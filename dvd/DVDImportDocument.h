@@ -1,0 +1,4 @@
+@interface DVDImportDocument : NSDocument
+{
+}
+@end
