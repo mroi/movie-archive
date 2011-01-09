@@ -11,6 +11,7 @@ handbrake: $(TARGET_TEMP_DIR)/handbrake/libhb.a
 $(TARGET_TEMP_DIR)/handbrake/libhb.a: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/handbrake/$(arch)/libhb/libhb.a)
 	lipo $^ -create -output $@
 	$(foreach arch, $(ARCHS), $(MAKE) -C $(TARGET_TEMP_DIR)/handbrake/$(arch) contrib.clean libhb.clean)
+	rm -rf $(PROJECT_DIR)/contrib/handbrake/download
 
 $(TARGET_TEMP_DIR)/handbrake/%/libhb/libhb.a: $(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile
 	$(MAKE) -C $(<D) libhb.build
