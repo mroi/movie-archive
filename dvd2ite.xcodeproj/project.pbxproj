@@ -9,12 +9,23 @@
 /* Begin PBXBuildFile section */
 		1DDD582C0DA1D0D100B32029 /* MyDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* MyDocument.xib */; };
 		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
+		4C94C47912DA34A000C29F6C /* libhb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C94C47812DA34A000C29F6C /* libhb.a */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
 		8D15AC310486D014006FF6A4 /* DVDImportDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* DVDImportDocument.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4CD82E6212DA172900F9C039 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CD82E5F12DA16EF00F9C039;
+			remoteInfo = "External Libraries";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -26,6 +37,8 @@
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dvd2ite_Prefix.pch; sourceTree = "<group>"; };
+		4C94C0F712DA310A00C29F6C /* contrib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = contrib; sourceTree = "<group>"; };
+		4C94C47812DA34A000C29F6C /* libhb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhb.a; path = handbrake/libhb.a; sourceTree = "<group>"; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* Cinema Paradiso.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cinema Paradiso.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +49,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
+				4C94C47912DA34A000C29F6C /* libhb.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,6 +100,8 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4C94C0F712DA310A00C29F6C /* contrib */,
+				4C94C46F12DA322E00C29F6C /* External Libraries */,
 				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
 			);
 			name = Frameworks;
@@ -101,7 +117,32 @@
 			path = dvd;
 			sourceTree = "<group>";
 		};
+		4C94C46F12DA322E00C29F6C /* External Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				4C94C47812DA34A000C29F6C /* libhb.a */,
+			);
+			path = "External Libraries";
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		4CD82E5F12DA16EF00F9C039 /* contrib */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 4CD82E6712DA173500F9C039 /* Build configuration list for PBXLegacyTarget "contrib" */;
+			buildPhases = (
+			);
+			buildToolPath = make;
+			buildWorkingDirectory = contrib;
+			dependencies = (
+			);
+			name = contrib;
+			passBuildSettingsInEnvironment = 1;
+			productName = "External Libraries";
+		};
+/* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
 		8D15AC270486D014006FF6A4 /* dvd2ite */ = {
@@ -115,6 +156,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4CD82E6312DA172900F9C039 /* PBXTargetDependency */,
 			);
 			name = dvd2ite;
 			productInstallPath = "$(HOME)/Applications";
@@ -145,6 +187,7 @@
 			projectRoot = "";
 			targets = (
 				8D15AC270486D014006FF6A4 /* dvd2ite */,
+				4CD82E5F12DA16EF00F9C039 /* contrib */,
 			);
 		};
 /* End PBXProject section */
@@ -174,6 +217,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4CD82E6312DA172900F9C039 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4CD82E5F12DA16EF00F9C039 /* contrib */;
+			targetProxy = 4CD82E6212DA172900F9C039 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C165FFE840EACC02AAC07 /* InfoPlist.strings */ = {
@@ -211,6 +262,22 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4CD82E6012DA16EF00F9C039 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PATH = "$(HOME)/.bin:$(PATH)";
+				PRODUCT_NAME = contrib;
+			};
+			name = Debug;
+		};
+		4CD82E6112DA16EF00F9C039 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PATH = "$(HOME)/.bin:$(PATH)";
+				PRODUCT_NAME = contrib;
+			};
+			name = Release;
+		};
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -219,6 +286,10 @@
 				GCC_PREFIX_HEADER = dvd2ite_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/build/dvd2ite.build/Debug/contrib.build/handbrake\"",
+				);
 				PRODUCT_NAME = "Cinema Paradiso";
 			};
 			name = Debug;
@@ -230,6 +301,10 @@
 				GCC_PREFIX_HEADER = dvd2ite_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/build/dvd2ite.build/Debug/contrib.build/handbrake\"",
+				);
 				PRODUCT_NAME = "Cinema Paradiso";
 			};
 			name = Release;
@@ -263,6 +338,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4CD82E6712DA173500F9C039 /* Build configuration list for PBXLegacyTarget "contrib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CD82E6012DA16EF00F9C039 /* Debug */,
+				4CD82E6112DA16EF00F9C039 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "dvd2ite" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
