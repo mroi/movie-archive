@@ -1,3 +1,5 @@
+/* This is free software, see file COPYING for license */
+
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
 #endif
