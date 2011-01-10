@@ -7,6 +7,7 @@ all: handbrake
 handbrake: $(TARGET_TEMP_DIR)/handbrake/libhb.a 
 
 .INTERMEDIATE: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/handbrake/$(arch)/libhb/libhb.a)
+.PRECIOUS: $(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile
 
 $(TARGET_TEMP_DIR)/handbrake/libhb.a: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/handbrake/$(arch)/libhb/libhb.a)
 	lipo $^ -create -output $@
@@ -16,8 +17,8 @@ $(TARGET_TEMP_DIR)/handbrake/libhb.a: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DI
 $(TARGET_TEMP_DIR)/handbrake/%/libhb/libhb.a: $(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile
 	$(MAKE) -C $(<D) libhb.build
 
-$(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile:
-	mkdir -p $(@D) ; cd $(@D) ; \
+$(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile: $(PROJECT_DIR)/contrib/.svn/dir-props
+	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
 	optimize=$(shell case $(CONFIGURATION) in (Debug) echo none ;; (Release) echo speed ;; esac) ; \
 	debug=$(shell case $(CONFIGURATION) in (Debug) echo std ;; (Release) echo none ;; esac) ; \
 	$(PROJECT_DIR)/contrib/handbrake/configure \
