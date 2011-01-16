@@ -1,4 +1,4 @@
-/* This is free software, see file COPYING for license */
+/* This is free software, see file COPYING for license. */
 
 #import "DVDImportDocument.h"
 
