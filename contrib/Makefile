@@ -17,7 +17,7 @@ $(TARGET_TEMP_DIR)/handbrake/libhb.a: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DI
 $(TARGET_TEMP_DIR)/handbrake/%/libhb/libhb.a: $(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile
 	$(MAKE) -C $(<D) libhb.build
 
-$(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile: $(PROJECT_DIR)/contrib/.svn/dir-props
+$(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile: $(wildcard $(PROJECT_DIR)/contrib/.svn/dir-props $(PROJECT_DIR)/contrib/.svn/dir-prop-base)
 	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
 	optimize=$(shell case $(CONFIGURATION) in (Debug) echo none ;; (Release) echo speed ;; esac) ; \
 	debug=$(shell case $(CONFIGURATION) in (Debug) echo std ;; (Release) echo none ;; esac) ; \
