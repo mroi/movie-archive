@@ -43,6 +43,7 @@
 		4C2A055312F5C33600120019 /* CPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPController.m; sourceTree = "<group>"; };
 		4C2A059912F5E1BA00120019 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4C2A059B12F5E22A00120019 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
+		4C2A062112F5F90C00120019 /* libdvdcss.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdvdcss.dylib; path = libdvdcss/libdvdcss.dylib; sourceTree = SOURCE_ROOT; };
 		4C94C0F712DA310A00C29F6C /* contrib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = contrib; sourceTree = "<group>"; };
 		4C94C47812DA34A000C29F6C /* libhb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhb.a; path = handbrake/libhb.a; sourceTree = "<group>"; };
 		4CE79C6912DBB6C900F3B7E7 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -134,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				4C94C47812DA34A000C29F6C /* libhb.a */,
+				4C2A062112F5F90C00120019 /* libdvdcss.dylib */,
 			);
 			path = "External Libraries";
 			sourceTree = BUILT_PRODUCTS_DIR;
