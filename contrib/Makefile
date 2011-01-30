@@ -1,4 +1,4 @@
-all: handbrake libdvdcss
+all: handbrake $(if $(wildcard $(PROJECT_DIR)/contrib/libdvdcss),libdvdcss)
 	@cd "$(BUILT_PRODUCTS_DIR)" ; ln -sf "$(TARGET_TEMP_DIR)" "External Libraries"
 
 .PHONY: handbrake libdvdcss clean
