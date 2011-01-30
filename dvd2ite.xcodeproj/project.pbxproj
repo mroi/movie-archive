@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1DDD582C0DA1D0D100B32029 /* DVDImportDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* DVDImportDocument.xib */; };
 		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
+		4C2A055412F5C33600120019 /* CPController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2A055312F5C33600120019 /* CPController.m */; };
+		4C2A059A12F5E1BA00120019 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C2A059812F5E1BA00120019 /* Localizable.strings */; };
 		4C94C47912DA34A000C29F6C /* libhb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C94C47812DA34A000C29F6C /* libhb.a */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
@@ -37,6 +39,10 @@
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dvd2ite_Prefix.pch; sourceTree = "<group>"; };
+		4C2A055212F5C33600120019 /* CPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPController.h; sourceTree = "<group>"; };
+		4C2A055312F5C33600120019 /* CPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPController.m; sourceTree = "<group>"; };
+		4C2A059912F5E1BA00120019 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
+		4C2A059B12F5E22A00120019 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4C94C0F712DA310A00C29F6C /* contrib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = contrib; sourceTree = "<group>"; };
 		4C94C47812DA34A000C29F6C /* libhb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhb.a; path = handbrake/libhb.a; sourceTree = "<group>"; };
 		4CE79C6912DBB6C900F3B7E7 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -83,8 +89,10 @@
 		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */,
+				4C2A055212F5C33600120019 /* CPController.h */,
+				4C2A055312F5C33600120019 /* CPController.m */,
 				2A37F4B0FDCFA73011CA2CEA /* main.m */,
+				32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -95,6 +103,7 @@
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
+				4C2A059812F5E1BA00120019 /* Localizable.strings */,
 				1DDD58280DA1D0D100B32029 /* DVDImportDocument.xib */,
 				1DDD582A0DA1D0D100B32029 /* MainMenu.xib */,
 			);
@@ -132,26 +141,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXLegacyTarget section */
-		4CD82E5F12DA16EF00F9C039 /* contrib */ = {
+		4CD82E5F12DA16EF00F9C039 /* Contrib */ = {
 			isa = PBXLegacyTarget;
 			buildArgumentsString = "$(ACTION)";
-			buildConfigurationList = 4CD82E6712DA173500F9C039 /* Build configuration list for PBXLegacyTarget "contrib" */;
+			buildConfigurationList = 4CD82E6712DA173500F9C039 /* Build configuration list for PBXLegacyTarget "Contrib" */;
 			buildPhases = (
 			);
 			buildToolPath = make;
 			buildWorkingDirectory = contrib;
 			dependencies = (
 			);
-			name = contrib;
+			name = Contrib;
 			passBuildSettingsInEnvironment = 1;
 			productName = "External Libraries";
 		};
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		8D15AC270486D014006FF6A4 /* dvd2ite */ = {
+		8D15AC270486D014006FF6A4 /* Cinema Paradiso */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "dvd2ite" */;
+			buildConfigurationList = C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Cinema Paradiso" */;
 			buildPhases = (
 				8D15AC2B0486D014006FF6A4 /* Resources */,
 				8D15AC300486D014006FF6A4 /* Sources */,
@@ -162,7 +171,7 @@
 			dependencies = (
 				4CD82E6312DA172900F9C039 /* PBXTargetDependency */,
 			);
-			name = dvd2ite;
+			name = "Cinema Paradiso";
 			productInstallPath = "$(HOME)/Applications";
 			productName = dvd2ite;
 			productReference = 8D15AC370486D014006FF6A4 /* Cinema Paradiso.app */;
@@ -190,8 +199,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D15AC270486D014006FF6A4 /* dvd2ite */,
-				4CD82E5F12DA16EF00F9C039 /* contrib */,
+				8D15AC270486D014006FF6A4 /* Cinema Paradiso */,
+				4CD82E5F12DA16EF00F9C039 /* Contrib */,
 			);
 		};
 /* End PBXProject section */
@@ -205,6 +214,7 @@
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
 				1DDD582C0DA1D0D100B32029 /* DVDImportDocument.xib in Resources */,
 				1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */,
+				4C2A059A12F5E1BA00120019 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,6 +227,7 @@
 			files = (
 				8D15AC310486D014006FF6A4 /* DVDImportDocument.m in Sources */,
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
+				4C2A055412F5C33600120019 /* CPController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,7 +236,7 @@
 /* Begin PBXTargetDependency section */
 		4CD82E6312DA172900F9C039 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4CD82E5F12DA16EF00F9C039 /* contrib */;
+			target = 4CD82E5F12DA16EF00F9C039 /* Contrib */;
 			targetProxy = 4CD82E6212DA172900F9C039 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -267,6 +278,15 @@
 			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
+		4C2A059812F5E1BA00120019 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4C2A059912F5E1BA00120019 /* English */,
+				4C2A059B12F5E22A00120019 /* German */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -274,7 +294,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PATH = "$(HOME)/.bin:/sw/bin:$(PATH)";
-				PRODUCT_NAME = contrib;
+				PRODUCT_NAME = Contrib;
 			};
 			name = Debug;
 		};
@@ -346,7 +366,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4CD82E6712DA173500F9C039 /* Build configuration list for PBXLegacyTarget "contrib" */ = {
+		4CD82E6712DA173500F9C039 /* Build configuration list for PBXLegacyTarget "Contrib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4CD82E6012DA16EF00F9C039 /* Debug */,
@@ -355,7 +375,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "dvd2ite" */ = {
+		C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Cinema Paradiso" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C05733C808A9546B00998B17 /* Debug */,
