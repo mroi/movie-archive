@@ -1,4 +1,4 @@
-all: handbrake $(if $(wildcard $(PROJECT_DIR)/contrib/libdvdcss),libdvdcss)
+all: handbrake $(if $(wildcard $(PROJECT_DIR)/contrib/libdvdcss),libdvdcss) $(BUILT_PRODUCTS_DIR)
 	@cd "$(BUILT_PRODUCTS_DIR)" ; ln -sf "$(TARGET_TEMP_DIR)" "External Libraries"
 
 .PHONY: handbrake libdvdcss clean
@@ -51,6 +51,9 @@ $(TARGET_TEMP_DIR)/libdvdcss/%/Makefile: $(PROJECT_DIR)/contrib/libdvdcss/config
 $(PROJECT_DIR)/contrib/libdvdcss/configure: $(CONTRIB_VERSION)
 	cd $(@D) ; ./bootstrap
 
+
+$(BUILT_PRODUCTS_DIR):
+	mkdir $@
 
 clean:
 	rm -rf "$(TARGET_TEMP_DIR)"

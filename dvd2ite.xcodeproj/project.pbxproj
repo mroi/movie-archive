@@ -42,11 +42,11 @@
 		4C2A055212F5C33600120019 /* CPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPController.h; sourceTree = "<group>"; };
 		4C2A055312F5C33600120019 /* CPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPController.m; sourceTree = "<group>"; };
 		4C2A059912F5E1BA00120019 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
-		4C2A059B12F5E22A00120019 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
-		4C2A062112F5F90C00120019 /* libdvdcss.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdvdcss.dylib; path = libdvdcss/libdvdcss.dylib; sourceTree = "<group>"; };
-		4C94C0F712DA310A00C29F6C /* contrib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = contrib; sourceTree = "<group>"; };
-		4C94C47812DA34A000C29F6C /* libhb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhb.a; path = handbrake/libhb.a; sourceTree = "<group>"; };
-		4CE79C6912DBB6C900F3B7E7 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4C2A059B12F5E22A00120019 /* German */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
+		4C2A062112F5F90C00120019 /* libdvdcss.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdvdcss.dylib; path = "External Libraries/libdvdcss/libdvdcss.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C94C47812DA34A000C29F6C /* libhb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhb.a; path = "External Libraries/handbrake/libhb.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CB7D12B132D40FC00C6DD1C /* contrib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = contrib; sourceTree = "<group>"; };
+		4CE79C6912DBB6C900F3B7E7 /* German */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4CE79C6A12DBB6DA00F3B7E7 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = German; path = German.lproj/Credits.rtf; sourceTree = "<group>"; };
 		4CE79C7A12DBB8E700F3B7E7 /* German */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = German; path = German.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		4CE79C7B12DBB8EF00F3B7E7 /* German */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = German; path = German.lproj/DVDImportDocument.xib; sourceTree = "<group>"; };
@@ -114,7 +114,7 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4C94C0F712DA310A00C29F6C /* contrib */,
+				4CB7D12B132D40FC00C6DD1C /* contrib */,
 				4C94C46F12DA322E00C29F6C /* External Libraries */,
 				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
 			);
@@ -137,8 +137,8 @@
 				4C94C47812DA34A000C29F6C /* libhb.a */,
 				4C2A062112F5F90C00120019 /* libdvdcss.dylib */,
 			);
-			path = "External Libraries";
-			sourceTree = BUILT_PRODUCTS_DIR;
+			name = "External Libraries";
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -213,11 +213,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
+				4C2A059A12F5E1BA00120019 /* Localizable.strings in Resources */,
 				1DDD582C0DA1D0D100B32029 /* DVDImportDocument.xib in Resources */,
 				1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */,
-				4C2A059A12F5E1BA00120019 /* Localizable.strings in Resources */,
+				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,9 +248,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D15AC310486D014006FF6A4 /* DVDImportDocument.m in Sources */,
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
 				4C2A055412F5C33600120019 /* CPController.m in Sources */,
+				8D15AC310486D014006FF6A4 /* DVDImportDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,7 +317,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PATH = "$(HOME)/.bin:/sw/bin:$(PATH)";
-				PRODUCT_NAME = Contrib;
 			};
 			name = Debug;
 		};
@@ -325,7 +324,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PATH = "$(HOME)/.bin:/sw/bin:$(PATH)";
-				PRODUCT_NAME = contrib;
 			};
 			name = Release;
 		};
@@ -336,10 +334,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = dvd2ite_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
+				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = (
+					"\"$(BUILT_PRODUCTS_DIR)/External Libraries/handbrake\"",
 					"$(inherited)",
-					"\"$(SRCROOT)/build/dvd2ite.build/Debug/contrib.build/handbrake\"",
 				);
 				PRODUCT_NAME = "Cinema Paradiso";
 			};
@@ -351,10 +349,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = dvd2ite_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
+				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = (
+					"\"$(BUILT_PRODUCTS_DIR)/External Libraries/handbrake\"",
 					"$(inherited)",
-					"\"$(SRCROOT)/build/dvd2ite.build/Debug/contrib.build/handbrake\"",
 				);
 				PRODUCT_NAME = "Cinema Paradiso";
 			};
