@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1DDD582C0DA1D0D100B32029 /* DVDImportDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* DVDImportDocument.xib */; };
 		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
+		4C003D86133FC3F200F09C61 /* Extras Template in Resources */ = {isa = PBXBuildFile; fileRef = 4C003D85133FC3F200F09C61 /* Extras Template */; };
 		4C2A055412F5C33600120019 /* CPController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2A055312F5C33600120019 /* CPController.m */; };
 		4C2A059A12F5E1BA00120019 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C2A059812F5E1BA00120019 /* Localizable.strings */; };
 		4C94C47912DA34A000C29F6C /* libhb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C94C47812DA34A000C29F6C /* libhb.a */; };
@@ -39,6 +40,7 @@
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dvd2ite_Prefix.pch; sourceTree = "<group>"; };
+		4C003D85133FC3F200F09C61 /* Extras Template */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Extras Template"; sourceTree = "<group>"; };
 		4C2A055212F5C33600120019 /* CPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPController.h; sourceTree = "<group>"; };
 		4C2A055312F5C33600120019 /* CPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPController.m; sourceTree = "<group>"; };
 		4C2A059912F5E1BA00120019 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				4C2A059812F5E1BA00120019 /* Localizable.strings */,
 				1DDD58280DA1D0D100B32029 /* DVDImportDocument.xib */,
 				1DDD582A0DA1D0D100B32029 /* MainMenu.xib */,
+				4C003D85133FC3F200F09C61 /* Extras Template */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -231,6 +234,7 @@
 				1DDD582C0DA1D0D100B32029 /* DVDImportDocument.xib in Resources */,
 				1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */,
 				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
+				4C003D86133FC3F200F09C61 /* Extras Template in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
