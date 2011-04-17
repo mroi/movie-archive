@@ -1,14 +1,12 @@
 function _(string)
 {
-	if (localizedStrings[player.language] && localizedStrings[player.language][string])
-		return localizedStrings[player.language][string];
-	else
-		return string;
+	var dictionary = player.pickLanguage(localizedStrings);
+	return dictionary[string] ? dictionary[string] : string;
 }
 
-var localizedStrings = {
+const localizedStrings = {
 	de: {
-		'iTunes Extras': 'iTunes Extras',
-		'Inconsistent Versions': 'Interner Versionsfehler'
+		'Inconsistent Versions': 'Interner Versionsfehler',
+		'iTunes Extras': 'iTunes Extras'
 	}
 };

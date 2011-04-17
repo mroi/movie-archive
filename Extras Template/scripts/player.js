@@ -8,42 +8,103 @@ const KEYBOARD_DOWN = 40;
 
 var player;
 
-function init()
+function player_init()
 {
 	player = {
 		version: 1,
+		view: document.getElementById('view'),
 		menu: document.getElementById('menu'),
 		still: document.getElementById('still'),
 		video: document.getElementById('video'),
 		highlight: document.getElementById('highlight'),
 		navigation: document.getElementById('navigation'),
+		emulator: document.getElementById('emulator'),
 		alert: document.getElementById('alert'),
 		
 		metadata: null,
-		// FIXME: language hardcoded
-		language: 'de',
 		activated: false,
+		
+		pickLanguage: function (object) {
+			var langList = window.iTunes.acceptedLanguages;
+			if (object.fallback)
+				var bestMatch = object.fallback;
+			else
+				var bestMatch = null;
+			for (var lang in object) {
+				if ((langList.indexOf(lang) >= 0 && langList.indexOf(bestMatch) == -1) || (langList.indexOf(lang) >= 0 && langList.indexOf(lang) < langList.indexOf(bestMatch)))
+					bestMatch = lang;
+			}
+			if (!bestMatch) {
+				for (var lang in object) {
+					bestMatch = lang;  // pick any language
+					break;
+				}
+			}
+			return bestMatch ? object[bestMatch] : null;
+		},
 		
 		sizeChanged: function () {
 			if (!window.innerHeight) return;
 			
 			var windowAspect = window.innerWidth / window.innerHeight;
 			
-			if (player.video.src.length > 0)
+			if (player.emulator.style.display === 'block')
+				playerAspect = player.emulator.videoWidth / player.emulator.videoHeight;
+			else if (player.video.style.display === 'block')
 				playerAspect = player.video.videoWidth / player.video.videoHeight;
-			else
+			else if (player.still.style.display === 'block')
 				playerAspect = player.still.naturalWidth / player.still.naturalHeight;
+			else
+				playerAspect = 16 / 9;
 			
+			/* update view size and margins */
 			if (playerAspect < windowAspect) {
-				player.menu.style.width = Math.round(window.innerHeight * playerAspect) + 'px';
-				player.menu.style.height = window.innerHeight + 'px';
-				player.menu.style.marginTop = '0';
-				player.menu.style.marginLeft = Math.round((window.innerWidth - window.innerHeight * playerAspect) / 2) + 'px';
+				player.view.style.width = Math.round(window.innerHeight * playerAspect) + 'px';
+				player.view.style.height = window.innerHeight + 'px';
+				player.view.style.marginTop = '0';
+				player.view.style.marginLeft = Math.round((window.innerWidth - window.innerHeight * playerAspect) / 2) + 'px';
 			} else {
-				player.menu.style.width = window.innerWidth + 'px';
-				player.menu.style.height = Math.round(window.innerWidth / playerAspect) + 'px';
-				player.menu.style.marginTop = Math.round((window.innerHeight - window.innerWidth / playerAspect) / 2) + 'px';
-				player.menu.style.marginLeft = '0';
+				player.view.style.width = window.innerWidth + 'px';
+				player.view.style.height = Math.round(window.innerWidth / playerAspect) + 'px';
+				player.view.style.marginTop = Math.round((window.innerHeight - window.innerWidth / playerAspect) / 2) + 'px';
+				player.view.style.marginLeft = '0';
+			}
+			
+			/* update mouse hotspots */
+			while (player.navigation.firstChild)
+				player.navigation.removeChild(player.navigation.firstChild);
+			// FIXME: compare the precedence of area-tags with what the DVD says when button areas overlap
+			for (var btn = 0; btn < vm.current.set[vm.buttonSet].button.length; btn++) {
+				var button = vm.current.set[vm.buttonSet].button[btn];
+				if (typeof button.x1 === 'number' &&
+				    typeof button.y1 === 'number' &&
+				    typeof button.x2 === 'number' &&
+				    typeof button.y2 === 'number') {
+					var x1 = Math.round((button.x1 / player.still.naturalWidth) * player.view.offsetWidth);
+					var y1 = Math.round((button.y1 / player.still.naturalHeight) * player.view.offsetHeight);
+					var x2 = Math.round((button.x2 / player.still.naturalWidth) * player.view.offsetWidth);
+					var y2 = Math.round((button.y2 / player.still.naturalHeight) * player.view.offsetHeight);
+					var area = document.createElement('area');
+					area.alt = 'button' + btn;
+					area.shape = 'rect';
+					area.coords = x1 + ',' + y1 + ',' + x2 + ',' + y2;
+					area.tabindex = btn;
+					area.style.cursor = 'pointer';
+					area.href = '#';
+					area.button = btn;
+					area.onmouseover = function () {
+						vm.button = this.button;
+						player.updateHighlight();
+					};
+					area.onmousedown = function() {
+						vm.button = this.button;
+						var event = document.createEvent("HTMLEvents");
+						event.initEvent('keydown', false, true);
+						event.keyCode = KEYBOARD_RETURN;
+						window.dispatchEvent(event);
+					};
+					player.navigation.appendChild(area);
+				}
 			}
 		},
 		
@@ -51,10 +112,10 @@ function init()
 			item = item.replace(/\u200b/g, '');  // why on earth is there a zero-width space at the end of string literals?
 			if (player.metadata) {
 				for (var node = player.metadata.firstChild; node; node = node.nextSibling) {
-					if (node.nodeName == 'key' && node.firstChild.data == item) {
+					if (node.nodeName === 'key' && node.firstChild.data === item) {
 						do {
 							node = node.nextSibling;
-						} while (node.nodeType == 3);
+						} while (node.nodeType === 3);
 						return node.firstChild.data;
 					}
 				}
@@ -63,31 +124,52 @@ function init()
 		},
 		
 		updateMenu: function () {
-			var base = 'images/menu' + (vm.menu < 10 ? '0' : '') + vm.menu + '_' + player.language;
-			var still = base + '.jpg';
-			if (still != player.still.src)
-				player.still.src = still;
-			player.activated = false;
+			/* setup menu video */
+			player.video.style.display = 'none';
 			
-			/* tigger prefetch for all highlight images */
-			for (var set = 0; set < content.menu[vm.menu][player.language].set.length; set++) {
-				for (var btn = 0; btn < content.menu[vm.menu][player.language].set[set].button.length; btn++) {
-					var urlBase = base + '_set' + (set < 10 ? '0' : '') + set + '_btn' + (btn < 10 ? '0' : '') + btn;
-					(new Image()).src = urlBase + '_highlight.png';
-					(new Image()).src = urlBase + '_activated.png';
-				}
+			/* setup still backdrop */
+			// FIXME: update still only when on Apple TV or in a still-only menu
+			var base = 'images/' + vm.current.prefix;
+			if (vm.current.set.length > 1)
+				base += '_set' + (vm.buttonSet < 10 ? '0' : '') + vm.buttonSet;
+			var still = base + '.jpg';
+			if (still != player.still.src) {
+				player.highlight.style.display = 'none';
+				var img = new Image();
+				img.onload = function () {
+					player.still.style.display = 'block';
+					player.still.src = this.src;
+					player.sizeChanged();
+					player.updateHighlight();
+				};
+				img.onerror = function () {
+					player.still.style.display = 'none';
+					player.updateHighlight();
+				};
+				img.src = still;
 			}
 			
-			player.updateHighlight();
+			/* tigger prefetch for highlight images */
+			for (var btn = 0; btn < vm.current.set[vm.buttonSet].button.length; btn++) {
+				var btnBase = base + '_btn' + (btn < 10 ? '0' : '') + btn;
+				(new Image()).src = btnBase + '_highlight.png';
+				(new Image()).src = btnBase + '_activated.png';
+			}
 		},
 		
 		updateHighlight: function () {
-			var base = 'images/menu' + (vm.menu < 10 ? '0' : '') + vm.menu + '_' + player.language;
-			var buttonSet = base + '_set' + (vm.buttonSet < 10 ? '0' : '') + vm.buttonSet;
+			var base = 'images/' + vm.current.prefix;
+			if (vm.current.set.length > 1)
+				base += '_set' + (vm.buttonSet < 10 ? '0' : '') + vm.buttonSet;
 			var buttonState = player.activated ? 'activated' : 'highlight';
-			var button = buttonSet + '_btn' + (vm.button < 10 ? '0' : '') + vm.button + '_' + buttonState + '.png';
-			if (button != player.highlight.src)
+			var button = base + '_btn' + (vm.button < 10 ? '0' : '') + vm.button + '_' + buttonState + '.png';
+			
+			if (button != player.highlight.src) {
+				player.highlight.style.display = 'block';
 				player.highlight.src = button;
+			}
+			
+			player.activated = false;
 		},
 		
 		keyPressed: function (event) {
@@ -110,7 +192,7 @@ function init()
 					case KEYBOARD_RETURN:
 						player.activated = true;
 						player.updateHighlight();
-						window.setTimeout("vm.action()", 250);
+						window.setTimeout(vm.action, 250);
 						handled = true;
 						break;
 					case KEYBOARD_ESCAPE:
@@ -146,7 +228,7 @@ function init()
 		},
 		
 		navigationSound: function (sound) {
-			if (window.iTunes.platform == 'AppleTV') {
+			if (window.iTunes.platform === 'AppleTV') {
 				var sounds = window.iTunes.getSystemSounds();
 				var soundName = 'SystemSound' + sound;
 				if (sounds && sounds[soundName])
@@ -157,37 +239,43 @@ function init()
 		showAlert: function (text, time) {
 			player.alert.innerHTML = text;
 			player.alert.style.opacity = '1';
-			window.setTimeout("player.alert.style.opacity = '0'", time);
+			window.setTimeout(function () {
+				player.alert.style.opacity = '0'
+			}, time * 1000);
 		}
 	};
 	
+	/* check version numbers of all components */
 	if (content.version != player.version ||
 	    player.version != vm.version ||
 	    vm.version != content.version)
-		player.showAlert(_('Inconsistent Versions'), 6000);
+		player.showAlert(_('Inconsistent Versions'), 8);
 	
+	/* setup event handling */
 	window.onkeydown = player.keyPressed;
 	window.onresize = player.sizeChanged;
 	player.still.onload = player.sizeChanged;
 	player.video.onload = player.sizeChanged;
+	player.emulator.onload = player.sizeChanged;
 	
+	/* fetch Extras metadata file */
 	var request = new XMLHttpRequest();
 	request.open('GET', 'iTunesMetadata.plist', false);
 	request.send();
-	if (request.readyState == 4 && request.status == 0) {
-		function skipText(node)
+	if (request.readyState === 4 && request.status === 0) {
+		function skipTextNodes(node)
 		{
-			while (node.nodeType == 3)
+			while (node.nodeType === 3)
 				node = node.nextSibling;
 			return node;
 		}
 		var plist = request.responseXML.getElementsByTagName('plist')[0];
-		var dict = skipText(plist.firstChild);
-		if (dict.nodeName == 'dict') {
+		var dict = skipTextNodes(plist.firstChild);
+		if (dict.nodeName === 'dict') {
 			for (var node = dict.firstChild; node; node = node.nextSibling) {
-				if (node.nodeName == 'key' && node.firstChild.data == 'Metadata') {
-					var metadata = skipText(node.nextSibling);
-					if (metadata.nodeName == 'dict')
+				if (node.nodeName === 'key' && node.firstChild.data === 'Metadata') {
+					var metadata = skipTextNodes(node.nextSibling);
+					if (metadata.nodeName === 'dict')
 						player.metadata = metadata;
 					break;
 				}
@@ -202,7 +290,11 @@ function init()
 	else
 		document.title = _(document.title);  // at least localize
 	
+	if (window.iTunes.platform === 'Emulator')
+		emulator_init();
+	
+	/* rock'n'roll */
 	content.start();
 }
 
-window.onload = init;
+window.onload = player_init;

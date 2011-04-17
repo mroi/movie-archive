@@ -5,7 +5,7 @@
 		<meta name="hdtv-fullscreen" content="true">
 		<meta name="hdtv-cursor-off" content="true">
 		<link rel="stylesheet" href="style.css" type="text/css" media="screen" charset="utf-8">
-		<script type="text/javascript" src="scripts/author.js" charset="utf-8"></script>
+		<script type="text/javascript" src="scripts/content.js" charset="utf-8"></script>
 		<script type="text/javascript" src="scripts/emulator.js" charset="utf-8"></script>
 		<script type="text/javascript" src="scripts/localized.js" charset="utf-8"></script>
 		<script type="text/javascript" src="scripts/player.js" charset="utf-8"></script>
@@ -13,14 +13,15 @@
 		<title>iTunes Extras</title>
 	</head>
 	<body>
-		<div id="menu">
-			<img id="still" class="scale" alt="menu-still" src="images/none.png">
-			<video id="video" class="scale">
-			</video>
-			<img id="highlight" class="scale" alt="menu-highlight" src="images/none.png" usemap="#navigation">
-			<map id="navigation" name="navigation" class="scale">
-			</map>
-			<div id="alert">
+		<div id="view">
+			<div id="menu" class="scale">
+				<img id="still" class="scale" alt="menu-still" src="images/none.png">
+				<video id="video" class="scale"></video>
+				<img id="highlight" class="scale" alt="menu-highlight" src="images/none.png" usemap="#navigation">
+				<map id="navigation" name="navigation"></map>
+			</div>
+			<video id="emulator" class="scale"></video>
 		</div>
+		<div id="alert"></div>
 	</body>
 </html>
