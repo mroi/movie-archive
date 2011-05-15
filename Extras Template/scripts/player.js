@@ -10,6 +10,11 @@ var player;
 
 function player_init()
 {
+	/* helper function to compare relative and absolute URIs */
+	String.prototype.endsWith = function (end) {
+		return end === this.substr(this.length - end.length, end.length);
+	};
+	
 	player = {
 		version: 1,
 		view: document.getElementById('view'),
@@ -57,7 +62,6 @@ function player_init()
 			else
 				playerAspect = 16 / 9;
 			
-			/* update view size and margins */
 			if (playerAspect < windowAspect) {
 				player.view.style.width = Math.round(window.innerHeight * playerAspect) + 'px';
 				player.view.style.height = window.innerHeight + 'px';
@@ -69,43 +73,9 @@ function player_init()
 				player.view.style.marginTop = Math.round((window.innerHeight - window.innerWidth / playerAspect) / 2) + 'px';
 				player.view.style.marginLeft = '0';
 			}
+			player.alert.style.fontSize = Math.round(player.view.offsetHeight / 20) + 'px';
 			
-			/* update mouse hotspots */
-			while (player.navigation.firstChild)
-				player.navigation.removeChild(player.navigation.firstChild);
-			// FIXME: compare the precedence of area-tags with what the DVD says when button areas overlap
-			for (var btn = 0; btn < vm.current.set[vm.buttonSet].button.length; btn++) {
-				var button = vm.current.set[vm.buttonSet].button[btn];
-				if (typeof button.x1 === 'number' &&
-				    typeof button.y1 === 'number' &&
-				    typeof button.x2 === 'number' &&
-				    typeof button.y2 === 'number') {
-					var x1 = Math.round((button.x1 / player.still.naturalWidth) * player.view.offsetWidth);
-					var y1 = Math.round((button.y1 / player.still.naturalHeight) * player.view.offsetHeight);
-					var x2 = Math.round((button.x2 / player.still.naturalWidth) * player.view.offsetWidth);
-					var y2 = Math.round((button.y2 / player.still.naturalHeight) * player.view.offsetHeight);
-					var area = document.createElement('area');
-					area.alt = 'button' + btn;
-					area.shape = 'rect';
-					area.coords = x1 + ',' + y1 + ',' + x2 + ',' + y2;
-					area.tabindex = btn;
-					area.style.cursor = 'pointer';
-					area.href = '#';
-					area.button = btn;
-					area.onmouseover = function () {
-						vm.button = this.button;
-						player.updateHighlight();
-					};
-					area.onmousedown = function() {
-						vm.button = this.button;
-						var event = document.createEvent("HTMLEvents");
-						event.initEvent('keydown', false, true);
-						event.keyCode = KEYBOARD_RETURN;
-						window.dispatchEvent(event);
-					};
-					player.navigation.appendChild(area);
-				}
-			}
+			player.updateMouseHotspots();
 		},
 		
 		lookupMetadata: function (item) {
@@ -123,57 +93,131 @@ function player_init()
 			return null;
 		},
 		
+		prefetchHighlights: function () {
+			if (vm.overlay && typeof vm.overlay.set[vm.buttonSet] === 'object') {
+				var base = 'images/' + vm.overlay.prefix;
+				if (vm.overlay.set.length > 1)
+					base += '_set' + (vm.buttonSet < 10 ? '0' : '') + vm.buttonSet;
+				
+				for (var btn = 0; btn < vm.overlay.set[vm.buttonSet].button.length; btn++) {
+					var btnBase = base + '_btn' + (btn < 10 ? '0' : '') + btn;
+					(new Image()).src = btnBase + '_highlight.png';
+					(new Image()).src = btnBase + '_activated.png';
+				}
+			}
+		},
+		
 		updateMenu: function () {
-			/* setup menu video */
-			player.video.style.display = 'none';
+			if (!vm.overlay) return;
 			
-			/* setup still backdrop */
-			// FIXME: update still only when on Apple TV or in a still-only menu
-			var base = 'images/' + vm.current.prefix;
-			if (vm.current.set.length > 1)
-				base += '_set' + (vm.buttonSet < 10 ? '0' : '') + vm.buttonSet;
-			var still = base + '.jpg';
-			if (still != player.still.src) {
+			/* setup menu video */
+			if (window.iTunes.platform !== 'AppleTV') {
+				var video = 'menus/' + vm.overlay.prefix + '.m4v';
 				player.highlight.style.display = 'none';
-				var img = new Image();
-				img.onload = function () {
-					player.still.style.display = 'block';
-					player.still.src = this.src;
-					player.sizeChanged();
-					player.updateHighlight();
-				};
-				img.onerror = function () {
-					player.still.style.display = 'none';
-					player.updateHighlight();
-				};
-				img.src = still;
+				if (player.video.src.endsWith(video)) {
+					if (!player.video.error) {
+						player.video.currentTime = 0;
+						player.video.play();
+						player.menu.style.display = 'block';
+					}
+				} else {
+					player.video.src = video;
+					player.video.play();
+				}
 			}
 			
-			/* tigger prefetch for highlight images */
-			for (var btn = 0; btn < vm.current.set[vm.buttonSet].button.length; btn++) {
-				var btnBase = base + '_btn' + (btn < 10 ? '0' : '') + btn;
-				(new Image()).src = btnBase + '_highlight.png';
-				(new Image()).src = btnBase + '_activated.png';
+			/* setup still backdrop */
+			if (window.iTunes.platform === 'AppleTV' || player.video.error) {
+				var jumpcount = vm.jumpcount;
+				
+				/* execute triggers preceding button set 0 */
+				if (vm.triggers && vm.overlay && typeof vm.overlay.set === 'object') {
+					if (typeof vm.overlay.set[0].start === 'number')
+						var start = vm.overlay.set[0].start;
+					else
+						var start = 0;
+					for (var i = 0; i < vm.triggers.length && jumpcount === vm.jumpcount; i++) {
+						if (vm.triggers[i].time <= start)
+							vm.triggers[i].action();
+						else
+							break;
+					}
+				}
+				
+				if (jumpcount === vm.jumpcount) {
+					// TODO: play menu audio
+					var still = 'images/' + vm.overlay.prefix + '.jpg';
+					player.highlight.style.display = 'none';
+					if (player.still.src.endsWith(still)) {
+						player.menu.style.display = 'block';
+						vm.activateButtons(0);
+					} else {
+						player.still.src = still;
+					}
+				}
+			}
+		},
+		
+		updateMouseHotspots: function () {
+			while (player.navigation.firstChild)
+				player.navigation.removeChild(player.navigation.firstChild);
+			if (vm.overlay && typeof vm.overlay.set[vm.buttonSet] === 'object') {
+				// When hotspot areas overlap, the DVD spec says the higher button number takes precedence. In HTML5, events are deliverd to the top-most area, with the first area element in tree-order being the top-most. Thus, we create area tags in reverse button-order.
+				for (var btn = vm.overlay.set[vm.buttonSet].button.length - 1; btn >= 0; btn--) {
+					var button = vm.overlay.set[vm.buttonSet].button[btn];
+					if (typeof button.x1 === 'number' &&
+							typeof button.y1 === 'number' &&
+							typeof button.x2 === 'number' &&
+							typeof button.y2 === 'number') {
+						var x1 = Math.round(button.x1 * player.view.offsetWidth);
+						var y1 = Math.round(button.y1 * player.view.offsetHeight);
+						var x2 = Math.round(button.x2 * player.view.offsetWidth);
+						var y2 = Math.round(button.y2 * player.view.offsetHeight);
+						var area = document.createElement('area');
+						area.alt = 'button' + btn;
+						area.shape = 'rect';
+						area.coords = x1 + ',' + y1 + ',' + x2 + ',' + y2;
+						area.tabindex = btn + 1;
+						area.style.cursor = 'pointer';
+						area.href = '#';
+						area.button = btn;
+						area.onmouseover = function () {
+							vm.button = this.button;
+							player.updateHighlight();
+						};
+						area.onmousedown = function() {
+							vm.button = this.button;
+							var event = document.createEvent("HTMLEvents");
+							event.initEvent('keydown', false, true);
+							event.keyCode = KEYBOARD_RETURN;
+							window.dispatchEvent(event);
+						};
+						player.navigation.appendChild(area);
+					}
+				}
 			}
 		},
 		
 		updateHighlight: function () {
-			var base = 'images/' + vm.current.prefix;
-			if (vm.current.set.length > 1)
-				base += '_set' + (vm.buttonSet < 10 ? '0' : '') + vm.buttonSet;
-			var buttonState = player.activated ? 'activated' : 'highlight';
-			var button = base + '_btn' + (vm.button < 10 ? '0' : '') + vm.button + '_' + buttonState + '.png';
-			
-			if (button != player.highlight.src) {
-				player.highlight.style.display = 'block';
-				player.highlight.src = button;
-			}
+			if (vm.overlay && typeof vm.overlay.set[vm.buttonSet] === 'object') {
+				var base = 'images/' + vm.overlay.prefix;
+				if (vm.overlay.set.length > 1)
+					base += '_set' + (vm.buttonSet < 10 ? '0' : '') + vm.buttonSet;
+				var buttonState = player.activated ? 'activated' : 'highlight';
+				var button = base + '_btn' + (vm.button < 10 ? '0' : '') + vm.button + '_' + buttonState + '.png';
+				
+				if (player.highlight.src.endsWith(button))
+					player.highlight.style.display = 'block';
+				else
+					player.highlight.src = button;
+			} else
+				player.highlight.src = 'images/none.png';
 			
 			player.activated = false;
 		},
 		
 		keyPressed: function (event) {
-			if (!player.activated) {
+			if (!player.activated && window.iTunes.currentPlayerState === window.iTunes.StoppedState) {
 				var handled = false;
 				
 				switch (event.keyCode) {
@@ -245,26 +289,56 @@ function player_init()
 		}
 	};
 	
-	/* check version numbers of all components */
+	/* check version numbers and initialize components */
 	if (content.version != player.version ||
 	    player.version != vm.version ||
 	    vm.version != content.version)
-		player.showAlert(_('Inconsistent Versions'), 8);
+		player.showAlert(_('Inconsistent Versions'), 10);
+	if (window.iTunes.platform === 'Emulator')
+		emulator_init();
+	player.emulator.style.display = 'none';
 	
-	/* setup event handling */
-	window.onkeydown = player.keyPressed;
-	window.onresize = player.sizeChanged;
-	player.still.onload = player.sizeChanged;
-	player.video.onload = player.sizeChanged;
-	player.emulator.onload = player.sizeChanged;
+	/* set up event handling */
+	window.addEventListener('keydown', player.keyPressed, true);
+	window.addEventListener('resize', player.sizeChanged, false);
+	window.addEventListener('play', vm.playback, false);
+	window.addEventListener('timeupdate', vm.playback, false);
+	window.addEventListener('videoclosed', vm.playback, false);
+	player.still.onload = function (event) {
+		player.menu.style.display = 'block';
+		player.still.style.display = 'block';
+		player.sizeChanged();
+		vm.activateButtons(0);
+	};
+	player.still.onerror = function (event) {
+		player.still.style.display = 'none';
+		vm.activateButtons(0);
+	};
+	player.highlight.onload = function (event) {
+		player.menu.style.display = 'block';
+		player.highlight.style.display = 'block';
+	};
+	player.highlight.onerror = function (event) {
+		player.highlight.src = 'images/none.png';
+	};
+	if (window.iTunes.platform !== 'AppleTV') {
+		player.video.addEventListener('loadedmetadata', function (event) {
+			player.menu.style.display = 'block';
+			player.video.style.display = 'block';
+			player.sizeChanged();
+		}, false);
+		player.video.addEventListener('error', function (event) {
+			player.video.style.display = 'none';
+			player.updateMenu();
+		}, false);
+	}
 	
 	/* fetch Extras metadata file */
 	var request = new XMLHttpRequest();
 	request.open('GET', 'iTunesMetadata.plist', false);
 	request.send();
-	if (request.readyState === 4 && request.status === 0) {
-		function skipTextNodes(node)
-		{
+	if (request.readyState === 4 && (request.status === 0 || request.status === 200)) {
+		function skipTextNodes(node) {
 			while (node.nodeType === 3)
 				node = node.nextSibling;
 			return node;
@@ -290,11 +364,14 @@ function player_init()
 	else
 		document.title = _(document.title);  // at least localize
 	
-	if (window.iTunes.platform === 'Emulator')
-		emulator_init();
+	if (typeof window.iTunes.allowDisplaySleep === 'function')
+		window.iTunes.allowDisplaySleep();
 	
 	/* rock'n'roll */
-	content.start();
+	if (typeof content.start === 'function')
+		content.start();
+	else
+		vm.playMenu(0);
 }
 
 window.onload = player_init;
