@@ -53,8 +53,10 @@ if (!window.iTunes) {
 		savedTitle: '',
 		
 		close: function () {
-			player.emulator.pause();
 			window.iTunes.currentPlayerState = window.iTunes.StoppedState;
+			player.emulator.pause();
+			if (typeof player.emulator.webkitExitFullscreen === 'function')
+				player.emulator.webkitExitFullscreen();
 			player.emulator.style.display = 'none';
 			player.sizeChanged();
 		},
