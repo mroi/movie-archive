@@ -49,7 +49,7 @@ static BOOL isDeviceUsable(NSString *devicePath)
 {
 	// FIXME: This is DVD-specific knowledge, but this code here should be generic.
 	NSString *mediaPath = [devicePath stringByAppendingString:@"/VIDEO_TS"];
-	return [[NSFileManager defaultManager] fileExistsAtPath:mediaPath];
+	return [[[[NSFileManager alloc] init] autorelease] fileExistsAtPath:mediaPath];
 }
 
 static NSNotification *notificationForDevice(NSString *devicePath, NSString *name, id sender)
@@ -87,7 +87,7 @@ static void foundInvalidDevice(NSString *invalidDevicePath, CPController *self)
 			// already a known device, should never happen
 			foundInvalidDevice(devicePath, self);
 		
-		NSString *deviceName = [[NSFileManager defaultManager] displayNameAtPath:devicePath];
+		NSString *deviceName = [[[[NSFileManager alloc] init] autorelease] displayNameAtPath:devicePath];
 		NSMenuItem *menuItem = [[NSMenuItem alloc] init];
 		NSInteger index = [[menuItemNew menu] indexOfItem:menuItemNew] + [deviceMenuItems count];
 		
@@ -100,6 +100,7 @@ static void foundInvalidDevice(NSString *invalidDevicePath, CPController *self)
 			// first one gets a keyboard shortcut
 			[menuItem setKeyEquivalent:@"n"];
 		} else {
+			// TODO: push entries into a submenu at a threshold of 5
 			dispatch_sync(dispatch_get_main_queue(), ^{
 				// delete all keyboard shortcuts to avoid confusion
 				for (id key in deviceMenuItems)
