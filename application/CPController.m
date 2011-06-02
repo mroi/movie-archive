@@ -18,22 +18,21 @@
 
 - (id)init
 {
-	[super init];
-	
-	deviceMenuItems = [[NSMutableDictionary alloc] init];
-	deviceManagementQueue = dispatch_queue_create("de.amalthea.dvd2ite.devices", NULL);
-	
-	NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
-	
-	[center addObserver:self
-			   selector:@selector(deviceDidMount:)
-				   name:NSWorkspaceDidMountNotification
-				 object:NULL];
-	[center addObserver:self
-			   selector:@selector(deviceDidUnmount:)
-				   name:NSWorkspaceDidUnmountNotification
-				 object:NULL];
-	
+	if ((self = [super init])) {
+		deviceMenuItems = [[NSMutableDictionary alloc] init];
+		deviceManagementQueue = dispatch_queue_create("de.amalthea.dvd2ite.devices", NULL);
+		
+		NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
+		
+		[center addObserver:self
+				   selector:@selector(deviceDidMount:)
+					   name:NSWorkspaceDidMountNotification
+					 object:NULL];
+		[center addObserver:self
+				   selector:@selector(deviceDidUnmount:)
+					   name:NSWorkspaceDidUnmountNotification
+					 object:NULL];
+	}
 	return self;
 }
 
@@ -49,11 +48,10 @@
 
 #pragma mark Management of "New" Menu Items
 
-static BOOL isDeviceUsable(NSString *devicePath)
+static BOOL isDeviceUsable(NSString *devicePath, NSDocumentController *documentController)
 {
-	// FIXME: This is DVD-specific knowledge, but this code here should be generic.
-	NSString *mediaPath = [devicePath stringByAppendingString:@"/VIDEO_TS"];
-	return [[[[NSFileManager alloc] init] autorelease] fileExistsAtPath:mediaPath];
+	NSURL *deviceURL = [NSURL fileURLWithPath:devicePath];
+	return [documentController typeForContentsOfURL:deviceURL error:NULL] ? YES : NO;
 }
 
 static NSNotification *notificationForDevice(NSString *devicePath, NSString *name, id sender)
@@ -69,7 +67,7 @@ static NSNotification *notificationForDevice(NSString *devicePath, NSString *nam
 static void foundInvalidDevice(NSString *invalidDevicePath, CPController *self)
 {
 	for (NSString *devicePath in self->deviceMenuItems)
-		if (!isDeviceUsable(devicePath) || [devicePath isEqualToString:invalidDevicePath])
+		if (!isDeviceUsable(devicePath, self) || [devicePath isEqualToString:invalidDevicePath])
 			[self deviceDidUnmount:notificationForDevice(devicePath, NSWorkspaceDidUnmountNotification, self)];
 }
 
@@ -85,7 +83,7 @@ static void foundInvalidDevice(NSString *invalidDevicePath, CPController *self)
 	NSString *devicePath = [[notification userInfo] objectForKey:@"NSDevicePath"];
 	
 	dispatch_async(deviceManagementQueue, ^{
-		if (!isDeviceUsable(devicePath))
+		if (!isDeviceUsable(devicePath, self))
 			return;
 		
 		if ([[deviceMenuItems allKeys] containsObject:devicePath])
