@@ -1,3 +1,7 @@
+/* This is free software, see file COPYING for license. */
+
+#include <objc/runtime.h>
+
 #import "CPController.h"
 
 
@@ -43,7 +47,7 @@
 }
 
 
-#pragma mark Handling of "New" Menu Items
+#pragma mark Management of "New" Menu Items
 
 static BOOL isDeviceUsable(NSString *devicePath)
 {
@@ -73,6 +77,7 @@ static void foundInvalidDevice(NSString *invalidDevicePath, CPController *self)
 {
 	for (NSString *devicePath in [[NSWorkspace sharedWorkspace] mountedRemovableMedia])
 		[self deviceDidMount:notificationForDevice(devicePath, NSWorkspaceDidMountNotification, self)];
+	// TODO: provide some feedback if there is no usable device
 }
 
 - (void)deviceDidMount:(NSNotification *)notification
@@ -150,6 +155,9 @@ static void foundInvalidDevice(NSString *invalidDevicePath, CPController *self)
 	});
 }
 
+
+#pragma mark NSDocumentController
+
 - (IBAction)newDocument:(id)sender
 {
 	__block NSString *devicePath;
@@ -164,13 +172,50 @@ static void foundInvalidDevice(NSString *invalidDevicePath, CPController *self)
 				return NO;
 		}] anyObject];
 	});
+
+	NSError *error;
+	NSURL *documentURL = [NSURL fileURLWithPath:devicePath];
+	id document;
 	
-	NSLog(@"would create document for device %@", devicePath);
-	// TODO: create new document, call foundInvalidDevice() if this fails
+retry:
+	document = [self openDocumentWithContentsOfURL:documentURL display:YES error:&error];
+	if (!document) {
+		if ([self presentError:error])
+			goto retry;
+		foundInvalidDevice(devicePath, self);
+	}
+}
+
+- (NSString *)typeForContentsOfURL:(NSURL *)url error:(NSError **)outError
+{
+	if (outError) *outError = nil;
+	
+	for (NSString *className in [self documentClassNames]) {
+		id class = objc_getClass([className UTF8String]);
+		if ([class conformsToProtocol:objc_getProtocol("CPURLSupportQuery")]) {
+			id <CPURLSupportQuery> documentClass = class;
+			if ([documentClass isURLSupported:url])
+				return [[documentClass readableTypes] lastObject];
+		} else {
+			NSLog(@"Document class %@ does not implement formal protocol CPURLSupportQuery", className);
+		}
+	}
+	
+	NSDictionary *errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							   NSLocalizedString(@"The requested document or device cannot be opened.", nil), NSLocalizedDescriptionKey,
+							   url, NSURLErrorKey, nil];
+	if (outError)
+		*outError = [NSError errorWithDomain:NSURLErrorDomain code:0 userInfo:errorInfo];
+	return nil;
 }
 
 
 #pragma mark NSApplicationDelegate
+
+- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
+{
+	return NO;
+}
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {

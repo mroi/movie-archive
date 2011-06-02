@@ -1,6 +1,9 @@
 /* This is free software, see file COPYING for license. */
 
-@interface DVDImportDocument : NSDocument
+#import "CPController.h"
+
+
+@interface DVDImportDocument : NSDocument <CPURLSupportQuery>
 {
 }
 @end
