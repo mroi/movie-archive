@@ -195,7 +195,7 @@ var vm = {
 				
 			case 'timeupdate':
 				// we assume this gets called at least once per second, the W3C spec defines a minimum of 4Hz for HTML5 video
-				// AppleTV never sends this event and also stops all JavaScript timers during playback, so we cannot emulate it
+				// AppleTV does not use this event and also stops all JavaScript timers during playback, so we cannot emulate it
 				if (window.iTunes.currentPlayingTrack && window.iTunes.currentPlayerState !== window.iTunes.StoppedState) {
 					var current = window.iTunes.currentTime;
 					var duration = window.iTunes.currentPlayingTrack.duration;
