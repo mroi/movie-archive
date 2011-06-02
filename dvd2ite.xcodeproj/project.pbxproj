@@ -39,10 +39,10 @@
 		2A37F4AEFDCFA73011CA2CEA /* DVDImportDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDImportDocument.h; sourceTree = "<group>"; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
-		32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dvd2ite_Prefix.pch; sourceTree = "<group>"; };
+		32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dvd2ite_Prefix.pch; path = ../dvd2ite_Prefix.pch; sourceTree = "<group>"; };
 		4C003D85133FC3F200F09C61 /* Extras Template */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Extras Template"; sourceTree = "<group>"; };
-		4C2A055212F5C33600120019 /* CPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPController.h; path = application/CPController.h; sourceTree = "<group>"; };
-		4C2A055312F5C33600120019 /* CPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPController.m; path = application/CPController.m; sourceTree = "<group>"; };
+		4C2A055212F5C33600120019 /* CPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPController.h; sourceTree = "<group>"; };
+		4C2A055312F5C33600120019 /* CPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPController.m; sourceTree = "<group>"; };
 		4C2A059912F5E1BA00120019 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4C2A059B12F5E22A00120019 /* German */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4C2A062112F5F90C00120019 /* libdvdcss.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdvdcss.dylib; path = "External Libraries/libdvdcss/libdvdcss.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -100,6 +100,7 @@
 				32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */,
 			);
 			name = "Other Sources";
+			path = application;
 			sourceTree = "<group>";
 		};
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
