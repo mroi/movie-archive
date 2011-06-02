@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1DDD582C0DA1D0D100B32029 /* DVDImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* DVDImportWindow.xib */; };
+		1DDD582C0DA1D0D100B32029 /* CPImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* CPImportWindow.xib */; };
 		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
 		4C003D86133FC3F200F09C61 /* Extras Template in Resources */ = {isa = PBXBuildFile; fileRef = 4C003D85133FC3F200F09C61 /* Extras Template */; };
 		4C2A055412F5C33600120019 /* CPController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2A055312F5C33600120019 /* CPController.m */; };
 		4C2A059A12F5E1BA00120019 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C2A059812F5E1BA00120019 /* Localizable.strings */; };
+		4C6E11181397F75B0050532A /* CPViewSwisher.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6E11171397F75B0050532A /* CPViewSwisher.m */; };
 		4C94C47912DA34A000C29F6C /* libhb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C94C47812DA34A000C29F6C /* libhb.a */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
@@ -33,7 +34,7 @@
 /* Begin PBXFileReference section */
 		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		1DDD58290DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DVDImportWindow.xib; sourceTree = "<group>"; };
+		1DDD58290DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CPImportWindow.xib; sourceTree = "<group>"; };
 		1DDD582B0DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		2A37F4ACFDCFA73011CA2CEA /* DVDImportDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDImportDocument.m; sourceTree = "<group>"; };
 		2A37F4AEFDCFA73011CA2CEA /* DVDImportDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDImportDocument.h; sourceTree = "<group>"; };
@@ -49,11 +50,13 @@
 		4C3025C61336A1C600297F81 /* libhb */ = {isa = PBXFileReference; lastKnownFileType = folder; name = libhb; path = handbrake/libhb; sourceTree = "<group>"; };
 		4C3025C81336A20E00297F81 /* libdvdcss */ = {isa = PBXFileReference; lastKnownFileType = folder; name = libdvdcss; path = libdvdcss/src; sourceTree = "<group>"; };
 		4C6DF16C1336A35B0062FF53 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		4C6E11161397F75B0050532A /* CPViewSwisher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPViewSwisher.h; sourceTree = "<group>"; };
+		4C6E11171397F75B0050532A /* CPViewSwisher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPViewSwisher.m; sourceTree = "<group>"; };
 		4C94C47812DA34A000C29F6C /* libhb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhb.a; path = "External Libraries/handbrake/libhb.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CE79C6912DBB6C900F3B7E7 /* German */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4CE79C6A12DBB6DA00F3B7E7 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = German; path = German.lproj/Credits.rtf; sourceTree = "<group>"; };
 		4CE79C7A12DBB8E700F3B7E7 /* German */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = German; path = German.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		4CE79C7B12DBB8EF00F3B7E7 /* German */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = German; path = German.lproj/DVDImportWindow.xib; sourceTree = "<group>"; };
+		4CE79C7B12DBB8EF00F3B7E7 /* German */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = German; path = German.lproj/CPImportWindow.xib; sourceTree = "<group>"; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* Cinema Paradiso.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cinema Paradiso.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -94,10 +97,12 @@
 		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */,
+				2A37F4B0FDCFA73011CA2CEA /* main.m */,
 				4C2A055212F5C33600120019 /* CPController.h */,
 				4C2A055312F5C33600120019 /* CPController.m */,
-				2A37F4B0FDCFA73011CA2CEA /* main.m */,
-				32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */,
+				4C6E11161397F75B0050532A /* CPViewSwisher.h */,
+				4C6E11171397F75B0050532A /* CPViewSwisher.m */,
 			);
 			name = "Other Sources";
 			path = application;
@@ -110,7 +115,7 @@
 				8D15AC360486D014006FF6A4 /* Info.plist */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
 				4C2A059812F5E1BA00120019 /* Localizable.strings */,
-				1DDD58280DA1D0D100B32029 /* DVDImportWindow.xib */,
+				1DDD58280DA1D0D100B32029 /* CPImportWindow.xib */,
 				1DDD582A0DA1D0D100B32029 /* MainMenu.xib */,
 				4C003D85133FC3F200F09C61 /* Extras Template */,
 			);
@@ -232,7 +237,7 @@
 			files = (
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
 				4C2A059A12F5E1BA00120019 /* Localizable.strings in Resources */,
-				1DDD582C0DA1D0D100B32029 /* DVDImportWindow.xib in Resources */,
+				1DDD582C0DA1D0D100B32029 /* CPImportWindow.xib in Resources */,
 				1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */,
 				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
 				4C003D86133FC3F200F09C61 /* Extras Template in Resources */,
@@ -269,6 +274,7 @@
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
 				4C2A055412F5C33600120019 /* CPController.m in Sources */,
 				8D15AC310486D014006FF6A4 /* DVDImportDocument.m in Sources */,
+				4C6E11181397F75B0050532A /* CPViewSwisher.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,13 +298,13 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		1DDD58280DA1D0D100B32029 /* DVDImportWindow.xib */ = {
+		1DDD58280DA1D0D100B32029 /* CPImportWindow.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				1DDD58290DA1D0D100B32029 /* English */,
 				4CE79C7B12DBB8EF00F3B7E7 /* German */,
 			);
-			name = DVDImportWindow.xib;
+			name = CPImportWindow.xib;
 			sourceTree = "<group>";
 		};
 		1DDD582A0DA1D0D100B32029 /* MainMenu.xib */ = {

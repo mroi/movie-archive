@@ -1,5 +1,7 @@
 /* This is free software, see file COPYING for license. */
 
+#import "CPViewSwisher.h"
+
 #import "DVDImportDocument.h"
 
 
@@ -29,15 +31,11 @@
 	return self;
 }
 
-- (NSString *)windowNibName
+- (void)makeWindowControllers
 {
-    return @"DVDImportWindow";
-}
-
-- (void)windowControllerDidLoadNib:(NSWindowController *) aController
-{
-    [super windowControllerDidLoadNib:aController];
-    // Add any code here that needs to be executed once the windowController has loaded the document's window.
+	CPViewSwisher *viewSwisher = [[[CPViewSwisher alloc] init] autorelease];
+	if (viewSwisher)
+		[self addWindowController:viewSwisher];
 }
 
 @end
