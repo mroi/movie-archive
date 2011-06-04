@@ -3,6 +3,7 @@
 
 @interface CPController : NSDocumentController <NSApplicationDelegate>
 {
+	// 32-bit compatibility requires these Ivars to live here instead of the internal class extension.
 	IBOutlet NSMenuItem *menuItemNew;
 	NSMutableDictionary *deviceMenuItems;
 	dispatch_queue_t deviceManagementQueue;

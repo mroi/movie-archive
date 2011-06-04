@@ -5,10 +5,9 @@
 #import "CPController.h"
 
 
-@interface CPController (InternalMethods)
+@interface CPController ()
 - (void)deviceDidMount:(NSNotification *)notification;
 - (void)deviceDidUnmount:(NSNotification *)notification;
-- (IBAction)newDocument:(id)sender;
 @end
 
 
