@@ -9,9 +9,14 @@
 
 + (BOOL)isURLSupported:(NSURL *)url
 {
-	NSString *devicePath = [[url filePathURL] path];
-	NSString *mediaPath = [devicePath stringByAppendingString:@"/VIDEO_TS"];
-	return [[[[NSFileManager alloc] init] autorelease] fileExistsAtPath:mediaPath];
+	NSError *error = nil;
+	NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
+	NSURL *videoTSFolder = [url URLByAppendingPathComponent:@"VIDEO_TS"];
+	NSArray *dvdFiles = [fileManager contentsOfDirectoryAtURL:videoTSFolder
+								   includingPropertiesForKeys:[NSArray array]
+													  options:0
+														error:&error];
+	return [dvdFiles count] > 0;
 }
 
 - (id)init
