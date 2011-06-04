@@ -171,7 +171,7 @@ static void foundInvalidDevice(NSString *invalidDevicePath, CPController *self)
 		}] anyObject];
 	});
 
-	NSError *error;
+	NSError *error = nil;
 	NSURL *documentURL = [NSURL fileURLWithPath:devicePath];
 	id document;
 	
@@ -186,8 +186,6 @@ retry:
 
 - (NSString *)typeForContentsOfURL:(NSURL *)url error:(NSError **)outError
 {
-	if (outError) *outError = nil;
-	
 	for (NSString *className in [self documentClassNames]) {
 		id class = objc_getClass([className UTF8String]);
 		if ([class conformsToProtocol:objc_getProtocol("CPURLSupportQuery")]) {
