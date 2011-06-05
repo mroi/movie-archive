@@ -375,7 +375,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(BUILT_PRODUCTS_DIR)/External Libraries/handbrake\"",
 					"$(inherited)",
-					"\"$(SRCROOT)/../../Library/Developer/Xcode/DerivedData/dvd2ite-fjspzhhwazuffuewgchkxuhicrxc/Build/Intermediates/dvd2ite.build/Debug/Contrib.build/handbrake\"",
 				);
 				PRODUCT_NAME = "Cinema Paradiso";
 			};
@@ -400,7 +399,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(BUILT_PRODUCTS_DIR)/External Libraries/handbrake\"",
 					"$(inherited)",
-					"\"$(SRCROOT)/../../Library/Developer/Xcode/DerivedData/dvd2ite-fjspzhhwazuffuewgchkxuhicrxc/Build/Intermediates/dvd2ite.build/Debug/Contrib.build/handbrake\"",
 				);
 				PRODUCT_NAME = "Cinema Paradiso";
 			};
