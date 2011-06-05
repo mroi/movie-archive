@@ -8,11 +8,12 @@
 	NSMutableDictionary *deviceMenuItems;
 	dispatch_queue_t deviceManagementQueue;
 }
++ (NSError *)errorUnsupportedDocument:(NSURL *)documentURL;
 @end
 
 
-@protocol CPURLSupportQuery
-+ (BOOL)isURLSupported:(NSURL *)url;
+@protocol CPDeviceSupportQuery
++ (BOOL)isDeviceSupported:(NSURL *)url;
 /* It would result in cleaner code, if NSDocumentController provided a way to enumerate all document types. However, it only supports enumerating all document classes. Therefore, we need a way to retrieve the type name once we have a class claiming support for a URL. */
 + (NSArray *)readableTypes;
 @end

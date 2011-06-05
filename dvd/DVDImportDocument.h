@@ -3,7 +3,12 @@
 #import "CPController.h"
 
 
-@interface DVDImportDocument : NSDocument <CPURLSupportQuery>
+@interface DVDImportDocument : NSDocument <CPDeviceSupportQuery>
 {
+	NSURL *deviceURL;
+	NSMutableArray *assets;
+	CPViewSwisher *views;
+	NSOperationQueue *work;
 }
+- (BOOL)populateDocumentFromDVD;
 @end

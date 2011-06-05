@@ -185,23 +185,39 @@ retry:
 
 - (NSString *)typeForContentsOfURL:(NSURL *)url error:(NSError **)outError
 {
+	NSString *typeName = nil;
+	
 	for (NSString *className in [self documentClassNames]) {
 		id class = objc_getClass([className UTF8String]);
-		if ([class conformsToProtocol:objc_getProtocol("CPURLSupportQuery")]) {
-			id <CPURLSupportQuery> documentClass = class;
-			if ([documentClass isURLSupported:url])
-				return [[documentClass readableTypes] lastObject];
-		} else {
-			NSLog(@"Document class %@ does not implement formal protocol CPURLSupportQuery", className);
-		}
+		if ([class conformsToProtocol:objc_getProtocol("CPDeviceSupportQuery")]) {
+			id <CPDeviceSupportQuery> documentClass = class;
+			if ([documentClass isDeviceSupported:url]) {
+				typeName = [[documentClass readableTypes] lastObject];
+				break;
+			}
+		} else
+			NSLog(@"document class %@ does not implement formal protocol CPDeviceSupportQuery", className);
 	}
 	
+	// TODO: if its not a supported device, it might be a saved import document; check NSURLTypeIdentifierKey and convert to CFBundleTypeName
+	
+	if (!typeName && outError)
+		*outError = [CPController errorUnsupportedDocument:url];
+	
+	return typeName;
+}
+
++ (NSError *)errorUnsupportedDocument:(NSURL *)documentURL
+{
+	NSString *displayName;
+	if (![documentURL getResourceValue:&displayName forKey:NSURLLocalizedNameKey error:NULL])
+		displayName = [documentURL lastPathComponent];
+	NSString *descriptionFormat = NSLocalizedString(@"The document or device “%@” cannot be opened.", @"error text used when opening a document fails");
+	NSString *description = [NSString stringWithFormat:descriptionFormat, displayName];
 	NSDictionary *errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							   NSLocalizedString(@"The requested document or device cannot be opened.", nil), NSLocalizedDescriptionKey,
-							   url, NSURLErrorKey, nil];
-	if (outError)
-		*outError = [NSError errorWithDomain:NSURLErrorDomain code:0 userInfo:errorInfo];
-	return nil;
+							   description, NSLocalizedDescriptionKey,
+							   documentURL, NSURLErrorKey, nil];
+	return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnsupportedURL userInfo:errorInfo];
 }
 
 
