@@ -115,8 +115,8 @@
 				8D15AC360486D014006FF6A4 /* Info.plist */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
 				4C2A059812F5E1BA00120019 /* Localizable.strings */,
-				1DDD58280DA1D0D100B32029 /* CPImportWindow.xib */,
 				1DDD582A0DA1D0D100B32029 /* MainMenu.xib */,
+				1DDD58280DA1D0D100B32029 /* CPImportWindow.xib */,
 				4C003D85133FC3F200F09C61 /* Extras Template */,
 			);
 			name = Resources;
