@@ -8,10 +8,13 @@ CONTRIB_VERSION = $(wildcard $(PROJECT_DIR)/contrib/.svn/dir-props $(PROJECT_DIR
 
 handbrake: $(TARGET_TEMP_DIR)/handbrake/libhb.a
 
+HANDBRAKE_EXTRA_LIBS = libdvdread
+
 .INTERMEDIATE: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/handbrake/$(arch)/libhb/libhb.a $(TARGET_TEMP_DIR)/handbrake/$(arch)/GNUmakefile)
 
 $(TARGET_TEMP_DIR)/handbrake/libhb.a: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/handbrake/$(arch)/libhb/libhb.a)
 	lipo $^ -create -output $@
+	$(foreach lib, $(HANDBRAKE_EXTRA_LIBS), lipo $(addsuffix ../contrib/lib/$(lib).a,$(^D)) -create -output $(@D)/$(lib).a ;)
 	$(foreach arch, $(ARCHS), $(MAKE) -C $(TARGET_TEMP_DIR)/handbrake/$(arch) contrib.clean libhb.clean ;)
 	rm -rf $(PROJECT_DIR)/contrib/handbrake/download
 

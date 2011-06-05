@@ -1,5 +1,7 @@
 /* This is free software, see file COPYING for license. */
 
+#include "dvdread/dvd_reader.h"
+
 #import "CPController.h"
 
 
@@ -9,6 +11,7 @@
 	NSMutableArray *assets;
 	CPViewSwisher *views;
 	NSOperationQueue *work;
+	dvd_reader_t *dvdread;
 }
 - (BOOL)populateDocumentFromDVD;
 @end

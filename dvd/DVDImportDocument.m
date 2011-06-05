@@ -1,5 +1,9 @@
 /* This is free software, see file COPYING for license. */
 
+#include <stdlib.h>
+
+#include "dvdread/dvd_reader.h"
+
 #import "CPViewSwisher.h"
 #import "CPController.h"
 
@@ -81,6 +85,8 @@
 
 - (void)dealloc
 {
+	DVDClose(dvdread);
+	
 	[deviceURL release];
 	[assets release];
 	[views release];
@@ -93,12 +99,14 @@
 
 - (BOOL)populateDocumentFromDVD
 {
-	BOOL retry = NO, success = NO;
+	BOOL success = NO;
 	
-	do {
-		success = YES;
-	} while (retry);
-	
+	setenv("DVDCSS_CACHE", "off", 0);
+	dvdread = DVDOpen([[[deviceURL filePathURL] path] fileSystemRepresentation]);
+	if (!dvdread) goto error;
+
+error:
+	// TODO: present error if not successful
 	return success;
 }
 

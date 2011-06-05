@@ -12,6 +12,7 @@
 		4C003D86133FC3F200F09C61 /* Extras Template in Resources */ = {isa = PBXBuildFile; fileRef = 4C003D85133FC3F200F09C61 /* Extras Template */; };
 		4C2A055412F5C33600120019 /* CPController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2A055312F5C33600120019 /* CPController.m */; };
 		4C2A059A12F5E1BA00120019 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C2A059812F5E1BA00120019 /* Localizable.strings */; };
+		4C64EC73139BC6FE003C22FA /* libdvdread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C64EC72139BC6FE003C22FA /* libdvdread.a */; };
 		4C6E11181397F75B0050532A /* CPViewSwisher.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6E11171397F75B0050532A /* CPViewSwisher.m */; };
 		4C94C47912DA34A000C29F6C /* libhb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C94C47812DA34A000C29F6C /* libhb.a */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
@@ -49,6 +50,7 @@
 		4C2A062112F5F90C00120019 /* libdvdcss.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdvdcss.dylib; path = "External Libraries/libdvdcss/libdvdcss.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C3025C61336A1C600297F81 /* libhb */ = {isa = PBXFileReference; lastKnownFileType = folder; name = libhb; path = handbrake/libhb; sourceTree = "<group>"; };
 		4C3025C81336A20E00297F81 /* libdvdcss */ = {isa = PBXFileReference; lastKnownFileType = folder; name = libdvdcss; path = libdvdcss/src; sourceTree = "<group>"; };
+		4C64EC72139BC6FE003C22FA /* libdvdread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdvdread.a; path = "External Libraries/handbrake/libdvdread.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6DF16C1336A35B0062FF53 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		4C6E11161397F75B0050532A /* CPViewSwisher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPViewSwisher.h; sourceTree = "<group>"; };
 		4C6E11171397F75B0050532A /* CPViewSwisher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPViewSwisher.m; sourceTree = "<group>"; };
@@ -68,6 +70,7 @@
 			files = (
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
 				4C94C47912DA34A000C29F6C /* libhb.a in Frameworks */,
+				4C64EC73139BC6FE003C22FA /* libdvdread.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,10 +160,11 @@
 			isa = PBXGroup;
 			children = (
 				4C94C47812DA34A000C29F6C /* libhb.a */,
+				4C64EC72139BC6FE003C22FA /* libdvdread.a */,
 				4C2A062112F5F90C00120019 /* libdvdcss.dylib */,
 			);
 			name = "External Libraries";
-			sourceTree = "<group>";
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXGroup section */
 
@@ -357,11 +361,21 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = dvd2ite_Prefix.pch;
+				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=i386]" = (
+					"\"$(BUILT_PRODUCTS_DIR)/External Libraries/handbrake/i386/contrib/include\"",
+					"$(inherited)",
+				);
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = (
+					"\"$(BUILT_PRODUCTS_DIR)/External Libraries/handbrake/x86_64/contrib/include\"",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(BUILT_PRODUCTS_DIR)/External Libraries/handbrake\"",
 					"$(inherited)",
+					"\"$(SRCROOT)/../../Library/Developer/Xcode/DerivedData/dvd2ite-fjspzhhwazuffuewgchkxuhicrxc/Build/Intermediates/dvd2ite.build/Debug/Contrib.build/handbrake\"",
 				);
 				PRODUCT_NAME = "Cinema Paradiso";
 			};
@@ -372,11 +386,21 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = dvd2ite_Prefix.pch;
+				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=i386]" = (
+					"\"$(BUILT_PRODUCTS_DIR)/External Libraries/handbrake/i386/contrib/include\"",
+					"$(inherited)",
+				);
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = (
+					"\"$(BUILT_PRODUCTS_DIR)/External Libraries/handbrake/x86_64/contrib/include\"",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(BUILT_PRODUCTS_DIR)/External Libraries/handbrake\"",
 					"$(inherited)",
+					"\"$(SRCROOT)/../../Library/Developer/Xcode/DerivedData/dvd2ite-fjspzhhwazuffuewgchkxuhicrxc/Build/Intermediates/dvd2ite.build/Debug/Contrib.build/handbrake\"",
 				);
 				PRODUCT_NAME = "Cinema Paradiso";
 			};
