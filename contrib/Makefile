@@ -54,7 +54,7 @@ $(PROJECT_DIR)/contrib/libdvdcss/configure: $(CONTRIB_VERSION)
 
 
 $(BUILT_PRODUCTS_DIR):
-	mkdir $@
+	mkdir -p $@
 
 clean:
 	rm -rf "$(TARGET_TEMP_DIR)"
