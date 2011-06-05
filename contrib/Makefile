@@ -8,12 +8,11 @@ CONTRIB_VERSION = $(wildcard $(PROJECT_DIR)/contrib/.svn/dir-props $(PROJECT_DIR
 
 handbrake: $(TARGET_TEMP_DIR)/handbrake/libhb.a
 
-.INTERMEDIATE: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/handbrake/$(arch)/libhb/libhb.a)
-.PRECIOUS: $(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile
+.INTERMEDIATE: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/handbrake/$(arch)/libhb/libhb.a $(TARGET_TEMP_DIR)/handbrake/$(arch)/GNUmakefile)
 
 $(TARGET_TEMP_DIR)/handbrake/libhb.a: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/handbrake/$(arch)/libhb/libhb.a)
 	lipo $^ -create -output $@
-	$(foreach arch, $(ARCHS), $(MAKE) -C $(TARGET_TEMP_DIR)/handbrake/$(arch) contrib.clean libhb.clean)
+	$(foreach arch, $(ARCHS), $(MAKE) -C $(TARGET_TEMP_DIR)/handbrake/$(arch) contrib.clean libhb.clean ;)
 	rm -rf $(PROJECT_DIR)/contrib/handbrake/download
 
 $(TARGET_TEMP_DIR)/handbrake/%/libhb/libhb.a: $(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile
@@ -30,12 +29,11 @@ $(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile: $(CONTRIB_VERSION)
 
 libdvdcss: $(TARGET_TEMP_DIR)/libdvdcss/libdvdcss.dylib
 
-.INTERMEDIATE: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/libdvdcss/$(arch)/src/.libs/libdvdcss.dylib $(TARGET_TEMP_DIR)/libdvdcss/$(arch)/Makefile)
-.PRECIOUS: $(PROJECT_DIR)/contrib/libdvdcss/configure
+.INTERMEDIATE: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/libdvdcss/$(arch)/src/.libs/libdvdcss.dylib $(TARGET_TEMP_DIR)/libdvdcss/$(arch)/Makefile $(PROJECT_DIR)/contrib/libdvdcss/configure)
 
 $(TARGET_TEMP_DIR)/libdvdcss/libdvdcss.dylib: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/libdvdcss/$(arch)/src/.libs/libdvdcss.dylib)
 	lipo $^ -create -output $@
-	$(foreach arch, $(ARCHS), $(MAKE) -C $(TARGET_TEMP_DIR)/libdvdcss/$(arch) distclean)
+	$(foreach arch, $(ARCHS), $(MAKE) -C $(TARGET_TEMP_DIR)/libdvdcss/$(arch) maintainer-clean ;)
 
 $(TARGET_TEMP_DIR)/libdvdcss/%/src/.libs/libdvdcss.dylib: $(TARGET_TEMP_DIR)/libdvdcss/%/Makefile
 	$(MAKE) -C $(<D)
