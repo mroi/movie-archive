@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "dvdread/dvd_reader.h"
+#include "dvdread/ifo_read.h"
 
 #import "CPViewSwisher.h"
 #import "CPController.h"
@@ -85,12 +86,15 @@
 
 - (void)dealloc
 {
+	for (int i = 0; i < sizeof(ifo) / sizeof(ifo[0]); i++)
+		ifoClose(ifo[i]);
 	DVDClose(dvdread);
 	
 	[deviceURL release];
 	[assets release];
 	[views release];
 	[work release];
+	
 	[super dealloc];
 }
 
@@ -108,8 +112,36 @@
 	[fileManager changeCurrentDirectoryPath:newCurrentDir];
 	dvdread = DVDOpen([[[deviceURL filePathURL] path] fileSystemRepresentation]);
 	[fileManager changeCurrentDirectoryPath:savedCurrentDir];
-	if (!dvdread) goto error;
-
+	if (!dvdread) {
+		NSLog(@"error opening the DVD for reading");
+		goto error;
+	}
+	
+	ifo[0] = ifoOpen(dvdread, 0);
+	if (!ifo[0]) {
+		NSLog(@"error reading VMGI");
+		goto error;
+	}
+	unsigned vtsCount = ifo[0]->vmgi_mat->vmg_nr_of_title_sets;
+	if (vtsCount != ifo[0]->vts_atrt->nr_of_vtss) {
+		NSLog(@"inconsistent information on number of video title sets");
+		// TODO: log a warning to show during import
+	}
+	unsigned vtsCountMax = sizeof(ifo) / sizeof(ifo[0]) - 1;
+	if (vtsCount >= vtsCountMax) {
+		NSLog(@"alleged number of title sets %u is beyond maximum of %u", vtsCount, vtsCountMax);
+		// TODO: log a warning to show during import
+		vtsCount = vtsCountMax;
+	}
+	
+	for (int i = 1; i <= vtsCount; i++) {
+		ifo[i] = ifoOpen(dvdread, i);
+		if (!ifo[i]) {
+			NSLog(@"error reading VTSI %u", i);
+			goto error;
+		}
+	}
+	
 	success = YES;
 error:
 	// TODO: present error if not successful
