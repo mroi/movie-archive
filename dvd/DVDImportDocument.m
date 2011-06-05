@@ -39,8 +39,10 @@
 - (void)makeWindowControllers
 {
 	CPViewSwisher *viewSwisher = [[[CPViewSwisher alloc] init] autorelease];
-	if (viewSwisher)
+	if (viewSwisher) {
 		[self addWindowController:viewSwisher];
+		[viewSwisher synchronizeWindowTitleWithDocumentName];
+	}
 }
 
 @end
