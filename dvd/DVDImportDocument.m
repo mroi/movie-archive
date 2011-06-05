@@ -1,18 +1,19 @@
 /* This is free software, see file COPYING for license. */
 
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "dvdread/dvd_reader.h"
 #include "dvdread/ifo_read.h"
 
-#import "CPViewSwisher.h"
-#import "CPController.h"
-
 #import "DVDImportDocument.h"
 
 
-@implementation DVDImportDocument
+NSString *CPLogLevel = @"CPLogLevel";
+NSString *CPLogMessage = @"CPLogMessage";
 
+
+@implementation DVDImportDocument
 
 #pragma mark NSDocument Life Cycle
 
@@ -31,10 +32,11 @@
 - (id)init
 {
 	if ((self = [super init])) {
-		assets = [[NSMutableArray alloc] init];
+		assets = [[NSMutableSet alloc] init];
 		views = [[CPViewSwisher alloc] init];
 		work = [[NSOperationQueue alloc] init];
-		if (!assets || !views || !work) {
+		log = [[NSMutableArray alloc] init];
+		if (!assets || !views || !work || !log) {
 			[self release];
 			return nil;
 		}
@@ -74,7 +76,7 @@
 	/* document setup complete, start reading in the DVD */
 	// FIXME: run spinning progress indicator with appropriate text
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		BOOL success = [self populateDocumentFromDVD];
+		BOOL success = [self populateDocumentFromDevice];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			if (success)
 				; // FIXME: done reading, stop spinning indicator and animate in the main UI
@@ -94,6 +96,7 @@
 	[assets release];
 	[views release];
 	[work release];
+	[log release];
 	
 	[super dealloc];
 }
@@ -101,7 +104,7 @@
 
 #pragma mark Parse DVD and Populate Document
 
-- (BOOL)populateDocumentFromDVD
+- (BOOL)populateDocumentFromDevice
 {
 	BOOL success = NO;
 	
@@ -123,29 +126,48 @@
 		goto error;
 	}
 	unsigned vtsCount = ifo[0]->vmgi_mat->vmg_nr_of_title_sets;
-	if (vtsCount != ifo[0]->vts_atrt->nr_of_vtss) {
-		NSLog(@"inconsistent information on number of video title sets");
-		// TODO: log a warning to show during import
-	}
+	if (vtsCount != ifo[0]->vts_atrt->nr_of_vtss)
+		[self logAtLevel:CPLogWarning formattedMessage:@"inconsistent number of video title sets: %u and %u", ifo[0]->vmgi_mat->vmg_nr_of_title_sets, ifo[0]->vts_atrt->nr_of_vtss];
 	unsigned vtsCountMax = sizeof(ifo) / sizeof(ifo[0]) - 1;
 	if (vtsCount >= vtsCountMax) {
-		NSLog(@"alleged number of title sets %u is beyond maximum of %u", vtsCount, vtsCountMax);
-		// TODO: log a warning to show during import
+		[self logAtLevel:CPLogWarning formattedMessage:@"alleged number of title sets %u is beyond maximum of %u", vtsCount, vtsCountMax];
 		vtsCount = vtsCountMax;
 	}
 	
-	for (int i = 1; i <= vtsCount; i++) {
-		ifo[i] = ifoOpen(dvdread, i);
-		if (!ifo[i]) {
-			NSLog(@"error reading VTSI %u", i);
+	for (int vts = 1; vts <= vtsCount; vts++) {
+		ifo[vts] = ifoOpen(dvdread, vts);
+		if (!ifo[vts]) {
+			NSLog(@"error reading VTSI %u", vts);
 			goto error;
 		}
 	}
+	
+	[self logAtLevel:CPLogNotice formattedMessage:@"all IFOs successfully parsed"];
 	
 	success = YES;
 error:
 	// TODO: present error if not successful
 	return success;
+}
+
+- (void)logAtLevel:(NSString *)level formattedMessage:(NSString *)format, ...;
+{
+	va_list argList;
+	va_start(argList, format);
+	
+	NSString *localizedFormat = NSLocalizedString(format, @"DVD import logging message");
+	NSString *message = [[[NSString alloc] initWithFormat:format arguments:argList] autorelease];
+	NSString *localizedMessage = [[[NSString alloc] initWithFormat:localizedFormat arguments:argList] autorelease];
+	
+	va_end(argList);
+	
+	@synchronized (log) {
+		[log addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+						CPLogLevel, level,
+						CPLogMessage, localizedMessage,
+						nil]];
+	}
+	NSLog(@"%@: %@", level, message);
 }
 
 @end
