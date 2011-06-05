@@ -47,7 +47,7 @@
 		4C2A055312F5C33600120019 /* CPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPController.m; sourceTree = "<group>"; };
 		4C2A059912F5E1BA00120019 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4C2A059B12F5E22A00120019 /* German */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
-		4C2A062112F5F90C00120019 /* libdvdcss.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdvdcss.dylib; path = "External Libraries/libdvdcss/libdvdcss.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C2A062112F5F90C00120019 /* libdvdcss.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdvdcss.2.dylib; path = "External Libraries/libdvdcss/libdvdcss.2.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C3025C61336A1C600297F81 /* libhb */ = {isa = PBXFileReference; lastKnownFileType = folder; name = libhb; path = handbrake/libhb; sourceTree = "<group>"; };
 		4C3025C81336A20E00297F81 /* libdvdcss */ = {isa = PBXFileReference; lastKnownFileType = folder; name = libdvdcss; path = libdvdcss/src; sourceTree = "<group>"; };
 		4C64EC72139BC6FE003C22FA /* libdvdread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdvdread.a; path = "External Libraries/handbrake/libdvdread.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -161,7 +161,7 @@
 			children = (
 				4C94C47812DA34A000C29F6C /* libhb.a */,
 				4C64EC72139BC6FE003C22FA /* libdvdread.a */,
-				4C2A062112F5F90C00120019 /* libdvdcss.dylib */,
+				4C2A062112F5F90C00120019 /* libdvdcss.2.dylib */,
 			);
 			name = "External Libraries";
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -257,7 +257,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/External Libraries/libdvdcss/libdvdcss.dylib",
+				"$(BUILT_PRODUCTS_DIR)/External Libraries/libdvdcss/libdvdcss.2.dylib",
 			);
 			name = "Copy libdvdcss";
 			outputPaths = (

@@ -14,7 +14,7 @@ HANDBRAKE_EXTRA_LIBS = libdvdread
 
 $(TARGET_TEMP_DIR)/handbrake/libhb.a: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/handbrake/$(arch)/libhb/libhb.a)
 	lipo $^ -create -output $@
-	$(foreach lib, $(HANDBRAKE_EXTRA_LIBS), lipo $(addsuffix ../contrib/lib/$(lib).a,$(^D)) -create -output $(@D)/$(lib).a ;)
+	$(foreach lib, $(HANDBRAKE_EXTRA_LIBS), lipo $(addsuffix /../contrib/lib/$(lib).a,$(^D)) -create -output $(@D)/$(lib).a ;)
 	$(foreach arch, $(ARCHS), $(MAKE) -C $(TARGET_TEMP_DIR)/handbrake/$(arch) contrib.clean libhb.clean ;)
 	rm -rf $(PROJECT_DIR)/contrib/handbrake/download
 
@@ -30,15 +30,15 @@ $(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile: $(CONTRIB_VERSION)
 		--disable-xcode --disable-gtk
 
 
-libdvdcss: $(TARGET_TEMP_DIR)/libdvdcss/libdvdcss.dylib
+libdvdcss: $(TARGET_TEMP_DIR)/libdvdcss/libdvdcss.2.dylib
 
-.INTERMEDIATE: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/libdvdcss/$(arch)/src/.libs/libdvdcss.dylib $(TARGET_TEMP_DIR)/libdvdcss/$(arch)/Makefile $(PROJECT_DIR)/contrib/libdvdcss/configure)
+.INTERMEDIATE: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/libdvdcss/$(arch)/src/.libs/libdvdcss.2.dylib $(TARGET_TEMP_DIR)/libdvdcss/$(arch)/Makefile $(PROJECT_DIR)/contrib/libdvdcss/configure)
 
-$(TARGET_TEMP_DIR)/libdvdcss/libdvdcss.dylib: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/libdvdcss/$(arch)/src/.libs/libdvdcss.dylib)
+$(TARGET_TEMP_DIR)/libdvdcss/libdvdcss.2.dylib: $(foreach arch, $(ARCHS), $(TARGET_TEMP_DIR)/libdvdcss/$(arch)/src/.libs/libdvdcss.2.dylib)
 	lipo $^ -create -output $@
 	$(foreach arch, $(ARCHS), $(MAKE) -C $(TARGET_TEMP_DIR)/libdvdcss/$(arch) maintainer-clean ;)
 
-$(TARGET_TEMP_DIR)/libdvdcss/%/src/.libs/libdvdcss.dylib: $(TARGET_TEMP_DIR)/libdvdcss/%/Makefile
+$(TARGET_TEMP_DIR)/libdvdcss/%/src/.libs/libdvdcss.2.dylib: $(TARGET_TEMP_DIR)/libdvdcss/%/Makefile
 	$(MAKE) -C $(<D)
 
 $(TARGET_TEMP_DIR)/libdvdcss/%/Makefile: $(PROJECT_DIR)/contrib/libdvdcss/configure

@@ -102,9 +102,15 @@
 	BOOL success = NO;
 	
 	setenv("DVDCSS_CACHE", "off", 0);
+	NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
+	NSString *savedCurrentDir = [fileManager currentDirectoryPath];
+	NSString *newCurrentDir = [[[NSBundle mainBundle] executablePath] stringByDeletingLastPathComponent];
+	[fileManager changeCurrentDirectoryPath:newCurrentDir];
 	dvdread = DVDOpen([[[deviceURL filePathURL] path] fileSystemRepresentation]);
+	[fileManager changeCurrentDirectoryPath:savedCurrentDir];
 	if (!dvdread) goto error;
 
+	success = YES;
 error:
 	// TODO: present error if not successful
 	return success;
