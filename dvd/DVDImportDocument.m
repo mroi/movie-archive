@@ -6,11 +6,13 @@
 #include "dvdread/dvd_reader.h"
 #include "dvdread/ifo_read.h"
 
+#import "DVDPrepareExtras.h"
+
 #import "DVDImportDocument.h"
 
 
-NSString *CPLogLevel = @"CPLogLevel";
-NSString *CPLogMessage = @"CPLogMessage";
+static NSString *CPLogLevel = @"CPLogLevel";
+static NSString *CPLogMessage = @"CPLogMessage";
 
 
 @implementation DVDImportDocument
@@ -38,12 +40,13 @@ NSString *CPLogMessage = @"CPLogMessage";
 {
 	if ((self = [super init])) {
 		assets = [[NSMutableSet alloc] init];
-		work = [[NSOperationQueue alloc] init];
+		workQueue = [[CPOperationQueue alloc] init];
 		log = [[NSMutableArray alloc] init];
-		if (!assets || !work || !log) {
+		if (!assets || !workQueue || !log) {
 			[self release];
 			return nil;
 		}
+		[workQueue setMaxConcurrentOperationCount:1];  // the encoding itself is parallel
 	}
 	return self;
 }
@@ -74,22 +77,20 @@ NSString *CPLogMessage = @"CPLogMessage";
 
 - (void)makeWindowControllers
 {
-	views = [[CPImportViewController alloc] init];
-	if (!views) [self close];
-	[self addWindowController:views];
-	[views synchronizeWindowTitleWithDocumentName];
+	viewController = [[CPImportViewController alloc] init];
+	if (!viewController) [self close];
+	[self addWindowController:viewController];
+	[viewController synchronizeWindowTitleWithDocumentName];
 	
 	/* document setup complete, start reading in the DVD */
-	// FIXME: run spinning progress indicator with appropriate text
+	[viewController indicateImportStage:CPImportPrepare];
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 		BOOL success = [self populateDocumentFromDevice];
 		dispatch_async(dispatch_get_main_queue(), ^{
-			// FIXME: done reading, stop spinning indicator
 			if (success)
-				; // FIXME: animate in the main UI
+				[viewController indicateImportStage:CPImportPrepareSuccess];
 			else
-				// FIXME: present error
-				[self close];
+				[viewController indicateImportStage:CPImportPrepareFailure];
 		});
 	});
 }
@@ -102,8 +103,9 @@ NSString *CPLogMessage = @"CPLogMessage";
 	
 	[deviceURL release];
 	[assets release];
-	[views release];
-	[work release];
+	[prepareOperation release];
+	[viewController release];
+	[workQueue release];
 	[log release];
 	
 	[super dealloc];
@@ -155,6 +157,9 @@ NSString *CPLogMessage = @"CPLogMessage";
 	}
 	
 	[self logAtLevel:CPLogNotice formattedMessage:@"all IFOs successfully parsed"];
+	
+	/* add prepare operation */
+	prepareOperation = [[DVDPrepareExtras alloc] initWithViewController:viewController];
 	
 	success = YES;
 error:

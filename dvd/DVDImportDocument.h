@@ -5,11 +5,12 @@
 
 #import "CPDocumentController.h"
 #import "CPImportViewController.h"
+#import "CPOperationQueue.h"
 
 
-NSString *CPLogNotice = @"CPLogNotice";
-NSString *CPLogWarning = @"CPLogWarning";
-NSString *CPLogError = @"CPLogError";
+static NSString *CPLogNotice = @"CPLogNotice";
+static NSString *CPLogWarning = @"CPLogWarning";
+static NSString *CPLogError = @"CPLogError";
 
 
 // TODO: we may want to factor out a generic, DVD-independent part in CPImportDocument
@@ -17,8 +18,11 @@ NSString *CPLogError = @"CPLogError";
 {
 	NSURL *deviceURL;
 	NSMutableSet *assets;
-	CPImportViewController *views;
-	NSOperationQueue *work;
+	CPOperation *prepareOperation;
+	CPOperation *finalizeOperation;
+	
+	CPImportViewController *viewController;
+	CPOperationQueue *workQueue;
 	NSMutableArray *log;
 	
 	dvd_reader_t *dvdread;
