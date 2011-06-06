@@ -37,7 +37,7 @@
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="580458321">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<object class="NSCustomObject" id="512844837">
-				<string key="NSClassName">CPViewSwisher</string>
+				<string key="NSClassName">CPImportViewController</string>
 			</object>
 			<object class="NSCustomObject" id="613418571">
 				<string key="NSClassName">FirstResponder</string>
@@ -752,11 +752,11 @@
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<string key="className">CPViewSwisher</string>
+					<string key="className">CPImportViewController</string>
 					<string key="superclassName">NSWindowController</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/CPViewSwisher.h</string>
+						<string key="minorKey">./Classes/CPImportViewController.h</string>
 					</object>
 				</object>
 			</object>
