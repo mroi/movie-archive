@@ -84,9 +84,11 @@ NSString *CPLogMessage = @"CPLogMessage";
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 		BOOL success = [self populateDocumentFromDevice];
 		dispatch_async(dispatch_get_main_queue(), ^{
+			// FIXME: done reading, stop spinning indicator
 			if (success)
-				; // FIXME: done reading, stop spinning indicator and animate in the main UI
+				; // FIXME: animate in the main UI
 			else
+				// FIXME: present error
 				[self close];
 		});
 	});
@@ -114,16 +116,20 @@ NSString *CPLogMessage = @"CPLogMessage";
 {
 	BOOL success = NO;
 	
-	setenv("DVDCSS_CACHE", "off", 0);
-	NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
-	NSString *savedCurrentDir = [fileManager currentDirectoryPath];
-	NSString *newCurrentDir = [[[NSBundle mainBundle] executablePath] stringByDeletingLastPathComponent];
-	[fileManager changeCurrentDirectoryPath:newCurrentDir];
-	dvdread = DVDOpen([[[deviceURL filePathURL] path] fileSystemRepresentation]);
-	[fileManager changeCurrentDirectoryPath:savedCurrentDir];
-	if (!dvdread) {
-		NSLog(@"error opening the DVD for reading");
-		goto error;
+	/* open dvdread context and parse in all IFOs */
+	
+	@synchronized (NSApp) {
+		setenv("DVDCSS_CACHE", "off", 0);
+		NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
+		NSString *savedCurrentDir = [fileManager currentDirectoryPath];
+		NSString *newCurrentDir = [[[NSBundle mainBundle] executablePath] stringByDeletingLastPathComponent];
+		[fileManager changeCurrentDirectoryPath:newCurrentDir];
+		dvdread = DVDOpen([[[deviceURL filePathURL] path] fileSystemRepresentation]);
+		[fileManager changeCurrentDirectoryPath:savedCurrentDir];
+		if (!dvdread) {
+			NSLog(@"error opening the DVD for reading");
+			goto error;
+		}
 	}
 	
 	ifo[0] = ifoOpen(dvdread, 0);
@@ -152,7 +158,6 @@ NSString *CPLogMessage = @"CPLogMessage";
 	
 	success = YES;
 error:
-	// TODO: present error if not successful
 	return success;
 }
 
