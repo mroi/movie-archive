@@ -2,10 +2,10 @@
 
 #include <objc/runtime.h>
 
-#import "CPController.h"
+#import "CPDocumentController.h"
 
 
-@interface CPController ()
+@interface CPDocumentController ()
 - (void)deviceDidMount:(NSNotification *)notification;
 - (void)deviceDidUnmount:(NSNotification *)notification;
 @end
@@ -13,7 +13,7 @@
 
 #pragma mark -
 
-@implementation CPController
+@implementation CPDocumentController
 
 - (id)init
 {
@@ -63,7 +63,7 @@ static NSNotification *notificationForDevice(NSString *devicePath, NSString *nam
 	return notification;
 }
 
-static void foundInvalidDevice(NSString *invalidDevicePath, CPController *self)
+static void foundInvalidDevice(NSString *invalidDevicePath, CPDocumentController *self)
 {
 	for (NSString *devicePath in self->deviceMenuItems)
 		if (!isDeviceUsable(devicePath, self) || [devicePath isEqualToString:invalidDevicePath])
@@ -202,7 +202,7 @@ retry:
 	// TODO: if its not a supported device, it might be a saved import document; check NSURLTypeIdentifierKey and convert to CFBundleTypeName
 	
 	if (!typeName && outError)
-		*outError = [CPController errorUnsupportedDocument:url];
+		*outError = [CPDocumentController errorUnsupportedDocument:url];
 	
 	return typeName;
 }

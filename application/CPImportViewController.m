@@ -1,9 +1,9 @@
 /* This is free software, see file COPYING for license. */
 
-#import "CPViewSwisher.h"
+#import "CPImportViewController.h"
 
 
-@implementation CPViewSwisher
+@implementation CPImportViewController
 
 - (id)init
 {

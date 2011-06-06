@@ -33,7 +33,7 @@ NSString *CPLogMessage = @"CPLogMessage";
 {
 	if ((self = [super init])) {
 		assets = [[NSMutableSet alloc] init];
-		views = [[CPViewSwisher alloc] init];
+		views = [[CPImportViewController alloc] init];
 		work = [[NSOperationQueue alloc] init];
 		log = [[NSMutableArray alloc] init];
 		if (!assets || !views || !work || !log) {
@@ -60,7 +60,7 @@ NSString *CPLogMessage = @"CPLogMessage";
 		
 		if (!deviceURL) {
 			if (outError)
-				*outError = [CPController errorUnsupportedDocument:url];
+				*outError = [CPDocumentController errorUnsupportedDocument:url];
 			[self release];
 			return nil;
 		}

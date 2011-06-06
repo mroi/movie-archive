@@ -3,8 +3,8 @@
 #include "dvdread/dvd_reader.h"
 #include "dvdread/ifo_types.h"
 
-#import "CPController.h"
-#import "CPViewSwisher.h"
+#import "CPDocumentController.h"
+#import "CPImportViewController.h"
 
 
 NSString *CPLogNotice = @"CPLogNotice";
@@ -16,7 +16,7 @@ NSString *CPLogError = @"CPLogError";
 {
 	NSURL *deviceURL;
 	NSMutableSet *assets;
-	CPViewSwisher *views;
+	CPImportViewController *views;
 	NSOperationQueue *work;
 	NSMutableArray *log;
 	

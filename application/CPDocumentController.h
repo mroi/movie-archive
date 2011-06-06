@@ -1,7 +1,7 @@
 /* This is free software, see file COPYING for license. */
 
 
-@interface CPController : NSDocumentController <NSApplicationDelegate>
+@interface CPDocumentController : NSDocumentController <NSApplicationDelegate>
 {
 	// 32-bit compatibility requires these Ivars to live here instead of the internal class extension.
 	IBOutlet NSMenuItem *menuItemNew;
