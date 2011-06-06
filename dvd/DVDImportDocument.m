@@ -29,14 +29,18 @@ NSString *CPLogMessage = @"CPLogMessage";
 	return [dvdFiles count] > 0;
 }
 
++ (BOOL)canConcurrentlyReadDocumentsOfType:(NSString *)typeName
+{
+	return YES;
+}
+
 - (id)init
 {
 	if ((self = [super init])) {
 		assets = [[NSMutableSet alloc] init];
-		views = [[CPImportViewController alloc] init];
 		work = [[NSOperationQueue alloc] init];
 		log = [[NSMutableArray alloc] init];
-		if (!assets || !views || !work || !log) {
+		if (!assets || !work || !log) {
 			[self release];
 			return nil;
 		}
@@ -70,6 +74,8 @@ NSString *CPLogMessage = @"CPLogMessage";
 
 - (void)makeWindowControllers
 {
+	views = [[CPImportViewController alloc] init];
+	if (!views) [self close];
 	[self addWindowController:views];
 	[views synchronizeWindowTitleWithDocumentName];
 	
