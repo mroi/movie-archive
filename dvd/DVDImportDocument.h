@@ -12,6 +12,7 @@ NSString *CPLogWarning = @"CPLogWarning";
 NSString *CPLogError = @"CPLogError";
 
 
+// TODO: we may want to factor out a generic, DVD-independent part in CPImportDocument
 @interface DVDImportDocument : NSDocument <CPDeviceSupportQuery>
 {
 	NSURL *deviceURL;
