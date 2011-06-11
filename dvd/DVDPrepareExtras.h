@@ -1,13 +1,13 @@
 /* This is free software, see file COPYING for license. */
 
-#import "CPImportViewController.h"
+#import "DVDImportDocument.h"
 #import "CPOperationQueue.h"
 
 
 @interface DVDPrepareExtras : CPOperation
 {
+	DVDImportDocument *dvdImport;
 	IBOutlet NSView *view;
-	CPImportViewController *viewController;
 }
-- (id)initWithViewController:(CPImportViewController *)views;
+- (id)initWithDocument:(DVDImportDocument *)document;
 @end

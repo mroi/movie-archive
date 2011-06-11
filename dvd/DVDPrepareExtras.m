@@ -5,10 +5,10 @@
 
 @implementation DVDPrepareExtras
 
-- (id)initWithViewController:(CPImportViewController *)views
+- (id)initWithDocument:(DVDImportDocument *)document
 {
 	if ((self = [self init])) {
-		viewController = [views retain];
+		dvdImport = [document retain];
 		[NSBundle loadNibNamed:@"DVDPrepareExtras" owner:self];
 	}
 	return self;
@@ -16,12 +16,12 @@
 
 - (void)awakeFromNib
 {
-	[viewController addView:view];
+	[dvdImport.viewController addView:view];
 }
 
 - (void)dealloc
 {
-	[viewController release];
+	[dvdImport release];
 	[super dealloc];
 }
 

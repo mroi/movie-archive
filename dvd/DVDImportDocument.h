@@ -19,7 +19,7 @@ static NSString *CPLogError = @"CPLogError";
 	NSURL *deviceURL;
 	NSMutableSet *assets;
 	CPOperation *prepareOperation;
-	CPOperation *finalizeOperation;
+	CPOperation *finishOperation;
 	
 	CPImportViewController *viewController;
 	CPOperationQueue *workQueue;
@@ -28,6 +28,9 @@ static NSString *CPLogError = @"CPLogError";
 	dvd_reader_t *dvdread;
 	ifo_handle_t *ifo[100];  // VTS files are numbered with two decimal digits, so 100 is enough
 }
+
+@property (readonly) CPImportViewController *viewController;
+
 - (BOOL)populateDocumentFromDevice;
 - (void)logAtLevel:(NSString *)level formattedMessage:(NSString *)format, ...;
 @end

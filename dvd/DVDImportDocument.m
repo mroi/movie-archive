@@ -17,6 +17,8 @@ static NSString *CPLogMessage = @"CPLogMessage";
 
 @implementation DVDImportDocument
 
+@synthesize viewController;
+
 #pragma mark NSDocument Life Cycle
 
 + (BOOL)isDeviceSupported:(NSURL *)url
@@ -159,7 +161,7 @@ static NSString *CPLogMessage = @"CPLogMessage";
 	[self logAtLevel:CPLogNotice formattedMessage:@"all IFOs successfully parsed"];
 	
 	/* add prepare operation */
-	prepareOperation = [[DVDPrepareExtras alloc] initWithViewController:viewController];
+	prepareOperation = [[DVDPrepareExtras alloc] initWithDocument:self];
 	
 	success = YES;
 error:
