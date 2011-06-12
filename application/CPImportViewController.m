@@ -18,6 +18,15 @@
 	return self;
 }
 
+- (void)dealloc
+{
+	[swisherViews release];
+	[super dealloc];
+}
+
+
+#pragma mark General Window Management
+
 - (void)windowDidLoad
 {
     [super windowDidLoad];
@@ -32,16 +41,29 @@
 	[bottomBar setFrameSize:newSize];
 	[bottomBar setFrameSize:oldSize];
 	
-//	CATransition *moveIn = [CATransition animation];
-//	[moveIn setType:kCATransitionMoveIn];
-//	[moveIn setSubtype:kCATransitionFromTop];
-//	[topBar setAnimations:[NSDictionary dictionaryWithObject:moveIn forKey:@"hidden"]];
+	if (![[self window] isMainWindow])
+		[self windowDidResignMain:nil];
 }
 
-- (void)dealloc
+static const CGFloat alphaDefault = 1.0;
+static const CGFloat alphaForInactiveBars = 0.3;
+static const CGFloat alphaForInactiveText = 0.5;
+static const CGFloat alphaInvisible = 0.0;
+
+- (void)windowDidBecomeMain:(NSNotification *)notification
 {
-	[swisherViews release];
-	[super dealloc];
+	[topBar setFillColor:[[topBar fillColor] colorWithAlphaComponent:alphaDefault]];
+	[bottomBar setFillColor:[[bottomBar fillColor] colorWithAlphaComponent:alphaDefault]];
+	[caption setTextColor:[[caption textColor] colorWithAlphaComponent:alphaDefault]];
+	[caption setBackgroundColor:[[caption backgroundColor] colorWithAlphaComponent:alphaDefault]];
+}
+
+- (void)windowDidResignMain:(NSNotification *)notification
+{
+	[topBar setFillColor:[[topBar fillColor] colorWithAlphaComponent:alphaForInactiveBars]];
+	[bottomBar setFillColor:[[bottomBar fillColor] colorWithAlphaComponent:alphaForInactiveBars]];
+	[caption setTextColor:[[caption textColor] colorWithAlphaComponent:alphaForInactiveText]];
+	[caption setBackgroundColor:[[caption backgroundColor] colorWithAlphaComponent:alphaInvisible]];
 }
 
 
@@ -72,6 +94,9 @@
 		// FIXME: stop spinning indicator, present error, OK button closes window
 	} else if ([stage isEqualToString:CPImportRun]) {
 		// FIXME: show log and progress bar with ETA
+	} else {
+		[NSException raise:NSInvalidArgumentException
+					format:@"%s called with unknown stage “%@”", sel_getName(_cmd), stage];
 	}
 }
 

@@ -10,9 +10,10 @@ static NSString *CPImportRun = @"CPImportRun";
 @interface CPImportViewController : NSWindowController <NSWindowDelegate>
 {
 	IBOutlet NSProgressIndicator *prepareIndicator;
-	IBOutlet NSView *topBar;
+	IBOutlet NSBox *topBar;
+	IBOutlet NSTextField *caption;
 	NSMutableArray *swisherViews;
-	IBOutlet NSView *bottomBar;
+	IBOutlet NSBox *bottomBar;
 }
 - (void)indicateImportStage:(NSString *)stage;  // call only from main thread
 - (void)addView:(NSView *)view;
