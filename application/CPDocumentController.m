@@ -189,7 +189,7 @@ retry:
 	
 	for (NSString *className in [self documentClassNames]) {
 		id class = objc_getClass([className UTF8String]);
-		if ([class conformsToProtocol:objc_getProtocol("CPDeviceSupportQuery")]) {
+		if ([class conformsToProtocol:@protocol(CPDeviceSupportQuery)]) {
 			id <CPDeviceSupportQuery> documentClass = class;
 			if ([documentClass isDeviceSupported:url]) {
 				typeName = [[documentClass readableTypes] lastObject];
