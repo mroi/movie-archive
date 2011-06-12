@@ -85,8 +85,10 @@ static NSString *CPLogMessage = @"CPLogMessage";
 	[viewController synchronizeWindowTitleWithDocumentName];
 	
 	/* document setup complete, start reading in the DVD */
-	[viewController indicateImportStage:CPImportPrepare];
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[viewController indicateImportStage:CPImportPrepare];
+		});
 		BOOL success = [self populateDocumentFromDevice];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			if (success)
@@ -160,7 +162,7 @@ static NSString *CPLogMessage = @"CPLogMessage";
 	
 	[self logAtLevel:CPLogNotice formattedMessage:@"all IFOs successfully parsed"];
 	
-	/* add prepare operation */
+	/* add prepare and finish operation */
 	prepareOperation = [[DVDPrepareExtras alloc] initWithDocument:self];
 	
 	success = YES;
