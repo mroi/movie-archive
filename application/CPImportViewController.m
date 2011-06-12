@@ -124,13 +124,14 @@ static const CGFloat alphaInvisible = 0.0;
 		[view setAnimations:[NSDictionary dictionaryWithObject:moveIn forKey:@"hidden"]];
 		
 		NSView *contentView = [[self window] contentView];
-		NSRect frame = [contentView frame];
+		NSRect frame;
+		NSRect contentFrame = [contentView frame];
 		NSRect topBarFrame = [topBar frame];
 		NSRect bottomBarFrame = [bottomBar frame];
-		frame.origin.x -= 1.0;
-		frame.origin.y = bottomBarFrame.origin.y + bottomBarFrame.size.height - 1.0;
-		frame.size.width += 2.0;
-		frame.size.height = topBarFrame.origin.y - frame.origin.y + 1.0;
+		frame.origin.x = contentFrame.origin.x;
+		frame.origin.y = bottomBarFrame.origin.y + bottomBarFrame.size.height;
+		frame.size.width = contentFrame.size.width;
+		frame.size.height = topBarFrame.origin.y - frame.origin.y;
 		[view setFrame:frame];
 		
 		// FIXME: we want to order the views by a runtime property we can add to NSView in IB

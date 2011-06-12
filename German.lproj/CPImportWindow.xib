@@ -732,7 +732,6 @@
 					<string>100022.ImportedFromIB2</string>
 					<string>100023.IBPluginDependency</string>
 					<string>100024.IBPluginDependency</string>
-					<string>100024.notes</string>
 					<string>100024.showNotes</string>
 					<string>100035.IBPluginDependency</string>
 					<string>100040.IBCATransitionLastKnownSubtype</string>
@@ -788,11 +787,24 @@
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<boolean value="NO"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>fromTop</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">AccessibilityDescription</string>
+						<object class="IBAccessibilityAttribute" key="NS.object.0">
+							<string key="name">AccessibilityDescription</string>
+							<reference key="object" ref="385080652"/>
+							<string key="accessibilityValue">weiter</string>
+						</object>
+					</object>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableAttributedString">
 						<object class="NSMutableString" key="NSString">
-							<characters key="NS.bytes">TODO: can we have this button be the default button in blue</characters>
+							<characters key="NS.bytes">TODO: replace buttons with custom images that look less bubbly and include an arrow</characters>
 						</object>
-						<object class="NSDictionary" key="NSAttributes" id="953697086">
+						<object class="NSDictionary" key="NSAttributes">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="NSArray" key="dict.sortedKeys">
 								<bool key="EncodedWithXMLCoder">YES</bool>
@@ -851,25 +863,6 @@
 								</object>
 							</object>
 						</object>
-					</object>
-					<boolean value="NO"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>fromTop</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<object class="NSMutableDictionary">
-						<string key="NS.key.0">AccessibilityDescription</string>
-						<object class="IBAccessibilityAttribute" key="NS.object.0">
-							<string key="name">AccessibilityDescription</string>
-							<reference key="object" ref="385080652"/>
-							<string key="accessibilityValue">weiter</string>
-						</object>
-					</object>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<object class="NSMutableAttributedString">
-						<object class="NSMutableString" key="NSString">
-							<characters key="NS.bytes">TODO: replace buttons with custom images that look less bubbly and include an arrow</characters>
-						</object>
-						<reference key="NSAttributes" ref="953697086"/>
 					</object>
 					<boolean value="NO"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
