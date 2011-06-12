@@ -65,9 +65,9 @@
 		4C6E11161397F75B0050532A /* CPImportViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPImportViewController.h; sourceTree = "<group>"; };
 		4C6E11171397F75B0050532A /* CPImportViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPImportViewController.m; sourceTree = "<group>"; };
 		4C94C47812DA34A000C29F6C /* libhb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhb.a; path = "External Libraries/handbrake/libhb.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4CA6B41313A502B10056618A /* AlertCautionIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = AlertCautionIcon.icns; path = AlertCautionIcon.icns; sourceTree = "<group>"; };
-		4CA6B41413A502B10056618A /* AlertNoteIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = AlertNoteIcon.icns; path = AlertNoteIcon.icns; sourceTree = "<group>"; };
-		4CA6B41513A502B10056618A /* AlertStopIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = AlertStopIcon.icns; path = AlertStopIcon.icns; sourceTree = "<group>"; };
+		4CA6B41313A502B10056618A /* AlertCautionIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AlertCautionIcon.icns; sourceTree = "<group>"; };
+		4CA6B41413A502B10056618A /* AlertNoteIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AlertNoteIcon.icns; sourceTree = "<group>"; };
+		4CA6B41513A502B10056618A /* AlertStopIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AlertStopIcon.icns; sourceTree = "<group>"; };
 		4CB346BA13A3A01F00877F5D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		4CC05BC9139D4ECE003457E4 /* CPOperationQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPOperationQueue.h; sourceTree = "<group>"; };
 		4CC05BCA139D4ECF003457E4 /* CPOperationQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPOperationQueue.m; sourceTree = "<group>"; };
@@ -141,9 +141,7 @@
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
 				4C2A059812F5E1BA00120019 /* Localizable.strings */,
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
-				1DDD582A0DA1D0D100B32029 /* MainMenu.xib */,
-				1DDD58280DA1D0D100B32029 /* CPImportWindow.xib */,
-				4CC05BD3139D7575003457E4 /* DVDPrepareExtras.xib */,
+				4C0FC5D113A50CEE0061E177 /* Interfaces */,
 				4C08F98413A4C0EC00523F6E /* Graphics */,
 				4C003D85133FC3F200F09C61 /* Extras Template */,
 			);
@@ -172,6 +170,16 @@
 			);
 			name = Graphics;
 			path = graphics;
+			sourceTree = "<group>";
+		};
+		4C0FC5D113A50CEE0061E177 /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				1DDD582A0DA1D0D100B32029 /* MainMenu.xib */,
+				1DDD58280DA1D0D100B32029 /* CPImportWindow.xib */,
+				4CC05BD3139D7575003457E4 /* DVDPrepareExtras.xib */,
+			);
+			name = Interfaces;
 			sourceTree = "<group>";
 		};
 		4C3025C71336A1E500297F81 /* Contributed Code */ = {
