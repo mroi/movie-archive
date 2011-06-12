@@ -145,10 +145,10 @@ static NSString *CPLogMessage = @"CPLogMessage";
 	}
 	unsigned vtsCount = ifo[0]->vmgi_mat->vmg_nr_of_title_sets;
 	if (vtsCount != ifo[0]->vts_atrt->nr_of_vtss)
-		[self logAtLevel:CPLogWarning formattedMessage:@"inconsistent number of video title sets: %u and %u", ifo[0]->vmgi_mat->vmg_nr_of_title_sets, ifo[0]->vts_atrt->nr_of_vtss];
+		[self logAtLevel:CPLogWarning formattedMessage:@"inconsistent number of video title sets: %1$u and %2$u", ifo[0]->vmgi_mat->vmg_nr_of_title_sets, ifo[0]->vts_atrt->nr_of_vtss];
 	unsigned vtsCountMax = sizeof(ifo) / sizeof(ifo[0]) - 1;
 	if (vtsCount >= vtsCountMax) {
-		[self logAtLevel:CPLogWarning formattedMessage:@"alleged number of title sets %u is beyond maximum of %u", vtsCount, vtsCountMax];
+		[self logAtLevel:CPLogWarning formattedMessage:@"alleged number of title sets (%1$u) is beyond the allowed maximum of %2$u", vtsCount, vtsCountMax];
 		vtsCount = vtsCountMax;
 	}
 	
@@ -175,7 +175,7 @@ error:
 	va_list argList;
 	va_start(argList, format);
 	
-	NSString *localizedFormat = NSLocalizedString(format, @"DVD import logging message");
+	NSString *localizedFormat = NSLocalizedString(format, @"DVD import log messages");
 	NSString *message = [[[NSString alloc] initWithFormat:format arguments:argList] autorelease];
 	NSString *localizedMessage = [[[NSString alloc] initWithFormat:localizedFormat arguments:argList] autorelease];
 	
