@@ -210,6 +210,7 @@ static const CGFloat alphaInvisible = 0.0;
 - (void)dealloc
 {
 	[caption release];
+	[super dealloc];
 }
 
 @end
