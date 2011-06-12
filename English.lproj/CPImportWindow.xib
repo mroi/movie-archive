@@ -686,25 +686,11 @@
 				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="-3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="100072.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="100089.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<boolean value="NO" key="100089.showNotes"/>
-				<string key="100090.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="100104.IBCATransitionLastKnownSubtype">fromTop</string>
-				<string key="100104.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<object class="NSMutableDictionary" key="100105.IBAttributePlaceholdersKey">
-					<string key="NS.key.0">AccessibilityDescription</string>
-					<object class="IBAccessibilityAttribute" key="NS.object.0">
-						<string key="name">AccessibilityDescription</string>
-						<reference key="object" ref="366475314"/>
-						<string key="accessibilityValue">next</string>
-					</object>
-				</object>
-				<string key="100105.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<object class="NSMutableAttributedString" key="100105.notes">
+				<object class="NSMutableAttributedString" key="100072.notes">
 					<object class="NSMutableString" key="NSString">
-						<characters key="NS.bytes">TODO: replace buttons with custom images that look less bubbly and include an arrow</characters>
+						<characters key="NS.bytes">TODO: use a custom NSView with an NSGradient background and a border only along the edge we want</characters>
 					</object>
-					<dictionary key="NSAttributes">
+					<dictionary key="NSAttributes" id="778068712">
 						<object class="NSFont" key="NSFont" id="601178098">
 							<string key="NSName">Helvetica</string>
 							<double key="NSSize">12</double>
@@ -754,6 +740,38 @@
 						</object>
 					</dictionary>
 				</object>
+				<string key="100089.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<boolean value="NO" key="100089.showNotes"/>
+				<string key="100090.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="100104.IBCATransitionLastKnownSubtype">fromTop</string>
+				<string key="100104.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<object class="NSMutableAttributedString" key="100104.notes">
+					<object class="NSMutableString" key="NSString">
+						<characters key="NS.bytes">TODO: use a custom NSView with an NSGradient background and a border only along the edge we want</characters>
+					</object>
+					<dictionary key="NSAttributes" id="354932223">
+						<reference key="NSFont" ref="601178098"/>
+						<object class="NSParagraphStyle" key="NSParagraphStyle">
+							<int key="NSAlignment">4</int>
+							<nil key="NSTabStops"/>
+						</object>
+					</dictionary>
+				</object>
+				<object class="NSMutableDictionary" key="100105.IBAttributePlaceholdersKey">
+					<string key="NS.key.0">AccessibilityDescription</string>
+					<object class="IBAccessibilityAttribute" key="NS.object.0">
+						<string key="name">AccessibilityDescription</string>
+						<reference key="object" ref="366475314"/>
+						<string key="accessibilityValue">next</string>
+					</object>
+				</object>
+				<string key="100105.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<object class="NSMutableAttributedString" key="100105.notes">
+					<object class="NSMutableString" key="NSString">
+						<characters key="NS.bytes">TODO: replace buttons with custom images that look less bubbly and include an arrow</characters>
+					</object>
+					<reference key="NSAttributes" ref="778068712"/>
+				</object>
 				<boolean value="NO" key="100105.showNotes"/>
 				<string key="100106.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<real value="0.0" key="100106.IBViewIntegration.shadowBlurRadius"/>
@@ -776,13 +794,7 @@
 					<object class="NSMutableString" key="NSString">
 						<characters key="NS.bytes">TODO: replace buttons with custom images that look less bubbly and include an arrow</characters>
 					</object>
-					<dictionary key="NSAttributes">
-						<reference key="NSFont" ref="601178098"/>
-						<object class="NSParagraphStyle" key="NSParagraphStyle">
-							<int key="NSAlignment">4</int>
-							<nil key="NSTabStops"/>
-						</object>
-					</dictionary>
+					<reference key="NSAttributes" ref="354932223"/>
 				</object>
 				<boolean value="NO" key="100108.showNotes"/>
 				<string key="100109.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
