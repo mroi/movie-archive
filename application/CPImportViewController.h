@@ -7,10 +7,13 @@ static NSString *CPImportPrepareFailure = @"CPImportPrepareFailure";
 static NSString *CPImportRun = @"CPImportRun";
 
 
-@interface CPImportViewController : NSWindowController
+@interface CPImportViewController : NSWindowController <NSWindowDelegate>
 {
-	NSMutableArray *views;
+	IBOutlet NSProgressIndicator *prepareIndicator;
+	IBOutlet NSView *topBar;
+	NSMutableArray *swisherViews;
+	IBOutlet NSView *bottomBar;
 }
-- (void)indicateImportStage:(NSString *)stage;
+- (void)indicateImportStage:(NSString *)stage;  // call only from main thread
 - (void)addView:(NSView *)view;
 @end

@@ -10,11 +10,13 @@
 		1DDD582C0DA1D0D100B32029 /* CPImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* CPImportWindow.xib */; };
 		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
 		4C003D86133FC3F200F09C61 /* Extras Template in Resources */ = {isa = PBXBuildFile; fileRef = 4C003D85133FC3F200F09C61 /* Extras Template */; };
+		4C08F98813A4C28700523F6E /* GrowBox.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08F98613A4C11700523F6E /* GrowBox.png */; };
 		4C2A055412F5C33600120019 /* CPDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2A055312F5C33600120019 /* CPDocumentController.m */; };
 		4C2A059A12F5E1BA00120019 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C2A059812F5E1BA00120019 /* Localizable.strings */; };
 		4C64EC73139BC6FE003C22FA /* libdvdread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C64EC72139BC6FE003C22FA /* libdvdread.a */; };
 		4C6E11181397F75B0050532A /* CPImportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6E11171397F75B0050532A /* CPImportViewController.m */; };
 		4C94C47912DA34A000C29F6C /* libhb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C94C47812DA34A000C29F6C /* libhb.a */; };
+		4CB346BB13A3A01F00877F5D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB346BA13A3A01F00877F5D /* QuartzCore.framework */; };
 		4CC05BCB139D4ECF003457E4 /* CPOperationQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC05BCA139D4ECF003457E4 /* CPOperationQueue.m */; };
 		4CC05BCE139D4FCE003457E4 /* DVDPrepareExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC05BCD139D4FCE003457E4 /* DVDPrepareExtras.m */; };
 		4CC05BD1139D7575003457E4 /* DVDPrepareExtras.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CC05BD3139D7575003457E4 /* DVDPrepareExtras.xib */; };
@@ -46,6 +48,8 @@
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dvd2ite_Prefix.pch; path = ../dvd2ite_Prefix.pch; sourceTree = "<group>"; };
 		4C003D85133FC3F200F09C61 /* Extras Template */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Extras Template"; sourceTree = "<group>"; };
+		4C08F98613A4C11700523F6E /* GrowBox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GrowBox.png; sourceTree = "<group>"; };
+		4C08F98713A4C11700523F6E /* GrowBox.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GrowBox.svg; sourceTree = "<group>"; };
 		4C2A055212F5C33600120019 /* CPDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPDocumentController.h; sourceTree = "<group>"; };
 		4C2A055312F5C33600120019 /* CPDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPDocumentController.m; sourceTree = "<group>"; };
 		4C2A059912F5E1BA00120019 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -58,6 +62,7 @@
 		4C6E11161397F75B0050532A /* CPImportViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPImportViewController.h; sourceTree = "<group>"; };
 		4C6E11171397F75B0050532A /* CPImportViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPImportViewController.m; sourceTree = "<group>"; };
 		4C94C47812DA34A000C29F6C /* libhb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhb.a; path = "External Libraries/handbrake/libhb.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CB346BA13A3A01F00877F5D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		4CC05BC9139D4ECE003457E4 /* CPOperationQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPOperationQueue.h; sourceTree = "<group>"; };
 		4CC05BCA139D4ECF003457E4 /* CPOperationQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPOperationQueue.m; sourceTree = "<group>"; };
 		4CC05BCC139D4FCE003457E4 /* DVDPrepareExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDPrepareExtras.h; sourceTree = "<group>"; };
@@ -78,6 +83,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
+				4CB346BB13A3A01F00877F5D /* QuartzCore.framework in Frameworks */,
 				4C94C47912DA34A000C29F6C /* libhb.a in Frameworks */,
 				4C64EC73139BC6FE003C22FA /* libdvdread.a in Frameworks */,
 			);
@@ -125,13 +131,14 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
 				4C2A059812F5E1BA00120019 /* Localizable.strings */,
+				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				1DDD582A0DA1D0D100B32029 /* MainMenu.xib */,
 				1DDD58280DA1D0D100B32029 /* CPImportWindow.xib */,
 				4CC05BD3139D7575003457E4 /* DVDPrepareExtras.xib */,
+				4C08F98413A4C0EC00523F6E /* Graphics */,
 				4C003D85133FC3F200F09C61 /* Extras Template */,
 			);
 			name = Resources;
@@ -143,8 +150,19 @@
 				4C3025C71336A1E500297F81 /* Contributed Code */,
 				4C94C46F12DA322E00C29F6C /* External Libraries */,
 				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
+				4CB346BA13A3A01F00877F5D /* QuartzCore.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4C08F98413A4C0EC00523F6E /* Graphics */ = {
+			isa = PBXGroup;
+			children = (
+				4C08F98713A4C11700523F6E /* GrowBox.svg */,
+				4C08F98613A4C11700523F6E /* GrowBox.png */,
+			);
+			name = Graphics;
+			path = graphics;
 			sourceTree = "<group>";
 		};
 		4C3025C71336A1E500297F81 /* Contributed Code */ = {
@@ -253,11 +271,12 @@
 			files = (
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
 				4C2A059A12F5E1BA00120019 /* Localizable.strings in Resources */,
-				1DDD582C0DA1D0D100B32029 /* CPImportWindow.xib in Resources */,
-				1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */,
 				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
-				4C003D86133FC3F200F09C61 /* Extras Template in Resources */,
+				1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */,
+				1DDD582C0DA1D0D100B32029 /* CPImportWindow.xib in Resources */,
 				4CC05BD1139D7575003457E4 /* DVDPrepareExtras.xib in Resources */,
+				4C08F98813A4C28700523F6E /* GrowBox.png in Resources */,
+				4C003D86133FC3F200F09C61 /* Extras Template in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,9 +309,9 @@
 			files = (
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
 				4C2A055412F5C33600120019 /* CPDocumentController.m in Sources */,
-				8D15AC310486D014006FF6A4 /* DVDImportDocument.m in Sources */,
 				4C6E11181397F75B0050532A /* CPImportViewController.m in Sources */,
 				4CC05BCB139D4ECF003457E4 /* CPOperationQueue.m in Sources */,
+				8D15AC310486D014006FF6A4 /* DVDImportDocument.m in Sources */,
 				4CC05BCE139D4FCE003457E4 /* DVDPrepareExtras.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
