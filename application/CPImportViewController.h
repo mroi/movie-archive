@@ -10,6 +10,10 @@ static NSString *CPImportRun = @"CPImportRun";
 @interface CPImportViewController : NSWindowController <NSWindowDelegate>
 {
 	IBOutlet NSProgressIndicator *prepareIndicator;
+	IBOutlet NSTextField *prepareLabel;
+	IBOutlet NSImageView *errorIcon;
+	IBOutlet NSButton *dismissButton;
+	
 	IBOutlet NSBox *topBar;
 	IBOutlet NSTextField *caption;
 	NSMutableArray *swisherViews;

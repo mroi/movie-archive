@@ -16,6 +16,9 @@
 		4C64EC73139BC6FE003C22FA /* libdvdread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C64EC72139BC6FE003C22FA /* libdvdread.a */; };
 		4C6E11181397F75B0050532A /* CPImportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6E11171397F75B0050532A /* CPImportViewController.m */; };
 		4C94C47912DA34A000C29F6C /* libhb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C94C47812DA34A000C29F6C /* libhb.a */; };
+		4CA6B41613A502B10056618A /* AlertCautionIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 4CA6B41313A502B10056618A /* AlertCautionIcon.icns */; };
+		4CA6B41713A502B10056618A /* AlertNoteIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 4CA6B41413A502B10056618A /* AlertNoteIcon.icns */; };
+		4CA6B41813A502B10056618A /* AlertStopIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 4CA6B41513A502B10056618A /* AlertStopIcon.icns */; };
 		4CB346BB13A3A01F00877F5D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB346BA13A3A01F00877F5D /* QuartzCore.framework */; };
 		4CC05BCB139D4ECF003457E4 /* CPOperationQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC05BCA139D4ECF003457E4 /* CPOperationQueue.m */; };
 		4CC05BCE139D4FCE003457E4 /* DVDPrepareExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC05BCD139D4FCE003457E4 /* DVDPrepareExtras.m */; };
@@ -62,6 +65,9 @@
 		4C6E11161397F75B0050532A /* CPImportViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPImportViewController.h; sourceTree = "<group>"; };
 		4C6E11171397F75B0050532A /* CPImportViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPImportViewController.m; sourceTree = "<group>"; };
 		4C94C47812DA34A000C29F6C /* libhb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhb.a; path = "External Libraries/handbrake/libhb.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CA6B41313A502B10056618A /* AlertCautionIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = AlertCautionIcon.icns; path = AlertCautionIcon.icns; sourceTree = "<group>"; };
+		4CA6B41413A502B10056618A /* AlertNoteIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = AlertNoteIcon.icns; path = AlertNoteIcon.icns; sourceTree = "<group>"; };
+		4CA6B41513A502B10056618A /* AlertStopIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = AlertStopIcon.icns; path = AlertStopIcon.icns; sourceTree = "<group>"; };
 		4CB346BA13A3A01F00877F5D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		4CC05BC9139D4ECE003457E4 /* CPOperationQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPOperationQueue.h; sourceTree = "<group>"; };
 		4CC05BCA139D4ECF003457E4 /* CPOperationQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPOperationQueue.m; sourceTree = "<group>"; };
@@ -158,6 +164,9 @@
 		4C08F98413A4C0EC00523F6E /* Graphics */ = {
 			isa = PBXGroup;
 			children = (
+				4CA6B41313A502B10056618A /* AlertCautionIcon.icns */,
+				4CA6B41413A502B10056618A /* AlertNoteIcon.icns */,
+				4CA6B41513A502B10056618A /* AlertStopIcon.icns */,
 				4C08F98713A4C11700523F6E /* GrowBox.svg */,
 				4C08F98613A4C11700523F6E /* GrowBox.png */,
 			);
@@ -277,6 +286,9 @@
 				4CC05BD1139D7575003457E4 /* DVDPrepareExtras.xib in Resources */,
 				4C08F98813A4C28700523F6E /* GrowBox.png in Resources */,
 				4C003D86133FC3F200F09C61 /* Extras Template in Resources */,
+				4CA6B41613A502B10056618A /* AlertCautionIcon.icns in Resources */,
+				4CA6B41713A502B10056618A /* AlertNoteIcon.icns in Resources */,
+				4CA6B41813A502B10056618A /* AlertStopIcon.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

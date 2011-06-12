@@ -76,22 +76,32 @@ static const CGFloat alphaInvisible = 0.0;
 					format:@"%s must only be called from the main thread", sel_getName(_cmd)];
 	
 	if ([stage isEqualToString:CPImportPrepare]) {
-		// FIXME: run spinning progress indicator with appropriate text below
 		[prepareIndicator startAnimation:self];
+		NSString *typeLabel = [NSString stringWithFormat:@"Preparing %@…", [[self document] fileType]];
+		NSString *localizedLabel = NSLocalizedString(typeLabel, @"action labels for import view");
+		[prepareLabel setStringValue:localizedLabel];
+		[[prepareLabel animator] setHidden:NO];
 	} else if ([stage isEqualToString:CPImportPrepareSuccess]) {
 		[CATransaction begin];
+		[CATransaction setCompletionBlock:^{
+			[prepareIndicator removeFromSuperview];
+			[prepareLabel removeFromSuperview];
+			[errorIcon removeFromSuperview];
+			[dismissButton removeFromSuperview];
+		}];
 		[[topBar animator] setHidden:NO];
 		// FIXME: stagger the animations of the swisher views
 		for (NSView *view in swisherViews)
 			[[view animator] setHidden:NO];
 		[[bottomBar animator] setHidden:NO];
-		[CATransaction setCompletionBlock:^{
-			[prepareIndicator stopAnimation:self];
-			[prepareIndicator setHidden:YES];
-		}];
 		[CATransaction commit];
 	} else if ([stage isEqualToString:CPImportPrepareFailure]) {
-		// FIXME: stop spinning indicator, present error, OK button closes window
+		[prepareIndicator stopAnimation:self];
+		NSString *errorLabel = [NSString stringWithFormat:@"Error during %@", [[self document] fileType]];
+		NSString *localizedLabel = NSLocalizedString(errorLabel, @"action labels for import view");
+		[prepareLabel setStringValue:localizedLabel];
+		[[errorIcon animator] setHidden:NO];
+		[[dismissButton animator] setHidden:NO];
 	} else if ([stage isEqualToString:CPImportRun]) {
 		// FIXME: show log and progress bar with ETA
 	} else {
@@ -123,7 +133,7 @@ static const CGFloat alphaInvisible = 0.0;
 		[view setFrame:frame];
 		
 		// FIXME: we want to order the views by a runtime property we can add to NSView in IB
-		[contentView addSubview:view positioned:NSWindowBelow relativeTo:nil];
+		[contentView addSubview:view positioned:NSWindowAbove relativeTo:prepareLabel];
 		[swisherViews addObject:view];
 	});
 }
