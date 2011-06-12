@@ -249,7 +249,7 @@
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="833629393"/>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
-							<int key="NSpiFlags">28682</int>
+							<int key="NSpiFlags">20490</int>
 							<double key="NSMaxValue">100</double>
 						</object>
 						<object class="NSTextField" id="833629393">
@@ -398,7 +398,6 @@
 							<string key="NSFrame">{{485, 18}, {75, 25}}</string>
 							<reference key="NSSuperview" ref="401305275"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<bool key="NSViewIsLayerTreeHost">YES</bool>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<bool key="NSEnabled">YES</bool>

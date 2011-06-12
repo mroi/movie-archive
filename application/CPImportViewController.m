@@ -84,7 +84,8 @@ static const CGFloat alphaInvisible = 0.0;
 	} else if ([stage isEqualToString:CPImportPrepareSuccess]) {
 		[CATransaction begin];
 		[CATransaction setCompletionBlock:^{
-			[prepareIndicator removeFromSuperview];
+			[prepareIndicator stopAnimation:self];
+			[[prepareIndicator animator] removeFromSuperview];
 			[prepareLabel removeFromSuperview];
 			[errorIcon removeFromSuperview];
 			[dismissButton removeFromSuperview];
