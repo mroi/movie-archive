@@ -12,7 +12,9 @@
 
 - (id)init
 {
-	return [self initWithTarget:self selector:@selector(run) object:nil];
+	if ((self = [self initWithTarget:self selector:@selector(run) object:nil]))
+		[self autorelease];  // NSInvocationOperation retains its target, which is self here
+	return self;
 }
 
 - (void)run

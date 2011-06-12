@@ -204,5 +204,12 @@ static const CGFloat alphaInvisible = 0.0;
 #pragma mark -
 
 @implementation CPCaptionedScrollView
+
 @synthesize caption;
+
+- (void)dealloc
+{
+	[caption release];
+}
+
 @end
