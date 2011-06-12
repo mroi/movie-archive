@@ -109,8 +109,8 @@
 		2A37F4AAFDCFA73011CA2CEA /* dvd2ite */ = {
 			isa = PBXGroup;
 			children = (
+				2A37F4AFFDCFA73011CA2CEA /* Application */,
 				4C343D9812D0F2D300B0B23B /* DVD */,
-				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
 				19C28FB0FE9D524F11CA2CBB /* Products */,
@@ -118,7 +118,7 @@
 			name = dvd2ite;
 			sourceTree = "<group>";
 		};
-		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
+		2A37F4AFFDCFA73011CA2CEA /* Application */ = {
 			isa = PBXGroup;
 			children = (
 				32DBCF750370BD2300C91783 /* dvd2ite_Prefix.pch */,
@@ -130,7 +130,7 @@
 				4CC05BC9139D4ECE003457E4 /* CPOperationQueue.h */,
 				4CC05BCA139D4ECF003457E4 /* CPOperationQueue.m */,
 			);
-			name = "Other Sources";
+			name = Application;
 			path = application;
 			sourceTree = "<group>";
 		};
