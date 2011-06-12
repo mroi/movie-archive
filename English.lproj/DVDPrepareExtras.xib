@@ -55,7 +55,7 @@
 								<string key="NSFrameSize">{567, 298}</string>
 								<reference key="NSSuperview" ref="865121325"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="533753774"/>
+								<reference key="NSNextKeyView" ref="889729733"/>
 								<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							</object>
 						</object>
@@ -82,6 +82,7 @@
 						<string key="NSFrame">{{567, 0}, {15, 298}}</string>
 						<reference key="NSSuperview" ref="839075917"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSViewLayerContentsRedrawPolicy">2</int>
 						<reference key="NSTarget" ref="839075917"/>
 						<string key="NSAction">_doScroller:</string>
@@ -105,7 +106,7 @@
 				<string key="NSFrameSize">{582, 298}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
-				<reference key="NSNextKeyView" ref="865121325"/>
+				<reference key="NSNextKeyView" ref="533753774"/>
 				<int key="NSViewLayerContentsRedrawPolicy">2</int>
 				<int key="NSsFlags">16</int>
 				<reference key="NSVScroller" ref="889729733"/>
@@ -187,6 +188,8 @@
 					<string>-1.IBPluginDependency</string>
 					<string>-2.IBPluginDependency</string>
 					<string>-3.IBPluginDependency</string>
+					<string>1.CustomClassName</string>
+					<string>1.IBAttributePlaceholdersKey</string>
 					<string>1.IBPluginDependency</string>
 					<string>1.showNotes</string>
 					<string>2.IBPluginDependency</string>
@@ -198,6 +201,22 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>CPCaptionedScrollView</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="839075917"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.string</string>
+									<string key="keyPath">caption</string>
+									<string key="value">General Settings</string>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="NO"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -222,6 +241,14 @@
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBPartialClassDescription">
+					<string key="className">CPCaptionedScrollView</string>
+					<string key="superclassName">NSScrollView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/CPCaptionedScrollView.h</string>
+					</object>
+				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">CPOperation</string>
 					<string key="superclassName">NSInvocationOperation</string>

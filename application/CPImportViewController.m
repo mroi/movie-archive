@@ -8,6 +8,13 @@
 #import "CPImportViewController.h"
 
 
+@interface CPImportViewController ()
+@property (assign) NSUInteger activeViewIndex;
+@end
+
+
+#pragma mark -
+
 @implementation CPImportViewController
 
 - (id)init
@@ -67,6 +74,43 @@ static const CGFloat alphaInvisible = 0.0;
 }
 
 
+#pragma mark Computed Properties for Bindings
+
+@synthesize activeViewIndex;
+
+- (NSView *)currentView
+{
+	if (activeViewIndex < [swisherViews count])
+		return [swisherViews objectAtIndex:activeViewIndex];
+	else
+		return nil;
+}
+
+- (BOOL)hasPreviousView
+{
+	return activeViewIndex > 1;
+}
+
+- (BOOL)hasNextView
+{
+	return activeViewIndex < [swisherViews count] - 1;
+}
+
++ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
+{
+	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
+	if ([key isEqualToString:@"currentView"] || [key isEqualToString:@"hasPreviousView"] || [key isEqualToString:@"hasNextView"]) {
+		NSSet *affectingKeys = [NSSet setWithObject:@"activeViewIndex"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKeys];
+	}
+	if ([key isEqualToString:@"currentView"] || [key isEqualToString:@"hasNextView"]) {
+		NSSet *affectingKeys = [NSSet setWithObject:@"swisherViews"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKeys];
+	}
+	return keyPaths;
+}
+
+
 #pragma mark View Swisher Management
 
 - (void)indicateImportStage:(NSString *)stage
@@ -81,7 +125,10 @@ static const CGFloat alphaInvisible = 0.0;
 		NSString *localizedLabel = NSLocalizedString(typeLabel, @"action labels for import view");
 		[prepareLabel setStringValue:localizedLabel];
 		[[prepareLabel animator] setHidden:NO];
+		
 	} else if ([stage isEqualToString:CPImportPrepareSuccess]) {
+		// FIXME: sort views with -sortSubviewsUsingFunction:context: according to their order in the swisherViews array
+		
 		[CATransaction begin];
 		[CATransaction setCompletionBlock:^{
 			[prepareIndicator stopAnimation:self];
@@ -96,6 +143,7 @@ static const CGFloat alphaInvisible = 0.0;
 			[[view animator] setHidden:NO];
 		[[bottomBar animator] setHidden:NO];
 		[CATransaction commit];
+		
 	} else if ([stage isEqualToString:CPImportPrepareFailure]) {
 		[prepareIndicator stopAnimation:self];
 		NSString *errorLabel = [NSString stringWithFormat:@"Error during %@", [[self document] fileType]];
@@ -103,8 +151,10 @@ static const CGFloat alphaInvisible = 0.0;
 		[prepareLabel setStringValue:localizedLabel];
 		[[errorIcon animator] setHidden:NO];
 		[[dismissButton animator] setHidden:NO];
+		
 	} else if ([stage isEqualToString:CPImportRun]) {
 		// FIXME: show log and progress bar with ETA
+		
 	} else {
 		[NSException raise:NSInvalidArgumentException
 					format:@"%s called with unknown stage “%@”", sel_getName(_cmd), stage];
@@ -117,6 +167,7 @@ static const CGFloat alphaInvisible = 0.0;
 		[view setHidden:YES];
 		[view setWantsLayer:YES];
 		
+		// TODO: use a custom animation drawing a gradient shadow on the leading edge
 		CATransition *moveIn = [CATransition animation];
 		[moveIn setType:kCATransitionMoveIn];
 		[moveIn setSubtype:kCATransitionFromRight];
@@ -134,9 +185,11 @@ static const CGFloat alphaInvisible = 0.0;
 		frame.size.height = topBarFrame.origin.y - frame.origin.y;
 		[view setFrame:frame];
 		
-		// FIXME: we want to order the views by a runtime property we can add to NSView in IB
 		[contentView addSubview:view positioned:NSWindowAbove relativeTo:prepareLabel];
+		// FIXME: we want to order the views by a property we can add in IB
+		[self willChangeValueForKey:@"swisherViews"];
 		[swisherViews addObject:view];
+		[self didChangeValueForKey:@"swisherViews"];
 	});
 }
 
@@ -145,4 +198,11 @@ static const CGFloat alphaInvisible = 0.0;
 	// TODO: handle swipe gesture for changing views
 }
 
+@end
+
+
+#pragma mark -
+
+@implementation CPCaptionedScrollView
+@synthesize caption;
 @end
