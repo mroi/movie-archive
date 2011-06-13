@@ -12,14 +12,12 @@
 
 - (id)init
 {
-	if ((self = [self initWithTarget:self selector:@selector(run) object:nil]))
-		[self autorelease];  // NSInvocationOperation retains its target, which is self here
+	if ((self = [super init])) {
+		[self setThreadPriority:0.0];  // perform import in the background
+	}
 	return self;
 }
 
-- (void)run
-{
-	[self doesNotRecognizeSelector:_cmd];
-}
+// TODO: derive queue priority from asset length, convert long assets (and library assets) first
 
 @end

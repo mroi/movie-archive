@@ -6,6 +6,5 @@
 @end
 
 
-@interface CPOperation : NSInvocationOperation
-- (void)run;
+@interface CPOperation : NSOperation
 @end
