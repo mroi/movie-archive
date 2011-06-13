@@ -138,7 +138,8 @@ static const CGFloat alphaInvisible = 0.0;
 		case CPImportPrepareSuccess:
 			// FIXME: sort views with -sortSubviewsUsingFunction:context: according to their order in the swisherViews array
 			[[[swisherViews lastObject] viewWithTag:nextButtonTag] removeFromSuperview];
-			[[[swisherViews lastObject] viewWithTag:lastPageTag] setHidden:NO];
+			if ([swisherViews count] > 1)
+				[[[swisherViews lastObject] viewWithTag:lastPageTag] setHidden:NO];
 			
 			[CATransaction begin];
 			[CATransaction setCompletionBlock:^{
