@@ -130,7 +130,7 @@
 												<bool key="NSDrawsBackground">YES</bool>
 												<object class="NSColor" key="NSBackgroundColor">
 													<int key="NSColorSpace">3</int>
-													<bytes key="NSWhite">MC44NQA</bytes>
+													<bytes key="NSWhite">MC43NQA</bytes>
 												</object>
 												<object class="NSColor" key="NSTextColor">
 													<int key="NSColorSpace">6</int>
@@ -188,7 +188,7 @@
 							<bool key="NSTransparent">NO</bool>
 							<object class="NSColor" key="NSFillColor2">
 								<int key="NSColorSpace">3</int>
-								<bytes key="NSWhite">MC44NQA</bytes>
+								<bytes key="NSWhite">MC43NQA</bytes>
 							</object>
 						</object>
 						<object class="NSProgressIndicator" id="1070342684">
@@ -371,7 +371,7 @@
 							<bool key="NSTransparent">NO</bool>
 							<object class="NSColor" key="NSFillColor2">
 								<int key="NSColorSpace">3</int>
-								<bytes key="NSWhite">MC43AA</bytes>
+								<bytes key="NSWhite">MC43NQA</bytes>
 							</object>
 						</object>
 						<object class="NSButton" id="1040649983">

@@ -139,7 +139,7 @@
 												<bool key="NSDrawsBackground">YES</bool>
 												<object class="NSColor" key="NSBackgroundColor">
 													<int key="NSColorSpace">3</int>
-													<bytes key="NSWhite">MC44NQA</bytes>
+													<bytes key="NSWhite">MC43NQA</bytes>
 												</object>
 												<object class="NSColor" key="NSTextColor">
 													<int key="NSColorSpace">6</int>
@@ -197,7 +197,7 @@
 							<bool key="NSTransparent">NO</bool>
 							<object class="NSColor" key="NSFillColor2">
 								<int key="NSColorSpace">3</int>
-								<bytes key="NSWhite">MC44NQA</bytes>
+								<bytes key="NSWhite">MC43NQA</bytes>
 							</object>
 						</object>
 						<object class="NSProgressIndicator" id="658833702">
@@ -390,7 +390,7 @@
 							<bool key="NSTransparent">NO</bool>
 							<object class="NSColor" key="NSFillColor2">
 								<int key="NSColorSpace">3</int>
-								<bytes key="NSWhite">MC43AA</bytes>
+								<bytes key="NSWhite">MC43NQA</bytes>
 							</object>
 						</object>
 						<object class="NSButton" id="620834830">
@@ -399,6 +399,7 @@
 							<string key="NSFrame">{{470, 18}, {90, 25}}</string>
 							<reference key="NSSuperview" ref="401305275"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView"/>
 							<bool key="NSViewIsLayerTreeHost">YES</bool>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<bool key="NSEnabled">YES</bool>
