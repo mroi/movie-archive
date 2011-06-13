@@ -51,7 +51,7 @@
 				<string key="NSWindowTitle">Dokumentenname</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
-				<string key="NSWindowContentMinSize">{300, 250}</string>
+				<string key="NSWindowContentMinSize">{350, 250}</string>
 				<object class="NSView" key="NSWindowView" id="401305275">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
@@ -426,7 +426,7 @@
 					<int key="NSViewLayerContentsRedrawPolicy">2</int>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 1002}}</string>
-				<string key="NSMinSize">{300, 272}</string>
+				<string key="NSMinSize">{350, 272}</string>
 				<string key="NSMaxSize">{1e+13, 1e+13}</string>
 			</object>
 		</object>
