@@ -21,6 +21,11 @@ static NSString *CPImportRun = @"CPImportRun";
 	
 	NSUInteger activeViewIndex;
 }
+
+@property (readonly) NSView *currentView;
+@property (readonly) BOOL hasPreviousView;
+@property (readonly) BOOL hasNextView;
+
 - (void)indicateImportStage:(NSString *)stage;  // call only from main thread
 - (void)addView:(NSView *)view;
 @end

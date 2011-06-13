@@ -8,6 +8,11 @@
 {
 	DVDImportDocument *dvdImport;  // weak reference to avoid retain cycle
 	IBOutlet NSView *view;
+	
+	BOOL createNewExtras;
 }
+
+@property (assign) BOOL createNewExtras;
+
 - (id)initWithDocument:(DVDImportDocument *)document;
 @end

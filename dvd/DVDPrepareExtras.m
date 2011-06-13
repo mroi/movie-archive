@@ -5,11 +5,18 @@
 
 @implementation DVDPrepareExtras
 
+@synthesize createNewExtras;
+
 - (id)initWithDocument:(DVDImportDocument *)document
 {
 	if ((self = [self init])) {
 		dvdImport = document;
-		[NSBundle loadNibNamed:@"DVDPrepareExtras" owner:self];
+		
+		createNewExtras = YES;
+
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[NSBundle loadNibNamed:@"DVDPrepareExtras" owner:self];
+		});
 	}
 	return self;
 }
@@ -17,11 +24,11 @@
 - (void)awakeFromNib
 {
 	[dvdImport.viewController addView:view];
+	[view release];
 }
 
 - (void)dealloc
 {
-	[view release];
 	[super dealloc];
 }
 

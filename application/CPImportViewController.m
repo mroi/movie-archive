@@ -77,6 +77,9 @@ static const CGFloat alphaInvisible = 0.0;
 #pragma mark Computed Properties for Bindings
 
 @synthesize activeViewIndex;
+@dynamic currentView;
+@dynamic hasPreviousView;
+@dynamic hasNextView;
 
 - (NSView *)currentView
 {
@@ -128,6 +131,7 @@ static const CGFloat alphaInvisible = 0.0;
 		
 	} else if ([stage isEqualToString:CPImportPrepareSuccess]) {
 		// FIXME: sort views with -sortSubviewsUsingFunction:context: according to their order in the swisherViews array
+		// FIXME: remove the next button from the last view
 		
 		[CATransaction begin];
 		[CATransaction setCompletionBlock:^{
@@ -166,34 +170,38 @@ static const CGFloat alphaInvisible = 0.0;
 
 - (void)addView:(NSView *)view
 {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[view setHidden:YES];
-		[view setWantsLayer:YES];
-		
-		// TODO: use a custom animation drawing a gradient shadow on the leading edge
-		CATransition *moveIn = [CATransition animation];
-		[moveIn setType:kCATransitionMoveIn];
-		[moveIn setSubtype:kCATransitionFromRight];
-		// BUG: Per my understanding, the key should be NSAnimationTriggerOrderIn here, but that does not work.
-		[view setAnimations:[NSDictionary dictionaryWithObject:moveIn forKey:@"hidden"]];
-		
-		NSView *contentView = [[self window] contentView];
-		NSRect frame;
-		NSRect contentFrame = [contentView frame];
-		NSRect topBarFrame = [topBar frame];
-		NSRect bottomBarFrame = [bottomBar frame];
-		frame.origin.x = contentFrame.origin.x;
-		frame.origin.y = bottomBarFrame.origin.y + bottomBarFrame.size.height;
-		frame.size.width = contentFrame.size.width;
-		frame.size.height = topBarFrame.origin.y - frame.origin.y;
-		[view setFrame:frame];
-		
-		[contentView addSubview:view positioned:NSWindowAbove relativeTo:prepareLabel];
-		// FIXME: we want to order the views by a property we can add in IB
-		[self willChangeValueForKey:@"swisherViews"];
-		[swisherViews addObject:view];
-		[self didChangeValueForKey:@"swisherViews"];
-	});
+	if (![[NSOperationQueue currentQueue] isEqualTo:[NSOperationQueue mainQueue]])
+		[NSException raise:NSInternalInconsistencyException
+					format:@"%s must only be called from the main thread", sel_getName(_cmd)];
+	
+	[view setHidden:YES];
+	[view setWantsLayer:YES];
+	
+	// TODO: use a custom animation drawing a gradient shadow on the leading edge
+	CATransition *moveIn = [CATransition animation];
+	[moveIn setType:kCATransitionMoveIn];
+	[moveIn setSubtype:kCATransitionFromRight];
+	// BUG: Per my understanding, the key should be NSAnimationTriggerOrderIn here, but that does not work.
+	[view setAnimations:[NSDictionary dictionaryWithObject:moveIn forKey:@"hidden"]];
+	
+	NSView *contentView = [[self window] contentView];
+	NSRect frame;
+	NSRect contentFrame = [contentView frame];
+	NSRect topBarFrame = [topBar frame];
+	NSRect bottomBarFrame = [bottomBar frame];
+	frame.origin.x = contentFrame.origin.x;
+	frame.origin.y = bottomBarFrame.origin.y + bottomBarFrame.size.height;
+	frame.size.width = contentFrame.size.width;
+	frame.size.height = topBarFrame.origin.y - frame.origin.y;
+	[view setFrame:frame];
+	
+	// FIXME: wire the next button inside the view to an appropriate action
+	
+	[contentView addSubview:view positioned:NSWindowAbove relativeTo:prepareLabel];
+	// FIXME: we want to order the views by a property we can add in IB
+	[self willChangeValueForKey:@"swisherViews"];
+	[swisherViews addObject:view];
+	[self didChangeValueForKey:@"swisherViews"];
 }
 
 - (void)swipeWithEvent:(NSEvent *)event
