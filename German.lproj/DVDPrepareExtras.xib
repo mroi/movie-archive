@@ -76,7 +76,7 @@
 											<object class="NSButtonCell" id="558087382">
 												<int key="NSCellFlags">-2080244224</int>
 												<int key="NSCellFlags2">131072</int>
-												<string key="NSContents">Neues iTunes Extra erstellen:</string>
+												<string key="NSContents">Neues iTunes-Film erstellen:</string>
 												<object class="NSFont" key="NSSupport" id="26">
 													<string key="NSName">LucidaGrande</string>
 													<double key="NSSize">11</double>
@@ -251,7 +251,7 @@ QXBwbGUgQ29tcHV0ZXIsIEluYy4sIDIwMDUAAAAAA</bytes>
 											<object class="NSButtonCell" id="9508295">
 												<int key="NSCellFlags">604110336</int>
 												<int key="NSCellFlags2">131072</int>
-												<string key="NSContents">Zu iTunes Extra hinzufügen:</string>
+												<string key="NSContents">Zu iTunes-Film hinzufügen:</string>
 												<reference key="NSSupport" ref="26"/>
 												<reference key="NSControlView" ref="1067072079"/>
 												<int key="NSButtonFlags">1211912703</int>
@@ -373,7 +373,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 									<object class="NSTextField" id="687615821">
 										<reference key="NSNextResponder" ref="607925726"/>
 										<int key="NSvFlags">268</int>
-										<string key="NSFrame">{{37, 234}, {160, 14}}</string>
+										<string key="NSFrame">{{40, 234}, {155, 14}}</string>
 										<reference key="NSSuperview" ref="607925726"/>
 										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="133366060"/>
@@ -550,7 +550,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 								<string key="NSFrameSize">{565, 298}</string>
 								<reference key="NSSuperview" ref="865121325"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="1067072079"/>
+								<reference key="NSNextKeyView" ref="533753774"/>
 								<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							</object>
 						</object>
@@ -569,7 +569,6 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 						<string key="NSFrame">{{565, 0}, {15, 298}}</string>
 						<reference key="NSSuperview" ref="839075917"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSViewLayerContentsRedrawPolicy">2</int>
 						<reference key="NSTarget" ref="839075917"/>
 						<string key="NSAction">_doScroller:</string>
@@ -593,7 +592,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 				<string key="NSFrameSize">{580, 298}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
-				<reference key="NSNextKeyView" ref="533753774"/>
+				<reference key="NSNextKeyView" ref="865121325"/>
 				<int key="NSViewLayerContentsRedrawPolicy">2</int>
 				<int key="NSsFlags">16</int>
 				<reference key="NSVScroller" ref="889729733"/>

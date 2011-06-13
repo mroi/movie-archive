@@ -76,7 +76,7 @@
 											<object class="NSButtonCell" id="212277097">
 												<int key="NSCellFlags">-2080244224</int>
 												<int key="NSCellFlags2">131072</int>
-												<string key="NSContents">Create new iTunes Extra:</string>
+												<string key="NSContents">Create new iTunes Movie:</string>
 												<object class="NSFont" key="NSSupport" id="26">
 													<string key="NSName">LucidaGrande</string>
 													<double key="NSSize">11</double>
@@ -251,7 +251,7 @@ QXBwbGUgQ29tcHV0ZXIsIEluYy4sIDIwMDUAAAAAA</bytes>
 											<object class="NSButtonCell" id="1014972862">
 												<int key="NSCellFlags">604110336</int>
 												<int key="NSCellFlags2">131072</int>
-												<string key="NSContents">Add to existing iTunes Extra:</string>
+												<string key="NSContents">Add to existing iTunes Movie:</string>
 												<reference key="NSSupport" ref="26"/>
 												<reference key="NSControlView" ref="551802162"/>
 												<int key="NSButtonFlags">1211912703</int>
@@ -373,7 +373,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 									<object class="NSTextField" id="1034312136">
 										<reference key="NSNextResponder" ref="607925726"/>
 										<int key="NSvFlags">268</int>
-										<string key="NSFrame">{{37, 234}, {138, 14}}</string>
+										<string key="NSFrame">{{39, 234}, {139, 14}}</string>
 										<reference key="NSSuperview" ref="607925726"/>
 										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="17596729"/>
