@@ -27,9 +27,4 @@
 	[view release];
 }
 
-- (void)dealloc
-{
-	[super dealloc];
-}
-
 @end
