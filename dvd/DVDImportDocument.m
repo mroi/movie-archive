@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdarg.h>
+#include <objc/runtime.h>
 
 #include "dvdread/dvd_reader.h"
 #include "dvdread/ifo_read.h"
@@ -123,6 +124,10 @@ static NSString *CPLogMessage = @"CPLogMessage";
 	BOOL success = NO;
 	
 	/* open dvdread context and parse in all IFOs */
+	
+	if (dvdread)
+		[NSException raise:NSInternalInconsistencyException
+					format:@"%s can only be called once per document", sel_getName(_cmd)];
 	
 	@synchronized (NSApp) {
 		setenv("DVDCSS_CACHE", "off", 0);
