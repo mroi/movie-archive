@@ -13,6 +13,10 @@
 @end
 
 
+static const NSInteger nextButtonTag = 'next';  // 1852143732
+static const NSInteger lastPageTag = 'last';    // 1818325876
+
+
 #pragma mark -
 
 @implementation CPImportViewController
@@ -133,7 +137,8 @@ static const CGFloat alphaInvisible = 0.0;
 			
 		case CPImportPrepareSuccess:
 			// FIXME: sort views with -sortSubviewsUsingFunction:context: according to their order in the swisherViews array
-			// FIXME: remove the next button from the last view
+			[[[swisherViews lastObject] viewWithTag:nextButtonTag] removeFromSuperview];
+			[[[swisherViews lastObject] viewWithTag:lastPageTag] setHidden:NO];
 			
 			[CATransaction begin];
 			[CATransaction setCompletionBlock:^{
