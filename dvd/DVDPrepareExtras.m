@@ -8,7 +8,7 @@
 - (id)initWithDocument:(DVDImportDocument *)document
 {
 	if ((self = [self init])) {
-		dvdImport = document;  // don't retain, that would close a retain cycle
+		dvdImport = document;
 		[NSBundle loadNibNamed:@"DVDPrepareExtras" owner:self];
 	}
 	return self;

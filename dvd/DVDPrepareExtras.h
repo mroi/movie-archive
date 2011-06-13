@@ -6,7 +6,7 @@
 
 @interface DVDPrepareExtras : CPOperation
 {
-	DVDImportDocument *dvdImport;
+	DVDImportDocument *dvdImport;  // weak reference to avoid retain cycle
 	IBOutlet NSView *view;
 }
 - (id)initWithDocument:(DVDImportDocument *)document;
