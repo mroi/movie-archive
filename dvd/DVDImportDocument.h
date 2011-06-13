@@ -8,11 +8,6 @@
 #import "CPOperationQueue.h"
 
 
-static NSString *CPLogNotice = @"CPLogNotice";
-static NSString *CPLogWarning = @"CPLogWarning";
-static NSString *CPLogError = @"CPLogError";
-
-
 // TODO: we may want to factor out a generic, DVD-independent part in CPImportDocument
 @interface DVDImportDocument : NSDocument <CPDeviceSupportQuery>
 {
@@ -29,8 +24,12 @@ static NSString *CPLogError = @"CPLogError";
 	ifo_handle_t *ifo[100];  // VTS files are numbered with two decimal digits, so 100 is enough
 }
 
+typedef enum {
+	CPLogNotice, CPLogWarning, CPLogError
+} CPLogLevel;
+
 @property (readonly) CPImportViewController *viewController;
 
 - (BOOL)populateDocumentFromDevice;
-- (void)logAtLevel:(NSString *)level formattedMessage:(NSString *)format, ...;
+- (void)logAtLevel:(CPLogLevel)level formattedMessage:(NSString *)format, ...;
 @end

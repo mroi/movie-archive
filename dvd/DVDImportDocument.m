@@ -12,8 +12,8 @@
 #import "DVDImportDocument.h"
 
 
-static NSString *CPLogLevel = @"CPLogLevel";
-static NSString *CPLogMessage = @"CPLogMessage";
+static NSString *CPLogLevelKey = @"CPLogLevelKey";
+static NSString *CPLogMessageKey = @"CPLogMessageKey";
 
 
 @implementation DVDImportDocument
@@ -176,7 +176,7 @@ error:
 	return success;
 }
 
-- (void)logAtLevel:(NSString *)level formattedMessage:(NSString *)format, ...;
+- (void)logAtLevel:(CPLogLevel)level formattedMessage:(NSString *)format, ...;
 {
 	va_list argList;
 	va_start(argList, format);
@@ -189,11 +189,11 @@ error:
 	
 	@synchronized (log) {
 		[log addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-						CPLogLevel, level,
-						CPLogMessage, localizedMessage,
+						CPLogLevelKey, [NSNumber numberWithInt:level],
+						CPLogMessageKey, localizedMessage,
 						nil]];
 	}
-	NSLog(@"%@: %@", level, message);
+	NSLog(@"%@", message);
 }
 
 @end

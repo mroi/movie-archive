@@ -116,55 +116,61 @@ static const CGFloat alphaInvisible = 0.0;
 
 #pragma mark View Swisher Management
 
-- (void)indicateImportStage:(NSString *)stage
+- (void)indicateImportStage:(CPImportStage)stage
 {
 	if (![[NSOperationQueue currentQueue] isEqualTo:[NSOperationQueue mainQueue]])
 		[NSException raise:NSInternalInconsistencyException
 					format:@"%s must only be called from the main thread", sel_getName(_cmd)];
 	
-	if ([stage isEqualToString:CPImportPrepare]) {
-		[prepareIndicator startAnimation:self];
-		NSString *typeLabel = [NSString stringWithFormat:@"Preparing %@…", [[self document] fileType]];
-		NSString *localizedLabel = NSLocalizedString(typeLabel, @"action labels for import view");
-		[prepareLabel setStringValue:localizedLabel];
-		[[prepareLabel animator] setHidden:NO];
-		
-	} else if ([stage isEqualToString:CPImportPrepareSuccess]) {
-		// FIXME: sort views with -sortSubviewsUsingFunction:context: according to their order in the swisherViews array
-		// FIXME: remove the next button from the last view
-		
-		[CATransaction begin];
-		[CATransaction setCompletionBlock:^{
+	switch (stage) {
+		case CPImportPrepare:
+			[prepareIndicator startAnimation:self];
+			NSString *label = [NSString stringWithFormat:@"Preparing %@…", [[self document] fileType]];
+			NSString *localizedLabel = NSLocalizedString(label, @"action labels for import view");
+			[prepareLabel setStringValue:localizedLabel];
+			[[prepareLabel animator] setHidden:NO];
+			break;
+			
+		case CPImportPrepareSuccess:
+			// FIXME: sort views with -sortSubviewsUsingFunction:context: according to their order in the swisherViews array
+			// FIXME: remove the next button from the last view
+			
+			[CATransaction begin];
+			[CATransaction setCompletionBlock:^{
+				[prepareIndicator stopAnimation:self];
+				[[prepareIndicator animator] removeFromSuperview];
+				[prepareLabel removeFromSuperview];
+				[errorIcon removeFromSuperview];
+				[closeButton removeFromSuperview];
+			}];
+			[[topBar animator] setHidden:NO];
+			// FIXME: stagger the animations of the swisher views
+			for (NSView *view in swisherViews)
+				[[view animator] setHidden:NO];
+			[[bottomBar animator] setHidden:NO];
+			[CATransaction commit];
+			break;
+			
+		case CPImportPrepareFailure:
 			[prepareIndicator stopAnimation:self];
 			[[prepareIndicator animator] removeFromSuperview];
-			[prepareLabel removeFromSuperview];
-			[errorIcon removeFromSuperview];
-			[closeButton removeFromSuperview];
-		}];
-		[[topBar animator] setHidden:NO];
-		// FIXME: stagger the animations of the swisher views
-		for (NSView *view in swisherViews)
-			[[view animator] setHidden:NO];
-		[[bottomBar animator] setHidden:NO];
-		[CATransaction commit];
-		
-	} else if ([stage isEqualToString:CPImportPrepareFailure]) {
-		[prepareIndicator stopAnimation:self];
-		[[prepareIndicator animator] removeFromSuperview];
-		NSString *errorLabel = [NSString stringWithFormat:@"Error during %@", [[self document] fileType]];
-		NSString *localizedLabel = NSLocalizedString(errorLabel, @"action labels for import view");
-		[prepareLabel setStringValue:localizedLabel];
-		[[errorIcon animator] setHidden:NO];
-		[[closeButton animator] setHidden:NO];
-		[topBar removeFromSuperview];
-		[bottomBar removeFromSuperview];
-		
-	} else if ([stage isEqualToString:CPImportRun]) {
-		// FIXME: show log and progress bar with ETA
-		
-	} else {
-		[NSException raise:NSInvalidArgumentException
-					format:@"%s called with unknown stage “%@”", sel_getName(_cmd), stage];
+			NSString *errorLabel = [NSString stringWithFormat:@"Error during %@", [[self document] fileType]];
+			NSString *localizedError = NSLocalizedString(errorLabel, @"action labels for import view");
+			[prepareLabel setStringValue:localizedError];
+			[[errorIcon animator] setHidden:NO];
+			[[closeButton animator] setHidden:NO];
+			[topBar removeFromSuperview];
+			[bottomBar removeFromSuperview];
+			break;
+			
+		case CPImportRun:
+			// FIXME: show log and progress bar with ETA
+			break;
+			
+		default:
+			[NSException raise:NSInvalidArgumentException
+						format:@"%s called with unknown stage “%@”", sel_getName(_cmd), stage];
+			break;
 	}
 }
 

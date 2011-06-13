@@ -1,12 +1,6 @@
 /* This is free software, see file COPYING for license. */
 
 
-static NSString *CPImportPrepare = @"CPImportPrepare";
-static NSString *CPImportPrepareSuccess = @"CPImportPrepareSuccess";
-static NSString *CPImportPrepareFailure = @"CPImportPrepareFailure";
-static NSString *CPImportRun = @"CPImportRun";
-
-
 @interface CPImportViewController : NSWindowController <NSWindowDelegate>
 {
 	IBOutlet NSProgressIndicator *prepareIndicator;
@@ -22,11 +16,16 @@ static NSString *CPImportRun = @"CPImportRun";
 	NSUInteger activeViewIndex;
 }
 
+typedef enum {
+	CPImportPrepare, CPImportPrepareSuccess, CPImportPrepareFailure, CPImportRun
+} CPImportStage;
+
 @property (readonly) NSView *currentView;
 @property (readonly) BOOL hasPreviousView;
 @property (readonly) BOOL hasNextView;
 
-- (void)indicateImportStage:(NSString *)stage;  // call only from main thread
+/* the methods are to be called only from the main thread */
+- (void)indicateImportStage:(CPImportStage)stage;
 - (void)addView:(NSView *)view;
 @end
 
