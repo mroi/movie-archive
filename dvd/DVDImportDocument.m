@@ -50,6 +50,7 @@ static NSString *CPLogMessage = @"CPLogMessage";
 			return nil;
 		}
 		[workQueue setMaxConcurrentOperationCount:1];  // the encoding itself is parallel
+		[workQueue setName:@"de.amalthea.dvd2ite.dvdImport"];
 	}
 	return self;
 }
