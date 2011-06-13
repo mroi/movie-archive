@@ -3,14 +3,26 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
 		<string key="IBDocument.SystemVersion">10J869</string>
-		<string key="IBDocument.InterfaceBuilderVersion">844</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1306</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">844</string>
+			<string key="NS.object.0">1306</string>
 		</object>
-		<array class="NSMutableArray" key="IBDocument.EditedObjectIDs"/>
+		<array key="IBDocument.IntegratedClassDependencies">
+			<string>NSView</string>
+			<string>NSCustomObject</string>
+			<string>NSWindowTemplate</string>
+			<string>NSTextField</string>
+			<string>NSTextFieldCell</string>
+			<string>NSProgressIndicator</string>
+			<string>NSButtonCell</string>
+			<string>NSImageCell</string>
+			<string>NSButton</string>
+			<string>NSImageView</string>
+			<string>NSBox</string>
+		</array>
 		<array key="IBDocument.PluginDependencies">
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 		</array>
@@ -33,10 +45,9 @@
 				<string key="NSWindowTitle">Document Name</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
-				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
 				<string key="NSWindowContentMinSize">{300, 250}</string>
 				<object class="NSView" key="NSWindowView" id="568628114">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<array class="NSMutableArray" key="NSSubviews">
 						<object class="NSBox" id="632114435">
@@ -52,6 +63,7 @@
 											<int key="NSvFlags">268</int>
 											<string key="NSFrame">{{4, 1}, {39, 38}}</string>
 											<reference key="NSSuperview" ref="530205091"/>
+											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="828849053"/>
 											<int key="NSViewLayerContentsRedrawPolicy">2</int>
 											<bool key="NSEnabled">YES</bool>
@@ -78,6 +90,7 @@
 											<int key="NSvFlags">265</int>
 											<string key="NSFrame">{{538, 1}, {39, 38}}</string>
 											<reference key="NSSuperview" ref="530205091"/>
+											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="607670916"/>
 											<int key="NSViewLayerContentsRedrawPolicy">2</int>
 											<bool key="NSEnabled">YES</bool>
@@ -100,6 +113,7 @@
 											<int key="NSvFlags">266</int>
 											<string key="NSFrame">{{41, 11}, {498, 22}}</string>
 											<reference key="NSSuperview" ref="530205091"/>
+											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="366475314"/>
 											<int key="NSViewLayerContentsRedrawPolicy">2</int>
 											<bool key="NSEnabled">YES</bool>
@@ -115,8 +129,8 @@
 												<reference key="NSControlView" ref="828849053"/>
 												<bool key="NSDrawsBackground">YES</bool>
 												<object class="NSColor" key="NSBackgroundColor">
-													<int key="NSColorSpace">1</int>
-													<bytes key="NSRGB">MC42OTY0MDEzNTc3IDAuNzU5MTkzMzYwOCAwLjc1NzU3OTM4NjIAA</bytes>
+													<int key="NSColorSpace">3</int>
+													<bytes key="NSWhite">MC44NQA</bytes>
 												</object>
 												<object class="NSColor" key="NSTextColor">
 													<int key="NSColorSpace">6</int>
@@ -132,12 +146,14 @@
 									</array>
 									<string key="NSFrame">{{1, 1}, {580, 43}}</string>
 									<reference key="NSSuperview" ref="632114435"/>
+									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="834274201"/>
 									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 								</object>
 							</array>
 							<string key="NSFrame">{{-1, 346}, {582, 45}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="530205091"/>
 							<bool key="NSViewIsLayerTreeHost">YES</bool>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
@@ -171,8 +187,8 @@
 							<int key="NSTitlePosition">0</int>
 							<bool key="NSTransparent">NO</bool>
 							<object class="NSColor" key="NSFillColor2">
-								<int key="NSColorSpace">1</int>
-								<bytes key="NSRGB">MC42OTY0MDEzNTc3IDAuNzU5MTkzMzYwOCAwLjc1NzU3OTM4NjIAA</bytes>
+								<int key="NSColorSpace">3</int>
+								<bytes key="NSWhite">MC44NQA</bytes>
 							</object>
 						</object>
 						<object class="NSProgressIndicator" id="1070342684">
@@ -181,6 +197,7 @@
 							<object class="NSPSMatrix" key="NSDrawMatrix"/>
 							<string key="NSFrame">{{274, 211}, {32, 32}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="126495625"/>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<int key="NSpiFlags">20490</int>
@@ -191,6 +208,7 @@
 							<int key="NSvFlags">-2147483350</int>
 							<string key="NSFrame">{{20, 147}, {540, 22}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="920142117"/>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<bool key="NSEnabled">YES</bool>
@@ -234,6 +252,7 @@
 							</set>
 							<string key="NSFrame">{{258, 195}, {64, 64}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="1070342684"/>
 							<bool key="NSViewIsLayerTreeHost">YES</bool>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
@@ -270,6 +289,7 @@
 											<int key="NSvFlags">289</int>
 											<string key="NSFrame">{{491, 11}, {75, 25}}</string>
 											<reference key="NSSuperview" ref="660717350"/>
+											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="869310057"/>
 											<int key="NSViewLayerContentsRedrawPolicy">2</int>
 											<bool key="NSEnabled">YES</bool>
@@ -300,6 +320,7 @@
 											</set>
 											<string key="NSFrame">{{566, -1}, {15.8, 15.8}}</string>
 											<reference key="NSSuperview" ref="660717350"/>
+											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="1040649983"/>
 											<int key="NSViewLayerContentsRedrawPolicy">2</int>
 											<bool key="NSEnabled">YES</bool>
@@ -320,12 +341,14 @@
 									</array>
 									<string key="NSFrame">{{1, 1}, {580, 46}}</string>
 									<reference key="NSSuperview" ref="920142117"/>
+									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="290508757"/>
 									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 								</object>
 							</array>
 							<string key="NSFrame">{{-1, -1}, {582, 48}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="660717350"/>
 							<bool key="NSViewIsLayerTreeHost">YES</bool>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
@@ -347,8 +370,8 @@
 							<int key="NSTitlePosition">0</int>
 							<bool key="NSTransparent">NO</bool>
 							<object class="NSColor" key="NSFillColor2">
-								<int key="NSColorSpace">1</int>
-								<bytes key="NSRGB">MC42NDg0ODg0NjIgMC43MTYwNzMzOTM4IDAuNzE0NDAxNTQzMQA</bytes>
+								<int key="NSColorSpace">3</int>
+								<bytes key="NSWhite">MC43AA</bytes>
 							</object>
 						</object>
 						<object class="NSButton" id="1040649983">
@@ -356,6 +379,7 @@
 							<int key="NSvFlags">-2147483359</int>
 							<string key="NSFrame">{{495, 18}, {65, 25}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
+							<reference key="NSWindow"/>
 							<bool key="NSViewIsLayerTreeHost">YES</bool>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<bool key="NSEnabled">YES</bool>
@@ -375,13 +399,15 @@
 						</object>
 					</array>
 					<string key="NSFrame">{{7, 11}, {580, 390}}</string>
+					<reference key="NSSuperview"/>
+					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="632114435"/>
 					<bool key="NSViewIsLayerTreeHost">YES</bool>
 					<int key="NSViewLayerContentsRedrawPolicy">2</int>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 1002}}</string>
 				<string key="NSMinSize">{300, 272}</string>
-				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
+				<string key="NSMaxSize">{1e+13, 1e+13}</string>
 			</object>
 			<object class="NSCustomObject" id="796877042">
 				<string key="NSClassName">NSApplication</string>
@@ -874,8 +900,6 @@
 				<integer value="1" key="5.ImportedFromIB2"/>
 				<boolean value="YES" key="5.NSWindowTemplate.visibleAtLaunch"/>
 				<string key="5.editorWindowContentRectSynchronizationRect">{{201, 387}, {507, 413}}</string>
-				<boolean value="YES" key="5.windowTemplate.hasMinSize"/>
-				<string key="5.windowTemplate.minSize">{300, 250}</string>
 				<string key="6.IBCATransitionLastKnownSubtype">fromTop</string>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<integer value="1" key="6.ImportedFromIB2"/>
@@ -948,7 +972,6 @@
 			<real value="4000" key="NS.object.0"/>
 		</object>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
-		<nil key="IBDocument.LastKnownRelativeProjectPath"/>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<string key="AlertStopIcon">{128, 128}</string>

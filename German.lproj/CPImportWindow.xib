@@ -3,15 +3,26 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
 		<string key="IBDocument.SystemVersion">10J869</string>
-		<string key="IBDocument.InterfaceBuilderVersion">844</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1306</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">844</string>
+			<string key="NS.object.0">1306</string>
 		</object>
-		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
+		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<string>NSView</string>
+			<string>NSCustomObject</string>
+			<string>NSWindowTemplate</string>
+			<string>NSTextField</string>
+			<string>NSTextFieldCell</string>
+			<string>NSProgressIndicator</string>
+			<string>NSButtonCell</string>
+			<string>NSImageCell</string>
+			<string>NSButton</string>
+			<string>NSImageView</string>
+			<string>NSBox</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -40,10 +51,9 @@
 				<string key="NSWindowTitle">Dokumentenname</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
-				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
 				<string key="NSWindowContentMinSize">{300, 250}</string>
 				<object class="NSView" key="NSWindowView" id="401305275">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -62,6 +72,7 @@
 											<int key="NSvFlags">268</int>
 											<string key="NSFrame">{{4, 1}, {39, 38}}</string>
 											<reference key="NSSuperview" ref="290062338"/>
+											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="488563206"/>
 											<int key="NSViewLayerContentsRedrawPolicy">2</int>
 											<bool key="NSEnabled">YES</bool>
@@ -88,6 +99,7 @@
 											<int key="NSvFlags">265</int>
 											<string key="NSFrame">{{538, 1}, {39, 38}}</string>
 											<reference key="NSSuperview" ref="290062338"/>
+											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="438532914"/>
 											<int key="NSViewLayerContentsRedrawPolicy">2</int>
 											<bool key="NSEnabled">YES</bool>
@@ -110,6 +122,7 @@
 											<int key="NSvFlags">266</int>
 											<string key="NSFrame">{{41, 11}, {498, 22}}</string>
 											<reference key="NSSuperview" ref="290062338"/>
+											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="385080652"/>
 											<int key="NSViewLayerContentsRedrawPolicy">2</int>
 											<bool key="NSEnabled">YES</bool>
@@ -124,9 +137,9 @@
 												</object>
 												<reference key="NSControlView" ref="488563206"/>
 												<bool key="NSDrawsBackground">YES</bool>
-												<object class="NSColor" key="NSBackgroundColor" id="563170488">
-													<int key="NSColorSpace">1</int>
-													<bytes key="NSRGB">MC42OTY0MDEzNTc3IDAuNzU5MTkzMzYwOCAwLjc1NzU3OTM4NjIAA</bytes>
+												<object class="NSColor" key="NSBackgroundColor">
+													<int key="NSColorSpace">3</int>
+													<bytes key="NSWhite">MC44NQA</bytes>
 												</object>
 												<object class="NSColor" key="NSTextColor">
 													<int key="NSColorSpace">6</int>
@@ -142,12 +155,14 @@
 									</object>
 									<string key="NSFrame">{{1, 1}, {580, 43}}</string>
 									<reference key="NSSuperview" ref="352097964"/>
+									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="902782"/>
 									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 								</object>
 							</object>
 							<string key="NSFrame">{{-1, 346}, {582, 45}}</string>
 							<reference key="NSSuperview" ref="401305275"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="290062338"/>
 							<bool key="NSViewIsLayerTreeHost">YES</bool>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
@@ -180,7 +195,10 @@
 							<int key="NSBoxType">4</int>
 							<int key="NSTitlePosition">0</int>
 							<bool key="NSTransparent">NO</bool>
-							<reference key="NSFillColor2" ref="563170488"/>
+							<object class="NSColor" key="NSFillColor2">
+								<int key="NSColorSpace">3</int>
+								<bytes key="NSWhite">MC44NQA</bytes>
+							</object>
 						</object>
 						<object class="NSProgressIndicator" id="658833702">
 							<reference key="NSNextResponder" ref="401305275"/>
@@ -188,6 +206,7 @@
 							<object class="NSPSMatrix" key="NSDrawMatrix"/>
 							<string key="NSFrame">{{274, 211}, {32, 32}}</string>
 							<reference key="NSSuperview" ref="401305275"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="833629393"/>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<int key="NSpiFlags">20490</int>
@@ -198,6 +217,7 @@
 							<int key="NSvFlags">-2147483350</int>
 							<string key="NSFrame">{{20, 147}, {540, 22}}</string>
 							<reference key="NSSuperview" ref="401305275"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="227281916"/>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<bool key="NSEnabled">YES</bool>
@@ -245,6 +265,7 @@
 							</object>
 							<string key="NSFrame">{{258, 195}, {64, 64}}</string>
 							<reference key="NSSuperview" ref="401305275"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="658833702"/>
 							<bool key="NSViewIsLayerTreeHost">YES</bool>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
@@ -283,6 +304,7 @@
 											<int key="NSvFlags">289</int>
 											<string key="NSFrame">{{467, 11}, {99, 25}}</string>
 											<reference key="NSSuperview" ref="572287784"/>
+											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="602453317"/>
 											<int key="NSViewLayerContentsRedrawPolicy">2</int>
 											<bool key="NSEnabled">YES</bool>
@@ -317,6 +339,7 @@
 											</object>
 											<string key="NSFrame">{{566, -1}, {15.8, 15.8}}</string>
 											<reference key="NSSuperview" ref="572287784"/>
+											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="620834830"/>
 											<int key="NSViewLayerContentsRedrawPolicy">2</int>
 											<bool key="NSEnabled">YES</bool>
@@ -337,12 +360,14 @@
 									</object>
 									<string key="NSFrame">{{1, 1}, {580, 46}}</string>
 									<reference key="NSSuperview" ref="227281916"/>
+									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="916046849"/>
 									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 								</object>
 							</object>
 							<string key="NSFrame">{{-1, -1}, {582, 48}}</string>
 							<reference key="NSSuperview" ref="401305275"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="572287784"/>
 							<bool key="NSViewIsLayerTreeHost">YES</bool>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
@@ -364,8 +389,8 @@
 							<int key="NSTitlePosition">0</int>
 							<bool key="NSTransparent">NO</bool>
 							<object class="NSColor" key="NSFillColor2">
-								<int key="NSColorSpace">1</int>
-								<bytes key="NSRGB">MC42NDg0ODg0NjIgMC43MTYwNzMzOTM4IDAuNzE0NDAxNTQzMQA</bytes>
+								<int key="NSColorSpace">3</int>
+								<bytes key="NSWhite">MC43AA</bytes>
 							</object>
 						</object>
 						<object class="NSButton" id="620834830">
@@ -373,6 +398,7 @@
 							<int key="NSvFlags">-2147483359</int>
 							<string key="NSFrame">{{470, 18}, {90, 25}}</string>
 							<reference key="NSSuperview" ref="401305275"/>
+							<reference key="NSWindow"/>
 							<bool key="NSViewIsLayerTreeHost">YES</bool>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<bool key="NSEnabled">YES</bool>
@@ -392,13 +418,15 @@
 						</object>
 					</object>
 					<string key="NSFrame">{{7, 11}, {580, 390}}</string>
+					<reference key="NSSuperview"/>
+					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="352097964"/>
 					<bool key="NSViewIsLayerTreeHost">YES</bool>
 					<int key="NSViewLayerContentsRedrawPolicy">2</int>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 1002}}</string>
 				<string key="NSMinSize">{300, 272}</string>
-				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
+				<string key="NSMaxSize">{1e+13, 1e+13}</string>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -797,8 +825,6 @@
 					<string>100021.ImportedFromIB2</string>
 					<string>100021.NSWindowTemplate.visibleAtLaunch</string>
 					<string>100021.editorWindowContentRectSynchronizationRect</string>
-					<string>100021.windowTemplate.hasMinSize</string>
-					<string>100021.windowTemplate.minSize</string>
 					<string>100022.IBCATransitionLastKnownSubtype</string>
 					<string>100022.IBPluginDependency</string>
 					<string>100022.ImportedFromIB2</string>
@@ -854,8 +880,6 @@
 					<integer value="1"/>
 					<boolean value="YES"/>
 					<string>{{201, 387}, {507, 413}}</string>
-					<boolean value="YES"/>
-					<string>{300, 250}</string>
 					<string>fromTop</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
@@ -1032,17 +1056,13 @@
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<reference key="dict.sortedKeys" ref="0"/>
-				<object class="NSMutableArray" key="dict.values">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-				</object>
+				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="activeLocalization"/>
 			<object class="NSMutableDictionary" key="localizations">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<reference key="dict.sortedKeys" ref="0"/>
-				<object class="NSMutableArray" key="dict.values">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-				</object>
+				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
 			<int key="maxID">100096</int>
@@ -1138,7 +1158,6 @@
 			<integer value="3000" key="NS.object.0"/>
 		</object>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
-		<nil key="IBDocument.LastKnownRelativeProjectPath"/>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<bool key="EncodedWithXMLCoder">YES</bool>
