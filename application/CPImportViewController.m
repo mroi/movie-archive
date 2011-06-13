@@ -135,7 +135,7 @@ static const CGFloat alphaInvisible = 0.0;
 			[[prepareIndicator animator] removeFromSuperview];
 			[prepareLabel removeFromSuperview];
 			[errorIcon removeFromSuperview];
-			[dismissButton removeFromSuperview];
+			[closeButton removeFromSuperview];
 		}];
 		[[topBar animator] setHidden:NO];
 		// FIXME: stagger the animations of the swisher views
@@ -146,11 +146,14 @@ static const CGFloat alphaInvisible = 0.0;
 		
 	} else if ([stage isEqualToString:CPImportPrepareFailure]) {
 		[prepareIndicator stopAnimation:self];
+		[[prepareIndicator animator] removeFromSuperview];
 		NSString *errorLabel = [NSString stringWithFormat:@"Error during %@", [[self document] fileType]];
 		NSString *localizedLabel = NSLocalizedString(errorLabel, @"action labels for import view");
 		[prepareLabel setStringValue:localizedLabel];
 		[[errorIcon animator] setHidden:NO];
-		[[dismissButton animator] setHidden:NO];
+		[[closeButton animator] setHidden:NO];
+		[topBar removeFromSuperview];
+		[bottomBar removeFromSuperview];
 		
 	} else if ([stage isEqualToString:CPImportRun]) {
 		// FIXME: show log and progress bar with ETA

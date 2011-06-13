@@ -12,7 +12,7 @@ static NSString *CPImportRun = @"CPImportRun";
 	IBOutlet NSProgressIndicator *prepareIndicator;
 	IBOutlet NSTextField *prepareLabel;
 	IBOutlet NSImageView *errorIcon;
-	IBOutlet NSButton *dismissButton;
+	IBOutlet NSButton *closeButton;
 	
 	IBOutlet NSBox *topBar;
 	IBOutlet NSTextField *caption;
