@@ -8,11 +8,6 @@
 #import "CPImportViewController.h"
 
 
-@interface CPImportViewController ()
-@property (assign) NSUInteger activeViewIndex;
-@end
-
-
 static const NSInteger nextButtonTag = 'next';  // 1852143732
 static const NSInteger lastPageTag = 'last';    // 1818325876
 
@@ -24,14 +19,14 @@ static const NSInteger lastPageTag = 'last';    // 1818325876
 - (id)init
 {
 	if ((self = [super initWithWindowNibName:@"CPImportWindow"])) {
-		swisherViews = [[NSMutableArray alloc] init];
+		pages = [[NSMutableArray alloc] init];
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-	[swisherViews release];
+	[pages release];
 	[super dealloc];
 }
 
@@ -80,27 +75,26 @@ static const CGFloat alphaInvisible = 0.0;
 
 #pragma mark Computed Properties for Bindings
 
-@synthesize activeViewIndex;
 @dynamic currentView;
 @dynamic hasPreviousView;
 @dynamic hasNextView;
 
 - (NSView *)currentView
 {
-	if (activeViewIndex < [swisherViews count])
-		return [swisherViews objectAtIndex:activeViewIndex];
+	if (activeViewIndex < [pages count])
+		return [pages objectAtIndex:activeViewIndex];
 	else
 		return nil;
 }
 
 - (BOOL)hasPreviousView
 {
-	return activeViewIndex > 1;
+	return activeViewIndex > 0;
 }
 
 - (BOOL)hasNextView
 {
-	return activeViewIndex < [swisherViews count] - 1;
+	return activeViewIndex < [pages count] - 1;
 }
 
 + (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
@@ -111,14 +105,29 @@ static const CGFloat alphaInvisible = 0.0;
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKeys];
 	}
 	if ([key isEqualToString:@"currentView"] || [key isEqualToString:@"hasNextView"]) {
-		NSSet *affectingKeys = [NSSet setWithObject:@"swisherViews"];
+		NSSet *affectingKeys = [NSSet setWithObject:@"pages"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKeys];
 	}
 	return keyPaths;
 }
 
 
-#pragma mark View Swisher Management
+#pragma mark Multi-Page View Management
+
+static NSComparisonResult sortByArrayOrder(id left, id right, void *context)
+{
+	NSArray *array = context;
+	NSUInteger leftIndex = [array indexOfObject:left];
+	NSUInteger rightIndex = [array indexOfObject:right];
+	if (leftIndex == NSNotFound || rightIndex == NSNotFound)
+		return NSOrderedSame;
+	if (leftIndex < rightIndex)
+		return NSOrderedAscending;
+	else if (leftIndex > rightIndex)
+		return NSOrderedDescending;
+	else
+		return NSOrderedSame;
+}
 
 - (void)indicateImportStage:(CPImportStage)stage
 {
@@ -136,10 +145,10 @@ static const CGFloat alphaInvisible = 0.0;
 			break;
 			
 		case CPImportPrepareSuccess:
-			// FIXME: sort views with -sortSubviewsUsingFunction:context: according to their order in the swisherViews array
-			[[[swisherViews lastObject] viewWithTag:nextButtonTag] removeFromSuperview];
-			if ([swisherViews count] > 1)
-				[[[swisherViews lastObject] viewWithTag:lastPageTag] setHidden:NO];
+			[[[self window] contentView] sortSubviewsUsingFunction:sortByArrayOrder context:pages];
+			[[[pages lastObject] viewWithTag:nextButtonTag] removeFromSuperview];
+			if ([pages count] > 1)
+				[[[pages lastObject] viewWithTag:lastPageTag] setHidden:NO];
 			
 			[CATransaction begin];
 			[CATransaction setCompletionBlock:^{
@@ -150,9 +159,7 @@ static const CGFloat alphaInvisible = 0.0;
 				[closeButton removeFromSuperview];
 			}];
 			[[topBar animator] setHidden:NO];
-			// FIXME: stagger the animations of the swisher views
-			for (NSView *view in swisherViews)
-				[[view animator] setHidden:NO];
+			[[[pages objectAtIndex:0] animator] setHidden:NO];
 			[[bottomBar animator] setHidden:NO];
 			[CATransaction commit];
 			break;
@@ -189,7 +196,7 @@ static const CGFloat alphaInvisible = 0.0;
 	[view setHidden:YES];
 	[view setWantsLayer:YES];
 	
-	// TODO: use a custom animation drawing a gradient shadow on the leading edge
+	// TODO: use a custom animation drawing a gradient shadow on the leading edge, also animate hiding a page
 	CATransition *moveIn = [CATransition animation];
 	[moveIn setType:kCATransitionMoveIn];
 	[moveIn setSubtype:kCATransitionFromRight];
@@ -207,13 +214,35 @@ static const CGFloat alphaInvisible = 0.0;
 	frame.size.height = topBarFrame.origin.y - frame.origin.y;
 	[view setFrame:frame];
 	
-	// FIXME: wire the next button inside the view to an appropriate action
+	NSControl *nextButton = [view viewWithTag:nextButtonTag];
+	[nextButton setTarget:self];
+	[nextButton setAction:@selector(nextPage:)];
 	
 	[contentView addSubview:view positioned:NSWindowAbove relativeTo:prepareLabel];
 	// FIXME: we want to order the views by a property we can add in IB
-	[self willChangeValueForKey:@"swisherViews"];
-	[swisherViews addObject:view];
-	[self didChangeValueForKey:@"swisherViews"];
+	[self willChangeValueForKey:@"pages"];
+	[pages addObject:view];
+	[self didChangeValueForKey:@"pages"];
+}
+
+- (IBAction)nextPage:(id)sender
+{
+	if ([self hasNextView]) {
+		[self willChangeValueForKey:@"activeViewIndex"];
+		activeViewIndex++;
+		[[[pages objectAtIndex:activeViewIndex] animator] setHidden:NO];
+		[self didChangeValueForKey:@"activeViewIndex"];
+	}
+}
+
+- (IBAction)previousPage:(id)sender
+{
+	if ([self hasPreviousView]) {
+		[self willChangeValueForKey:@"activeViewIndex"];
+		[[[pages objectAtIndex:activeViewIndex] animator] setHidden:YES];
+		activeViewIndex--;
+		[self didChangeValueForKey:@"activeViewIndex"];
+	}
 }
 
 - (void)swipeWithEvent:(NSEvent *)event

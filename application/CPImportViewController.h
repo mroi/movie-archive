@@ -10,7 +10,7 @@
 	
 	IBOutlet NSBox *topBar;
 	IBOutlet NSTextField *caption;
-	NSMutableArray *swisherViews;
+	NSMutableArray *pages;
 	IBOutlet NSBox *bottomBar;
 	
 	NSUInteger activeViewIndex;
@@ -27,6 +27,10 @@ typedef enum {
 /* the methods are to be called only from the main thread */
 - (void)indicateImportStage:(CPImportStage)stage;
 - (void)addView:(NSView *)view;
+
+- (IBAction)nextPage:(id)sender;
+- (IBAction)previousPage:(id)sender;
+
 @end
 
 
