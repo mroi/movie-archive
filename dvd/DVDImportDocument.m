@@ -168,8 +168,13 @@ static NSString *CPLogMessageKey = @"CPLogMessageKey";
 	
 	[self logAtLevel:CPLogNotice formattedMessage:@"all IFOs successfully parsed"];
 	
-	/* add prepare and finish operation */
+	/* create operations */
+	
 	prepareOperation = [[DVDPrepareExtras alloc] initWithDocument:self];
+	
+	// TODO: iterate over all PGCs and create DVDAssets
+	// TODO: create the finish operation
+	// TODO: use visitor pattern to check and optimize asset structure
 	
 	success = YES;
 error:
