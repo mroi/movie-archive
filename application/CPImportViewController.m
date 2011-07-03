@@ -248,6 +248,7 @@ static NSComparisonResult sortByArrayOrder(id left, id right, void *context)
 - (void)swipeWithEvent:(NSEvent *)event
 {
 	// TODO: handle swipe gesture for changing views
+	// new Lion APIs: -wantsScrollEventForSwipeTracking and -tracksSwipeEventWithOptions:
 }
 
 @end

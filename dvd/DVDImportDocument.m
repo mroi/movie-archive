@@ -39,6 +39,8 @@ static NSString *CPLogMessageKey = @"CPLogMessageKey";
 	return YES;
 }
 
+// TODO: Lion autosave: +autosavesInPlace
+
 - (id)init
 {
 	if ((self = [super init])) {
