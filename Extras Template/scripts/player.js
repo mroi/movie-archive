@@ -1,10 +1,12 @@
-const KEYBOARD_BACKSPACE = 8;
-const KEYBOARD_RETURN = 13;
-const KEYBOARD_ESCAPE = 27;
-const KEYBOARD_LEFT = 37;
-const KEYBOARD_UP = 38;
-const KEYBOARD_RIGHT = 39;
-const KEYBOARD_DOWN = 40;
+"use strict";
+
+var KEYBOARD_BACKSPACE = 8;
+var KEYBOARD_RETURN = 13;
+var KEYBOARD_ESCAPE = 27;
+var KEYBOARD_LEFT = 37;
+var KEYBOARD_UP = 38;
+var KEYBOARD_RIGHT = 39;
+var KEYBOARD_DOWN = 40;
 
 var player;
 
@@ -52,6 +54,7 @@ function player_init()
 			if (!window.innerHeight) return;
 			
 			var windowAspect = window.innerWidth / window.innerHeight;
+			var playerAspect = 16 / 9;
 			
 			if (player.emulator.style.display === 'block')
 				playerAspect = player.emulator.videoWidth / player.emulator.videoHeight;
@@ -59,8 +62,6 @@ function player_init()
 				playerAspect = player.video.videoWidth / player.video.videoHeight;
 			else if (player.still.style.display === 'block')
 				playerAspect = player.still.naturalWidth / player.still.naturalHeight;
-			else
-				playerAspect = 16 / 9;
 			
 			if (playerAspect < windowAspect) {
 				player.view.style.width = Math.round(window.innerHeight * playerAspect) + 'px';
@@ -338,17 +339,16 @@ function player_init()
 	request.open('GET', 'iTunesMetadata.plist', false);
 	request.send();
 	if (request.readyState === 4 && (request.status === 0 || request.status === 200)) {
-		function skipTextNodes(node) {
-			while (node.nodeType === 3)
-				node = node.nextSibling;
-			return node;
-		}
 		var plist = request.responseXML.getElementsByTagName('plist')[0];
-		var dict = skipTextNodes(plist.firstChild);
+		var dict = plist.firstChild;
+		while (dict.nodeType === 3)
+			dict = dict.nextSibling;
 		if (dict.nodeName === 'dict') {
 			for (var node = dict.firstChild; node; node = node.nextSibling) {
 				if (node.nodeName === 'key' && node.firstChild.data === 'Metadata') {
-					var metadata = skipTextNodes(node.nextSibling);
+					var metadata = node.nextSibling;
+					while (metadata.nodeType === 3)
+						metadata = metadata.nextSibling;
 					if (metadata.nodeName === 'dict')
 						player.metadata = metadata;
 					break;

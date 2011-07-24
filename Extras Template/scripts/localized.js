@@ -1,10 +1,12 @@
+"use strict";
+
 function _(string)
 {
 	var dictionary = player.pickLanguage(localizedStrings);
 	return dictionary[string] ? dictionary[string] : string;
 }
 
-const localizedStrings = {
+var localizedStrings = {
 	de: {
 		'Inconsistent Versions': 'Interner Versionsfehler',
 		'This feature is not supported on Apple TV.': 'Diese Funktion wird auf Apple TV nicht unterstützt.',

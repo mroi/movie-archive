@@ -1,3 +1,5 @@
+"use strict";
+
 if (!window.iTunes) {
 	window.iTunes = {
 		StoppedState: 0,

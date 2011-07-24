@@ -1,3 +1,5 @@
+"use strict";
+
 var vm = {
 	version: 1,
 	
