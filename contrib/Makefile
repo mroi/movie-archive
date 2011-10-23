@@ -27,7 +27,8 @@ $(TARGET_TEMP_DIR)/handbrake/%/GNUmakefile: $(CONTRIB_VERSION)
 	debug=$(shell case $(CONFIGURATION) in (Debug) echo std ;; (Release) echo none ;; esac) ; \
 	$(PROJECT_DIR)/contrib/handbrake/configure \
 		--arch=$* --optimize=$$optimize --debug=$$debug \
-		--disable-xcode --disable-gtk
+		--disable-xcode --disable-gtk \
+		LIBOGG.GCC.args.extra=-O3 LIBVORBIS.GCC.args.extra=-O3  # FIXME: LTO fails with llvm-gcc-4.2
 
 
 libdvdcss: $(TARGET_TEMP_DIR)/libdvdcss/libdvdcss.2.dylib
