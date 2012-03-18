@@ -42,7 +42,7 @@ static const NSInteger lastPageTag = 'last';    // 1818325876
 	[prepareIndicator setUsesThreadedAnimation:YES];
 	
 	// BUG: Wiggle the sizing of the bottom bar, otherwise the GrowBox image in the bottom right will snap into a properly pixel-aligned position at the first user-triggered resize.
-	NSSize oldSize = NSSizeFromCGSize([bottomBar frame].size);
+	NSSize oldSize = [bottomBar frame].size;
 	NSSize newSize = NSMakeSize(oldSize.width - 1.0, oldSize.height);
 	[bottomBar setFrameSize:newSize];
 	[bottomBar setFrameSize:oldSize];
@@ -180,10 +180,13 @@ static NSComparisonResult sortByArrayOrder(id left, id right, void *context)
 			// FIXME: show log and progress bar with ETA
 			break;
 			
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunreachable-code"
 		default:
 			[NSException raise:NSInvalidArgumentException
 						format:@"%s called with unknown stage “%@”", sel_getName(_cmd), stage];
 			break;
+#pragma clang diagnostic pop
 	}
 }
 

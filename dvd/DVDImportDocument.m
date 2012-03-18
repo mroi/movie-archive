@@ -183,7 +183,7 @@ error:
 	return success;
 }
 
-- (void)logAtLevel:(CPLogLevel)level formattedMessage:(NSString *)format, ...;
+- (void)logAtLevel:(CPLogLevel)level formattedMessage:(NSString *)format, ...
 {
 	va_list argList;
 	va_start(argList, format);

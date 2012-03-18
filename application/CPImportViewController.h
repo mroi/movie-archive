@@ -20,9 +20,9 @@ typedef enum {
 	CPImportPrepare, CPImportPrepareSuccess, CPImportPrepareFailure, CPImportRun
 } CPImportStage;
 
-@property (readonly) NSView *currentView;
-@property (readonly) BOOL hasPreviousView;
-@property (readonly) BOOL hasNextView;
+@property (readonly, nonatomic) NSView *currentView;
+@property (readonly, nonatomic) BOOL hasPreviousView;
+@property (readonly, nonatomic) BOOL hasNextView;
 
 /* the methods are to be called only from the main thread */
 - (void)indicateImportStage:(CPImportStage)stage;
