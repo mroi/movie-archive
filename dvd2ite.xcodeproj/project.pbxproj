@@ -262,7 +262,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "dvd2ite" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -408,14 +408,14 @@
 		4CD82E6012DA16EF00F9C039 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PATH = "/sw/bin:$(PATH)";
+				PATH = "/sw/bin:/opt/fink/bin:$(PATH)";
 			};
 			name = Debug;
 		};
 		4CD82E6112DA16EF00F9C039 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PATH = "/sw/bin:$(PATH)";
+				PATH = "/sw/bin:/opt/fink/bin:$(PATH)";
 			};
 			name = Release;
 		};
@@ -473,7 +473,6 @@
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				WARNING_CFLAGS = (
@@ -488,7 +487,6 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				LLVM_LTO = YES;
 				SDKROOT = macosx;
 				WARNING_CFLAGS = (
