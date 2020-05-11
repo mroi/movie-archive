@@ -1,0 +1,449 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 53;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4C1A3593245DFEE700C40FB5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */; };
+		4C1A3595245DFEE700C40FB5 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* Document.swift */; };
+		4C1A3597245DFEE700C40FB5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3596245DFEE700C40FB5 /* ContentView.swift */; };
+		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
+		4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A359D245DFEE800C40FB5 /* Main.storyboard */; };
+		4C1A35AB245DFEE900C40FB5 /* UnitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A35AA245DFEE900C40FB5 /* UnitTests.swift */; };
+		4C874A91245E032C0026B9D7 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 4C874A90245E032C0026B9D7 /* README.md */; };
+		4CAC9F3E24688E880031A9EE /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4C1A35A7245DFEE900C40FB5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C1A3587245DFEE700C40FB5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C1A358E245DFEE700C40FB5;
+			remoteInfo = "Movie Archive";
+		};
+		4C1A35B2245DFEE900C40FB5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C1A3587245DFEE700C40FB5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C1A358E245DFEE700C40FB5;
+			remoteInfo = "Movie Archive";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		4C1A358F245DFEE700C40FB5 /* Movie Archive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Movie Archive.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4C1A3594245DFEE700C40FB5 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
+		4C1A3596245DFEE700C40FB5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4C1A3598245DFEE800C40FB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4C1A359E245DFEE800C40FB5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4C1A35A0245DFEE800C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4C1A35A1245DFEE800C40FB5 /* MovieArchive.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MovieArchive.entitlements; sourceTree = "<group>"; };
+		4C1A35A6245DFEE900C40FB5 /* macOS Unit Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "macOS Unit Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C1A35AA245DFEE900C40FB5 /* UnitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitTests.swift; sourceTree = "<group>"; };
+		4C1A35AC245DFEE900C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4C1A35B1245DFEE900C40FB5 /* macOS UI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "macOS UI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		4CAC9F3D24688E880031A9EE /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4C1A358C245DFEE700C40FB5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C1A35A3245DFEE900C40FB5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C1A35AE245DFEE900C40FB5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4C1A3586245DFEE700C40FB5 = {
+			isa = PBXGroup;
+			children = (
+				4C874A90245E032C0026B9D7 /* README.md */,
+				4CAC9F3B246885630031A9EE /* macOS */,
+				4C1A3591245DFEE700C40FB5 /* Importer */,
+				4C1A35A9245DFEE900C40FB5 /* Tests */,
+				4C1A3590245DFEE700C40FB5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4C1A3590245DFEE700C40FB5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4C1A358F245DFEE700C40FB5 /* Movie Archive.app */,
+				4C1A35A6245DFEE900C40FB5 /* macOS Unit Tests.xctest */,
+				4C1A35B1245DFEE900C40FB5 /* macOS UI Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4C1A3591245DFEE700C40FB5 /* Importer */ = {
+			isa = PBXGroup;
+			children = (
+				4C1A3594245DFEE700C40FB5 /* Document.swift */,
+				4C1A3596245DFEE700C40FB5 /* ContentView.swift */,
+			);
+			path = Importer;
+			sourceTree = "<group>";
+		};
+		4C1A35A9245DFEE900C40FB5 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				4C1A35AC245DFEE900C40FB5 /* Info.plist */,
+				4C1A35AA245DFEE900C40FB5 /* UnitTests.swift */,
+				4CAC9F3D24688E880031A9EE /* UITests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		4CAC9F3B246885630031A9EE /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */,
+				4C1A3598245DFEE800C40FB5 /* Assets.xcassets */,
+				4C1A35A0245DFEE800C40FB5 /* Info.plist */,
+				4C1A359D245DFEE800C40FB5 /* Main.storyboard */,
+				4C1A35A1245DFEE800C40FB5 /* MovieArchive.entitlements */,
+			);
+			path = macOS;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4C1A358E245DFEE700C40FB5 /* Movie Archive */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C1A35BA245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "Movie Archive" */;
+			buildPhases = (
+				4C1A358B245DFEE700C40FB5 /* Sources */,
+				4C1A358C245DFEE700C40FB5 /* Frameworks */,
+				4C1A358D245DFEE700C40FB5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Movie Archive";
+			productName = "Movie Archive";
+			productReference = 4C1A358F245DFEE700C40FB5 /* Movie Archive.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4C1A35A5245DFEE900C40FB5 /* macOS Unit Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C1A35BD245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "macOS Unit Tests" */;
+			buildPhases = (
+				4C1A35A2245DFEE900C40FB5 /* Sources */,
+				4C1A35A3245DFEE900C40FB5 /* Frameworks */,
+				4C1A35A4245DFEE900C40FB5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4C1A35A8245DFEE900C40FB5 /* PBXTargetDependency */,
+			);
+			name = "macOS Unit Tests";
+			productName = "Movie ArchiveTests";
+			productReference = 4C1A35A6245DFEE900C40FB5 /* macOS Unit Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4C1A35B0245DFEE900C40FB5 /* macOS UI Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C1A35C0245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "macOS UI Tests" */;
+			buildPhases = (
+				4C1A35AD245DFEE900C40FB5 /* Sources */,
+				4C1A35AE245DFEE900C40FB5 /* Frameworks */,
+				4C1A35AF245DFEE900C40FB5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4C1A35B3245DFEE900C40FB5 /* PBXTargetDependency */,
+			);
+			name = "macOS UI Tests";
+			productName = "Movie ArchiveUITests";
+			productReference = 4C1A35B1245DFEE900C40FB5 /* macOS UI Tests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4C1A3587245DFEE700C40FB5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1140;
+				LastUpgradeCheck = 1140;
+				TargetAttributes = {
+					4C1A358E245DFEE700C40FB5 = {
+						CreatedOnToolsVersion = 11.4.1;
+					};
+					4C1A35A5245DFEE900C40FB5 = {
+						CreatedOnToolsVersion = 11.4.1;
+						TestTargetID = 4C1A358E245DFEE700C40FB5;
+					};
+					4C1A35B0245DFEE900C40FB5 = {
+						CreatedOnToolsVersion = 11.4.1;
+						LastSwiftMigration = 1140;
+						TestTargetID = 4C1A358E245DFEE700C40FB5;
+					};
+				};
+			};
+			buildConfigurationList = 4C1A358A245DFEE700C40FB5 /* Build configuration list for PBXProject "MovieArchive" */;
+			compatibilityVersion = "Xcode 11.4";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4C1A3586245DFEE700C40FB5;
+			productRefGroup = 4C1A3590245DFEE700C40FB5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4C1A358E245DFEE700C40FB5 /* Movie Archive */,
+				4C1A35A5245DFEE900C40FB5 /* macOS Unit Tests */,
+				4C1A35B0245DFEE900C40FB5 /* macOS UI Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4C1A358D245DFEE700C40FB5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C874A91245E032C0026B9D7 /* README.md in Resources */,
+				4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */,
+				4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C1A35A4245DFEE900C40FB5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C1A35AF245DFEE900C40FB5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4C1A358B245DFEE700C40FB5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C1A3595245DFEE700C40FB5 /* Document.swift in Sources */,
+				4C1A3593245DFEE700C40FB5 /* AppDelegate.swift in Sources */,
+				4C1A3597245DFEE700C40FB5 /* ContentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C1A35A2245DFEE900C40FB5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C1A35AB245DFEE900C40FB5 /* UnitTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C1A35AD245DFEE900C40FB5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CAC9F3E24688E880031A9EE /* UITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4C1A35A8245DFEE900C40FB5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C1A358E245DFEE700C40FB5 /* Movie Archive */;
+			targetProxy = 4C1A35A7245DFEE900C40FB5 /* PBXContainerItemProxy */;
+		};
+		4C1A35B3245DFEE900C40FB5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C1A358E245DFEE700C40FB5 /* Movie Archive */;
+			targetProxy = 4C1A35B2245DFEE900C40FB5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		4C1A359D245DFEE800C40FB5 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4C1A359E245DFEE800C40FB5 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4C1A35B8245DFEE900C40FB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_TESTABILITY = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4C1A35B9245DFEE900C40FB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ENABLE_PREVIEWS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		4C1A35BB245DFEE900C40FB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = macOS/MovieArchive.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = macOS/Info.plist;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4C1A35BC245DFEE900C40FB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = macOS/MovieArchive.entitlements;
+				CODE_SIGN_IDENTITY = "Michael Roitzsch";
+				CODE_SIGN_STYLE = Manual;
+				INFOPLIST_FILE = macOS/Info.plist;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4C1A35BE245DFEE900C40FB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Tests/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.unittests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4C1A35BF245DFEE900C40FB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Tests/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.unittests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4C1A35C1245DFEE900C40FB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				INFOPLIST_FILE = Tests/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.uitests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = "Movie Archive";
+			};
+			name = Debug;
+		};
+		4C1A35C2245DFEE900C40FB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				INFOPLIST_FILE = Tests/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.uitests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = "Movie Archive";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4C1A358A245DFEE700C40FB5 /* Build configuration list for PBXProject "MovieArchive" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C1A35B8245DFEE900C40FB5 /* Debug */,
+				4C1A35B9245DFEE900C40FB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C1A35BA245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "Movie Archive" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C1A35BB245DFEE900C40FB5 /* Debug */,
+				4C1A35BC245DFEE900C40FB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C1A35BD245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "macOS Unit Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C1A35BE245DFEE900C40FB5 /* Debug */,
+				4C1A35BF245DFEE900C40FB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C1A35C0245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "macOS UI Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C1A35C1245DFEE900C40FB5 /* Debug */,
+				4C1A35C2245DFEE900C40FB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4C1A3587245DFEE700C40FB5 /* Project object */;
+}
