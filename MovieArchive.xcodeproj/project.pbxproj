@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4C1A3593245DFEE700C40FB5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */; };
-		4C1A3595245DFEE700C40FB5 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* Document.swift */; };
+		4C1A3595245DFEE700C40FB5 /* ImportDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */; };
 		4C1A3597245DFEE700C40FB5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3596245DFEE700C40FB5 /* ContentView.swift */; };
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
 		4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A359D245DFEE800C40FB5 /* Main.storyboard */; };
@@ -37,7 +37,7 @@
 /* Begin PBXFileReference section */
 		4C1A358F245DFEE700C40FB5 /* Movie Archive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Movie Archive.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4C1A3594245DFEE700C40FB5 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
+		4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportDocument.swift; sourceTree = "<group>"; };
 		4C1A3596245DFEE700C40FB5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4C1A3598245DFEE800C40FB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4C1A359E245DFEE800C40FB5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -100,7 +100,6 @@
 		4C1A3591245DFEE700C40FB5 /* Importer */ = {
 			isa = PBXGroup;
 			children = (
-				4C1A3594245DFEE700C40FB5 /* Document.swift */,
 				4C1A3596245DFEE700C40FB5 /* ContentView.swift */,
 			);
 			path = Importer;
@@ -120,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */,
+				4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */,
 				4C1A3598245DFEE800C40FB5 /* Assets.xcassets */,
 				4C1A35A0245DFEE800C40FB5 /* Info.plist */,
 				4C1A359D245DFEE800C40FB5 /* Main.storyboard */,
@@ -259,7 +259,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C1A3595245DFEE700C40FB5 /* Document.swift in Sources */,
+				4C1A3595245DFEE700C40FB5 /* ImportDocument.swift in Sources */,
 				4C1A3593245DFEE700C40FB5 /* AppDelegate.swift in Sources */,
 				4C1A3597245DFEE700C40FB5 /* ContentView.swift in Sources */,
 			);

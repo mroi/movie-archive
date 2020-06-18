@@ -1,14 +1,13 @@
-//
-//  Document.swift
-//  Movie Archive
-//
-//  Created by Michael Roitzsch on 02.05.20.
-//
-
 import Cocoa
 import SwiftUI
 
-class Document: NSDocument {
+
+/// Represents importing content from an external source like a DVD into the archive.
+///
+/// This document is called ‘input’ because this is what the user experiences in the context of the macOS app.
+/// However, internally it uses an importer and an exporter. The importer reads from the external source into
+/// the internal data model. The exporter outputs from the data model to the movie archive storage format.
+class ImportDocument: NSDocument {
 
 	override init() {
 	    super.init()
@@ -49,4 +48,3 @@ class Document: NSDocument {
 
 
 }
-
