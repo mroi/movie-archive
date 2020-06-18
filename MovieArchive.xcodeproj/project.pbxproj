@@ -81,7 +81,7 @@
 			children = (
 				4C874A90245E032C0026B9D7 /* README.md */,
 				4CAC9F3B246885630031A9EE /* macOS */,
-				4C1A3591245DFEE700C40FB5 /* Importer */,
+				4C1A3591245DFEE700C40FB5 /* Importers */,
 				4C1A35A9245DFEE900C40FB5 /* Tests */,
 				4C1A3590245DFEE700C40FB5 /* Products */,
 			);
@@ -97,12 +97,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		4C1A3591245DFEE700C40FB5 /* Importer */ = {
+		4C1A3591245DFEE700C40FB5 /* Importers */ = {
 			isa = PBXGroup;
 			children = (
 				4C1A3596245DFEE700C40FB5 /* ContentView.swift */,
 			);
-			path = Importer;
+			path = Importers;
 			sourceTree = "<group>";
 		};
 		4C1A35A9245DFEE900C40FB5 /* Tests */ = {
