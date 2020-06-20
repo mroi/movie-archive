@@ -11,20 +11,12 @@
 		4C1A3595245DFEE700C40FB5 /* ImportDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */; };
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
 		4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A359D245DFEE800C40FB5 /* Main.storyboard */; };
-		4C1A35AB245DFEE900C40FB5 /* UnitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A35AA245DFEE900C40FB5 /* UnitTests.swift */; };
 		4C1BDC3A249E703100BBF058 /* Importers in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1BDC39249E703100BBF058 /* Importers */; };
 		4C874A91245E032C0026B9D7 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 4C874A90245E032C0026B9D7 /* README.md */; };
-		4CAC9F3E24688E880031A9EE /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UITests.swift */; };
+		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		4C1A35A7245DFEE900C40FB5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4C1A3587245DFEE700C40FB5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4C1A358E245DFEE700C40FB5;
-			remoteInfo = "Movie Archive";
-		};
 		4C1A35B2245DFEE900C40FB5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4C1A3587245DFEE700C40FB5 /* Project object */;
@@ -42,15 +34,13 @@
 		4C1A359E245DFEE800C40FB5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4C1A35A0245DFEE800C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C1A35A1245DFEE800C40FB5 /* MovieArchive.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MovieArchive.entitlements; sourceTree = "<group>"; };
-		4C1A35A6245DFEE900C40FB5 /* macOS Unit Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "macOS Unit Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C1A35AA245DFEE900C40FB5 /* UnitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitTests.swift; sourceTree = "<group>"; };
 		4C1A35AC245DFEE900C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4C1A35B1245DFEE900C40FB5 /* macOS UI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "macOS UI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C1BDC35249E6FB900BBF058 /* Importers */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Importers; sourceTree = "<group>"; };
 		4C392A56249E72E000CD7308 /* Exporters */ = {isa = PBXFileReference; lastKnownFileType = text; path = Exporters; sourceTree = SOURCE_ROOT; };
 		4C392A57249E72E000CD7308 /* Model */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model; sourceTree = SOURCE_ROOT; };
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		4CAC9F3D24688E880031A9EE /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
+		4CAC9F3D24688E880031A9EE /* UIMacOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMacOS.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,13 +49,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C1BDC3A249E703100BBF058 /* Importers in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4C1A35A3245DFEE900C40FB5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,8 +79,7 @@
 			isa = PBXGroup;
 			children = (
 				4C1A358F245DFEE700C40FB5 /* Movie Archive.app */,
-				4C1A35A6245DFEE900C40FB5 /* macOS Unit Tests.xctest */,
-				4C1A35B1245DFEE900C40FB5 /* macOS UI Tests.xctest */,
+				4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -106,8 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				4C1A35AC245DFEE900C40FB5 /* Info.plist */,
-				4C1A35AA245DFEE900C40FB5 /* UnitTests.swift */,
-				4CAC9F3D24688E880031A9EE /* UITests.swift */,
+				4CAC9F3D24688E880031A9EE /* UIMacOS.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -148,27 +129,9 @@
 			productReference = 4C1A358F245DFEE700C40FB5 /* Movie Archive.app */;
 			productType = "com.apple.product-type.application";
 		};
-		4C1A35A5245DFEE900C40FB5 /* macOS Unit Tests */ = {
+		4C1A35B0245DFEE900C40FB5 /* Tests macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4C1A35BD245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "macOS Unit Tests" */;
-			buildPhases = (
-				4C1A35A2245DFEE900C40FB5 /* Sources */,
-				4C1A35A3245DFEE900C40FB5 /* Frameworks */,
-				4C1A35A4245DFEE900C40FB5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4C1A35A8245DFEE900C40FB5 /* PBXTargetDependency */,
-			);
-			name = "macOS Unit Tests";
-			productName = "Movie ArchiveTests";
-			productReference = 4C1A35A6245DFEE900C40FB5 /* macOS Unit Tests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		4C1A35B0245DFEE900C40FB5 /* macOS UI Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4C1A35C0245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "macOS UI Tests" */;
+			buildConfigurationList = 4C1A35C0245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "Tests macOS" */;
 			buildPhases = (
 				4C1A35AD245DFEE900C40FB5 /* Sources */,
 				4C1A35AE245DFEE900C40FB5 /* Frameworks */,
@@ -179,9 +142,9 @@
 			dependencies = (
 				4C1A35B3245DFEE900C40FB5 /* PBXTargetDependency */,
 			);
-			name = "macOS UI Tests";
+			name = "Tests macOS";
 			productName = "Movie ArchiveUITests";
-			productReference = 4C1A35B1245DFEE900C40FB5 /* macOS UI Tests.xctest */;
+			productReference = 4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -195,10 +158,6 @@
 				TargetAttributes = {
 					4C1A358E245DFEE700C40FB5 = {
 						CreatedOnToolsVersion = 11.4.1;
-					};
-					4C1A35A5245DFEE900C40FB5 = {
-						CreatedOnToolsVersion = 11.4.1;
-						TestTargetID = 4C1A358E245DFEE700C40FB5;
 					};
 					4C1A35B0245DFEE900C40FB5 = {
 						CreatedOnToolsVersion = 11.4.1;
@@ -221,8 +180,7 @@
 			projectRoot = "";
 			targets = (
 				4C1A358E245DFEE700C40FB5 /* Movie Archive */,
-				4C1A35A5245DFEE900C40FB5 /* macOS Unit Tests */,
-				4C1A35B0245DFEE900C40FB5 /* macOS UI Tests */,
+				4C1A35B0245DFEE900C40FB5 /* Tests macOS */,
 			);
 		};
 /* End PBXProject section */
@@ -235,13 +193,6 @@
 				4C874A91245E032C0026B9D7 /* README.md in Resources */,
 				4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */,
 				4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4C1A35A4245DFEE900C40FB5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,30 +215,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4C1A35A2245DFEE900C40FB5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4C1A35AB245DFEE900C40FB5 /* UnitTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		4C1A35AD245DFEE900C40FB5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4CAC9F3E24688E880031A9EE /* UITests.swift in Sources */,
+				4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		4C1A35A8245DFEE900C40FB5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4C1A358E245DFEE700C40FB5 /* Movie Archive */;
-			targetProxy = 4C1A35A7245DFEE900C40FB5 /* PBXContainerItemProxy */;
-		};
 		4C1A35B3245DFEE900C40FB5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4C1A358E245DFEE700C40FB5 /* Movie Archive */;
@@ -359,32 +297,12 @@
 			};
 			name = Release;
 		};
-		4C1A35BE245DFEE900C40FB5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = Tests/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.unittests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		4C1A35BF245DFEE900C40FB5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = Tests/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.unittests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
 		4C1A35C1245DFEE900C40FB5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = Tests/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.uitests";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				TEST_TARGET_NAME = "Movie Archive";
@@ -396,7 +314,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = Tests/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.uitests";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				TEST_TARGET_NAME = "Movie Archive";
@@ -424,16 +342,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4C1A35BD245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "macOS Unit Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4C1A35BE245DFEE900C40FB5 /* Debug */,
-				4C1A35BF245DFEE900C40FB5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4C1A35C0245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "macOS UI Tests" */ = {
+		4C1A35C0245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "Tests macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4C1A35C1245DFEE900C40FB5 /* Debug */,
