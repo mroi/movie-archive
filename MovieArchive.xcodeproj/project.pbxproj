@@ -9,10 +9,10 @@
 /* Begin PBXBuildFile section */
 		4C1A3593245DFEE700C40FB5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */; };
 		4C1A3595245DFEE700C40FB5 /* ImportDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */; };
-		4C1A3597245DFEE700C40FB5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3596245DFEE700C40FB5 /* ContentView.swift */; };
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
 		4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A359D245DFEE800C40FB5 /* Main.storyboard */; };
 		4C1A35AB245DFEE900C40FB5 /* UnitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A35AA245DFEE900C40FB5 /* UnitTests.swift */; };
+		4C1BDC3A249E703100BBF058 /* Importers in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1BDC39249E703100BBF058 /* Importers */; };
 		4C874A91245E032C0026B9D7 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 4C874A90245E032C0026B9D7 /* README.md */; };
 		4CAC9F3E24688E880031A9EE /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UITests.swift */; };
 /* End PBXBuildFile section */
@@ -38,7 +38,6 @@
 		4C1A358F245DFEE700C40FB5 /* Movie Archive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Movie Archive.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportDocument.swift; sourceTree = "<group>"; };
-		4C1A3596245DFEE700C40FB5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4C1A3598245DFEE800C40FB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4C1A359E245DFEE800C40FB5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4C1A35A0245DFEE800C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -47,6 +46,9 @@
 		4C1A35AA245DFEE900C40FB5 /* UnitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitTests.swift; sourceTree = "<group>"; };
 		4C1A35AC245DFEE900C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C1A35B1245DFEE900C40FB5 /* macOS UI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "macOS UI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C1BDC35249E6FB900BBF058 /* Importers */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Importers; sourceTree = "<group>"; };
+		4C392A56249E72E000CD7308 /* Exporters */ = {isa = PBXFileReference; lastKnownFileType = text; path = Exporters; sourceTree = SOURCE_ROOT; };
+		4C392A57249E72E000CD7308 /* Model */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model; sourceTree = SOURCE_ROOT; };
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4CAC9F3D24688E880031A9EE /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -56,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C1BDC3A249E703100BBF058 /* Importers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,7 +84,9 @@
 			children = (
 				4C874A90245E032C0026B9D7 /* README.md */,
 				4CAC9F3B246885630031A9EE /* macOS */,
-				4C1A3591245DFEE700C40FB5 /* Importers */,
+				4C392A57249E72E000CD7308 /* Model */,
+				4C1BDC35249E6FB900BBF058 /* Importers */,
+				4C392A56249E72E000CD7308 /* Exporters */,
 				4C1A35A9245DFEE900C40FB5 /* Tests */,
 				4C1A3590245DFEE700C40FB5 /* Products */,
 			);
@@ -95,14 +100,6 @@
 				4C1A35B1245DFEE900C40FB5 /* macOS UI Tests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		4C1A3591245DFEE700C40FB5 /* Importers */ = {
-			isa = PBXGroup;
-			children = (
-				4C1A3596245DFEE700C40FB5 /* ContentView.swift */,
-			);
-			path = Importers;
 			sourceTree = "<group>";
 		};
 		4C1A35A9245DFEE900C40FB5 /* Tests */ = {
@@ -144,6 +141,9 @@
 			dependencies = (
 			);
 			name = "Movie Archive";
+			packageProductDependencies = (
+				4C1BDC39249E703100BBF058 /* Importers */,
+			);
 			productName = "Movie Archive";
 			productReference = 4C1A358F245DFEE700C40FB5 /* Movie Archive.app */;
 			productType = "com.apple.product-type.application";
@@ -261,7 +261,6 @@
 			files = (
 				4C1A3595245DFEE700C40FB5 /* ImportDocument.swift in Sources */,
 				4C1A3593245DFEE700C40FB5 /* AppDelegate.swift in Sources */,
-				4C1A3597245DFEE700C40FB5 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,6 +443,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4C1BDC39249E703100BBF058 /* Importers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Importers;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4C1A3587245DFEE700C40FB5 /* Project object */;
 }

@@ -1,6 +1,8 @@
 import Cocoa
 import SwiftUI
 
+import MovieArchiveImporters
+
 
 /// Represents importing content from an external source like a DVD into the archive.
 ///
