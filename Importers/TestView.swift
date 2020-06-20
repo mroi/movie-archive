@@ -1,8 +1,8 @@
 import SwiftUI
 
 
-public struct ContentView: View {
-	public init() {}
+public struct TestView: View {
+	public static let `default`: NSView = NSHostingView(rootView: TestView())
 	public var body: some View {
 		Text("Hello, World!")
 			.frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -10,8 +10,8 @@ public struct ContentView: View {
 }
 
 
-struct ContentView_Previews: PreviewProvider {
+struct TestView_Previews: PreviewProvider {
 	static var previews: some View {
-		ContentView()
+		TestView()
 	}
 }
