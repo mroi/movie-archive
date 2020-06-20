@@ -1,0 +1,3 @@
+[submodule "Dependencies/HandBrake"]
+	path = Dependencies/HandBrake
+	url = https://github.com/HandBrake/HandBrake.git
