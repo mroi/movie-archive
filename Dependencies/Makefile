@@ -13,10 +13,10 @@ all: $(BUILD)/HandBrake/libhandbrake.a $(if $(wildcard libdvdcss),$(BUILD)/libdv
 
 $(BUILD)/HandBrake/libhandbrake.a: $(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(arch)/libhb/libhandbrake.a)
 	lipo $^ -create -output $@
-	for lib in $(addsuffix /../contrib/lib/*.a,$(<D)) ; do \
+	for lib in $(addsuffix /../contrib/lib/lib*.a,$(<D)) ; do \
 		lib=`basename $$lib` ; lipo $(addsuffix /../contrib/lib/$$lib,$(^D)) -create -output $(@D)/$$lib ; \
 	done
-	$(foreach arch,$(ARCHS),$(MAKE) -C $(BUILD)/HandBrake/$(arch) contrib.clean libhb.clean ;)
+	find $(@D) -mindepth 1 ! -path "$(@D)/lib*.a" $(foreach arch,$(ARCHS),! -path "$(@D)/$(arch)/contrib/include/*" ! -path "$(@D)/$(arch)/libhb/handbrake/*") -delete
 	rm -rf HandBrake/download
 
 $(BUILD)/HandBrake/%/libhb/libhandbrake.a: $(BUILD)/HandBrake/%/GNUmakefile
