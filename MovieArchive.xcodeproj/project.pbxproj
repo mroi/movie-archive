@@ -12,7 +12,6 @@
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
 		4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A359D245DFEE800C40FB5 /* Main.storyboard */; };
 		4C1BDC3A249E703100BBF058 /* Importers in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1BDC39249E703100BBF058 /* Importers */; };
-		4C874A91245E032C0026B9D7 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 4C874A90245E032C0026B9D7 /* README.md */; };
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
 /* End PBXBuildFile section */
 
@@ -221,7 +220,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C874A91245E032C0026B9D7 /* README.md in Resources */,
 				4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */,
 				4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */,
 			);
