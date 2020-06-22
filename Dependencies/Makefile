@@ -29,13 +29,15 @@ $(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure ../.git/modules/Dependenci
 	$(abspath $<) --arch=$* --optimize=$$optimize --debug=$$debug --disable-xcode
 
 
-.INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/src/.libs/libdvdcss.2.dylib $(BUILD)/libdvdcss/$(arch)/Makefile libdvdcss/configure)
+.INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/.libs/libdvdcss.2.dylib $(BUILD)/libdvdcss/$(arch)/Makefile)
+.PRECIOUS: libdvdcss/configure
 
-$(BUILD)/libdvdcss/libdvdcss.2.dylib: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/src/.libs/libdvdcss.2.dylib)
+$(BUILD)/libdvdcss/libdvdcss.2.dylib: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/.libs/libdvdcss.2.dylib)
 	lipo $^ -create -output $@
 	$(foreach arch,$(ARCHS),$(MAKE) -C $(BUILD)/libdvdcss/$(arch) maintainer-clean ;)
+	find $(@D) -type d -empty -delete
 
-$(BUILD)/libdvdcss/%/src/.libs/libdvdcss.2.dylib: $(BUILD)/libdvdcss/%/Makefile
+$(BUILD)/libdvdcss/%/.libs/libdvdcss.2.dylib: $(BUILD)/libdvdcss/%/Makefile
 	$(MAKE) $(JOBS) -C $(<D)
 
 $(BUILD)/libdvdcss/%/Makefile: libdvdcss/configure
@@ -46,7 +48,7 @@ $(BUILD)/libdvdcss/%/Makefile: libdvdcss/configure
 	$(abspath $<) --host=$*-apple-darwin10 CFLAGS="$$arch $$optimize $$debug"
 
 libdvdcss/configure: ../.git/modules/Dependencies/libdvdcss/HEAD
-	cd $(@D) ; ./bootstrap
+	cd $(@D) ; autoreconf -i
 
 
 clean:
