@@ -11,4 +11,5 @@ bonus clips can be watched in any recent web browser as well.
 
 ___
 This work is licensed under the [GNU GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
+The [player components](https://github.com/mroi/movie-archive/tree/master/Players) are licensed under [MPLv2](https://www.mozilla.org/en-US/MPL/2.0/) for compatibility with the App Store.
 Nothing in this work handles copy-protected DVDs, you have to [deal with the CSS copy-protection](http://www.videolan.org/developers/libdvdcss.html) yourself.

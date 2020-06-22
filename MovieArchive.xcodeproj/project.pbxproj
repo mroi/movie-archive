@@ -24,6 +24,13 @@
 			remoteGlobalIDString = 4C1A358E245DFEE700C40FB5;
 			remoteInfo = "Movie Archive";
 		};
+		4CEEFEEC24A0B11100C0357D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C1A3587245DFEE700C40FB5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CAA9C76249E8D96005EB90A;
+			remoteInfo = Dependencies;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +47,7 @@
 		4C392A56249E72E000CD7308 /* Exporters */ = {isa = PBXFileReference; lastKnownFileType = text; path = Exporters; sourceTree = SOURCE_ROOT; };
 		4C392A57249E72E000CD7308 /* Model */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model; sourceTree = SOURCE_ROOT; };
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		4CAA9C7A249E8DBD005EB90A /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		4CAC9F3D24688E880031A9EE /* UIMacOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMacOS.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -71,6 +79,7 @@
 				4C1BDC35249E6FB900BBF058 /* Importers */,
 				4C392A56249E72E000CD7308 /* Exporters */,
 				4C1A35A9245DFEE900C40FB5 /* Tests */,
+				4CAA9C7A249E8DBD005EB90A /* Dependencies */,
 				4C1A3590245DFEE700C40FB5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,6 +117,23 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXLegacyTarget section */
+		4CAA9C76249E8D96005EB90A /* Dependencies */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 4CAA9C79249E8D96005EB90A /* Build configuration list for PBXLegacyTarget "Dependencies" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "$(PROJECT_DIR)/Dependencies";
+			dependencies = (
+			);
+			name = Dependencies;
+			passBuildSettingsInEnvironment = 1;
+			productName = Dependencies;
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
 		4C1A358E245DFEE700C40FB5 /* Movie Archive */ = {
 			isa = PBXNativeTarget;
@@ -120,6 +146,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4CEEFEED24A0B11100C0357D /* PBXTargetDependency */,
 			);
 			name = "Movie Archive";
 			packageProductDependencies = (
@@ -164,6 +191,9 @@
 						LastSwiftMigration = 1140;
 						TestTargetID = 4C1A358E245DFEE700C40FB5;
 					};
+					4CAA9C76249E8D96005EB90A = {
+						CreatedOnToolsVersion = 11.5;
+					};
 				};
 			};
 			buildConfigurationList = 4C1A358A245DFEE700C40FB5 /* Build configuration list for PBXProject "MovieArchive" */;
@@ -179,6 +209,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				4CAA9C76249E8D96005EB90A /* Dependencies */,
 				4C1A358E245DFEE700C40FB5 /* Movie Archive */,
 				4C1A35B0245DFEE900C40FB5 /* Tests macOS */,
 			);
@@ -230,6 +261,11 @@
 			isa = PBXTargetDependency;
 			target = 4C1A358E245DFEE700C40FB5 /* Movie Archive */;
 			targetProxy = 4C1A35B2245DFEE900C40FB5 /* PBXContainerItemProxy */;
+		};
+		4CEEFEED24A0B11100C0357D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4CAA9C76249E8D96005EB90A /* Dependencies */;
+			targetProxy = 4CEEFEEC24A0B11100C0357D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -321,6 +357,20 @@
 			};
 			name = Release;
 		};
+		4CAA9C77249E8D96005EB90A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+			};
+			name = Debug;
+		};
+		4CAA9C78249E8D96005EB90A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -347,6 +397,15 @@
 			buildConfigurations = (
 				4C1A35C1245DFEE900C40FB5 /* Debug */,
 				4C1A35C2245DFEE900C40FB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CAA9C79249E8D96005EB90A /* Build configuration list for PBXLegacyTarget "Dependencies" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CAA9C77249E8D96005EB90A /* Debug */,
+				4CAA9C78249E8D96005EB90A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
