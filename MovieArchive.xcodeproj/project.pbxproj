@@ -48,6 +48,7 @@
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4CAA9C7A249E8DBD005EB90A /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		4CAC9F3D24688E880031A9EE /* UIMacOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMacOS.swift; sourceTree = "<group>"; };
+		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +78,7 @@
 				4C392A57249E72E000CD7308 /* Model */,
 				4C1BDC35249E6FB900BBF058 /* Importers */,
 				4C392A56249E72E000CD7308 /* Exporters */,
+				4CEEFEEE24A0FDE400C0357D /* Players */,
 				4C1A35A9245DFEE900C40FB5 /* Tests */,
 				4CAA9C7A249E8DBD005EB90A /* Dependencies */,
 				4C1A3590245DFEE700C40FB5 /* Products */,
