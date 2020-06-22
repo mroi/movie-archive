@@ -1,6 +1,7 @@
 SHELL = ./shell.sh
 ARCHS ?= x86_64
 CONFIGURATION ?= Debug
+JOBS = -j$(shell sysctl -n hw.activecpu)
 BUILD = Build/$(CONFIGURATION)
 
 all: $(BUILD)/HandBrake/libhandbrake.a $(if $(wildcard libdvdcss),$(BUILD)/libdvdcss/libdvdcss.2.dylib)
@@ -19,7 +20,7 @@ $(BUILD)/HandBrake/libhandbrake.a: $(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(
 	rm -rf HandBrake/download
 
 $(BUILD)/HandBrake/%/libhb/libhandbrake.a: $(BUILD)/HandBrake/%/GNUmakefile
-	$(MAKE) -C $(<D) libhb.build
+	$(MAKE) $(JOBS) -C $(<D) libhb.build
 
 $(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure ../.git/modules/Dependencies/HandBrake/HEAD
 	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
@@ -35,7 +36,7 @@ $(BUILD)/libdvdcss/libdvdcss.2.dylib: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss
 	$(foreach arch,$(ARCHS),$(MAKE) -C $(BUILD)/libdvdcss/$(arch) maintainer-clean ;)
 
 $(BUILD)/libdvdcss/%/src/.libs/libdvdcss.2.dylib: $(BUILD)/libdvdcss/%/Makefile
-	$(MAKE) -C $(<D)
+	$(MAKE) $(JOBS) -C $(<D)
 
 $(BUILD)/libdvdcss/%/Makefile: libdvdcss/configure
 	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
