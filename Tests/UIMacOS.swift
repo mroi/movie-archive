@@ -1,9 +1,12 @@
 import XCTest
 
+
 class UIMacOS: XCTestCase {
 
-    override func setUp() {
-        continueAfterFailure = false
-        XCUIApplication().launch()
-    }
+	let app = XCUIApplication()
+
+	override func setUp() {
+		continueAfterFailure = false
+		app.launch()
+	}
 }
