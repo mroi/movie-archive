@@ -7,10 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4C1A3593245DFEE700C40FB5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */; };
+		4C1A3593245DFEE700C40FB5 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* App.swift */; };
 		4C1A3595245DFEE700C40FB5 /* ImportDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */; };
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
-		4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A359D245DFEE800C40FB5 /* Main.storyboard */; };
 		4C1BDC3A249E703100BBF058 /* Importers in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1BDC39249E703100BBF058 /* Importers */; };
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
 		4CEEFEFA24A108ED00C0357D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEEFEF924A108ED00C0357D /* main.swift */; };
@@ -64,10 +63,9 @@
 
 /* Begin PBXFileReference section */
 		4C1A358F245DFEE700C40FB5 /* Movie Archive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Movie Archive.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4C1A3592245DFEE700C40FB5 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportDocument.swift; sourceTree = "<group>"; };
 		4C1A3598245DFEE800C40FB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4C1A359E245DFEE800C40FB5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4C1A35A0245DFEE800C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C1A35A1245DFEE800C40FB5 /* MovieArchive.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MovieArchive.entitlements; sourceTree = "<group>"; };
 		4C1A35AC245DFEE900C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -148,11 +146,10 @@
 		4CAC9F3B246885630031A9EE /* macOS */ = {
 			isa = PBXGroup;
 			children = (
-				4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */,
+				4C1A3592245DFEE700C40FB5 /* App.swift */,
 				4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */,
 				4C1A3598245DFEE800C40FB5 /* Assets.xcassets */,
 				4C1A35A0245DFEE800C40FB5 /* Info.plist */,
-				4C1A359D245DFEE800C40FB5 /* Main.storyboard */,
 				4C1A35A1245DFEE800C40FB5 /* MovieArchive.entitlements */,
 			);
 			path = macOS;
@@ -297,7 +294,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */,
 				4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -324,7 +320,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C1A3595245DFEE700C40FB5 /* ImportDocument.swift in Sources */,
-				4C1A3593245DFEE700C40FB5 /* AppDelegate.swift in Sources */,
+				4C1A3593245DFEE700C40FB5 /* App.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,17 +365,6 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		4C1A359D245DFEE800C40FB5 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4C1A359E245DFEE800C40FB5 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		4C1A35B8245DFEE900C40FB5 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -389,7 +374,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTABILITY = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.16;
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -403,7 +388,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.16;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
