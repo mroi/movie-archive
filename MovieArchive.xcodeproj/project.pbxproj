@@ -71,6 +71,7 @@
 		4C1A35AC245DFEE900C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C1BDC35249E6FB900BBF058 /* Importers */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Importers; sourceTree = "<group>"; };
+		4C1E153724BB9E96000897F9 /* MovieArchive.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MovieArchive.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		4C392A56249E72E000CD7308 /* Exporters */ = {isa = PBXFileReference; lastKnownFileType = text; path = Exporters; sourceTree = SOURCE_ROOT; };
 		4C392A57249E72E000CD7308 /* Model */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model; sourceTree = SOURCE_ROOT; };
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -112,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				4C874A90245E032C0026B9D7 /* README.md */,
+				4C1E153724BB9E96000897F9 /* MovieArchive.playground */,
 				4CAC9F3B246885630031A9EE /* macOS */,
 				4C392A57249E72E000CD7308 /* Model */,
 				4C1BDC35249E6FB900BBF058 /* Importers */,
