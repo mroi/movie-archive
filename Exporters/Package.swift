@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
 	name: "Exporters",
 	platforms: [
-		.macOS(.v10_16)
+		.macOS(.v11)
 	],
 	products: [
 //		.library(name: "Exporters", type: .static, targets: ["MovieArchiveExporters"]),
