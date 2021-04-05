@@ -43,6 +43,9 @@ Players are separate from the model, importer, and exporter layers and present U
 the stored movies.
 
 ___
-This work is licensed under the [GNU GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) unless otherwise noted.
-The [player components](https://github.com/mroi/movie-archive/tree/master/Players) are licensed under [MPLv2](https://www.mozilla.org/en-US/MPL/2.0/) for compatibility with the App Store.
-Nothing in this work handles copy-protected DVDs, you have to [deal with the CSS copy-protection](http://www.videolan.org/developers/libdvdcss.html) yourself.
+This work is licensed under [MPLv2](https://www.mozilla.org/en-US/MPL/2.0/) for 
+compatibility with the App Store. The [XPCConverter](XPCConverter) links against code 
+licensed under [GNU GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) and is 
+thus covered by this license. Nothing in this work handles copy-protected DVDs, you have to 
+[deal with the CSS copy-protection](http://www.videolan.org/developers/libdvdcss.html) 
+yourself.
