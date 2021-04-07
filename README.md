@@ -15,20 +15,21 @@ Code Structure
 These modules form the architectural layers of the application:
 
 **Model**  
-The core data structures store a tree of movie assets and menus. The data model includes 
+The central data structures store a tree of media assets and menus. The data model includes 
 facilities to manipulate it, but it is not concerned with how and why these manipulations 
-take place. Manipulations are conducted as a work queue of tree operators. The data model 
-tree is value-typed, but may contain reference-typed payload.
+take place. Manipulations are conducted as a work queue of tree passes. The data model tree 
+is value-typed, but may contain reference-typed payload.
 
 **Importers**  
 This module implements the use case of importing from external representations like DVDs to 
 the internal data model. Initially, the entire DVD structures are imported into one opaque 
-model node, then tree operators are executed to transform the imported data into a useful 
-model representation.
+model node, then tree passes are executed to break this structure down into a clean model 
+representation.
 
 **Exporters**  
 Exporting will convert the internal data model to an on-disk representation. The canonical 
-export is to encode M4V files and write out the JSON menu files.
+export is to encode M4V files and write out JSON menu files to include the movie in the 
+archive library.
 
 **XPCConverter**  
 All external libraries like `libdvdread` or `libhandbrake` run in isolation within this XPC 

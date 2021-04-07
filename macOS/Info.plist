@@ -10,14 +10,14 @@
 			<key>CFBundleTypeIconFile</key>
 			<string></string>
 			<key>CFBundleTypeName</key>
-			<string>Import</string>
+			<string>Ingest</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSHandlerRank</key>
 			<string>Default</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>de.reactorcontrol.movie-archive.import</string>
+				<string>de.reactorcontrol.movie-archive.ingest</string>
 			</array>
 			<key>NSDocumentClass</key>
 			<string></string>
@@ -45,11 +45,11 @@
 	<array>
 		<dict>
 			<key>UTTypeDescription</key>
-			<string>Import</string>
+			<string>Ingest</string>
 			<key>UTTypeIcons</key>
 			<dict/>
 			<key>UTTypeIdentifier</key>
-			<string>de.reactorcontrol.movie-archive.import</string>
+			<string>de.reactorcontrol.movie-archive.ingest</string>
 			<key>UTTypeTagSpecification</key>
 			<dict/>
 		</dict>

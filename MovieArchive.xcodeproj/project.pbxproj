@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4C1A3593245DFEE700C40FB5 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* App.swift */; };
-		4C1A3595245DFEE700C40FB5 /* ImportDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */; };
+		4C1A3595245DFEE700C40FB5 /* IngestDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */; };
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
 		4C1BDC3A249E703100BBF058 /* Importers in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1BDC39249E703100BBF058 /* Importers */; };
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
@@ -64,7 +64,7 @@
 /* Begin PBXFileReference section */
 		4C1A358F245DFEE700C40FB5 /* Movie Archive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Movie Archive.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C1A3592245DFEE700C40FB5 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
-		4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportDocument.swift; sourceTree = "<group>"; };
+		4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngestDocument.swift; sourceTree = "<group>"; };
 		4C1A3598245DFEE800C40FB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4C1A35A0245DFEE800C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C1A35A1245DFEE800C40FB5 /* MovieArchive.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MovieArchive.entitlements; sourceTree = "<group>"; };
@@ -149,7 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				4C1A3592245DFEE700C40FB5 /* App.swift */,
-				4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */,
+				4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */,
 				4C1A3598245DFEE800C40FB5 /* Assets.xcassets */,
 				4C1A35A0245DFEE800C40FB5 /* Info.plist */,
 				4C1A35A1245DFEE800C40FB5 /* MovieArchive.entitlements */,
@@ -321,7 +321,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C1A3595245DFEE700C40FB5 /* ImportDocument.swift in Sources */,
+				4C1A3595245DFEE700C40FB5 /* IngestDocument.swift in Sources */,
 				4C1A3593245DFEE700C40FB5 /* App.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
