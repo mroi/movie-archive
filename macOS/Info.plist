@@ -41,17 +41,27 @@
 	<string>public.app-category.video</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
-	<key>UTImportedTypeDeclarations</key>
+	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
 			<key>UTTypeDescription</key>
-			<string>Ingest</string>
+			<string>Ingest Document</string>
 			<key>UTTypeIcons</key>
 			<dict/>
 			<key>UTTypeIdentifier</key>
 			<string>de.reactorcontrol.movie-archive.ingest</string>
 			<key>UTTypeTagSpecification</key>
-			<dict/>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>ingest</string>
+				</array>
+			</dict>
 		</dict>
 	</array>
 </dict>
