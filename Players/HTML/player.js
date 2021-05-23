@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference path="hls.d.ts" />
 
 // @ts-expect-error
 if (error) throw Error("browser incompatible");
