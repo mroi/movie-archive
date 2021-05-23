@@ -9,11 +9,10 @@ document.documentElement.style.fontFamily = "system-ui, sans-serif";
 document.documentElement.style.backgroundColor = "black";
 document.documentElement.style.color = "white";
 
-// check browser support for CSS min(), which is the most cutting-edge feature needed
-document.documentElement.style.width = "min(2px, 1px)";
-var result = getComputedStyle(document.documentElement, null).width;
-document.documentElement.style.width = "";
-if (result != "1px") {
+// check browser support for String.replaceAll()
+// http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll
+// Although we may not use this feature directly, support for it subsumes other modern features we do use.
+if (!("replaceAll" in String.prototype)) {
 	// show error message
 	var translations = {
 		"de": "Bitte aktualisiere Deinen Browser, er unterstützt diesen Player nicht.",
