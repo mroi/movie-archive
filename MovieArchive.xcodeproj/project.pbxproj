@@ -3,16 +3,17 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4C1A3593245DFEE700C40FB5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */; };
-		4C1A3595245DFEE700C40FB5 /* ImportDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */; };
+		4C1A3593245DFEE700C40FB5 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* App.swift */; };
+		4C1A3595245DFEE700C40FB5 /* IngestDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */; };
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
-		4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A359D245DFEE800C40FB5 /* Main.storyboard */; };
 		4C1BDC3A249E703100BBF058 /* Importers in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1BDC39249E703100BBF058 /* Importers */; };
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
+		4CEEFEFA24A108ED00C0357D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEEFEF924A108ED00C0357D /* main.swift */; };
+		4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -23,6 +24,13 @@
 			remoteGlobalIDString = 4C1A358E245DFEE700C40FB5;
 			remoteInfo = "Movie Archive";
 		};
+		4CD333F324A25A3A00CF1786 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C1A3587245DFEE700C40FB5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CAA9C76249E8D96005EB90A;
+			remoteInfo = Dependencies;
+		};
 		4CEEFEEC24A0B11100C0357D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4C1A3587245DFEE700C40FB5 /* Project object */;
@@ -30,25 +38,49 @@
 			remoteGlobalIDString = 4CAA9C76249E8D96005EB90A;
 			remoteInfo = Dependencies;
 		};
+		4CEEFF0324A10A0600C0357D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C1A3587245DFEE700C40FB5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CEEFEF224A108EC00C0357D;
+			remoteInfo = Converter;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4CEEFEFE24A108ED00C0357D /* Embed XPC Services */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
+			files = (
+				4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Services */,
+			);
+			name = "Embed XPC Services";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		4C1A358F245DFEE700C40FB5 /* Movie Archive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Movie Archive.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportDocument.swift; sourceTree = "<group>"; };
+		4C1A3592245DFEE700C40FB5 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngestDocument.swift; sourceTree = "<group>"; };
 		4C1A3598245DFEE800C40FB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4C1A359E245DFEE800C40FB5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4C1A35A0245DFEE800C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C1A35A1245DFEE800C40FB5 /* MovieArchive.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MovieArchive.entitlements; sourceTree = "<group>"; };
 		4C1A35AC245DFEE900C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C1BDC35249E6FB900BBF058 /* Importers */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Importers; sourceTree = "<group>"; };
+		4C1E153724BB9E96000897F9 /* MovieArchive.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MovieArchive.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		4C392A56249E72E000CD7308 /* Exporters */ = {isa = PBXFileReference; lastKnownFileType = text; path = Exporters; sourceTree = SOURCE_ROOT; };
 		4C392A57249E72E000CD7308 /* Model */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model; sourceTree = SOURCE_ROOT; };
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4CAA9C7A249E8DBD005EB90A /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		4CAC9F3D24688E880031A9EE /* UIMacOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMacOS.swift; sourceTree = "<group>"; };
 		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
+		4CEEFEF324A108EC00C0357D /* Converter.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = Converter.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CEEFEF924A108ED00C0357D /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		4CEEFEFB24A108ED00C0357D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +99,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4CEEFEF024A108EC00C0357D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -74,11 +113,13 @@
 			isa = PBXGroup;
 			children = (
 				4C874A90245E032C0026B9D7 /* README.md */,
+				4C1E153724BB9E96000897F9 /* MovieArchive.playground */,
 				4CAC9F3B246885630031A9EE /* macOS */,
 				4C392A57249E72E000CD7308 /* Model */,
 				4C1BDC35249E6FB900BBF058 /* Importers */,
 				4C392A56249E72E000CD7308 /* Exporters */,
 				4CEEFEEE24A0FDE400C0357D /* Players */,
+				4CEEFEF424A108EC00C0357D /* XPCConverter */,
 				4C1A35A9245DFEE900C40FB5 /* Tests */,
 				4CAA9C7A249E8DBD005EB90A /* Dependencies */,
 				4C1A3590245DFEE700C40FB5 /* Products */,
@@ -88,6 +129,7 @@
 		4C1A3590245DFEE700C40FB5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				4CEEFEF324A108EC00C0357D /* Converter.xpc */,
 				4C1A358F245DFEE700C40FB5 /* Movie Archive.app */,
 				4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */,
 			);
@@ -106,14 +148,22 @@
 		4CAC9F3B246885630031A9EE /* macOS */ = {
 			isa = PBXGroup;
 			children = (
-				4C1A3592245DFEE700C40FB5 /* AppDelegate.swift */,
-				4C1A3594245DFEE700C40FB5 /* ImportDocument.swift */,
+				4C1A3592245DFEE700C40FB5 /* App.swift */,
+				4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */,
 				4C1A3598245DFEE800C40FB5 /* Assets.xcassets */,
 				4C1A35A0245DFEE800C40FB5 /* Info.plist */,
-				4C1A359D245DFEE800C40FB5 /* Main.storyboard */,
 				4C1A35A1245DFEE800C40FB5 /* MovieArchive.entitlements */,
 			);
 			path = macOS;
+			sourceTree = "<group>";
+		};
+		4CEEFEF424A108EC00C0357D /* XPCConverter */ = {
+			isa = PBXGroup;
+			children = (
+				4CEEFEFB24A108ED00C0357D /* Info.plist */,
+				4CEEFEF924A108ED00C0357D /* main.swift */,
+			);
+			path = XPCConverter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,11 +193,13 @@
 				4C1A358B245DFEE700C40FB5 /* Sources */,
 				4C1A358C245DFEE700C40FB5 /* Frameworks */,
 				4C1A358D245DFEE700C40FB5 /* Resources */,
+				4CEEFEFE24A108ED00C0357D /* Embed XPC Services */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				4CEEFEED24A0B11100C0357D /* PBXTargetDependency */,
+				4CEEFF0424A10A0600C0357D /* PBXTargetDependency */,
 			);
 			name = "Movie Archive";
 			packageProductDependencies = (
@@ -175,6 +227,24 @@
 			productReference = 4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		4CEEFEF224A108EC00C0357D /* Converter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CEEFF0024A108ED00C0357D /* Build configuration list for PBXNativeTarget "Converter" */;
+			buildPhases = (
+				4CEEFEEF24A108EC00C0357D /* Sources */,
+				4CEEFEF024A108EC00C0357D /* Frameworks */,
+				4CEEFEF124A108EC00C0357D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4CD333F424A25A3A00CF1786 /* PBXTargetDependency */,
+			);
+			name = Converter;
+			productName = converter;
+			productReference = 4CEEFEF324A108EC00C0357D /* Converter.xpc */;
+			productType = "com.apple.product-type.xpc-service";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -182,7 +252,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1140;
-				LastUpgradeCheck = 1150;
+				LastUpgradeCheck = 1250;
 				TargetAttributes = {
 					4C1A358E245DFEE700C40FB5 = {
 						CreatedOnToolsVersion = 11.4.1;
@@ -195,10 +265,13 @@
 					4CAA9C76249E8D96005EB90A = {
 						CreatedOnToolsVersion = 11.5;
 					};
+					4CEEFEF224A108EC00C0357D = {
+						CreatedOnToolsVersion = 11.5;
+					};
 				};
 			};
 			buildConfigurationList = 4C1A358A245DFEE700C40FB5 /* Build configuration list for PBXProject "MovieArchive" */;
-			compatibilityVersion = "Xcode 11.4";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -211,6 +284,7 @@
 			projectRoot = "";
 			targets = (
 				4CAA9C76249E8D96005EB90A /* Dependencies */,
+				4CEEFEF224A108EC00C0357D /* Converter */,
 				4C1A358E245DFEE700C40FB5 /* Movie Archive */,
 				4C1A35B0245DFEE900C40FB5 /* Tests macOS */,
 			);
@@ -222,12 +296,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C1A359F245DFEE800C40FB5 /* Main.storyboard in Resources */,
 				4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4C1A35AF245DFEE900C40FB5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CEEFEF124A108EC00C0357D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -241,8 +321,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C1A3595245DFEE700C40FB5 /* ImportDocument.swift in Sources */,
-				4C1A3593245DFEE700C40FB5 /* AppDelegate.swift in Sources */,
+				4C1A3595245DFEE700C40FB5 /* IngestDocument.swift in Sources */,
+				4C1A3593245DFEE700C40FB5 /* App.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,6 +334,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4CEEFEEF24A108EC00C0357D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CEEFEFA24A108ED00C0357D /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -262,31 +350,33 @@
 			target = 4C1A358E245DFEE700C40FB5 /* Movie Archive */;
 			targetProxy = 4C1A35B2245DFEE900C40FB5 /* PBXContainerItemProxy */;
 		};
+		4CD333F424A25A3A00CF1786 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4CAA9C76249E8D96005EB90A /* Dependencies */;
+			targetProxy = 4CD333F324A25A3A00CF1786 /* PBXContainerItemProxy */;
+		};
 		4CEEFEED24A0B11100C0357D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4CAA9C76249E8D96005EB90A /* Dependencies */;
 			targetProxy = 4CEEFEEC24A0B11100C0357D /* PBXContainerItemProxy */;
 		};
-/* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		4C1A359D245DFEE800C40FB5 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4C1A359E245DFEE800C40FB5 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
+		4CEEFF0424A10A0600C0357D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4CEEFEF224A108EC00C0357D /* Converter */;
+			targetProxy = 4CEEFF0324A10A0600C0357D /* PBXContainerItemProxy */;
 		};
-/* End PBXVariantGroup section */
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		4C1A35B8245DFEE900C40FB5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTABILITY = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -297,7 +387,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -309,7 +402,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = macOS/MovieArchive.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = macOS/Info.plist;
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos";
@@ -325,6 +420,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/MovieArchive.entitlements;
 				CODE_SIGN_IDENTITY = "Michael Roitzsch";
 				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = macOS/Info.plist;
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos";
@@ -336,7 +432,10 @@
 		4C1A35C1245DFEE900C40FB5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = 599BKLQ4UG;
 				INFOPLIST_FILE = Tests/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -348,7 +447,10 @@
 		4C1A35C2245DFEE900C40FB5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = 599BKLQ4UG;
 				INFOPLIST_FILE = Tests/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -360,14 +462,36 @@
 		4CAA9C77249E8D96005EB90A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = x86_64;
 			};
 			name = Debug;
 		};
 		4CAA9C78249E8D96005EB90A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = x86_64;
+			};
+			name = Release;
+		};
+		4CEEFF0124A108ED00C0357D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = XPCConverter/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.converter";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4CEEFF0224A108ED00C0357D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Michael Roitzsch";
+				CODE_SIGN_STYLE = Manual;
+				INFOPLIST_FILE = XPCConverter/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.converter";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -406,6 +530,15 @@
 			buildConfigurations = (
 				4CAA9C77249E8D96005EB90A /* Debug */,
 				4CAA9C78249E8D96005EB90A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CEEFF0024A108ED00C0357D /* Build configuration list for PBXNativeTarget "Converter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CEEFF0124A108ED00C0357D /* Debug */,
+				4CEEFF0224A108ED00C0357D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

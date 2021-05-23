@@ -6,7 +6,7 @@ BUILD = Build/$(CONFIGURATION)
 
 all: $(BUILD)/HandBrake/libhandbrake.a $(if $(wildcard libdvdcss),$(BUILD)/libdvdcss/libdvdcss.2.dylib)
 
-.PHONY: all clean
+.PHONY: all install clean
 
 
 .INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(arch)/libhb/libhandbrake.a $(BUILD)/HandBrake/$(arch)/GNUmakefile)
@@ -50,6 +50,9 @@ $(BUILD)/libdvdcss/%/Makefile: libdvdcss/configure
 libdvdcss/configure: ../.git/modules/Dependencies/libdvdcss/HEAD
 	cd $(@D) ; autoreconf -i
 
+
+install:
+	unset BUILD_ROOT ; $(MAKE) all
 
 clean:
 	rm -rf Build
