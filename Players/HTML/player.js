@@ -14,11 +14,12 @@ document.addEventListener("DOMContentLoaded", event => {
 const Player = class {
 
 	constructor() {
+		// configure viewport-filling display
 		document.body.style.display = "grid";
 		document.body.style.height = "100%";
 		document.body.style.margin = "0";
 
-		// view container
+		// add main player view
 		customElements.define("player-view", Player.View);
 		const view = document.createElement("player-view");
 		document.body.append(view);
