@@ -9,20 +9,23 @@ document.addEventListener("DOMContentLoaded", event => {
 });
 
 
-class Player {
+/* MARK: - Player
+ * controller object which mediates between views and engine */
+const Player = class {
 
 	constructor() {
 		document.body.style.display = "grid";
 		document.body.style.height = "100%";
 		document.body.style.margin = "0";
 
-		// container div
-		const container = document.createElement("div");
-		container.style.position = "relative";
-		container.style.margin = "auto";
-		document.body.append(container);
+		// view container
+		customElements.define("player-view", Player.View);
+		const view = document.createElement("player-view");
+		document.body.append(view);
+		this.view = view;
 
 		// main video player
+		// FIXME: move into custom view element
 		const video = document.createElement("video");
 		video.controls = true;
 		video.style.display = "block";
@@ -36,17 +39,18 @@ class Player {
 				this.video.style.height = "min(100vh, " + 1/aspect * 100 + "vw)";
 			}
 		});
-		container.append(video);
+		view.append(video);
 		this.video = video;
 
 		// menu container
+		// FIXME: this is just an example to test positioning
 		let menu = document.createElement("div");
 		menu.style.width = "100%";
 		menu.style.height = "100%";
 		menu.style.position = "absolute";
 		menu.style.top = "0";
 		menu.style.fontSize = "4vmin";
-		container.append(menu);
+		view.append(menu);
 		this.menu = menu;
 
 		// FIXME: hard-coded setup, parse query parameters instead
@@ -118,3 +122,24 @@ class Player {
 }
 
 
+/* MARK: - Engine
+ * manages the media tree containing menu and playable asset metadata */
+Player.Engine = class Engine {
+}
+
+
+/* MARK: - View
+ * custom HTML elements to display user interfaces for media tree nodes */
+Player.View = class View extends HTMLElement {
+
+	constructor() {
+		super();
+		// TODO: register all sub-views here
+	}
+
+	connectedCallback() {
+		// set up as container at which sub-elements can position themselves
+		this.style.position = "relative";
+		this.style.margin = "auto";
+	}
+}
