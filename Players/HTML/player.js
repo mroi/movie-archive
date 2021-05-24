@@ -4,6 +4,10 @@
 // @ts-expect-error
 if (error) throw Error("browser incompatible");
 
+document.addEventListener("DOMContentLoaded", event => {
+	const player = new Player();
+});
+
 
 class Player {
 
@@ -44,6 +48,12 @@ class Player {
 		menu.style.fontSize = "4vmin";
 		container.append(menu);
 		this.menu = menu;
+
+		// FIXME: hard-coded setup, parse query parameters instead
+		document.title = "Im toten Winkel";
+		this.menu.style.pointerEvents = "none";
+		this.loadVideo("movie.m3u8", "movie.mp4", "movie.webm");
+		this.video.poster = "/files/justiceinc/preview.jpg";
 	}
 
 	/** @param {string[]} urls */
@@ -108,11 +118,3 @@ class Player {
 }
 
 
-document.addEventListener("DOMContentLoaded", event => {
-	const player = new Player();
-	// TODO: hard-coded setup
-	document.title = "Im toten Winkel";
-	player.menu.style.pointerEvents = "none";
-	player.loadVideo("movie.m3u8", "movie.mp4", "movie.webm");
-	player.video.poster = "/files/justiceinc/preview.jpg";
-});
