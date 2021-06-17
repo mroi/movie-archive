@@ -68,7 +68,6 @@
 		4C1A3598245DFEE800C40FB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4C1A35A0245DFEE800C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C1A35A1245DFEE800C40FB5 /* MovieArchive.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MovieArchive.entitlements; sourceTree = "<group>"; };
-		4C1A35AC245DFEE900C40FB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C1BDC35249E6FB900BBF058 /* Importers */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Importers; sourceTree = "<group>"; };
 		4C1E153724BB9E96000897F9 /* MovieArchive.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MovieArchive.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -139,7 +138,6 @@
 		4C1A35A9245DFEE900C40FB5 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				4C1A35AC245DFEE900C40FB5 /* Info.plist */,
 				4CAC9F3D24688E880031A9EE /* UIMacOS.swift */,
 			);
 			path = Tests;
@@ -405,8 +403,9 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0.1;
+				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
-				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -421,8 +420,9 @@
 				CODE_SIGN_IDENTITY = "Michael Roitzsch";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0.1;
+				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
-				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -436,7 +436,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = 599BKLQ4UG;
-				INFOPLIST_FILE = Tests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -451,7 +451,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = 599BKLQ4UG;
-				INFOPLIST_FILE = Tests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -476,6 +476,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.converter";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -488,6 +489,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Michael Roitzsch";
 				CODE_SIGN_STYLE = Manual;
+				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.converter";
 				PRODUCT_NAME = "$(TARGET_NAME)";
