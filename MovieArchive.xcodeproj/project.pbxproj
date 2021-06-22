@@ -10,6 +10,7 @@
 		4C1A3593245DFEE700C40FB5 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* App.swift */; };
 		4C1A3595245DFEE700C40FB5 /* IngestDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */; };
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
+		4C947BDE268234FD00D72937 /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4C947BDD268234FD00D72937 /* MovieArchiveExporters */; };
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
 		4CEEFEFA24A108ED00C0357D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEEFEF924A108ED00C0357D /* main.swift */; };
 		4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -88,6 +89,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CFA77932681FCB900BB9632 /* MovieArchiveImporters in Frameworks */,
+				4C947BDE268234FD00D72937 /* MovieArchiveExporters in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,6 +204,7 @@
 			name = "Movie Archive";
 			packageProductDependencies = (
 				4CFA77922681FCB900BB9632 /* MovieArchiveImporters */,
+				4C947BDD268234FD00D72937 /* MovieArchiveExporters */,
 			);
 			productName = "Movie Archive";
 			productReference = 4C1A358F245DFEE700C40FB5 /* Movie Archive.app */;
@@ -548,6 +551,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4C947BDD268234FD00D72937 /* MovieArchiveExporters */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MovieArchiveExporters;
+		};
 		4CFA77922681FCB900BB9632 /* MovieArchiveImporters */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MovieArchiveImporters;
