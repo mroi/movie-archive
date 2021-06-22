@@ -7,7 +7,7 @@ let package = Package(
 		.macOS(.v11)
 	],
 	products: [
-//		.library(name: "Model", type: .static, targets: ["MovieArchiveModel"]),
+//		.library(name: "MovieArchiveModel", targets: ["MovieArchiveModel"])
 	],
 	targets: [
 //		.target(name: "MovieArchiveModel", path: ".")
