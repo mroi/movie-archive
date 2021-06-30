@@ -2,8 +2,12 @@ import Foundation
 import Combine
 
 
+/// Functions from `libdvdread` for reading and interpreting DVD data structures.
+@objc public protocol ConverterDVDReader {
+}
+
 /// Aggregate interface of all converter interfaces.
-@objc public protocol ConverterInterface {}
+@objc public protocol ConverterInterface: ConverterDVDReader {}
 
 
 /// Low-level access the converter functionality.
