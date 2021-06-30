@@ -12,6 +12,7 @@
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
 		4C947BDE268234FD00D72937 /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4C947BDD268234FD00D72937 /* MovieArchiveExporters */; };
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
+		4CB768F5268BC1BA00FAF9DC /* MovieArchiveConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */; };
 		4CEEFEFA24A108ED00C0357D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEEFEF924A108ED00C0357D /* main.swift */; };
 		4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4CFA77932681FCB900BB9632 /* MovieArchiveImporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CFA77922681FCB900BB9632 /* MovieArchiveImporters */; };
@@ -75,6 +76,7 @@
 		4C392A56249E72E000CD7308 /* Exporters */ = {isa = PBXFileReference; lastKnownFileType = text; path = Exporters; sourceTree = SOURCE_ROOT; };
 		4C392A57249E72E000CD7308 /* Model */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model; sourceTree = SOURCE_ROOT; };
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		4C8AC3D5268B05EB00BF1726 /* Converter */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Converter; sourceTree = "<group>"; };
 		4CAA9C7A249E8DBD005EB90A /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		4CAC9F3D24688E880031A9EE /* UIMacOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMacOS.swift; sourceTree = "<group>"; };
 		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CB768F5268BC1BA00FAF9DC /* MovieArchiveConverter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +163,7 @@
 		4CEEFEF424A108EC00C0357D /* XPCConverter */ = {
 			isa = PBXGroup;
 			children = (
+				4C8AC3D5268B05EB00BF1726 /* Converter */,
 				4CEEFEFB24A108ED00C0357D /* Info.plist */,
 				4CEEFEF924A108ED00C0357D /* main.swift */,
 			);
@@ -241,6 +245,9 @@
 				4CD333F424A25A3A00CF1786 /* PBXTargetDependency */,
 			);
 			name = Converter;
+			packageProductDependencies = (
+				4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */,
+			);
 			productName = converter;
 			productReference = 4CEEFEF324A108EC00C0357D /* Converter.xpc */;
 			productType = "com.apple.product-type.xpc-service";
@@ -546,6 +553,10 @@
 		4C947BDD268234FD00D72937 /* MovieArchiveExporters */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MovieArchiveExporters;
+		};
+		4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MovieArchiveConverter;
 		};
 		4CFA77922681FCB900BB9632 /* MovieArchiveImporters */ = {
 			isa = XCSwiftPackageProductDependency;
