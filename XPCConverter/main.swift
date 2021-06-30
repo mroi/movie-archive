@@ -1,17 +1,18 @@
 import Foundation
+import MovieArchiveConverter
 
 
-@objc public protocol ConverterProtocol {
-}
-
-class Converter: NSObject, ConverterProtocol {
-}
+/// Implementation of the XPC functionality.
+///
+/// A new implementation instance is created per connection to the XPC service.
+/// Functions are called on an internal serial queue, so per instance, all
+/// operations are single-threaded.
+class ConverterImplementation: NSObject {}
 
 class ConverterDelegate: NSObject, NSXPCListenerDelegate {
 	func listener(_ listener: NSXPCListener, shouldAcceptNewConnection connection: NSXPCConnection) -> Bool {
-		let exportedObject = Converter()
-		connection.exportedInterface = NSXPCInterface(with: ConverterProtocol.self)
-		connection.exportedObject = exportedObject
+		connection.exportedInterface = NSXPCInterface(with: ConverterInterface.self)
+		connection.exportedObject = ConverterImplementation()
 		connection.resume()
 		return true
 	}
