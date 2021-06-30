@@ -10,11 +10,13 @@ let package = Package(
 		.library(name: "MovieArchiveImporters", targets: ["MovieArchiveImporters"])
 	],
 	dependencies: [
-		.package(name: "Model", path: "../Model")
+		.package(name: "Model", path: "../Model"),
+		.package(name: "Converter", path: "../XPCConverter/Converter")
 	],
 	targets: [
 		.target(name: "MovieArchiveImporters", dependencies: [
-			.product(name: "MovieArchiveModel", package: "Model")
+			.product(name: "MovieArchiveModel", package: "Model"),
+			.product(name: "MovieArchiveConverter", package: "Converter")
 		], path: ".")
 	]
 )
