@@ -1,0 +1,4 @@
+module LibDVDRead {
+	header "contrib/include/dvdread/dvd_reader.h"
+	link "dvdread"
+}

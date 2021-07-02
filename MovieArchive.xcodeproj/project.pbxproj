@@ -39,13 +39,6 @@
 			remoteGlobalIDString = 4CAA9C76249E8D96005EB90A;
 			remoteInfo = Dependencies;
 		};
-		4CEEFEEC24A0B11100C0357D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4C1A3587245DFEE700C40FB5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4CAA9C76249E8D96005EB90A;
-			remoteInfo = Dependencies;
-		};
 		4CEEFF0324A10A0600C0357D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4C1A3587245DFEE700C40FB5 /* Project object */;
@@ -231,7 +224,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				4CEEFEED24A0B11100C0357D /* PBXTargetDependency */,
 				4CEEFF0424A10A0600C0357D /* PBXTargetDependency */,
 			);
 			name = "Movie Archive";
@@ -392,11 +384,6 @@
 			target = 4CAA9C76249E8D96005EB90A /* Dependencies */;
 			targetProxy = 4CD333F324A25A3A00CF1786 /* PBXContainerItemProxy */;
 		};
-		4CEEFEED24A0B11100C0357D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4CAA9C76249E8D96005EB90A /* Dependencies */;
-			targetProxy = 4CEEFEEC24A0B11100C0357D /* PBXContainerItemProxy */;
-		};
 		4CEEFF0424A10A0600C0357D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4CEEFEF224A108EC00C0357D /* Converter */;
@@ -518,9 +505,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XPCConverter/Info.plist;
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.converter";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64";
 			};
 			name = Debug;
 		};
@@ -532,9 +522,12 @@
 				CODE_SIGN_STYLE = Manual;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XPCConverter/Info.plist;
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.converter";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64";
 			};
 			name = Release;
 		};
