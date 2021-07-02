@@ -4,7 +4,10 @@ CONFIGURATION ?= Debug
 JOBS = -j$(shell sysctl -n hw.activecpu)
 BUILD = Build/$(CONFIGURATION)
 
-all: $(BUILD)/HandBrake/libhandbrake.a $(if $(wildcard libdvdcss),$(BUILD)/libdvdcss/libdvdcss.2.dylib)
+all: \
+	$(BUILD)/HandBrake/libhandbrake.a \
+	$(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(arch)/module.modulemap) \
+	$(if $(wildcard libdvdcss),$(BUILD)/libdvdcss/libdvdcss.2.dylib)
 
 .PHONY: all install clean
 
@@ -27,6 +30,10 @@ $(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure ../.git/modules/Dependenci
 	optimize=$(shell case $(CONFIGURATION) in (Debug) echo none ;; (Release) echo speed ;; esac) ; \
 	debug=$(shell case $(CONFIGURATION) in (Debug) echo std ;; (Release) echo none ;; esac) ; \
 	$(abspath $<) --arch=$* --optimize=$$optimize --debug=$$debug --disable-xcode
+
+
+$(BUILD)/HandBrake/%/module.modulemap: HandBrake.modulemap
+	ln -sf ../../../../$< $@
 
 
 .INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/.libs/libdvdcss.2.dylib $(BUILD)/libdvdcss/$(arch)/Makefile)
