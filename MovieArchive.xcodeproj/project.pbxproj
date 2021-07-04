@@ -12,6 +12,7 @@
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
 		4C300E5C2691124000DF059F /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4C947BDE268234FD00D72937 /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4C947BDD268234FD00D72937 /* MovieArchiveExporters */; };
+		4CA53B872690D4FF002140BC /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA53B862690D4FF002140BC /* Common.swift */; };
 		4CA53B8A2690D5F2002140BC /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA53B892690D5F2002140BC /* MovieArchiveExporters */; };
 		4CA53B8C2690D5F2002140BC /* MovieArchiveImporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA53B8B2690D5F2002140BC /* MovieArchiveImporters */; };
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
@@ -92,6 +93,7 @@
 		4C7158F42693A9FC0086A8C8 /* Converter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Converter.entitlements; sourceTree = "<group>"; };
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4C8AC3D5268B05EB00BF1726 /* Converter */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Converter; sourceTree = "<group>"; };
+		4CA53B862690D4FF002140BC /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		4CAA9C7A249E8DBD005EB90A /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		4CAC9F3D24688E880031A9EE /* UIMacOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMacOS.swift; sourceTree = "<group>"; };
 		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
@@ -160,6 +162,7 @@
 		4C1A35A9245DFEE900C40FB5 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				4CA53B862690D4FF002140BC /* Common.swift */,
 				4CAC9F3D24688E880031A9EE /* UIMacOS.swift */,
 			);
 			path = Tests;
@@ -354,6 +357,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */,
+				4CA53B872690D4FF002140BC /* Common.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
