@@ -75,6 +75,7 @@
 		4C1E153724BB9E96000897F9 /* MovieArchive.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MovieArchive.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		4C392A56249E72E000CD7308 /* Exporters */ = {isa = PBXFileReference; lastKnownFileType = text; path = Exporters; sourceTree = SOURCE_ROOT; };
 		4C392A57249E72E000CD7308 /* Model */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model; sourceTree = SOURCE_ROOT; };
+		4C7158F42693A9FC0086A8C8 /* Converter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Converter.entitlements; sourceTree = "<group>"; };
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4C8AC3D5268B05EB00BF1726 /* Converter */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Converter; sourceTree = "<group>"; };
 		4CAA9C7A249E8DBD005EB90A /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
@@ -165,6 +166,7 @@
 			children = (
 				4C8AC3D5268B05EB00BF1726 /* Converter */,
 				4CEEFEFB24A108ED00C0357D /* Info.plist */,
+				4C7158F42693A9FC0086A8C8 /* Converter.entitlements */,
 				4CEEFEF924A108ED00C0357D /* main.swift */,
 			);
 			path = XPCConverter;
@@ -476,6 +478,7 @@
 		4CEEFF0124A108ED00C0357D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = XPCConverter/Converter.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -489,6 +492,7 @@
 		4CEEFF0224A108ED00C0357D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = XPCConverter/Converter.entitlements;
 				CODE_SIGN_IDENTITY = "Michael Roitzsch";
 				CODE_SIGN_STYLE = Manual;
 				GENERATE_INFOPLIST_FILE = YES;
