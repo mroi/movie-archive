@@ -78,4 +78,9 @@ class DVDImporterTests: XCTestCase {
 
 		waitForExpectations(timeout: .infinity)
 	}
+
+	func testMinimalDVD() {
+		let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
+		XCTAssertNoThrow(try Importer(source: iso))
+	}
 }
