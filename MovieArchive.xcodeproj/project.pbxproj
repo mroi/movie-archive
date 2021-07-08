@@ -234,7 +234,6 @@
 			buildPhases = (
 				4CEEFEEF24A108EC00C0357D /* Sources */,
 				4CEEFEF024A108EC00C0357D /* Frameworks */,
-				4CEEFEF124A108EC00C0357D /* Resources */,
 			);
 			buildRules = (
 			);
@@ -302,13 +301,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4C1A35AF245DFEE900C40FB5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4CEEFEF124A108EC00C0357D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
