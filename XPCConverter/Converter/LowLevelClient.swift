@@ -34,6 +34,16 @@ public class ConverterClient<ProxyInterface> {
 
 	/// Sets up a client instance managing one XPC connection.
 	init() {
+#if DEBUG
+		if let injected = ConverterClient<Any>.injected {
+			remote = injected.proxy as! ProxyInterface
+			publisher = injected.publisher
+			connection = NSXPCConnection()
+			subscription = nil
+			return
+		}
+#endif
+
 		let returnChannel = ReturnImplementation()
 		connection = ConverterClient<ProxyInterface>.makeConnection()
 		connection.remoteObjectInterface = NSXPCInterface(with: ConverterInterface.self)
@@ -74,3 +84,20 @@ public class ConverterClient<ProxyInterface> {
 		return NSXPCConnection(serviceName: name)
 	}
 }
+
+#if DEBUG
+extension ConverterClient where ProxyInterface == Any {
+	// TODO: change to @TaskLocal properties
+
+	/// Injects mock implementations for testing.
+	static func withMocks(proxy: ProxyInterface, publisher: ConverterPublisher? = nil,
+	                      _ body: () throws -> ()) rethrows {
+		let emptyPublisher = Empty<ConverterOutput, ConverterError>(completeImmediately: false).eraseToAnyPublisher()
+		injected = (proxy, publisher ?? emptyPublisher)
+		try body()
+		injected = nil
+	}
+
+	private static var injected: (proxy: ProxyInterface, publisher: ConverterPublisher)?
+}
+#endif
