@@ -4,6 +4,8 @@ import Combine
 
 /// Functions from `libdvdread` for reading and interpreting DVD data structures.
 @objc public protocol ConverterDVDReader {
+	func open(_ url: URL, completionHandler: @escaping (_ result: UUID?) -> Void)
+	func close(_ id: UUID)
 }
 
 /// Aggregate interface of all converter interfaces.
