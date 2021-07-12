@@ -33,7 +33,9 @@ archive library.
 
 **XPCConverter**  
 All external libraries like `libdvdread` or `libhandbrake` run in isolation within this XPC 
-service. It implements a controller layer to interface with these libraries.
+service. It implements a controller layer to interface with these libraries. To override and 
+augment external library behavior, an intercept layer replaces some functionality of 
+`libSystem`.
 
 **macOS**  
 This layer contains all macOS-specific code and bridges the importer and exporter use case 
