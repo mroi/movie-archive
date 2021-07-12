@@ -19,6 +19,7 @@
 		4CAB2E99268C5FD9004D9C4B /* DVDReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAB2E98268C5FB3004D9C4B /* DVDReader.swift */; };
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
 		4CB768F5268BC1BA00FAF9DC /* MovieArchiveConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */; };
+		4CB78014269C88700027D46F /* dlopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CB78013269C88700027D46F /* dlopen.c */; };
 		4CD8F9CE26947995003752B3 /* Resources in Copy Resources Directory */ = {isa = PBXBuildFile; fileRef = 4C7158F32693A8370086A8C8 /* Resources */; };
 		4CEEFEFA24A108ED00C0357D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEEFEF924A108ED00C0357D /* main.swift */; };
 		4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -32,6 +33,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4C1A358E245DFEE700C40FB5;
 			remoteInfo = "Movie Archive";
+		};
+		4CB78015269C88AC0027D46F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C1A3587245DFEE700C40FB5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CB7800D269C855B0027D46F;
+			remoteInfo = Intercept;
 		};
 		4CD333F324A25A3A00CF1786 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -107,6 +115,8 @@
 		4CAA9C7A249E8DBD005EB90A /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		4CAB2E98268C5FB3004D9C4B /* DVDReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVDReader.swift; sourceTree = "<group>"; };
 		4CAC9F3D24688E880031A9EE /* UIMacOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMacOS.swift; sourceTree = "<group>"; };
+		4CB7800E269C855B0027D46F /* libintercept.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libintercept.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CB78013269C88700027D46F /* dlopen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dlopen.c; sourceTree = "<group>"; };
 		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
 		4CEEFEF324A108EC00C0357D /* Converter.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = Converter.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEEFEF924A108ED00C0357D /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -166,6 +176,7 @@
 				4CEEFEF324A108EC00C0357D /* Converter.xpc */,
 				4C1A358F245DFEE700C40FB5 /* Movie Archive.app */,
 				4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */,
+				4CB7800E269C855B0027D46F /* libintercept.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -193,11 +204,20 @@
 			path = macOS;
 			sourceTree = "<group>";
 		};
+		4CB78012269C88700027D46F /* Intercept */ = {
+			isa = PBXGroup;
+			children = (
+				4CB78013269C88700027D46F /* dlopen.c */,
+			);
+			path = Intercept;
+			sourceTree = "<group>";
+		};
 		4CEEFEF424A108EC00C0357D /* XPCConverter */ = {
 			isa = PBXGroup;
 			children = (
 				4C8AC3D5268B05EB00BF1726 /* Converter */,
 				4CAB2E98268C5FB3004D9C4B /* DVDReader.swift */,
+				4CB78012269C88700027D46F /* Intercept */,
 				4CEEFEFB24A108ED00C0357D /* Info.plist */,
 				4C1F484926A2D44400AF7205 /* XPC-Debug.entitlements */,
 				4C7158F42693A9FC0086A8C8 /* XPC-Release.entitlements */,
@@ -272,6 +292,21 @@
 			productReference = 4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		4CB7800D269C855B0027D46F /* Intercept */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CB7800F269C855B0027D46F /* Build configuration list for PBXNativeTarget "Intercept" */;
+			buildPhases = (
+				4CB7800B269C855B0027D46F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Intercept;
+			productName = Intercept;
+			productReference = 4CB7800E269C855B0027D46F /* libintercept.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		4CEEFEF224A108EC00C0357D /* Converter */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4CEEFF0024A108ED00C0357D /* Build configuration list for PBXNativeTarget "Converter" */;
@@ -312,6 +347,9 @@
 					4CAA9C76249E8D96005EB90A = {
 						CreatedOnToolsVersion = 11.5;
 					};
+					4CB7800D269C855B0027D46F = {
+						CreatedOnToolsVersion = 13.0;
+					};
 					4CEEFEF224A108EC00C0357D = {
 						CreatedOnToolsVersion = 11.5;
 					};
@@ -331,6 +369,7 @@
 			projectRoot = "";
 			targets = (
 				4CAA9C76249E8D96005EB90A /* Dependencies */,
+				4CB7800D269C855B0027D46F /* Intercept */,
 				4CEEFEF224A108EC00C0357D /* Converter */,
 				4C1A358E245DFEE700C40FB5 /* Movie Archive */,
 				4C1A35B0245DFEE900C40FB5 /* Tests macOS */,
@@ -366,6 +405,14 @@
 				4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */,
 				4C6D90A626B49E5200EAA149 /* Importers.swift in Sources */,
 				4CA53B872690D4FF002140BC /* Common.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CB7800B269C855B0027D46F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CB78014269C88700027D46F /* dlopen.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,6 +551,79 @@
 			};
 			name = Release;
 		};
+		4CB78010269C855B0027D46F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1292.0.0;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PRODUCT_NAME = "$(TARGET_NAME:lower)";
+				REEXPORTED_LIBRARY_NAMES = System;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4CB78011269C855B0027D46F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1292.0.0;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PRODUCT_NAME = "$(TARGET_NAME:lower)";
+				REEXPORTED_LIBRARY_NAMES = System;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		4CEEFF0124A108ED00C0357D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -573,6 +693,15 @@
 			buildConfigurations = (
 				4CAA9C77249E8D96005EB90A /* Debug */,
 				4CAA9C78249E8D96005EB90A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CB7800F269C855B0027D46F /* Build configuration list for PBXNativeTarget "Intercept" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CB78010269C855B0027D46F /* Debug */,
+				4CB78011269C855B0027D46F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
