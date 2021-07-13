@@ -117,6 +117,7 @@
 		4CAC9F3D24688E880031A9EE /* UIMacOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMacOS.swift; sourceTree = "<group>"; };
 		4CB7800E269C855B0027D46F /* libintercept.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libintercept.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CB78013269C88700027D46F /* dlopen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dlopen.c; sourceTree = "<group>"; };
+		4CB7801C269C97610027D46F /* intercept.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = intercept.h; sourceTree = "<group>"; };
 		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
 		4CEEFEF324A108EC00C0357D /* Converter.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = Converter.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEEFEF924A108ED00C0357D /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -207,6 +208,7 @@
 		4CB78012269C88700027D46F /* Intercept */ = {
 			isa = PBXGroup;
 			children = (
+				4CB7801C269C97610027D46F /* intercept.h */,
 				4CB78013269C88700027D46F /* dlopen.c */,
 			);
 			path = Intercept;
