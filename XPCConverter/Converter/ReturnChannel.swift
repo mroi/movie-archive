@@ -14,6 +14,7 @@ public enum ConverterOutput {
 
 /// Error conditions in the converter service.
 public enum ConverterError: Error {
+	case sourceNotSupported
 }
 
 

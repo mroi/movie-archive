@@ -1,5 +1,6 @@
 import Foundation
 import MovieArchiveModel
+import MovieArchiveConverter
 
 
 /// Generate a `MediaTree` by importing from an external data source.
@@ -17,9 +18,7 @@ public struct Importer: ImportPass {
 	private let selectedImporter: ImportPass
 
 	/// Failure cases for importer initialization.
-	public enum Error: Swift.Error {
-		case SourceNotSupported
-	}
+	public typealias Error = ConverterError
 
 	/// Instantiates the first available importer supporting the source.
 	public init(source url: URL) throws {
@@ -28,11 +27,11 @@ public struct Importer: ImportPass {
 				let importer = try importerType.init(source: url)
 				selectedImporter = importer
 				return
-			} catch {
+			} catch Error.sourceNotSupported {
 				continue
 			}
 		}
-		throw Error.SourceNotSupported
+		throw Error.sourceNotSupported
 	}
 
 	public var subPasses: [Pass] {

@@ -5,8 +5,44 @@ import XCTest
 
 
 class ImporterTests: XCTestCase {
+
+	func testUnsupportedSource() {
+		let source = URL(fileURLWithPath: "/var/empty")
+		XCTAssertThrowsError(try Importer(source: source)) {
+			XCTAssertEqual($0 as! Importer.Error, Importer.Error.sourceNotSupported)
+		}
+	}
 }
 
 
 class DVDImporterTests: XCTestCase {
+
+	func testDVDReaderInitDeinit() {
+		let openCall = expectation(description: "open should be called")
+		let closeCall = expectation(description: "close should be called")
+
+		class ReaderMock: ConverterDVDReader {
+			let openCall: XCTestExpectation
+			let closeCall: XCTestExpectation
+
+			init(withExpectations expectations: XCTestExpectation...) {
+				openCall = expectations[0]
+				closeCall = expectations[1]
+			}
+			func open(_: URL, completionHandler done: @escaping (UUID?) -> Void) {
+				openCall.fulfill()
+				done(UUID())
+			}
+			func close(_: UUID) {
+				closeCall.fulfill()
+			}
+		}
+
+		ConverterClient.withMocks(proxy: ReaderMock(withExpectations: openCall, closeCall)) {
+			let source = URL(fileURLWithPath: ".")
+			XCTAssertNoThrow(try? DVDReader(source: source))
+		}
+
+		waitForExpectations(timeout: .infinity)
+	}
 }
