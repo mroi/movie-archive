@@ -47,6 +47,9 @@ class ImporterTests: XCTestCase {
 
 class DVDImporterTests: XCTestCase {
 
+	/// The `Bundle` of this test class, can be used to access test resources.
+	private var testBundle: Bundle { Bundle(for: type(of: self)) }
+
 	func testDVDReaderInitDeinit() {
 		let openCall = expectation(description: "open should be called")
 		let closeCall = expectation(description: "close should be called")
