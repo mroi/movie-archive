@@ -313,11 +313,13 @@
 			buildPhases = (
 				4CEEFEEF24A108EC00C0357D /* Sources */,
 				4CEEFEF024A108EC00C0357D /* Frameworks */,
+				4CB7801B269C8ABD0027D46F /* Install Intercept Library */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				4CD333F424A25A3A00CF1786 /* PBXTargetDependency */,
+				4CB78016269C88AC0027D46F /* PBXTargetDependency */,
 			);
 			name = Converter;
 			packageProductDependencies = (
@@ -388,6 +390,30 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		4CB7801B269C8ABD0027D46F /* Install Intercept Library */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/libintercept.dylib",
+				"$(BUILT_PRODUCTS_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Install Intercept Library";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/libintercept.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# copy intercept library\nmkdir -p \"$(dirname \"$SCRIPT_OUTPUT_FILE_0\")\"\ncp -p \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n\n# patch XPC converter to replace libSystem with intercept library\nif otool -L \"$SCRIPT_INPUT_FILE_1\" | fgrep -q libSystem ; then\n\tcodesign --remove-signature \"$SCRIPT_INPUT_FILE_1\"\n\tinstall_name_tool -change /usr/lib/libSystem.B.dylib \"@executable_path/../Frameworks/$(basename \"$SCRIPT_OUTPUT_FILE_0\")\" \"$SCRIPT_INPUT_FILE_1\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4C1A358B245DFEE700C40FB5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -432,6 +458,11 @@
 			isa = PBXTargetDependency;
 			target = 4C1A358E245DFEE700C40FB5 /* Movie Archive */;
 			targetProxy = 4C1A35B2245DFEE900C40FB5 /* PBXContainerItemProxy */;
+		};
+		4CB78016269C88AC0027D46F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4CB7800D269C855B0027D46F /* Intercept */;
+			targetProxy = 4CB78015269C88AC0027D46F /* PBXContainerItemProxy */;
 		};
 		4CD333F424A25A3A00CF1786 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -628,11 +659,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "XPCConverter/XPC-$(CONFIGURATION).entitlements";
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 599BKLQ4UG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.converter";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -650,6 +683,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.converter";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
