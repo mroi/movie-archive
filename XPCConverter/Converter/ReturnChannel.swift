@@ -15,6 +15,8 @@ public enum ConverterOutput {
 /// Error conditions in the converter service.
 public enum ConverterError: Error {
 	case sourceNotSupported
+	case connectionInvalid
+	case connectionInterrupted
 }
 
 
@@ -27,6 +29,8 @@ public enum ConverterError: Error {
 ///
 /// - Note: This is a low-level interface. Clients use the `ConverterPublisher`.
 @objc public protocol ReturnInterface {
+	func connectionInvalid()
+	func connectionInterrupted()
 }
 
 /// Adapts updates coming in via the XPC `ReturnInterface` to a `ConverterPublisher`.
@@ -37,6 +41,9 @@ class ReturnImplementation: NSObject, ReturnInterface {
 	var publisher: ConverterPublisher {
 		get { return subject.receive(on: DispatchQueue.main).eraseToAnyPublisher() }
 	}
+
+	func connectionInvalid() { subject.send(completion: .failure(.connectionInvalid)) }
+	func connectionInterrupted() { subject.send(completion: .failure(.connectionInterrupted)) }
 
 	deinit {
 		subject.send(completion: .finished)

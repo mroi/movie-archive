@@ -12,6 +12,36 @@ class ImporterTests: XCTestCase {
 			XCTAssertEqual($0 as! Importer.Error, Importer.Error.sourceNotSupported)
 		}
 	}
+
+	func testXPCErrorPropagation() {
+		// set up an invalid XPC connection
+		let returnChannel = ReturnImplementation()
+		let connection = NSXPCConnection(serviceName: "invalid")
+		connection.remoteObjectInterface = NSXPCInterface(with: ConverterInterface.self)
+		connection.invalidationHandler = { returnChannel.connectionInvalid() }
+		connection.interruptionHandler = { returnChannel.connectionInterrupted() }
+		connection.resume()
+
+		// expect publisher to report the error
+		let publisherFailure = expectation(description: "publisher should fail")
+		let subscription = returnChannel.publisher.sink {
+			XCTAssertEqual($0, .failure(.connectionInvalid))
+			publisherFailure.fulfill()
+		} receiveValue: { _ in }
+
+		// exercise the invalid connection
+		try! ConverterClient.withMocks(proxy: connection.remoteObjectProxy, publisher: returnChannel.publisher) {
+			let source = URL(fileURLWithPath: "/var/empty")
+			XCTAssertThrowsError(try Importer(source: source)) {
+				XCTAssertEqual($0 as! Importer.Error, Importer.Error.connectionInvalid)
+			}
+		}
+		waitForExpectations(timeout: .infinity)
+
+		// cleanup
+		subscription.cancel()
+		connection.invalidate()
+	}
 }
 
 

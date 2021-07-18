@@ -16,7 +16,21 @@ public final class DVDReader: ConverterClient<ConverterDVDReader> {
 	public init(source url: URL) throws {
 		super.init()
 
+		// listen for asynchronous errors
 		var done = false
+		var error: ConverterError?
+		let subscription = publisher.sink {
+			switch $0 {
+			case .failure(let publishedError):
+				error = publishedError
+			case .finished:
+				error = .connectionInterrupted
+			}
+			done = true
+		} receiveValue: { _ in
+		}
+		defer { subscription.cancel() }
+
 		// invoke the converter operation
 		var id: UUID?
 		remote.open(url) { result in
@@ -26,7 +40,11 @@ public final class DVDReader: ConverterClient<ConverterDVDReader> {
 		waitForAsync(until: done)
 
 		guard let id = id else {
-			throw ConverterError.sourceNotSupported
+			if let error = error {
+				throw error
+			} else {
+				throw ConverterError.sourceNotSupported
+			}
 		}
 
 		readerStateID = id

@@ -51,6 +51,8 @@ public class ConverterClient<ProxyInterface> {
 		connection.remoteObjectInterface = NSXPCInterface(with: ConverterInterface.self)
 		connection.exportedInterface = NSXPCInterface(with: ReturnInterface.self)
 		connection.exportedObject = returnChannel
+		connection.invalidationHandler = { returnChannel.connectionInvalid() }
+		connection.interruptionHandler = { returnChannel.connectionInterrupted() }
 		connection.resume()
 
 		remote = connection.remoteObjectProxy as! ProxyInterface
