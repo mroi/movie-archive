@@ -10,5 +10,24 @@ import MovieArchiveModel
 /// - Remark: Exporters form a use case layer on top of the model types.
 public struct Exporter: ExportPass {
 
-	public init() {}
+	private let selectedExporter: ExportPass
+
+	/// Data formats for which an `Exporter` is available.
+	public enum Format {
+
+		/// Movie Archive’s canonical library storage format.
+		///
+		/// The `MediaTree` is serialized to JSON and assets are encoded with
+		/// modern codecs. Interactive menus are playable by HTML or native
+		/// clients.
+		case movieArchiveLibrary
+	}
+
+	/// Instantiates an exporter for the given output format.
+	public init(format: Format) {
+		switch format {
+		case .movieArchiveLibrary:
+			selectedExporter = LibraryExporter()
+		}
+	}
 }
