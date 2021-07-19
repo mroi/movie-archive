@@ -15,6 +15,10 @@ import Foundation
 /// provided by an XPC service. These operations are grouped in interface
 /// protocols. A client-side proxy object implementing one of these interfaces
 /// is provided by an instance of this class.
+///
+/// - Remark: These low-level XPC protocols form an hourglass interface which
+///   is meant to be augmented with client-side currency types like `DVDReader`.
+///   This empty `enum` acts as a namespace for factory functions.
 public class ConverterClient<ProxyInterface> {
 
 	let remote: ProxyInterface
