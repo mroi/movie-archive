@@ -53,10 +53,17 @@ public protocol ImportPass: Pass {
 
 	/// Creates an appropriate importer if the source is supported.
 	init(source url: URL) throws
+
+	/// Generates an initial `MediaTree` without receiving any input.
+	func generate() -> MediaTree
 }
 
 /// A special pass that generates no output other than side effects.
-public protocol ExportPass: Pass {}
+public protocol ExportPass: Pass {
+
+	/// Receives a `MediaTree` without returning a new one.
+	func consume(_ mediaTree: MediaTree)
+}
 
 
 /* MARK: Default Implementations */
@@ -86,5 +93,27 @@ public extension Pass {
 
 	func process(singleNode mediaTree: MediaTree) -> MediaTree {
 		return mediaTree
+	}
+}
+
+public extension ImportPass {
+	func generate() -> MediaTree {
+		guard let firstSubPass = subPasses.first as? ImportPass else {
+			fatalError("first sub-pass is not of type ImportPass")
+		}
+		let newTree = firstSubPass.generate()
+		let otherSubPasses = subPasses.suffix(from: 1)
+		return otherSubPasses.reduce(newTree) { $1.process($0) }
+	}
+}
+
+public extension ExportPass {
+	func consume(_ mediaTree: MediaTree) {
+		guard let lastSubPass = subPasses.last as? ExportPass else {
+			fatalError("last sub-pass is not of type ExportPass")
+		}
+		let otherSubPasses = subPasses.prefix(upTo: subPasses.endIndex - 1)
+		let newTree = otherSubPasses.reduce(mediaTree) { $1.process($0) }
+		lastSubPass.consume(newTree)
 	}
 }
