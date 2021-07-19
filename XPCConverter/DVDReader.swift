@@ -31,6 +31,27 @@ extension ConverterImplementation: ConverterDVDReader {
 		done(.none)
 	}
 
+	func readIFOs(withHandle id: UUID, completionHandler done: @escaping () -> Void) {
+		guard let reader = state[id] else { return }
+
+		let vmgi = ifoOpen(reader, 0)
+		guard let vmgi = vmgi else { return }
+		defer { ifoClose(vmgi) }
+
+		var vtsi: [Int: UnsafeMutablePointer<ifo_handle_t>] = [:]
+		defer { vtsi.forEach { ifoClose($0.value) }	}
+
+		let vtsCount = vmgi.pointee.vmgi_mat?.pointee.vmg_nr_of_title_sets ?? 0
+		for vtsIndex in 1...99 {
+			if vtsi.count == vtsCount { break }
+			let vtsInfo = ifoOpen(reader, Int32(vtsIndex))
+			guard let vtsInfo = vtsInfo else { continue }
+			vtsi[vtsIndex] = vtsInfo
+		}
+
+		done()  // FIXME: return Swift struct with DVD info
+	}
+
 	public func close(_ id: UUID) {
 		guard let reader = state[id] else { return }
 		state.removeValue(forKey: id)
