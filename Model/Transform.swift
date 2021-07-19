@@ -16,4 +16,14 @@ public struct Transform {
 		self.importer = importer
 		self.exporter = exporter
 	}
+
+	/// Start the transform.
+	///
+	/// This function is asynchronous, so any long-running work will yield to
+	/// the caller. For status updates and interacting with the transform like
+	/// configuring options, you must subscribe to the `publisher` property.
+	public func execute() {  // TODO: convert to async function
+		let mediaTree = importer.generate()
+		exporter.consume(mediaTree)
+	}
 }
