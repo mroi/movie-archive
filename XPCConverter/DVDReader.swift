@@ -5,7 +5,13 @@ import LibDVDRead
 
 extension ConverterImplementation: ConverterDVDReader {
 
+	static let disableCSSCache: Void = {
+		setenv("DVDCSS_CACHE", "off", 1)
+	}()
+
 	public func open(_ url: URL, completionHandler done: @escaping (_ result: UUID?) -> Void) {
+		Self.disableCSSCache
+
 		if url.isFileURL, let reader = DVDOpen(url.path) {
 			// make sure this looks like a DVD
 			var statbuf = dvd_stat_t()
