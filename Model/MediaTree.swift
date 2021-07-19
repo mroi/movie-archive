@@ -18,4 +18,20 @@ public enum MediaTree {
 
 	/// Storage for intermediate states during transformations.
 	case opaque
+
+	/// The list of immediate child trees of the current node.
+	public var childTrees: [Self] {
+		get {
+			switch self {
+			case .asset, .menu, .link, .opaque:
+				return []
+			}
+		}
+		set {
+			switch self {
+			case .asset, .menu, .link, .opaque:
+				break
+			}
+		}
+	}
 }
