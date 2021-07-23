@@ -21,6 +21,9 @@ import Combine
 ///
 /// At the same time, the XPC service can send asynchronous feedback to the
 /// client by way of the `ConverterPublisher`.
+///
+/// - Remark: These low-level XPC protocols form an hourglass interface which
+///   is meant to be augmented with client-side currency types like `DVDReader`.
 public class ConverterClient<ProxyInterface> {
 
 	/// Publisher to receive status updates from the converter service.
