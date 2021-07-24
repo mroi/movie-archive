@@ -1,3 +1,6 @@
+import Foundation
+
+
 /// Operator to manipulate a `MediaTree`.
 ///
 /// A `Pass` takes a `MediaTree` as input and outputs a new one. It represents
@@ -10,7 +13,11 @@ public protocol Pass {
 
 
 /// A special pass that receives no input.
-public protocol ImportPass {}
+public protocol ImportPass {
+
+	/// Creates an appropriate importer if the source is supported.
+	init(source url: URL) throws
+}
 
 /// A special pass that generates no output other than side effects.
 public protocol ExportPass {}

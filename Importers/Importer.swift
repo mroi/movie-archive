@@ -13,6 +13,25 @@ import MovieArchiveModel
 /// - Remark: Importers form a use case layer on top of the model types.
 public struct Importer: ImportPass {
 
-	/// Autodetects the source and creates an appropriate importer.
-	public init(source: URL) throws {}
+	private let availableImporters = [ DVDImporter.self ]
+	private let selectedImporter: ImportPass
+
+	/// Failure cases for importer initialization.
+	public enum Error: Swift.Error {
+		case SourceNotSupported
+	}
+
+	/// Instantiates the first available importer supporting the source.
+	public init(source url: URL) throws {
+		for importerType in availableImporters {
+			do {
+				let importer = try importerType.init(source: url)
+				selectedImporter = importer
+				return
+			} catch {
+				continue
+			}
+		}
+		throw Error.SourceNotSupported
+	}
 }
