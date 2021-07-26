@@ -83,6 +83,60 @@ public class ConverterClient<ProxyInterface> {
 }
 
 
+extension ConverterClient {
+
+	/// Wrap a remote converter invocation with connection error handling.
+	///
+	/// When invoking a remote function, XPC guarantees that either the
+	/// function’s completion handler or one of the connection’s error handlers
+	/// is called. Consequently, in the error case, the completion handler is
+	/// never called and code not checking for connection errors will be stuck.
+	///
+	/// The connection errors will surface as failures on `publisher`, so this
+	/// wrapper listens for such failures and throws them. Best practice is to
+	/// wrap every remote invocation individually.
+	///
+	/// - Parameter body: A closure invoking a remote function. The closure
+	///   receives a continuation function which must be called exactly once
+	///   if the remote function’s completion handler is called.
+	/// - Returns: Successful results are returned, errors are thrown.
+	func withConnectionErrorHandling<T>(_ body: (_ done: @escaping (Result<T, ConverterError>) -> Void) -> Void) throws -> T {
+
+		// TODO: replace semaphore with async continuation to not block the caller
+		let resultAvailable = DispatchSemaphore(value: 0)
+		var result: Result<T, ConverterError>?
+
+		// set the result exclusively and only once via this function
+		func setResult(_ value: Result<T, ConverterError>) {
+			assert(result == nil)
+			result = value  // race-free: called on some thread, but only once
+			resultAvailable.signal()
+		}
+
+		// listen for asynchronous errors from the publisher
+		let subscription = publisher.sink(
+			receiveCompletion: {
+				switch $0 {
+				case .failure(let error):
+					setResult(.failure(error))
+				case .finished:
+					setResult(.failure(.connectionInterrupted))
+				}
+			},
+			receiveValue: { _ in })
+		defer { subscription.cancel() }
+
+		// run caller code
+		body(setResult)
+
+		// wait for continuation, result is definitely valid after this line
+		resultAvailable.wait()
+
+		return try result!.get()
+	}
+}
+
+
 #if DEBUG
 extension ConverterClient where ProxyInterface == Any {
 	// TODO: change to @TaskLocal property

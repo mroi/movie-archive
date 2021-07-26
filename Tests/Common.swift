@@ -35,6 +35,31 @@ class ConverterTests: XCTestCase {
 
 		waitForExpectations(timeout: .infinity)
 	}
+
+	func testXPCErrorWrapper() {
+		class ErrorSender {
+			private let returnChannel: ReturnImplementation
+			init(channel: ReturnImplementation) { returnChannel = channel }
+			func error() { returnChannel.sendConnectionInterrupted() }
+		}
+		class ErrorClient: ConverterClient<ErrorSender> {
+			func test() throws {
+				// test that this wrapper observes the published error and throws
+				try withConnectionErrorHandling { (_: (Result<Void, ConverterError>) -> Void) in
+					remote.error()
+				}
+				XCTFail("error handling should throw")
+			}
+		}
+
+		let returnChannel = ReturnImplementation()
+		let sender = ErrorSender(channel: returnChannel)
+		try! ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+			XCTAssertThrowsError(try ErrorClient().test()) {
+				XCTAssertEqual($0 as! ConverterError, .connectionInterrupted)
+			}
+		}
+	}
 }
 
 @objc private protocol ConverterTesting {
