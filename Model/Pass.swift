@@ -17,7 +17,14 @@ public protocol ImportPass {
 
 	/// Creates an appropriate importer if the source is supported.
 	init(source url: URL) throws
+
+	/// Generates an initial `MediaTree` without receiving any input.
+	func generate() throws -> MediaTree
 }
 
 /// A special pass that generates no output other than side effects.
-public protocol ExportPass {}
+public protocol ExportPass {
+
+	/// Receives a `MediaTree` without returning a new one.
+	func consume(_ mediaTree: MediaTree) throws
+}

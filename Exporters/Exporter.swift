@@ -30,4 +30,8 @@ public struct Exporter: ExportPass {
 			selectedExporter = LibraryExporter()
 		}
 	}
+
+	public func consume(_ mediaTree: MediaTree) throws {
+		try selectedExporter.consume(mediaTree)
+	}
 }
