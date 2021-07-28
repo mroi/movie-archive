@@ -47,6 +47,36 @@ class ConverterTests: XCTestCase {
 		waitForExpectations(timeout: .infinity)
 	}
 
+	func testMessagePropagation() {
+		class MessageSender {
+			private let returnChannel: ReturnImplementation
+			init(channel: ReturnImplementation) { returnChannel = channel }
+			func message() { returnChannel.sendMessage(level: .default, "test message") }
+		}
+
+		let returnChannel = ReturnImplementation()
+		let sender = MessageSender(channel: returnChannel)
+		var outputs = [ConverterOutput]()
+
+		ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+			let client = ConverterClient<MessageSender>()
+			let subscription = client.publisher
+				.assertNoFailure()
+				.sink { outputs.append($0) }
+			defer { subscription.cancel() }
+
+			client.remote.message()
+		}
+
+		XCTAssertEqual(outputs.count, 1)
+		if case .message(let level, let text) = outputs[0] {
+			XCTAssertEqual(level, .default)
+			XCTAssertEqual(text, "test message")
+		} else {
+			XCTFail("unexpected publisher output")
+		}
+	}
+
 	func testXPCErrorPropagation() {
 		// set up an invalid XPC connection
 		let returnChannel = ReturnImplementation()

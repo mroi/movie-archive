@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import os
 
 
 /* MARK: Publisher for Updates */
@@ -9,7 +10,8 @@ public typealias ConverterPublisher = AnyPublisher<ConverterOutput, ConverterErr
 
 /// Status updates from the converter service.
 public enum ConverterOutput {
-	// TODO: progress reporting and log messages
+	case message(level: OSLogType, String)
+	// TODO: progress reporting
 }
 
 /// Error conditions in the converter service.
@@ -34,6 +36,7 @@ public enum ConverterError: Error {
 ///
 /// - Note: This is a low-level interface. Clients use the `ConverterPublisher`.
 @objc public protocol ReturnInterface {
+	func sendMessage(level: OSLogType, _ text: String)
 	func sendConnectionInvalid()
 	func sendConnectionInterrupted()
 }
@@ -47,6 +50,9 @@ class ReturnImplementation: NSObject, ReturnInterface {
 		return subject.eraseToAnyPublisher()
 	}
 
+	func sendMessage(level: OSLogType, _ text: String) {
+		subject.send(.message(level: level, text))
+	}
 	func sendConnectionInvalid() {
 		subject.send(completion: .failure(.connectionInvalid))
 	}
