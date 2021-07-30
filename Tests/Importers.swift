@@ -57,6 +57,38 @@ class DVDImporterTests: XCTestCase {
 		waitForExpectations(timeout: .infinity)
 	}
 
+	func testInfoError() {
+		let readCall = expectation(description: "read info should be called")
+
+		class ReaderMock: ConverterDVDReader {
+			let readCall: XCTestExpectation
+
+			init(expectations: XCTestExpectation...) {
+				readCall = expectations[0]
+			}
+			func open(_: URL, completionHandler done: @escaping (UUID?) -> Void) {
+				done(UUID())
+			}
+			func close(_: UUID) {}
+			func readInfo(_: UUID, completionHandler done: @escaping () -> Void) {
+				readCall.fulfill()
+				done()
+			}
+		}
+
+		try! ConverterClient.withMocks(proxy: ReaderMock(expectations: readCall)) {
+			let source = URL(fileURLWithPath: ".")
+			var reader: DVDReader?
+			XCTAssertNoThrow(reader = try DVDReader(source: source))
+			XCTAssertNotNil(reader)
+			XCTAssertThrowsError(try reader!.info()) {
+				XCTAssertEqual($0 as! ConverterError, .sourceReadError)
+			}
+		}
+
+		waitForExpectations(timeout: .infinity)
+	}
+
 	func testMinimalDVD() {
 		let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
 		var importer: Importer?

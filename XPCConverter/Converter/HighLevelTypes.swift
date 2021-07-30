@@ -27,6 +27,23 @@ public final class DVDReader: ConverterClient<ConverterDVDReader> {
 		}
 	}
 
+	/// Aggregated meta-information about the DVD.
+	///
+	/// The information is fetched from the DVD by performing an asynchronous
+	/// XPC request. A single `Progress` instance is sent through the
+	/// `publisher` so clients can observe progress.
+	///
+	/// Information is collected by reading the IFO files and menu NAV packets
+	/// on the DVD.
+	public func info() throws -> DVDInfo {
+		return try withConnectionErrorHandling { done in
+
+			remote.readInfo(readerStateID) { 
+				done(.failure(.sourceReadError))
+			}
+		}
+	}
+
 	deinit {
 		if readerStateID != nil {
 			remote.close(readerStateID)

@@ -19,6 +19,7 @@ public enum ConverterOutput {
 /// are thrown to immediately unwind control flow.
 public enum ConverterError: Error {
 	case sourceNotSupported
+	case sourceReadError
 	case connectionInvalid
 	case connectionInterrupted
 }
