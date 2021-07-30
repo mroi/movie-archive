@@ -44,6 +44,9 @@ class DVDImporterTests: XCTestCase {
 			func close(_: UUID) {
 				closeCall.fulfill()
 			}
+			func readInfo(_: UUID, completionHandler: @escaping () -> Void) {
+				XCTFail()
+			}
 		}
 
 		try! ConverterClient.withMocks(proxy: ReaderMock(withExpectations: openCall, closeCall)) {
