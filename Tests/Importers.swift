@@ -21,6 +21,9 @@ class ImporterTests: XCTestCase {
 
 class DVDImporterTests: XCTestCase {
 
+	/// The `Bundle` of this test class, can be used to access test resources.
+	private var testBundle: Bundle { Bundle(for: type(of: self)) }
+
 	func testReaderInitDeinit() {
 		let openCall = expectation(description: "open should be called")
 		let closeCall = expectation(description: "close should be called")
@@ -48,5 +51,10 @@ class DVDImporterTests: XCTestCase {
 		}
 
 		waitForExpectations(timeout: .infinity)
+	}
+
+	func testMinimalDVD() {
+		let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
+		XCTAssertNoThrow(try Importer(source: iso))
 	}
 }
