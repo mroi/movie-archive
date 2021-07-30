@@ -11,6 +11,7 @@
 		4C1A3595245DFEE700C40FB5 /* IngestDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */; };
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
 		4C300E5C2691124000DF059F /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4C6D90A626B49E5200EAA149 /* Importers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6D90A526B49E5200EAA149 /* Importers.swift */; };
 		4C947BDE268234FD00D72937 /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4C947BDD268234FD00D72937 /* MovieArchiveExporters */; };
 		4CA53B872690D4FF002140BC /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA53B862690D4FF002140BC /* Common.swift */; };
 		4CA53B8A2690D5F2002140BC /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA53B892690D5F2002140BC /* MovieArchiveExporters */; };
@@ -92,6 +93,7 @@
 		4C1F484926A2D44400AF7205 /* XPC-Debug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "XPC-Debug.entitlements"; sourceTree = "<group>"; };
 		4C392A56249E72E000CD7308 /* Exporters */ = {isa = PBXFileReference; lastKnownFileType = text; path = Exporters; sourceTree = SOURCE_ROOT; };
 		4C392A57249E72E000CD7308 /* Model */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model; sourceTree = SOURCE_ROOT; };
+		4C6D90A526B49E5200EAA149 /* Importers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Importers.swift; sourceTree = "<group>"; };
 		4C7158F42693A9FC0086A8C8 /* XPC-Release.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "XPC-Release.entitlements"; sourceTree = "<group>"; };
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4C8AC3D5268B05EB00BF1726 /* Converter */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Converter; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				4CA53B862690D4FF002140BC /* Common.swift */,
+				4C6D90A526B49E5200EAA149 /* Importers.swift */,
 				4CAC9F3D24688E880031A9EE /* UIMacOS.swift */,
 			);
 			path = Tests;
@@ -362,6 +365,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */,
+				4C6D90A626B49E5200EAA149 /* Importers.swift in Sources */,
 				4CA53B872690D4FF002140BC /* Common.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
