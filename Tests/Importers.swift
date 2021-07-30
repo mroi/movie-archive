@@ -1,5 +1,6 @@
 import XCTest
 
+@testable import MovieArchiveModel
 @testable import MovieArchiveImporters
 @testable import MovieArchiveConverter
 
@@ -55,6 +56,11 @@ class DVDImporterTests: XCTestCase {
 
 	func testMinimalDVD() {
 		let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
-		XCTAssertNoThrow(try Importer(source: iso))
+		var importer: Importer?
+		XCTAssertNoThrow(importer = try Importer(source: iso))
+		XCTAssertNotNil(importer)
+
+		let transform = Transform(importer: importer!, exporter: NullExporter())
+		transform.execute()
 	}
 }

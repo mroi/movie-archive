@@ -16,4 +16,19 @@ public class Transform {
 		self.importer = importer
 		self.exporter = exporter
 	}
+
+	/// Execute the transform.
+	///
+	/// This function is asynchronous, so any long-running work will yield to
+	/// the caller. For status updates and interacting with the transform like
+	/// configuring options, you must subscribe to the `publisher` property.
+	public func execute() {  // TODO: convert to async function
+		// TODO: set up publisher
+		do {
+			let mediaTree = try importer.generate()
+			try exporter.consume(mediaTree)
+		} catch {
+			// TODO: post error to publisher
+		}
+	}
 }
