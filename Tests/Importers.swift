@@ -7,6 +7,13 @@ import XCTest
 /* MARK: Generic Importer Tests */
 
 class ImporterTests: XCTestCase {
+
+	func testUnsupportedSource() {
+		let source = URL(fileURLWithPath: "/var/empty")
+		XCTAssertThrowsError(try Importer(source: source)) {
+			XCTAssertEqual($0 as! Importer.Error, .sourceNotSupported)
+		}
+	}
 }
 
 
