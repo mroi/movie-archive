@@ -1,6 +1,31 @@
 import XCTest
 
+@testable import MovieArchiveModel
 @testable import MovieArchiveConverter
+
+
+/* MARK: Model Tests */
+
+class ModelTests: XCTestCase {
+
+	func testErrorToPublisher() {
+		let error = expectation(description: "an error should be published")
+
+		let importer = ThrowingImporter()
+		let exporter = NullExporter()
+		let transform = Transform(importer: importer, exporter: exporter)
+		XCTAssertEqual(transform.description, "ThrowingImporter → NullExporter")
+
+		let subscription = transform.publisher.sink(
+			receiveCompletion: { if case .failure = $0 { error.fulfill() } },
+			receiveValue: { _ in XCTFail("unexpected publisher output") })
+		defer { subscription.cancel() }
+
+		transform.execute()
+
+		waitForExpectations(timeout: .infinity)
+	}
+}
 
 
 /* MARK: Converter Tests */
