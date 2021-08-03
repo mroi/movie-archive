@@ -12,6 +12,7 @@
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
 		4C300E5C2691124000DF059F /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4C6D90A626B49E5200EAA149 /* Importers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6D90A526B49E5200EAA149 /* Importers.swift */; };
+		4C6D90A926B87D8A00EAA149 /* libintercept.dylib in Copy Intercept Library */ = {isa = PBXBuildFile; fileRef = 4CB7800E269C855B0027D46F /* libintercept.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		4C947BDE268234FD00D72937 /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4C947BDD268234FD00D72937 /* MovieArchiveExporters */; };
 		4CA53B872690D4FF002140BC /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA53B862690D4FF002140BC /* Common.swift */; };
 		4CA53B8A2690D5F2002140BC /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA53B892690D5F2002140BC /* MovieArchiveExporters */; };
@@ -67,6 +68,17 @@
 				4C300E5C2691124000DF059F /* Converter.xpc in Embed XPC Service */,
 			);
 			name = "Embed XPC Service";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C6D90A826B87D4E00EAA149 /* Copy Intercept Library */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4C6D90A926B87D8A00EAA149 /* libintercept.dylib in Copy Intercept Library */,
+			);
+			name = "Copy Intercept Library";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4CD8F9CD26947971003752B3 /* Copy Resources Directory */ = {
@@ -278,6 +290,7 @@
 				4C1A35AD245DFEE900C40FB5 /* Sources */,
 				4C1A35AE245DFEE900C40FB5 /* Frameworks */,
 				4CD8F9CD26947971003752B3 /* Copy Resources Directory */,
+				4C6D90A826B87D4E00EAA149 /* Copy Intercept Library */,
 				4C300E5B2690EA6500DF059F /* Embed XPC Service */,
 			);
 			buildRules = (

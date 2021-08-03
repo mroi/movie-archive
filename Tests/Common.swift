@@ -105,3 +105,33 @@ class ConverterTests: XCTestCase {
 @objc private protocol ConverterTesting {
 	func doNothing()
 }
+
+
+/* MARK: Intercept Library Tests */
+
+class InterceptTests: XCTestCase {
+
+	struct Intercept {
+		let dlopen: @convention(c) (UnsafePointer<CChar>?, Int32) -> UnsafeMutableRawPointer?
+
+		init() {
+			let handle = Darwin.dlopen("libintercept.dylib", RTLD_LOCAL)
+			XCTAssertNotNil(handle)
+
+			let dlopenSymbol = dlsym(handle, "dlopen")
+			XCTAssertNotNil(dlopenSymbol)
+			dlopen = unsafeBitCast(dlopenSymbol, to: type(of: dlopen))
+		}
+	}
+
+	/// Access the functions of the intercept library.
+	///
+	/// The intercept library replaces or wraps functionality of `libSystem` to
+	/// adapt the behavior of other libraries without the need to modify them.
+	let intercept = Intercept()
+
+	func testDlopen() {
+		XCTAssertNotNil(intercept.dlopen("/usr/lib/libSystem.B.dylib", 0))
+		XCTAssertNil(intercept.dlopen("not existing", 0))
+	}
+}
