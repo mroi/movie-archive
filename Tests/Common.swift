@@ -7,6 +7,46 @@ import XCTest
 
 class ConverterTests: XCTestCase {
 
+	func testDeinitialization() {
+		let deinitClient = expectation(description: "converter client should be released")
+		let deinitReturn = expectation(description: "return channel should be released")
+
+		class TestClient: ConverterClient<ConverterInterface> {
+			let deinitClient: XCTestExpectation
+			init(withExpectations expectations: XCTestExpectation...) {
+				deinitClient = expectations[0]
+			}
+			deinit {
+				deinitClient.fulfill()
+			}
+		}
+		class TestReturn: ReturnImplementation {
+			let deinitReturn: XCTestExpectation
+			init(withExpectations expectations: XCTestExpectation...) {
+				deinitReturn = expectations[0]
+			}
+			deinit {
+				deinitReturn.fulfill()
+			}
+		}
+
+		// do complicated stuff with client and return and check for proper release
+		do {
+			let client = TestClient(withExpectations: deinitClient)
+			let returnChannel = TestReturn(withExpectations: deinitReturn)
+			try! ConverterClient.withMocks(proxy: client.remote, publisher: returnChannel.publisher) {
+				XCTAssertNoThrow(
+					try client.withConnectionErrorHandling { done in
+						done(.success(ConverterClient<ConverterInterface>()))
+					}
+				)
+				returnChannel.sendConnectionInterrupted()
+			}
+		}
+
+		waitForExpectations(timeout: .infinity)
+	}
+
 	func testXPCErrorPropagation() {
 		// set up an invalid XPC connection
 		let returnChannel = ReturnImplementation()
