@@ -8,12 +8,12 @@ import Foundation
 /// operations recursively:
 /// * A pass can invoke itself recursively on child trees.
 /// * A pass can invoke a chain of sub-passes on the tree.
-public protocol Pass {
+public protocol Pass: AnyPass {
 }
 
 
 /// A special pass that receives no input.
-public protocol ImportPass {
+public protocol ImportPass: AnyPass {
 
 	/// Creates an appropriate importer if the source is supported.
 	init(source url: URL) throws
@@ -23,8 +23,21 @@ public protocol ImportPass {
 }
 
 /// A special pass that generates no output other than side effects.
-public protocol ExportPass {
+public protocol ExportPass: AnyPass {
 
 	/// Receives a `MediaTree` without returning a new one.
 	func consume(_ mediaTree: MediaTree) throws
+}
+
+/// A `Pass`, `ImportPass`, or `ExportPass`.
+///
+/// Consumers of the passes API should rarely need this. It is used internally
+/// to offer protocol extensions and default implementations for all passes.
+public protocol AnyPass: CustomStringConvertible {}
+
+
+/* MARK: Default Implementations */
+
+extension AnyPass {
+	public var description: String { String(describing: type(of: self)) }
 }

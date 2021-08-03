@@ -32,3 +32,7 @@ public class Transform {
 		}
 	}
 }
+
+extension Transform: CustomStringConvertible {
+	public var description: String { "\(importer) → \(exporter)" }
+}
