@@ -314,6 +314,7 @@
 				4CEEFEEF24A108EC00C0357D /* Sources */,
 				4CEEFEF024A108EC00C0357D /* Frameworks */,
 				4CB7801B269C8ABD0027D46F /* Install Intercept Library */,
+				4CB78009269C40890027D46F /* Copy Optional CSS Library */,
 			);
 			buildRules = (
 			);
@@ -391,6 +392,27 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4CB78009269C40890027D46F /* Copy Optional CSS Library */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/libdvdcss/libdvdcss.2.dylib",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/libintercept.dylib",
+			);
+			name = "Copy Optional CSS Library";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/libdvdcss.2.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if test -x \"$SCRIPT_INPUT_FILE_0\" ; then\n\tmkdir -p \"$(dirname \"$SCRIPT_OUTPUT_FILE_0\")\"\n\tcp -p \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n\tinstall_name_tool -change /usr/lib/libSystem.B.dylib \"@executable_path/../Frameworks/$(basename \"$SCRIPT_INPUT_FILE_1\")\" \"$SCRIPT_OUTPUT_FILE_0\"\nfi\n";
+		};
 		4CB7801B269C8ABD0027D46F /* Install Intercept Library */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
