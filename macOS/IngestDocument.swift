@@ -11,7 +11,7 @@ import MovieArchiveImporters
 /// The exporter outputs from the data model to the movie archive storage format.
 struct IngestDocument: FileDocument {
 
-	static var readableContentTypes: [UTType] = [ .ingestDocument ]
+	static let readableContentTypes: [UTType] = [ .ingestDocument ]
 
 	init() {}
 	init(configuration: ReadConfiguration) throws {}
