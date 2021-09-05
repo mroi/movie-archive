@@ -90,29 +90,22 @@ class DVDImporterTests: XCTestCase {
 	}
 
 	func testMinimalDVD() {
-		// TODO: remove mocking when publisher is exposed on the transform
-		let client = ConverterClient<ConverterDVDReader>()
-		withExtendedLifetime(client) {
-			try! ConverterClient.withMocks(proxy: client.remote, publisher: client.publisher) {
+		let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
+		var importer: Importer?
+		XCTAssertNoThrow(importer = try Importer(source: iso))
+		XCTAssertNotNil(importer)
 
-				let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
-				var importer: Importer?
-				XCTAssertNoThrow(importer = try Importer(source: iso))
-				XCTAssertNotNil(importer)
+		let transform = Transform(importer: importer!, exporter: NullExporter())
 
-				let transform = Transform(importer: importer!, exporter: NullExporter())
+		var outputs = 0
+		let subscription = transform.publisher
+			.mapError { _ in fatalError("unexpected publisher error") }
+			.sink { _ in outputs += 1 }
+		defer { subscription.cancel() }
 
-				var outputs = [ConverterOutput]()
-				let subscription = client.publisher
-					.mapError { _ in fatalError("unexpected publisher error") }
-					.sink { outputs.append($0) }
-				defer { subscription.cancel() }
+		transform.execute()
 
-				transform.execute()
-
-				XCTAssertEqual(transform.description, "DVDImporter → NullExporter")
-				XCTAssertEqual(outputs.count, 1)
-			}
-		}
+		XCTAssertEqual(transform.description, "DVDImporter → NullExporter")
+		XCTAssertEqual(outputs, 1)
 	}
 }
