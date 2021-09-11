@@ -77,6 +77,11 @@ extension ConverterImplementation: ConverterDVDReader {
 				throw DVDReaderError.dataImportError
 			}
 
+			// consistency checks
+			info.checkConsistency(against: ifo.data).forEach { error in
+				returnChannel?.sendMessage(level: .default, error.rawValue)
+			}
+
 			// serialize for sending as result
 			let archiver = NSKeyedArchiver(requiringSecureCoding: true)
 			try archiver.encodeEncodable(info, forKey: NSKeyedArchiveRootObjectKey)
@@ -530,6 +535,55 @@ private extension Dictionary where Key == DVDData.IFO.All.Key, Value == DVDData.
 	}
 }
 
+
+/* MARK: Consistency Checks */
+
+private extension DVDInfo {
+	/// Check consistency of information that is stored redundantly in VMGI and VTSI.
+	func checkConsistency(against ifoData: DVDData.IFO.All) -> [DVDReaderError] {
+		var result: [DVDReaderError] = []
+
+		// number of actual and reported title sets should match
+		let vtsCount = self.titleSets.count
+		if vtsCount != ifoData.vtsCount {
+			result.append(DVDReaderError.vtsCountInconsistent)
+		} else {
+			// number of actual and reported titles should match
+			let titleCount = self.titleSets.values.map(\.titles.count).reduce(0, +)
+			if titleCount != ifoData.titleInfo.count {
+				result.append(DVDReaderError.titleCountInconsistent)
+			} else {
+				// number of actual and reported parts per title should match
+				let partCounts = self.titleSets.values.flatMap(\.titles.values)
+					.sorted { $0.globalIndex < $1.globalIndex }
+					.map { UInt16($0.parts.count) }
+				if partCounts != ifoData.titleInfo.map(\.nr_of_ptts) {
+					result.append(DVDReaderError.partsCountInconsistent)
+				}
+			}
+		}
+
+		// all durations and time stamps in program chains should use the same frame rate
+		let allProgramChains = (self.start.map { [$0] } ?? []) +
+			self.titleSets.values.flatMap {
+				Array($0.menus.programChains.all) + Array($0.content.programChains.all)
+			}
+		let ratesPerProgramChain = allProgramChains.map { pgc in
+			[pgc.duration.rate] + pgc.cells.values.flatMap { cell in
+				[cell.duration.rate] + cell.interaction.map(\.linearPlaybackTimestamp?.rate)
+			}
+		}
+		let allEqualWithinProgramChains = ratesPerProgramChain.reduce(true) {
+			$0 && Set($1).count <= 1
+		}
+		if !allEqualWithinProgramChains {
+			result.append(DVDReaderError.frameRatesInconsistent)
+		}
+
+		return result
+	}
+}
+
 /// Error conditions while reading and understanding DVD information.
 private enum DVDReaderError: String, Error {
 	case vmgiReadError = "could not read VMGI"
@@ -537,4 +591,8 @@ private enum DVDReaderError: String, Error {
 	case vobReadError = "could not read VOB"
 	case navImportError = "NAV data not understood"
 	case dataImportError = "DVD data not understood"
+	case vtsCountInconsistent = "inconsistent VTS count"
+	case titleCountInconsistent = "inconsistent title count"
+	case partsCountInconsistent = "inconsistent parts count"
+	case frameRatesInconsistent = "inconsistent frame rates"
 }
