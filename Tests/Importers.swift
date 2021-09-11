@@ -90,12 +90,28 @@ class DVDImporterTests: XCTestCase {
 	}
 
 	func testMinimalDVD() {
-		let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
-		var importer: Importer?
-		XCTAssertNoThrow(importer = try Importer(source: iso))
-		XCTAssertNotNil(importer)
+		// TODO: remove mocking when publisher is exposed on the transform
+		let client = ConverterClient<ConverterDVDReader>()
+		withExtendedLifetime(client) {
+			try! ConverterClient.withMocks(proxy: client.remote, publisher: client.publisher) {
 
-		let transform = Transform(importer: importer!, exporter: NullExporter())
-		transform.execute()
+				let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
+				var importer: Importer?
+				XCTAssertNoThrow(importer = try Importer(source: iso))
+				XCTAssertNotNil(importer)
+
+				let transform = Transform(importer: importer!, exporter: NullExporter())
+
+				var outputs = [ConverterOutput]()
+				let subscription = client.publisher
+					.mapError { _ in fatalError("unexpected publisher error") }
+					.sink { outputs.append($0) }
+				defer { subscription.cancel() }
+
+				transform.execute()
+
+				XCTAssertEqual(outputs.count, 1)
+			}
+		}
 	}
 }
