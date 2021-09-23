@@ -50,7 +50,8 @@ extension ConverterImplementation: ConverterDVDReader {
 				do {
 					let vtsi = DVDData.FileId.vtsi(vtsIndex)
 					try ifo.read(vtsi)
-				} catch {
+				} catch let error as DVDReaderError {
+					returnChannel?.sendMessage(level: .error, error.rawValue)
 					continue
 				}
 			}
@@ -67,6 +68,9 @@ extension ConverterImplementation: ConverterDVDReader {
 
 			done(archiver.encodedData)
 
+		} catch let error as DVDReaderError {
+			returnChannel?.sendMessage(level: .error, error.rawValue)
+			done(nil)
 		} catch {
 			done(nil)
 		}
@@ -138,7 +142,10 @@ private extension DVDData.IFO {
 		func read(_ file: DVDData.FileId) throws {
 			let ifoData = ifoOpen(reader, file.rawValue)
 			guard let ifoData = ifoData else {
-				throw DVDReaderError.readError
+				switch file {
+				case .vmgi: throw DVDReaderError.vmgiReadError
+				case .vtsi: throw DVDReaderError.vtsiReadError
+				}
 			}
 			data[file] = ifoData
 		}
@@ -160,7 +167,8 @@ private extension Dictionary where Key == DVDData.IFO.All.Key, Value == DVDData.
 }
 
 /// Error conditions while reading and understanding DVD information.
-private enum DVDReaderError: Error {
-	case readError
-	case dataImportError
+private enum DVDReaderError: String, Error {
+	case vmgiReadError = "could not read VMGI"
+	case vtsiReadError = "could not read VTSI"
+	case dataImportError = "DVD data not understood"
 }
