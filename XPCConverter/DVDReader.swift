@@ -169,6 +169,22 @@ enum DVDData {
 		typealias Cell = [NAVPacket]
 		typealias NAVPacket = (timestamp: UInt64?, pci: pci_t, dsi: dsi_t)
 	}
+
+	/// Types for handling of VOB data.
+	///
+	/// Video Objects are the files containing MPEG program stream data and
+	/// NAV packets.
+	enum VOB {
+		/// A Video Object Unit is the smallest physically contiguous sequence of MPEG data.
+		///
+		/// Each VOBU starts with exactly one NAV packet.
+		struct VOBU {
+			/// Presentation Control Information (PCI).
+			let pci: pci_t
+			/// Data Search Information (DSI).
+			let dsi: dsi_t
+		}
+	}
 }
 
 
@@ -253,16 +269,35 @@ private extension DVDData.NAV {
 
 			// FIXME: update progress with a fractional value
 
-			let vtsNav = vtsData.map { (domain, domainData) -> (DVDData.DomainId, Domain) in
+			let vtsNav = try vtsData.map { (domain, domainData) -> (DVDData.DomainId, Domain) in
 				guard domainData.contains(where: { $0.value.count > 0 }) else {
 					return (domain, [:])
 				}
+				let vob = try DVDData.VOB.Reader(file, domain: domain, reader: reader)
 
 				let domainNav = domainData.mapValues { pgc -> PGC in
 					return pgc.map { cell -> Cell in
 
-						// FIXME: read NAV packets from cells
-						return []
+						// read VOBUs of one cell
+						let vobuSequence = vob.readCell(startingAt: Int(cell.first_sector))
+						let vobus = vobuSequence.map { vobu in
+							return vobu
+						}
+
+						// get PCI and DSI from VOBUs, calculate timestamp by summing the VOBU durations
+						return vobus.reduce(into: []) { result, vobu in
+							let timestamp: UInt64?
+							if let previous = result.last {
+								timestamp = previous.timestamp.map {
+									let duration = previous.pci.pci_gi.vobu_e_ptm - previous.pci.pci_gi.vobu_s_ptm
+									return $0 + UInt64(duration)
+								}
+							} else {
+								timestamp = 0
+							}
+							let linearPlayback = !vobu.dsi.sml_pbi.category.bit(14)
+							result.append((linearPlayback ? timestamp : nil, vobu.pci, vobu.dsi))
+						}
 					}
 				}
 				return (domain, domainNav)
@@ -270,6 +305,107 @@ private extension DVDData.NAV {
 
 			data[file] = VTS(uniqueKeysWithValues: vtsNav)
 		}
+	}
+}
+
+private extension DVDData.VOB {
+	/// Executes VOB read operations.
+	class Reader {
+		private let fileReader: OpaquePointer
+
+		init(_ file: DVDData.FileId, domain: DVDData.DomainId, reader: OpaquePointer) throws {
+			let fileReader = DVDOpenFile(reader, file.rawValue, domain.rawValue)
+			guard let fileReader = fileReader else { throw DVDReaderError.vobReadError }
+			self.fileReader = fileReader
+		}
+
+		func readCell(startingAt sector: Int) -> VOBUSequence {
+			return VOBUSequence(startingAt: sector, file: fileReader)
+		}
+
+		deinit {
+			DVDCloseFile(fileReader)
+		}
+
+		/// A sequence of consecutive Video Object Units.
+		struct VOBUSequence: Sequence, IteratorProtocol {
+			private let fileReader: OpaquePointer
+			var currentSector: Int?
+
+			init(startingAt sector: Int, file reader: OpaquePointer) {
+				currentSector = sector
+				fileReader = reader
+			}
+
+			mutating func next() -> VOBU? {
+				guard let currentSector = currentSector else { return nil }
+
+				let buffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: Int(DVD_VIDEO_LB_LEN))
+				defer { buffer.deallocate() }
+				let successful = DVDReadBlocks(fileReader, Int32(currentSector), 1, buffer.baseAddress)
+				guard successful == 1 else { return nil }
+
+				let vobu = VOBU(data: buffer)
+				guard let vobu = vobu else { return nil }
+
+				let nextVobu = vobu.dsi.vobu_sri.next_vobu.bits(0...29)
+				if nextVobu != SRI_END_OF_CELL {
+					self.currentSector = currentSector + Int(nextVobu)
+				} else {
+					self.currentSector = nil
+				}
+
+				return vobu
+			}
+		}
+	}
+}
+
+private extension DVDData.VOB.VOBU {
+	/// Initialize by parsing the first sector of VOBU data, which should contain the NAV packet.
+	init?(data: UnsafeMutableBufferPointer<UInt8>) {
+		func packetLength(at position: Int) -> Int {
+			var length = 0
+			length |= Int(data[position + 4]) << 8
+			length |= Int(data[position + 5])
+			return length
+		}
+
+		var position = data.startIndex
+
+		if data[position + 3] == 0xBA {
+			// program stream pack header
+			if data[position + 4].bit(6) {
+				// MPEG-2
+				let stuffing = data[position + 13].bits(0...2)
+				position += 14 + Int(stuffing)
+			} else {
+				// MPEG-1
+				position += 12
+			}
+		}
+		if data[position + 3] == 0xBB {
+			// program stream system header
+			position += 6 + packetLength(at: position)
+		}
+		guard data[position...position + 3].elementsEqual([0, 0, 1, 0xBF]) else { return nil }
+		// private stream 2 packet reached
+		let length = packetLength(at: position)
+
+		position += 6
+		guard data[position] == 0 else { return nil }
+		// NAV PCI packet reached
+		var pci = pci_t()
+		navRead_PCI(&pci, data.baseAddress?.advanced(by: position + 1))
+		self.pci = pci
+		position += length
+
+		position += 6
+		guard data[position] == 1 else { return nil }
+		// NAV DSI packet reached
+		var dsi = dsi_t()
+		navRead_DSI(&dsi, data.baseAddress?.advanced(by: position + 1))
+		self.dsi = dsi
 	}
 }
 
@@ -360,5 +496,6 @@ private extension Dictionary where Key == DVDData.IFO.All.Key, Value == DVDData.
 private enum DVDReaderError: String, Error {
 	case vmgiReadError = "could not read VMGI"
 	case vtsiReadError = "could not read VTSI"
+	case vobReadError = "could not read VOB"
 	case dataImportError = "DVD data not understood"
 }
