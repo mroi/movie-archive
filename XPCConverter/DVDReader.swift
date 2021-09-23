@@ -196,6 +196,12 @@ private extension DVDData {
 		private let id = UUID()
 		private let channel: ReturnInterface?
 
+		/// Progress fractions when alternately reading IFO and NAV information.
+		///
+		/// Reading the IFO is 10% of the work per `DVDFileId`, scanning for NAV
+		/// packets is 90% of the work per `DVDFileId`.
+		static let workFraction = (ifo: 0.1, nav: 0.9)
+
 		/// Expected work items.
 		var expectedTotal = 0 {
 			didSet { report() }
@@ -242,7 +248,7 @@ private extension DVDData.IFO {
 				}
 			}
 			data[file] = ifoData
-			progress.itemsCompleted = Double(data.count)
+			progress.itemsCompleted = Double(data.count - 1) + DVDData.Progress.workFraction.ifo
 		}
 
 		deinit {
@@ -269,7 +275,16 @@ private extension DVDData.NAV {
 
 			let vtsData = ifoData.vtsNavCells(for: file)
 
-			// FIXME: update progress with a fractional value
+			// determine total amount of sectors for progress reporting
+			let sectorCounts = vtsData.flatMap { domain in
+				domain.value.flatMap { pgc in
+					pgc.value.map { cell in
+						Int(cell.last_sector - cell.first_sector + 1)
+					}
+				}
+			}
+			let totalSectors = sectorCounts.reduce(0, +)
+			var completedSectors = 0
 
 			let vtsNav = try vtsData.map { (domain, domainData) -> (DVDData.DomainId, Domain) in
 				guard domainData.contains(where: { $0.value.count > 0 }) else {
@@ -287,6 +302,16 @@ private extension DVDData.NAV {
 								if case .failure(let error) = result { lastError = error }
 								return nil
 							}
+
+							// update progress
+							completedSectors += Int(vobu.dsi.dsi_gi.vobu_ea + 1)
+							let fraction = Double(completedSectors) / Double(totalSectors)
+							assert(fraction <= 1.0)
+							var completed = progress.itemsCompleted.rounded(.down)
+							completed += DVDData.Progress.workFraction.ifo
+							completed += DVDData.Progress.workFraction.nav * fraction
+							progress.itemsCompleted = completed
+
 							return vobu
 						}
 
