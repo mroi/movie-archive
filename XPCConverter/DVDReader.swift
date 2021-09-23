@@ -40,7 +40,7 @@ extension ConverterImplementation: ConverterDVDReader {
 			let ifo = DVDData.IFO.Reader(reader: reader)
 
 			// read Video Manager Information
-			try ifo.read(0)
+			try ifo.read(.vmgi)
 
 			// read Video Title Set Information
 			let vmgCount = 1
@@ -48,11 +48,14 @@ extension ConverterImplementation: ConverterDVDReader {
 			for vtsIndex in 1...99 {
 				if ifo.data.count == vmgCount + vtsCount { break }
 				do {
-					try ifo.read(vtsIndex)
+					let vtsi = DVDData.FileId.vtsi(vtsIndex)
+					try ifo.read(vtsi)
 				} catch {
 					continue
 				}
 			}
+
+			let _ = DVDInfo(ifo.data)
 
 			done()  // FIXME: return Swift struct with DVD info
 
@@ -73,14 +76,40 @@ extension ConverterImplementation: ConverterDVDReader {
 /* MARK: DVD Data Collections */
 
 /// Collections of raw data, obtained from the DVD via `libdvdread`.
+///
+/// The ingest of DVD data happens in two steps:
+/// 1. The DVD data is read in its raw form via `libdvdread` functions. The
+///    corresponding C data structures are stored within Swift collections.
+/// 2. These Swift collections are passed to the toplevel initializer of
+///    the `DVDInfo` type. This is a Swift struct offering a more usable
+///    representation of this data.
 enum DVDData {
+
+	/// Identifies a file or file group of 2GB chunks on the DVD.
+	enum FileId: Hashable {
+		/// Video Manager Information (VMGI).
+		///
+		/// The Video Manager contains toplevel entry points of the DVD.
+		case vmgi
+		/// Video Title Set Information (VTSI).
+		///
+		/// The Video Title Sets are groups of playble content.
+		case vtsi(_ index: Int)
+
+		var rawValue: Int32 {
+			switch self {
+			case .vmgi: return 0
+			case .vtsi(let titleSet): return Int32(titleSet)
+			}
+		}
+	}
 
 	/// Collection types for storing IFO data.
 	///
 	/// IFOs are files containing meta information about the DVD’s navigational
 	/// and playback structure.
 	enum IFO {
-		typealias All = [Int: IFOFile]
+		typealias All = [FileId: IFOFile]
 		typealias IFOFile = UnsafeMutablePointer<ifo_handle_t>
 	}
 }
@@ -98,8 +127,8 @@ private extension DVDData.IFO {
 			self.reader = reader
 		}
 
-		func read(_ file: Int) throws {
-			let ifoData = ifoOpen(reader, Int32(file))
+		func read(_ file: DVDData.FileId) throws {
+			let ifoData = ifoOpen(reader, file.rawValue)
 			guard let ifoData = ifoData else {
 				throw DVDReaderError.readError
 			}
@@ -118,7 +147,7 @@ private extension DVDData.IFO {
 private extension Dictionary where Key == DVDData.IFO.All.Key, Value == DVDData.IFO.All.Value {
 	/// The number of Video Title Sets on the DVD.
 	var vtsCount: Int {
-		Int(self[0]?.pointee.vmgi_mat?.pointee.vmg_nr_of_title_sets ?? 0)
+		Int(self[.vmgi]?.pointee.vmgi_mat?.pointee.vmg_nr_of_title_sets ?? 0)
 	}
 }
 
