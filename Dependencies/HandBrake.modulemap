@@ -1,5 +1,6 @@
 module LibDVDRead {
 	header "contrib/include/dvdread/dvd_reader.h"
 	header "contrib/include/dvdread/ifo_read.h"
+	header "contrib/include/dvdread/nav_read.h"
 	link "dvdread"
 }

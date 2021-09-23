@@ -39,6 +39,7 @@ extension ConverterImplementation: ConverterDVDReader {
 		do {
 			let progress = DVDData.Progress(channel: returnChannel)
 			let ifo = DVDData.IFO.Reader(reader: reader, progress: progress)
+			let nav = DVDData.NAV.Reader(reader: reader, progress: progress)
 
 			// read Video Manager Information
 			try ifo.read(.vmgi)
@@ -48,12 +49,16 @@ extension ConverterImplementation: ConverterDVDReader {
 			let vtsCount = ifo.data.vtsCount
 			progress.expectedTotal = vmgCount + vtsCount
 
+			// scan NAV packets within First Play and Video Manager Menu
+			try nav.scan(.vmgi, within: ifo.data)
+
 			// read Video Title Set Information
 			for vtsIndex in 1...99 {
 				if ifo.data.count == vmgCount + vtsCount { break }
 				do {
 					let vtsi = DVDData.FileId.vtsi(vtsIndex)
 					try ifo.read(vtsi)
+					try nav.scan(vtsi, within: ifo.data)
 				} catch let error as DVDReaderError {
 					returnChannel?.sendMessage(level: .error, error.rawValue)
 					continue
@@ -120,6 +125,28 @@ enum DVDData {
 		}
 	}
 
+	/// Identifies a playback domain within a file.
+	enum DomainId: Hashable {
+		case firstPlay
+		case menus
+		case titles
+
+		var rawValue: dvd_read_domain_t {
+			switch self {
+			case .firstPlay: return DVD_READ_MENU_VOBS
+			case .menus: return DVD_READ_MENU_VOBS
+			case .titles: return DVD_READ_TITLE_VOBS
+			}
+		}
+	}
+
+	/// Identifies a concrete program chain within a domain.
+	enum PGCId: Hashable {
+		case firstPlay
+		case menu(language: UInt32, pgc: UInt32)
+		case title(pgc: UInt32)
+	}
+
 	/// Collection types for storing IFO data.
 	///
 	/// IFOs are files containing meta information about the DVD’s navigational
@@ -127,6 +154,20 @@ enum DVDData {
 	enum IFO {
 		typealias All = [FileId: IFOFile]
 		typealias IFOFile = UnsafeMutablePointer<ifo_handle_t>
+	}
+
+	/// Collection types for storing NAV data.
+	///
+	/// Navigation packets are embedded within the MPEG program streams and
+	/// contain information about interactive menus and directions for playback
+	/// with multiple viewing angles.
+	enum NAV {
+		typealias All = [FileId: VTS]
+		typealias VTS = [DomainId: Domain]
+		typealias Domain = [PGCId: PGC]
+		typealias PGC = [Cell]
+		typealias Cell = [NAVPacket]
+		typealias NAVPacket = (timestamp: UInt64?, pci: pci_t, dsi: dsi_t)
 	}
 }
 
@@ -191,6 +232,25 @@ private extension DVDData.IFO {
 		deinit {
 			progress.itemsCompleted = Double(data.count)
 			data.forEach { ifoClose($0.value) }
+		}
+	}
+}
+
+private extension DVDData.NAV {
+	/// Executes NAV scan operations, reports progress, and maintains the resulting data.
+	class Reader {
+		var data: All = [:]
+		private let reader: OpaquePointer
+		private let progress: DVDData.Progress
+
+		init(reader: OpaquePointer, progress: DVDData.Progress) {
+			self.reader = reader
+			self.progress = progress
+		}
+
+		func scan(_ file: DVDData.FileId, within ifoData: DVDData.IFO.All) throws {
+			// FIXME: scan for NAV packets and collect information
+			// FIXME: update progress with a fractional value
 		}
 	}
 }
