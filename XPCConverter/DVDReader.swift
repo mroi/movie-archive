@@ -37,14 +37,18 @@ extension ConverterImplementation: ConverterDVDReader {
 		guard let reader = state[id] else { return done(nil) }
 
 		do {
-			let ifo = DVDData.IFO.Reader(reader: reader)
+			let progress = DVDData.Progress(channel: returnChannel)
+			let ifo = DVDData.IFO.Reader(reader: reader, progress: progress)
 
 			// read Video Manager Information
 			try ifo.read(.vmgi)
 
-			// read Video Title Set Information
+			// update expected amount of work
 			let vmgCount = 1
 			let vtsCount = ifo.data.vtsCount
+			progress.expectedTotal = vmgCount + vtsCount
+
+			// read Video Title Set Information
 			for vtsIndex in 1...99 {
 				if ifo.data.count == vmgCount + vtsCount { break }
 				do {
@@ -129,14 +133,47 @@ enum DVDData {
 
 /* MARK: Reading Data from the DVD */
 
+private extension DVDData {
+	/// Progress reporting for the process of reading DVD data.
+	class Progress {
+		private let id = UUID()
+		private let channel: ReturnInterface?
+
+		/// Expected work items.
+		var expectedTotal = 0 {
+			didSet { report() }
+		}
+		/// Successfully completed items.
+		var itemsCompleted = 0.0 {
+			didSet { report() }
+		}
+
+		init(channel: ReturnInterface?) {
+			self.channel = channel
+			report()
+		}
+
+		/// Calculates and reports the current progress via the return channel.
+		private func report() {
+			let total = 1000 * Int64(expectedTotal)
+			let completed = total > 0 ? Int64(1000 * itemsCompleted) : 0
+			channel?.sendProgress(id: id, completed: completed, total: total,
+			                      description: "reading DVD information")
+		}
+	}
+}
+
 private extension DVDData.IFO {
 	/// Executes IFO read operations, reports progress, and maintains the resulting data.
 	class Reader {
 		var data: All = [:]
 		private let reader: OpaquePointer
+		private let progress: DVDData.Progress
 
-		init(reader: OpaquePointer) {
+		init(reader: OpaquePointer, progress: DVDData.Progress) {
 			self.reader = reader
+			self.progress = progress
+			progress.itemsCompleted = Double(data.count)
 		}
 
 		func read(_ file: DVDData.FileId) throws {
@@ -148,9 +185,11 @@ private extension DVDData.IFO {
 				}
 			}
 			data[file] = ifoData
+			progress.itemsCompleted = Double(data.count)
 		}
 
 		deinit {
+			progress.itemsCompleted = Double(data.count)
 			data.forEach { ifoClose($0.value) }
 		}
 	}
