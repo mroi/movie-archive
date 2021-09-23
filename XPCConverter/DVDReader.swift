@@ -265,6 +265,8 @@ private extension DVDData.NAV {
 		}
 
 		func scan(_ file: DVDData.FileId, within ifoData: DVDData.IFO.All) throws {
+			var lastError: DVDReaderError?
+
 			let vtsData = ifoData.vtsNavCells(for: file)
 
 			// FIXME: update progress with a fractional value
@@ -280,7 +282,11 @@ private extension DVDData.NAV {
 
 						// read VOBUs of one cell
 						let vobuSequence = vob.readCell(startingAt: Int(cell.first_sector))
-						let vobus = vobuSequence.map { vobu in
+						let vobus = vobuSequence.compactMap { result -> DVDData.VOB.VOBU? in
+							guard case .success(let vobu) = result else {
+								if case .failure(let error) = result { lastError = error }
+								return nil
+							}
 							return vobu
 						}
 
@@ -304,6 +310,7 @@ private extension DVDData.NAV {
 			}
 
 			data[file] = VTS(uniqueKeysWithValues: vtsNav)
+			if let error = lastError { throw error }
 		}
 	}
 }
@@ -337,25 +344,24 @@ private extension DVDData.VOB {
 				fileReader = reader
 			}
 
-			mutating func next() -> VOBU? {
+			mutating func next() -> Result<VOBU, DVDReaderError>? {
 				guard let currentSector = currentSector else { return nil }
+				self.currentSector = nil
 
 				let buffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: Int(DVD_VIDEO_LB_LEN))
 				defer { buffer.deallocate() }
 				let successful = DVDReadBlocks(fileReader, Int32(currentSector), 1, buffer.baseAddress)
-				guard successful == 1 else { return nil }
+				guard successful == 1 else { return .failure(.vobReadError) }
 
 				let vobu = VOBU(data: buffer)
-				guard let vobu = vobu else { return nil }
+				guard let vobu = vobu else { return .failure(.navImportError) }
 
 				let nextVobu = vobu.dsi.vobu_sri.next_vobu.bits(0...29)
 				if nextVobu != SRI_END_OF_CELL {
 					self.currentSector = currentSector + Int(nextVobu)
-				} else {
-					self.currentSector = nil
 				}
 
-				return vobu
+				return .success(vobu)
 			}
 		}
 	}
@@ -497,5 +503,6 @@ private enum DVDReaderError: String, Error {
 	case vmgiReadError = "could not read VMGI"
 	case vtsiReadError = "could not read VTSI"
 	case vobReadError = "could not read VOB"
+	case navImportError = "NAV data not understood"
 	case dataImportError = "DVD data not understood"
 }
