@@ -38,8 +38,16 @@ public final class DVDReader: ConverterClient<ConverterDVDReader> {
 	public func info() throws -> DVDInfo {
 		return try withConnectionErrorHandling { done in
 
-			remote.readInfo(readerStateID) { 
-				done(.failure(.sourceReadError))
+			remote.readInfo(readerStateID) { result in
+				do {
+					guard let result = result else { throw ConverterError.sourceReadError }
+					let unarchiver = try NSKeyedUnarchiver(forReadingFrom: result)
+					let info = try unarchiver.decodeTopLevelDecodable(DVDInfo.self, forKey: NSKeyedArchiveRootObjectKey)
+					guard let info = info else { throw ConverterError.sourceReadError }
+					done(.success(info))
+				} catch {
+					done(.failure(.sourceReadError))
+				}
 			}
 		}
 	}

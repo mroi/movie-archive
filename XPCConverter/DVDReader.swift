@@ -33,8 +33,8 @@ extension ConverterImplementation: ConverterDVDReader {
 		done(.none)
 	}
 
-	func readInfo(_ id: UUID, completionHandler done: @escaping () -> Void) {
-		guard let reader = state[id] else { return done() }
+	func readInfo(_ id: UUID, completionHandler done: @escaping (_ result: Data?) -> Void) {
+		guard let reader = state[id] else { return done(nil) }
 
 		do {
 			let ifo = DVDData.IFO.Reader(reader: reader)
@@ -55,12 +55,20 @@ extension ConverterImplementation: ConverterDVDReader {
 				}
 			}
 
-			let _ = DVDInfo(ifo.data)
+			// convert DVD data to Swift struct
+			guard let info = DVDInfo(ifo.data) else {
+				throw DVDReaderError.dataImportError
+			}
 
-			done()  // FIXME: return Swift struct with DVD info
+			// serialize for sending as result
+			let archiver = NSKeyedArchiver(requiringSecureCoding: true)
+			try archiver.encodeEncodable(info, forKey: NSKeyedArchiveRootObjectKey)
+			archiver.finishEncoding()
+
+			done(archiver.encodedData)
 
 		} catch {
-			done()
+			done(nil)
 		}
 	}
 
@@ -154,4 +162,5 @@ private extension Dictionary where Key == DVDData.IFO.All.Key, Value == DVDData.
 /// Error conditions while reading and understanding DVD information.
 private enum DVDReaderError: Error {
 	case readError
+	case dataImportError
 }

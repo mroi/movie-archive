@@ -44,7 +44,7 @@ class DVDImporterTests: XCTestCase {
 			func close(_: UUID) {
 				closeCall.fulfill()
 			}
-			func readInfo(_: UUID, completionHandler: @escaping () -> Void) {
+			func readInfo(_: UUID, completionHandler: @escaping (Data?) -> Void) {
 				XCTFail()
 			}
 		}
@@ -70,9 +70,9 @@ class DVDImporterTests: XCTestCase {
 				done(UUID())
 			}
 			func close(_: UUID) {}
-			func readInfo(_: UUID, completionHandler done: @escaping () -> Void) {
+			func readInfo(_: UUID, completionHandler done: @escaping (Data?) -> Void) {
 				readCall.fulfill()
-				done()
+				done(Data(base64Encoded: "broken archive"))
 			}
 		}
 
