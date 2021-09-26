@@ -1,14 +1,19 @@
 import Foundation
 
 
+/* MARK: Pass Protocols */
+
 /// Operator to manipulate a `MediaTree`.
 ///
 /// A `Pass` takes a `MediaTree` as input and outputs a new one. It represents
 /// a single step of a tree transformation. Passes can be combined into larger
-/// operations recursively:
-/// * A pass can invoke itself recursively on child trees.
-/// * A pass can invoke a chain of sub-passes on the tree.
+/// operations recursively.
+///
+///  - SeeAlso: `ImportPass`, `ExportPass`
 public protocol Pass: AnyPass {
+
+	/// Ask the pass to process a `MediaTree`.
+	mutating func process(_ mediaTree: MediaTree) throws -> MediaTree
 }
 
 
