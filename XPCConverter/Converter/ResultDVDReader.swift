@@ -14,6 +14,7 @@ public struct DVDInfo: Codable {
 
 	public let start: ProgramChain?
 	public let topLevelMenus: Domain
+	public let titleSets: [Index<TitleSet>: TitleSet]
 
 	public init(specification: Version,
 	            category: UInt32,
@@ -23,7 +24,8 @@ public struct DVDInfo: Codable {
 	            volumeIndex: UInt16,
 	            discSide: UInt8,
 	            start: ProgramChain?,
-	            topLevelMenus: Domain) {
+	            topLevelMenus: Domain,
+	            titleSets: [Index<TitleSet>: TitleSet]) {
 		self.specification = specification
 		self.category = category
 		self.provider = provider
@@ -33,6 +35,7 @@ public struct DVDInfo: Codable {
 		self.discSide = discSide
 		self.start = start
 		self.topLevelMenus = topLevelMenus
+		self.titleSets = titleSets
 	}
 
 	public struct Version: Codable {
@@ -72,6 +75,70 @@ public struct DVDInfo: Codable {
 	public enum VOBAudioStream {}
 	public enum VOBSubpictureStream {}
 	public enum Sector {}
+
+	/// Title sets form the navigational structure of the DVD.
+	///
+	/// A DVD is organized in title sets, which contain menus and playable
+	/// content with common attributes, grouped in one menu and one title domain.
+	public struct TitleSet: Codable {
+		public let titles: [Index<Title>: Title]
+
+		public let specification: Version
+		public let category: UInt32
+
+		public init(titles: [Index<Title>: Title],
+		            specification: Version,
+		            category: UInt32) {
+			self.titles = titles
+			self.specification = specification
+			self.category = category
+		}
+
+		/// Each title is presented to the user as one playable item.
+		public struct Title: Codable {
+			public let globalIndex: Index<AllTitles>
+
+			public let parts: [Index<Part>: Part]
+			public let viewingAngleCount: UInt8
+
+			public let jumpCommands: CommandPresence
+			public let linearPlayback: Bool
+			public let restrictions: Restrictions
+
+			public init(globalIndex: Index<AllTitles>,
+			            parts: [Index<Part>: Part],
+			            viewingAngleCount: UInt8,
+			            jumpCommands: CommandPresence,
+			            linearPlayback: Bool,
+			            restrictions: Restrictions) {
+				self.globalIndex = globalIndex
+				self.parts = parts
+				self.viewingAngleCount = viewingAngleCount
+				self.jumpCommands = jumpCommands
+				self.linearPlayback = linearPlayback
+				self.restrictions = restrictions
+			}
+
+			public enum AllTitles {}
+
+			/// Parts are presented to the user as chapters within a title.
+			public struct Part: Codable {
+				public let start: Reference<TitleSet, ProgramChain.Program>
+				public init(start: Reference<TitleSet, ProgramChain.Program>) {
+					self.start = start
+				}
+			}
+
+			public struct CommandPresence: Codable, OptionSet {
+				public let rawValue: UInt8
+				public static let features = CommandPresence(rawValue: 1 << 0)
+				public static let prePosts = CommandPresence(rawValue: 1 << 1)
+				public static let cells = CommandPresence(rawValue: 1 << 2)
+				public static let buttons = CommandPresence(rawValue: 1 << 3)
+				public init(rawValue: UInt8) { self.rawValue = rawValue }
+			}
+		}
+	}
 
 	/// Domains group a set of program chains with common attributes.
 	///
@@ -492,6 +559,7 @@ public struct DVDInfo: Codable {
 	/// - Remark: Subscript implementations are available to resolve references.
 	public struct Reference<Root, Value>: Codable {
 		public let programChain: DVDInfo.Index<DVDInfo.ProgramChain>?
+		public let program: DVDInfo.Index<DVDInfo.ProgramChain.Program>?
 		public let cell: DVDInfo.Index<DVDInfo.ProgramChain.Cell>?
 		public let command: DVDInfo.Index<DVDInfo.Command>?
 	}
@@ -525,9 +593,18 @@ extension DVDInfo.Domain.ProgramChains {
 
 /* MARK: Reference */
 
+extension DVDInfo.Reference where Root == DVDInfo.TitleSet, Value == DVDInfo.ProgramChain.Program {
+	public init(programChain: DVDInfo.Index<DVDInfo.ProgramChain>, program: DVDInfo.Index<Value>) {
+		self.programChain = programChain
+		self.program = program
+		self.cell = nil
+		self.command = nil
+	}
+}
 extension DVDInfo.Reference where Root == DVDInfo.Domain, Value == DVDInfo.ProgramChain {
 	public init(programChain: DVDInfo.Index<Value>) {
 		self.programChain = programChain
+		self.program = nil
 		self.cell = nil
 		self.command = nil
 	}
@@ -535,6 +612,7 @@ extension DVDInfo.Reference where Root == DVDInfo.Domain, Value == DVDInfo.Progr
 extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.ProgramChain.Cell {
 	public init(cell: DVDInfo.Index<Value>) {
 		self.programChain = nil
+		self.program = nil
 		self.cell = cell
 		self.command = nil
 	}
@@ -542,11 +620,17 @@ extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo
 extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.Command {
 	public init(command: DVDInfo.Index<Value>) {
 		self.programChain = nil
+		self.program = nil
 		self.cell = nil
 		self.command = command
 	}
 }
 
+extension DVDInfo.TitleSet {
+	public subscript(resolve reference: DVDInfo.Reference<Self, DVDInfo.ProgramChain.Program>) -> DVDInfo.ProgramChain.Program? {
+		return nil  // FIXME: resolve reference
+	}
+}
 extension DVDInfo.Domain {
 	public subscript(resolve reference: DVDInfo.Reference<Self, DVDInfo.ProgramChain>,
 	                 language: String? = nil) -> DVDInfo.ProgramChain? {

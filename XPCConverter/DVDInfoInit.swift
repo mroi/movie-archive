@@ -8,6 +8,7 @@ extension DVDInfo {
 	init?(_ ifoData: DVDData.IFO.All) {
 		guard let vmgi = ifoData[.vmgi]?.pointee else { return nil }
 		guard let vmgiMat = vmgi.vmgi_mat?.pointee else { return nil }
+		guard let titleSets = Dictionary(titleSets: ifoData) else { return nil }
 		self.init(specification: Version(vmgiMat.specification_version),
 		          category: vmgiMat.vmg_category,
 		          provider: String(tuple: vmgiMat.provider_identifier),
@@ -16,7 +17,8 @@ extension DVDInfo {
 		          volumeIndex: vmgiMat.vmg_this_volume_nr,
 		          discSide: vmgiMat.disc_side,
 		          start: ProgramChain(vmgi.first_play_pgc?.pointee),
-		          topLevelMenus: Domain(vmgi.pgci_ut?.pointee, vmgiMat))
+		          topLevelMenus: Domain(vmgi.pgci_ut?.pointee, vmgiMat),
+		          titleSets: titleSets)
 	}
 }
 
@@ -47,6 +49,91 @@ private extension DVDInfo.Time.FrameRate {
 		case 3: self = .framesPerSecond(29.97)
 		default: self = .unexpected(frameInfo)
 		}
+	}
+}
+
+
+/* MARK: Title Set */
+
+private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo.TitleSet {
+	init?(titleSets ifoData: DVDData.IFO.All) {
+		let titles: [DVDInfo.Index<DVDInfo.TitleSet.Title.AllTitles>: title_info_t]
+		let titleTable = ifoData[.vmgi]?.pointee.tt_srpt?.pointee
+		let titleStart = titleTable?.title
+		let titleCount = titleTable?.nr_of_srpts
+		let titleBuffer = UnsafeBufferPointer(start: titleStart, count: titleCount)
+		titles = .init(uniqueKeysWithValues: zip(1..., titleBuffer))
+
+		// these two sets of indexes should be identical
+		let titleSetIndexes1 = titles.map(\.value.title_set_nr).map(Int.init)
+		let titleSetIndexes2 = ifoData.keys.compactMap { key -> Int? in
+			if case .vtsi(let index) = key { return index } else { return nil }
+		}
+		let titleSetIndexes = Set().union(titleSetIndexes1).union(titleSetIndexes2)
+
+		self.init(minimumCapacity: titleSetIndexes.count)
+		for titleSetIndex in titleSetIndexes {
+			guard let vtsi = ifoData[.vtsi(titleSetIndex)]?.pointee else { return nil }
+			let titles = titles.filter { $0.value.title_set_nr == titleSetIndex }
+			self[Key(titleSetIndex)] = DVDInfo.TitleSet(vtsi, vmgi: titles)
+		}
+	}
+}
+
+private extension DVDInfo.TitleSet {
+	init?(_ vtsi: ifo_handle_t, vmgi titles: [DVDInfo.Index<DVDInfo.TitleSet.Title.AllTitles>: title_info_t]) {
+		guard let vtsiMat = vtsi.vtsi_mat?.pointee else { return nil }
+		self.init(titles: Dictionary(vtsi.vts_ptt_srpt?.pointee, vmgi: titles),
+		          specification: DVDInfo.Version(vtsiMat.specification_version),
+		          category: vtsiMat.vts_category)
+	}
+}
+
+private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo.TitleSet.Title {
+	init(_ pttSrpt: vts_ptt_srpt_t?, vmgi globalTitles: [DVDInfo.Index<DVDInfo.TitleSet.Title.AllTitles>: title_info_t]) {
+		let titlesStart = pttSrpt?.title
+		let titlesCount = pttSrpt?.nr_of_srpts
+		let titlesBuffer = UnsafeBufferPointer(start: titlesStart, count: titlesCount)
+		let parts: [[ptt_info_t]] = titlesBuffer.map {
+			let partsStart = $0.ptt
+			let partsCount = $0.nr_of_ptts
+			let partsBuffer = UnsafeBufferPointer(start: partsStart, count: partsCount)
+			return Array(partsBuffer)
+		}
+
+		let localIndexes = Set(globalTitles.map(\.value.vts_ttn)).map(Key.init)
+		self.init(minimumCapacity: localIndexes.count)
+		for localIndex in localIndexes {
+			let titleInfo = globalTitles.first { $0.value.vts_ttn == localIndex.rawValue }!
+			let partsIndex = Int(localIndex.rawValue) - 1  // one-based to zero-based
+			let parts = partsIndex < parts.count ? parts[partsIndex] : []
+			self[localIndex] = Value(titleInfo.value, parts: parts, globalIndex: titleInfo.key)
+		}
+	}
+}
+
+private extension DVDInfo.TitleSet.Title {
+	init?(_ title: title_info_t, parts: [ptt_info_t], globalIndex: DVDInfo.Index<AllTitles>) {
+		var jumpCommands = CommandPresence()
+		if title.pb_ty.jlc_exists_in_tt_dom != 0 { jumpCommands.update(with: .features) }
+		if title.pb_ty.jlc_exists_in_prepost_cmd != 0 { jumpCommands.update(with: .prePosts) }
+		if title.pb_ty.jlc_exists_in_cell_cmd != 0 { jumpCommands.update(with: .cells) }
+		if title.pb_ty.jlc_exists_in_button_cmd != 0 { jumpCommands.update(with: .buttons) }
+		var restrictions = DVDInfo.Restrictions()
+		if title.pb_ty.title_or_time_play != 0 { restrictions.update(with: .noJumpIntoTitle) }
+		if title.pb_ty.chapter_search_or_play != 0 { restrictions.update(with: .noJumpToPart) }
+		self.init(globalIndex: globalIndex,
+		          parts: Dictionary(uniqueKeysWithValues: zip(1..., parts.map(Part.init))),
+		          viewingAngleCount: title.nr_of_angles,
+		          jumpCommands: jumpCommands,
+		          linearPlayback: title.pb_ty.multi_or_random_pgc_title == 0,
+		          restrictions: restrictions)
+	}
+}
+
+private extension DVDInfo.TitleSet.Title.Part {
+	init(_ part: ptt_info_t) {
+		self.init(start: DVDInfo.Reference(programChain: .init(part.pgcn), program: .init(part.pgn)))
 	}
 }
 
