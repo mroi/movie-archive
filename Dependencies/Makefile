@@ -23,11 +23,12 @@ $(BUILD)/HandBrake/libhandbrake.a: $(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(
 	for lib in $(addsuffix /../contrib/lib/lib*.a,$(<D)) ; do \
 		lib=`basename $$lib` ; lipo $(addsuffix /../contrib/lib/$$lib,$(^D)) -create -output $(@D)/$$lib ; \
 	done
-	find $(@D) -mindepth 1 ! -path "$(@D)/lib*.a" $(foreach arch,$(ARCHS),! -path "$(@D)/$(arch)/contrib/include/*" ! -path "$(@D)/$(arch)/libhb/handbrake/*") -delete
+	find $(@D) -depth -mindepth 1 ! -path "$(@D)/lib*.a" $(foreach arch,$(ARCHS),! -path "$(@D)/$(arch)/contrib/include/*" ! -path "$(@D)/$(arch)/libhb/handbrake/*") -delete || true
 	rm -rf HandBrake/download
 
 $(BUILD)/HandBrake/%/libhb/libhandbrake.a: $(BUILD)/HandBrake/%/GNUmakefile
-	$(MAKE) $(JOBS) -C $(<D) libhb.build
+	# FIXME: parallel HandBrake builds fail
+	$(MAKE) -C $(<D) libhb.build
 
 $(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure ../.git/modules/Dependencies/HandBrake/HEAD
 	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
