@@ -13,7 +13,7 @@ all: \
 	$(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(arch)/module.modulemap) \
 	$(if $(wildcard libdvdcss),$(BUILD)/libdvdcss/libdvdcss.2.dylib)
 
-.PHONY: all install clean
+.PHONY: all install clean docbuild
 
 
 .INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(arch)/libhb/libhandbrake.a $(BUILD)/HandBrake/$(arch)/GNUmakefile)
@@ -67,3 +67,5 @@ install:
 
 clean:
 	rm -rf Build
+
+docbuild:
