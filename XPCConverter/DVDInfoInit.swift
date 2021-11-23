@@ -5,7 +5,7 @@ import LibDVDRead
 /* MARK: Toplevel */
 
 extension DVDInfo {
-	init?(_ ifoData: DVDData.IFO.All, _ navData: DVDData.NAV.All) {
+	init?(_ ifoData: DVDData.IFO.All, _ navData: DVDData.NAV.All, discId: [UInt8]) {
 		guard let vmgi = ifoData[.vmgi]?.pointee else { return nil }
 		guard let vmgiMat = vmgi.vmgi_mat?.pointee else { return nil }
 		guard let titleSets = Dictionary(titleSets: ifoData, navData) else { return nil }
@@ -13,6 +13,7 @@ extension DVDInfo {
 		let vmgmNav = navData[.vmgi]?[.menus]
 		self.init(specification: Version(vmgiMat.specification_version),
 		          category: vmgiMat.vmg_category,
+		          discId: discId,
 		          provider: String(tuple: vmgiMat.provider_identifier),
 		          posCode: vmgiMat.vmg_pos_code,
 		          totalVolumeCount: vmgiMat.vmg_nr_of_volumes,

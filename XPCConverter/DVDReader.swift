@@ -65,8 +65,15 @@ extension ConverterImplementation: ConverterDVDReader {
 				}
 			}
 
+			// get disc ID from libdvdread
+			let discId = Array<UInt8>(unsafeUninitializedCapacity: 16) { buffer, initializedCount in
+				buffer.assign(repeating: 0)
+				initializedCount = buffer.count
+				DVDDiscID(reader, buffer.baseAddress)
+			}
+
 			// convert DVD data to Swift struct
-			guard let info = DVDInfo(ifo.data, nav.data) else {
+			guard let info = DVDInfo(ifo.data, nav.data, discId: discId) else {
 				throw DVDReaderError.dataImportError
 			}
 

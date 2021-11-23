@@ -5,6 +5,7 @@ public struct DVDInfo: Codable {
 
 	public let specification: Version
 	public let category: UInt32
+	public let discId: [UInt8]
 
 	public let provider: String
 	public let posCode: UInt64
@@ -18,6 +19,7 @@ public struct DVDInfo: Codable {
 
 	public init(specification: Version,
 	            category: UInt32,
+	            discId: [UInt8],
 	            provider: String,
 	            posCode: UInt64,
 	            totalVolumeCount: UInt16,
@@ -28,6 +30,7 @@ public struct DVDInfo: Codable {
 	            titleSets: [Index<TitleSet>: TitleSet]) {
 		self.specification = specification
 		self.category = category
+		self.discId = discId
 		self.provider = provider
 		self.posCode = posCode
 		self.totalVolumeCount = totalVolumeCount
