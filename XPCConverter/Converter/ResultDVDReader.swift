@@ -80,16 +80,54 @@ public struct DVDInfo: Codable {
 	/// * Video Title Set Menu (VTSM): menu domain within each title set.
 	/// * Video Title Set (VTS): domain for playable content backing the titles.
 	public struct Domain: Codable {
+		public let programChains: ProgramChains
+
 		public let video: VideoAttributes
 		public let audio: [Index<LogicalAudioStream>: AudioAttributes]
 		public let subpicture: [Index<LogicalSubpictureStream>: SubpictureAttributes]
 
-		public init(video: VideoAttributes,
+		public init(programChains: ProgramChains,
+		            video: VideoAttributes,
 		            audio: [Index<LogicalAudioStream>: AudioAttributes],
 		            subpicture: [Index<LogicalSubpictureStream>: SubpictureAttributes]) {
+			self.programChains = programChains
 			self.video = video
 			self.audio = audio
 			self.subpicture = subpicture
+		}
+
+		/// Program chains for this domain.
+		///
+		/// The program chains within a domain are addressed by a descriptor,
+		/// which uses different information for menu and title domains.
+		/// The same program chain can be associated with multiple descriptors.
+		///
+		/// - Remark: Convenience accessor and subscript implementations are available.
+		public struct ProgramChains: Codable {
+			private let mapping: [Descriptor: Id]
+			private let storage: [Id: ProgramChain]
+
+			public init(mapping: [Descriptor: Id], storage: [Id: ProgramChain]) {
+				self.mapping = mapping
+				self.storage = storage
+			}
+
+			public enum Descriptor: Codable, Hashable {
+				case menu(language: String, index: Index<ProgramChain>, entryPoint: Bool, type: MenuType?)
+				public enum MenuType: Codable, Hashable {
+					case titles, rootWithinTitle, chapter
+					case audio, subpicture, viewingAngle
+					case unexpected(UInt8)
+				}
+			}
+			public struct Id: Codable, Hashable {
+				public let languageId: UInt32?
+				public let programChainId: UInt32
+				public init(languageId: UInt32? = nil, programChainId: UInt32) {
+					self.languageId = languageId
+					self.programChainId = programChainId
+				}
+			}
 		}
 
 		public struct VideoAttributes: Codable {
@@ -460,6 +498,31 @@ public struct DVDInfo: Codable {
 }
 
 
+/* MARK: Custom Accessors */
+
+extension DVDInfo.Domain.ProgramChains {
+	public var descriptors: Dictionary<Descriptor, Id>.Keys { mapping.keys }
+	public var all: Dictionary<Id, DVDInfo.ProgramChain>.Values { storage.values }
+
+	public subscript(match predicate: (Descriptor) -> Bool) -> DVDInfo.ProgramChain? {
+		let firstMatch = mapping.first { predicate($0.key) }
+		guard let id = firstMatch?.value else { return nil }
+		return storage[id]
+	}
+	public subscript(index: DVDInfo.Index<DVDInfo.ProgramChain>, language language: String? = nil) -> DVDInfo.ProgramChain? {
+		let predicate = { (descriptor: Descriptor) -> Bool in
+			switch descriptor {
+			case .menu(language, index, _, _):
+				return true
+			default:
+				return false
+			}
+		}
+		return self[match: predicate]
+	}
+}
+
+
 /* MARK: Reference */
 
 extension DVDInfo.Reference where Root == DVDInfo.Domain, Value == DVDInfo.ProgramChain {
@@ -487,7 +550,7 @@ extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo
 extension DVDInfo.Domain {
 	public subscript(resolve reference: DVDInfo.Reference<Self, DVDInfo.ProgramChain>,
 	                 language: String? = nil) -> DVDInfo.ProgramChain? {
-		return nil  // FIXME: resolve program chain index
+		return programChains[reference.programChain!, language: language]
 	}
 }
 extension DVDInfo.ProgramChain {

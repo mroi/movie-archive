@@ -16,7 +16,7 @@ extension DVDInfo {
 		          volumeIndex: vmgiMat.vmg_this_volume_nr,
 		          discSide: vmgiMat.disc_side,
 		          start: ProgramChain(vmgi.first_play_pgc?.pointee),
-		          topLevelMenus: Domain(vmgiMat))
+		          topLevelMenus: Domain(vmgi.pgci_ut?.pointee, vmgiMat))
 	}
 }
 
@@ -54,10 +54,73 @@ private extension DVDInfo.Time.FrameRate {
 /* MARK: Domain */
 
 private extension DVDInfo.Domain {
-	init(_ vmgiMat: vmgi_mat_t) {
-		self.init(video: VideoAttributes(vmgiMat.vmgm_video_attr),
+	init(_ pgcUt: pgci_ut_t?, _ vmgiMat: vmgi_mat_t) {
+		let pgcs = Self.convert(pgcsPerLanguage: pgcUt)
+		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
+		                                       storage: Dictionary(storage: pgcs)),
+		          video: VideoAttributes(vmgiMat.vmgm_video_attr),
 		          audio: vmgiMat.nr_of_vmgm_audio_streams == 0 ? [:] : [0: AudioAttributes(vmgiMat.vmgm_audio_attr)],
 		          subpicture: vmgiMat.nr_of_vmgm_subp_streams == 0 ? [:] : [0: SubpictureAttributes(vmgiMat.vmgm_subp_attr)])
+	}
+	static func convert(pgcsPerLanguage pgcUt: pgci_ut_t?) -> [pgci_lu_t: [pgci_srp_t]] {
+		let languagesStart = pgcUt?.lu
+		let languagesCount = pgcUt?.nr_of_lus
+		let languagesBuffer = UnsafeBufferPointer(start: languagesStart, count: languagesCount)
+		let languages = languagesBuffer.compactMap { $0.pgcit != nil ? $0 : nil }
+
+		let laungagePgcs = languages.map { convert(pgcs: $0.pgcit?.pointee) }
+		return Dictionary(uniqueKeysWithValues: zip(languages, laungagePgcs))
+	}
+	static func convert(pgcs pgcIt: pgcit_t?) -> [pgci_srp_t] {
+		let pgcInfosStart = pgcIt?.pgci_srp
+		let pgcInfosCount = pgcIt?.nr_of_pgci_srp
+		let pgcInfosBuffer = UnsafeBufferPointer(start: pgcInfosStart, count: pgcInfosCount)
+		return Array(pgcInfosBuffer)
+	}
+}
+
+private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Descriptor, Value == DVDInfo.Domain.ProgramChains.Id {
+	init(mapping pgcs: [pgci_lu_t: [pgci_srp_t]]) {
+		self.init(minimumCapacity: pgcs.map(\.value.count).reduce(0, +))
+		for (language, pgcs) in pgcs {
+			for (index, pgcInfo) in zip(1..., pgcs) {
+				let menuType = Key.MenuType(pgcInfo.entry_id.bits(0...3))
+				let descriptor = Key.menu(language: String(twoCharacters: language.lang_code),
+				                          index: DVDInfo.Index(index),
+				                          entryPoint: pgcInfo.entry_id.bit(7),
+				                          type: pgcInfo.entry_id.bit(7) ? menuType : nil)
+				self[descriptor] = Value(languageId: language.lang_start_byte,
+				                         programChainId: pgcInfo.pgc_start_byte)
+			}
+		}
+	}
+}
+
+private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Id, Value == DVDInfo.ProgramChain {
+	init(storage pgcs: [pgci_lu_t: [pgci_srp_t]]) {
+		self.init(minimumCapacity: pgcs.map(\.value.count).reduce(0, +))
+		for (language, pgcs) in pgcs {
+			for pgcInfo in pgcs {
+				guard let pgc = pgcInfo.pgc?.pointee else { continue }
+				let id = Key(languageId: language.lang_start_byte,
+				             programChainId: pgcInfo.pgc_start_byte)
+				self[id] = Value(pgc)
+			}
+		}
+	}
+}
+
+private extension DVDInfo.Domain.ProgramChains.Descriptor.MenuType {
+	init(_ entry: UInt8) {
+		switch entry {
+		case 2: self = .titles
+		case 3: self = .rootWithinTitle
+		case 4: self = .subpicture
+		case 5: self = .audio
+		case 6: self = .viewingAngle
+		case 7: self = .chapter
+		default: self = .unexpected(entry)
+		}
 	}
 }
 
@@ -536,5 +599,20 @@ private extension String {
 		let unicodePoint1 = Unicode.Scalar(UInt8(combined.bits(0...7)))
 		self.append(Character(unicodePoint0))
 		self.append(Character(unicodePoint1))
+	}
+}
+
+extension pgci_lu_t: Hashable {
+	public func hash(into hasher: inout Hasher) {
+		withUnsafeBytes(of: self) {
+			hasher.combine(bytes: $0)
+		}
+	}
+	public static func == (lhs: pgci_lu_t, rhs: pgci_lu_t) -> Bool {
+		withUnsafeBytes(of: lhs) { lhs in
+			withUnsafeBytes(of: rhs) { rhs in
+				lhs.elementsEqual(rhs)
+			}
+		}
 	}
 }
