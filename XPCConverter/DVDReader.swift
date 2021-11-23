@@ -66,7 +66,7 @@ extension ConverterImplementation: ConverterDVDReader {
 			}
 
 			// convert DVD data to Swift struct
-			guard let info = DVDInfo(ifo.data) else {
+			guard let info = DVDInfo(ifo.data, nav.data) else {
 				throw DVDReaderError.dataImportError
 			}
 

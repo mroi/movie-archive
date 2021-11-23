@@ -5,10 +5,12 @@ import LibDVDRead
 /* MARK: Toplevel */
 
 extension DVDInfo {
-	init?(_ ifoData: DVDData.IFO.All) {
+	init?(_ ifoData: DVDData.IFO.All, _ navData: DVDData.NAV.All) {
 		guard let vmgi = ifoData[.vmgi]?.pointee else { return nil }
 		guard let vmgiMat = vmgi.vmgi_mat?.pointee else { return nil }
-		guard let titleSets = Dictionary(titleSets: ifoData) else { return nil }
+		guard let titleSets = Dictionary(titleSets: ifoData, navData) else { return nil }
+		let firstPlayNav = navData[.vmgi]?[.firstPlay]?[.firstPlay]
+		let vmgmNav = navData[.vmgi]?[.menus]
 		self.init(specification: Version(vmgiMat.specification_version),
 		          category: vmgiMat.vmg_category,
 		          provider: String(tuple: vmgiMat.provider_identifier),
@@ -16,8 +18,8 @@ extension DVDInfo {
 		          totalVolumeCount: vmgiMat.vmg_nr_of_volumes,
 		          volumeIndex: vmgiMat.vmg_this_volume_nr,
 		          discSide: vmgiMat.disc_side,
-		          start: ProgramChain(vmgi.first_play_pgc?.pointee),
-		          topLevelMenus: Domain(vmgi.pgci_ut?.pointee, vmgiMat),
+		          start: ProgramChain(vmgi.first_play_pgc?.pointee, navigation: firstPlayNav),
+		          topLevelMenus: Domain(vmgi.pgci_ut?.pointee, vmgiMat, vmgmNav),
 		          titleSets: titleSets)
 	}
 }
@@ -40,6 +42,22 @@ private extension DVDInfo.Time {
 		          frames: bcd(time.frame_u.bits(0...5)),
 		          rate: FrameRate(time.frame_u))
 	}
+	init(_ time: UInt64, rate: FrameRate) {
+		let (hours, hoursRemainder) = time.quotientAndRemainder(dividingBy: 60 * 60 * 90_000)
+		let (minutes, minutesRemainder) = hoursRemainder.quotientAndRemainder(dividingBy: 60 * 90_000)
+		let (seconds, secondsRemainder) = minutesRemainder.quotientAndRemainder(dividingBy: 90_000)
+		let frames: Double
+		if case .framesPerSecond(let rate) = rate {
+			frames = Double(secondsRemainder) / (90_000 / rate)
+		} else {
+			frames = 0
+		}
+		self.init(hours: UInt8(hours),
+		          minutes: UInt8(minutes),
+		          seconds: UInt8(seconds),
+		          frames: UInt8(frames),
+		          rate: rate)
+	}
 }
 
 private extension DVDInfo.Time.FrameRate {
@@ -56,7 +74,7 @@ private extension DVDInfo.Time.FrameRate {
 /* MARK: Title Set */
 
 private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo.TitleSet {
-	init?(titleSets ifoData: DVDData.IFO.All) {
+	init?(titleSets ifoData: DVDData.IFO.All, _ navData: DVDData.NAV.All) {
 		let titles: [DVDInfo.Index<DVDInfo.TitleSet.Title.AllTitles>: title_info_t]
 		let titleTable = ifoData[.vmgi]?.pointee.tt_srpt?.pointee
 		let titleStart = titleTable?.title
@@ -75,17 +93,18 @@ private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo
 		for titleSetIndex in titleSetIndexes {
 			guard let vtsi = ifoData[.vtsi(titleSetIndex)]?.pointee else { return nil }
 			let titles = titles.filter { $0.value.title_set_nr == titleSetIndex }
-			self[Key(titleSetIndex)] = DVDInfo.TitleSet(vtsi, vmgi: titles)
+			let nav = navData[.vtsi(titleSetIndex)]
+			self[Key(titleSetIndex)] = Value(vtsi, vmgi: titles, navigation: nav)
 		}
 	}
 }
 
 private extension DVDInfo.TitleSet {
-	init?(_ vtsi: ifo_handle_t, vmgi titles: [DVDInfo.Index<DVDInfo.TitleSet.Title.AllTitles>: title_info_t]) {
+	init?(_ vtsi: ifo_handle_t, vmgi titles: [DVDInfo.Index<DVDInfo.TitleSet.Title.AllTitles>: title_info_t], navigation nav: DVDData.NAV.VTS?) {
 		guard let vtsiMat = vtsi.vtsi_mat?.pointee else { return nil }
 		self.init(titles: Dictionary(vtsi.vts_ptt_srpt?.pointee, vmgi: titles),
-		          menus: DVDInfo.Domain(vtsi.pgci_ut?.pointee, vtsiMat),
-		          content: DVDInfo.Domain(vtsi.vts_pgcit?.pointee, vtsiMat),
+		          menus: DVDInfo.Domain(vtsi.pgci_ut?.pointee, vtsiMat, nav?[.menus]),
+		          content: DVDInfo.Domain(vtsi.vts_pgcit?.pointee, vtsiMat, nav?[.titles]),
 		          specification: DVDInfo.Version(vtsiMat.specification_version),
 		          category: vtsiMat.vts_category)
 	}
@@ -143,23 +162,23 @@ private extension DVDInfo.TitleSet.Title.Part {
 /* MARK: Domain */
 
 private extension DVDInfo.Domain {
-	init(_ pgcUt: pgci_ut_t?, _ vmgiMat: vmgi_mat_t) {
+	init(_ pgcUt: pgci_ut_t?, _ vmgiMat: vmgi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let pgcs = Self.convert(pgcsPerLanguage: pgcUt)
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
-		                                       storage: Dictionary(storage: pgcs)),
+		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vmgiMat.vmgm_video_attr),
 		          audio: vmgiMat.nr_of_vmgm_audio_streams == 0 ? [:] : [0: AudioAttributes(vmgiMat.vmgm_audio_attr)],
 		          subpicture: vmgiMat.nr_of_vmgm_subp_streams == 0 ? [:] : [0: SubpictureAttributes(vmgiMat.vmgm_subp_attr)])
 	}
-	init(_ pgcUt: pgci_ut_t?, _ vtsiMat: vtsi_mat_t) {
+	init(_ pgcUt: pgci_ut_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let pgcs = Self.convert(pgcsPerLanguage: pgcUt)
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
-		                                       storage: Dictionary(storage: pgcs)),
+		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vtsiMat.vtsm_video_attr),
 		          audio: vtsiMat.nr_of_vtsm_audio_streams == 0 ? [:] : [0: AudioAttributes(vtsiMat.vtsm_audio_attr)],
 		          subpicture: vtsiMat.nr_of_vtsm_subp_streams == 0 ? [:] : [0: SubpictureAttributes(vtsiMat.vtsm_subp_attr)])
 	}
-	init(_ pgcIt: pgcit_t?, _ vtsiMat: vtsi_mat_t) {
+	init(_ pgcIt: pgcit_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let audioChannel = Array<audio_attr_t>(tuple: vtsiMat.vts_audio_attr)
 			.prefix(upTo: Int(vtsiMat.nr_of_vts_audio_streams))
 		let multichannel = Array<multichannel_ext_t>(tuple: vtsiMat.vts_mu_audio_attr)
@@ -171,7 +190,7 @@ private extension DVDInfo.Domain {
 
 		let pgcs = Self.convert(pgcs: pgcIt)
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
-		                                       storage: Dictionary(storage: pgcs)),
+		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vtsiMat.vts_video_attr),
 		          audio: Dictionary(uniqueKeysWithValues: zip(0..., audio)),
 		          subpicture: Dictionary(uniqueKeysWithValues: zip(0..., subpicture)))
@@ -220,23 +239,26 @@ private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Descripto
 }
 
 private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Id, Value == DVDInfo.ProgramChain {
-	init(storage pgcs: [pgci_lu_t: [pgci_srp_t]]) {
+	init(storage pgcs: [pgci_lu_t: [pgci_srp_t]], navigation: DVDData.NAV.Domain?) {
 		self.init(minimumCapacity: pgcs.map(\.value.count).reduce(0, +))
 		for (language, pgcs) in pgcs {
 			for pgcInfo in pgcs {
 				guard let pgc = pgcInfo.pgc?.pointee else { continue }
 				let id = Key(languageId: language.lang_start_byte,
 				             programChainId: pgcInfo.pgc_start_byte)
-				self[id] = Value(pgc)
+				let nav = navigation?[.menu(language: language.lang_start_byte,
+				                            pgc: pgcInfo.pgc_start_byte)]
+				self[id] = Value(pgc, navigation: nav)
 			}
 		}
 	}
-	init(storage pgcs: [pgci_srp_t]) {
+	init(storage pgcs: [pgci_srp_t], navigation: DVDData.NAV.Domain?) {
 		self.init(minimumCapacity: pgcs.count)
 		for pgcInfo in pgcs {
 			guard let pgc = pgcInfo.pgc?.pointee else { continue }
 			let id = Key(programChainId: pgcInfo.pgc_start_byte)
-			self[id] = Value(pgc)
+			let nav = navigation?[.title(pgc: pgcInfo.pgc_start_byte)]
+			self[id] = Value(pgc, navigation: nav)
 		}
 	}
 }
@@ -477,7 +499,7 @@ private extension DVDInfo.Domain.SubpictureAttributes.ContentInfo {
 /* MARK: Program Chain */
 
 private extension DVDInfo.ProgramChain {
-	init(_ pgc: pgc_t) {
+	init(_ pgc: pgc_t, navigation: DVDData.NAV.PGC?) {
 		let programsStart = pgc.program_map
 		let programsCount = pgc.nr_of_programs
 		let programsBuffer = UnsafeBufferPointer(start: programsStart, count: programsCount)
@@ -508,8 +530,12 @@ private extension DVDInfo.ProgramChain {
 			pre = []; post = []; cellPost = []
 		}
 
+		func cellInit(_ pair: (key: Int, value: cell_playback_t)) -> (DVDInfo.Index<Cell>, Cell) {
+			(DVDInfo.Index(pair.key), Cell(pair.value, navigation: navigation?[pair.key - 1]))
+		}
+
 		self.init(programs: Dictionary(uniqueKeysWithValues: zip(1..., programs.map(Program.init))),
-		          cells: Dictionary(uniqueKeysWithValues: zip(1..., cells.map(Cell.init))),
+		          cells: Dictionary(uniqueKeysWithValues: zip(1..., cells).map(cellInit)),
 		          duration: DVDInfo.Time(pgc.playback_time),
 		          playback: PlaybackMode(pgc.pg_playback_mode),
 		          ending: EndingMode(pgc.still_time),
@@ -521,12 +547,12 @@ private extension DVDInfo.ProgramChain {
 		          pre: Dictionary(uniqueKeysWithValues: zip(1..., pre.map(DVDInfo.Command.init))),
 		          post: Dictionary(uniqueKeysWithValues: zip(1..., post.map(DVDInfo.Command.init))),
 		          cellPost: Dictionary(uniqueKeysWithValues: zip(1..., cellPost.map(DVDInfo.Command.init))),
-		          buttonPalette: Dictionary(palette: pgc.palette),
+		          buttonPalette: Dictionary(palette: pgc.palette, navigation: navigation ?? []),
 		          restrictions: DVDInfo.Restrictions(pgc.prohibited_ops))
 	}
-	init?(_ pgc: pgc_t?) {
+	init?(_ pgc: pgc_t?, navigation: DVDData.NAV.PGC?) {
 		guard let pgc = pgc else { return nil }
-		self.init(pgc)
+		self.init(pgc, navigation: navigation)
 	}
 }
 
@@ -537,7 +563,7 @@ private extension DVDInfo.ProgramChain.Program {
 }
 
 private extension DVDInfo.ProgramChain.Cell {
-	init(_ cell: cell_playback_t) {
+	init(_ cell: cell_playback_t, navigation: DVDData.NAV.Cell?) {
 		var playback = PlaybackMode()
 		if cell.seamless_play != 0 { playback.update(with: .seamless) }
 		if cell.interleaved != 0 { playback.update(with: .interleaved) }
@@ -550,6 +576,7 @@ private extension DVDInfo.ProgramChain.Cell {
 		          ending: EndingMode(cell.still_time),
 		          angle: AngleInfo(block: cell.block_type, cell: cell.block_mode),
 		          karaoke: KaraokeInfo(cell.cell_type),
+		          interaction: navigation?.compactMap(DVDInfo.Interaction.init) ?? [],
 		          post: cell.cell_cmd_nr != 0 ? DVDInfo.Reference(command: .init(cell.cell_cmd_nr)) : nil,
 		          sectors: DVDInfo.Index<DVDInfo.Sector>(cell.first_sector)...DVDInfo.Index<DVDInfo.Sector>(cell.last_sector))
 	}
@@ -647,10 +674,33 @@ private extension Dictionary where Key == DVDInfo.Index<DVDInfo.LogicalSubpictur
 
 private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo.ProgramChain.Color {
 	init(palette: (UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32,
-	               UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32)) {
+	               UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32),
+	     navigation: DVDData.NAV.PGC) {
+		// palette entries cannot be marked as unused, so we detect usage ourselves
+		let usedColors = navigation.reduce(into: Set<Int>()) { result, cellNav in
+			let usedColors = cellNav.reduce(into: Set<Int>()) { result, nav in
+				// only consider new highlight information with active buttons
+				guard nav.pci.hli.hl_gi.hli_ss.bit(0) && nav.pci.hli.hl_gi.btn_ns > 0 else { return }
+				let colors = [
+					nav.pci.hli.btn_colit.btn_coli.0.0,
+					nav.pci.hli.btn_colit.btn_coli.0.1,
+					nav.pci.hli.btn_colit.btn_coli.1.0,
+					nav.pci.hli.btn_colit.btn_coli.1.1,
+					nav.pci.hli.btn_colit.btn_coli.2.0,
+					nav.pci.hli.btn_colit.btn_coli.2.1
+				]
+				colors.forEach {
+					result.insert(Int($0.bits(16...19)))
+					result.insert(Int($0.bits(20...23)))
+					result.insert(Int($0.bits(24...27)))
+					result.insert(Int($0.bits(28...31)))
+				}
+			}
+			result.formUnion(usedColors)
+		}
+		self.init()
 		let elements = Array<UInt32>(tuple: palette)
-		self.init(minimumCapacity: elements.count)
-		for (index, color) in zip(0..., elements) {
+		for (index, color) in zip(0..., elements) where usedColors.contains(index) {
 			self[Key(index)] = Value(color)
 		}
 	}
@@ -661,6 +711,19 @@ private extension DVDInfo.ProgramChain.Color {
 		self.init(Y: UInt8(color.bits(16...23)),
 		          Cb: UInt8(color.bits(8...15)),
 		          Cr: UInt8(color.bits(0...7)))
+	}
+}
+
+
+/* MARK: Interaction */
+
+private extension DVDInfo.Interaction {
+	init?(_ nav: DVDData.NAV.NAVPacket) {
+		// only consider new highlight information with active buttons
+		guard nav.pci.hli.hl_gi.hli_ss.bit(0) && nav.pci.hli.hl_gi.btn_ns > 0 else { return nil }
+
+		// TODO: decode NAV packet
+		self.init()
 	}
 }
 

@@ -418,6 +418,7 @@ public struct DVDInfo: Codable {
 			public let angle: AngleInfo?
 			public let karaoke: KaraokeInfo?
 
+			public let interaction: [Interaction]
 			public let post: Reference<ProgramChain, Command>?
 			public let sectors: ClosedRange<Index<Sector>>
 
@@ -426,6 +427,7 @@ public struct DVDInfo: Codable {
 			            ending: EndingMode,
 			            angle: AngleInfo?,
 			            karaoke: KaraokeInfo?,
+			            interaction: [Interaction],
 			            post: Reference<ProgramChain, Command>?,
 			            sectors: ClosedRange<Index<Sector>>) {
 				self.duration = duration
@@ -433,6 +435,7 @@ public struct DVDInfo: Codable {
 				self.ending = ending
 				self.angle = angle
 				self.karaoke = karaoke
+				self.interaction = interaction
 				self.post = post
 				self.sectors = sectors
 			}
@@ -490,6 +493,11 @@ public struct DVDInfo: Codable {
 				self.Cr = Cr
 			}
 		}
+	}
+
+	/// User interaction is defined by menu buttons with associated commands.
+	public struct Interaction: Codable {
+		public init() {}
 	}
 
 	public enum Command: Codable {
