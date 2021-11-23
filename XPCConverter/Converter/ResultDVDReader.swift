@@ -497,7 +497,101 @@ public struct DVDInfo: Codable {
 
 	/// User interaction is defined by menu buttons with associated commands.
 	public struct Interaction: Codable {
-		public init() {}
+		public let sector: Index<Sector>
+		public let linearPlaybackTimestamp: Time?
+		public let onlyCommandsChanged: Bool
+
+		public let buttons: [Index<Button>: [ButtonDescriptor: Button]]
+		public let buttonsSelectable: Time
+		public let buttonsVisible: Time
+		public let forcedSelect: Index<Button>?
+		public let forcedAction: Index<Button>?
+
+		public let restrictions: Restrictions
+
+		public init(sector: Index<Sector>,
+		            linearPlaybackTimestamp: Time?,
+		            onlyCommandsChanged: Bool,
+		            buttons: [Index<Button>: [ButtonDescriptor: Button]],
+		            buttonsSelectable: Time,
+		            buttonsVisible: Time,
+		            forcedSelect: Index<Button>?,
+		            forcedAction: Index<Button>?,
+		            restrictions: Restrictions) {
+			self.sector = sector
+			self.linearPlaybackTimestamp = linearPlaybackTimestamp
+			self.onlyCommandsChanged = onlyCommandsChanged
+			self.buttons = buttons
+			self.buttonsSelectable = buttonsSelectable
+			self.buttonsVisible = buttonsVisible
+			self.forcedSelect = forcedSelect
+			self.forcedAction = forcedAction
+			self.restrictions = restrictions
+		}
+
+		public struct ButtonDescriptor: Codable, Hashable, OptionSet {
+			public let rawValue: UInt32
+			public static let classic = ButtonDescriptor([])
+			public static let wide = ButtonDescriptor(rawValue: 1 << 0)
+			public static let letterbox = ButtonDescriptor(rawValue: 1 << 1)
+			public static let panScan = ButtonDescriptor(rawValue: 1 << 2)
+			public init(rawValue: UInt32) { self.rawValue = rawValue }
+		}
+
+		public struct Button: Codable {
+			public let mask: Rectangle
+			public let up: Reference<Interaction, Button>?
+			public let down: Reference<Interaction, Button>?
+			public let left: Reference<Interaction, Button>?
+			public let right: Reference<Interaction, Button>?
+
+			public let selectionColors: [Color]?
+			public let actionColors: [Color]?
+
+			public let action: Command
+			public let autoActionOnSelect: Bool
+
+			public init(mask: Rectangle,
+			            up: Reference<Interaction, Button>?,
+			            down: Reference<Interaction, Button>?,
+			            left: Reference<Interaction, Button>?,
+			            right: Reference<Interaction, Button>?,
+			            selectionColors: [Color]?,
+			            actionColors: [Color]?,
+			            action: Command,
+			            autoActionOnSelect: Bool) {
+				self.mask = mask
+				self.up = up
+				self.down = down
+				self.left = left
+				self.right = right
+				self.selectionColors = selectionColors
+				self.actionColors = actionColors
+				self.action = action
+				self.autoActionOnSelect = autoActionOnSelect
+			}
+
+			public struct Rectangle: Codable {
+				public let xStart, xEnd, yStart, yEnd: UInt32
+				public init(xStart: UInt32, xEnd: UInt32,
+				            yStart: UInt32, yEnd: UInt32) {
+					self.xStart = xStart
+					self.xEnd = xEnd
+					self.yStart = yStart
+					self.yEnd = yEnd
+				}
+			}
+
+			public struct Color: Codable {
+				public let color: Reference<ProgramChain, ProgramChain.Color>
+				public let alpha: Double
+				public init(color: DVDInfo.Reference<ProgramChain, ProgramChain.Color>,
+				            alpha: Double) {
+					self.color = color
+					self.alpha = alpha
+				}
+			}
+		}
 	}
 
 	public enum Command: Codable {
@@ -577,6 +671,8 @@ public struct DVDInfo: Codable {
 		public let program: DVDInfo.Index<DVDInfo.ProgramChain.Program>?
 		public let cell: DVDInfo.Index<DVDInfo.ProgramChain.Cell>?
 		public let command: DVDInfo.Index<DVDInfo.Command>?
+		public let button: DVDInfo.Index<DVDInfo.Interaction.Button>?
+		public let color: DVDInfo.Index<DVDInfo.ProgramChain.Color>?
 	}
 }
 
@@ -607,6 +703,13 @@ extension DVDInfo.Domain.ProgramChains {
 	}
 }
 
+extension Dictionary where Key == DVDInfo.Interaction.ButtonDescriptor, Value == DVDInfo.Interaction.Button {
+	public subscript(match descriptor: Key) -> Value? {
+		let selected = first { $0.key.contains(descriptor) }
+		return selected?.value
+	}
+}
+
 
 /* MARK: Reference */
 
@@ -616,6 +719,8 @@ extension DVDInfo.Reference where Root == DVDInfo.TitleSet, Value == DVDInfo.Pro
 		self.program = program
 		self.cell = nil
 		self.command = nil
+		self.button = nil
+		self.color = nil
 	}
 }
 extension DVDInfo.Reference where Root == DVDInfo.Domain, Value == DVDInfo.ProgramChain {
@@ -624,6 +729,8 @@ extension DVDInfo.Reference where Root == DVDInfo.Domain, Value == DVDInfo.Progr
 		self.program = nil
 		self.cell = nil
 		self.command = nil
+		self.button = nil
+		self.color = nil
 	}
 }
 extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.ProgramChain.Cell {
@@ -632,6 +739,8 @@ extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo
 		self.program = nil
 		self.cell = cell
 		self.command = nil
+		self.button = nil
+		self.color = nil
 	}
 }
 extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.Command {
@@ -640,6 +749,28 @@ extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo
 		self.program = nil
 		self.cell = nil
 		self.command = command
+		self.button = nil
+		self.color = nil
+	}
+}
+extension DVDInfo.Reference where Root == DVDInfo.Interaction, Value == DVDInfo.Interaction.Button {
+	public init(button: DVDInfo.Index<Value>) {
+		self.programChain = nil
+		self.program = nil
+		self.cell = nil
+		self.command = nil
+		self.button = button
+		self.color = nil
+	}
+}
+extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.ProgramChain.Color {
+	public init(color: DVDInfo.Index<Value>) {
+		self.programChain = nil
+		self.program = nil
+		self.cell = nil
+		self.command = nil
+		self.button = nil
+		self.color = color
 	}
 }
 
@@ -660,5 +791,14 @@ extension DVDInfo.ProgramChain {
 	}
 	public subscript(resolve reference: DVDInfo.Reference<Self, DVDInfo.Command>) -> DVDInfo.Command? {
 		return cellPost[reference.command!]
+	}
+	public subscript(resolve reference: DVDInfo.Reference<Self, Color>) -> Color? {
+		return buttonPalette[reference.color!]
+	}
+}
+extension DVDInfo.Interaction {
+	public subscript(resolve reference: DVDInfo.Reference<Self, Button>,
+	                 descriptor: ButtonDescriptor) -> Button? {
+		return buttons[reference.button!]?[match: descriptor]
 	}
 }

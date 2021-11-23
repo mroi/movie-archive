@@ -722,8 +722,91 @@ private extension DVDInfo.Interaction {
 		// only consider new highlight information with active buttons
 		guard nav.pci.hli.hl_gi.hli_ss.bit(0) && nav.pci.hli.hl_gi.btn_ns > 0 else { return nil }
 
-		// TODO: decode NAV packet
-		self.init()
+		let start = nav.timestamp.map { timestamp -> UInt64 in
+			let startOffset = nav.pci.hli.hl_gi.hli_s_ptm - nav.pci.pci_gi.vobu_s_ptm
+			return timestamp + UInt64(startOffset)
+		}
+		let selectable = nav.pci.hli.hl_gi.btn_se_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm
+		let visible = nav.pci.hli.hl_gi.hli_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm
+		let frameRate = DVDInfo.Time.FrameRate(nav.pci.pci_gi.e_eltm.frame_u)
+
+		self.init(sector: DVDInfo.Index(nav.pci.pci_gi.nv_pck_lbn),
+		          linearPlaybackTimestamp: start.map { DVDInfo.Time($0, rate: frameRate) },
+		          onlyCommandsChanged: nav.pci.hli.hl_gi.hli_ss.bits(0...1) == 3,
+		          buttons: Dictionary(buttons: nav.pci.hli),
+		          buttonsSelectable: DVDInfo.Time(UInt64(selectable), rate: frameRate),
+		          buttonsVisible: DVDInfo.Time(UInt64(visible), rate: frameRate),
+		          forcedSelect: nav.pci.hli.hl_gi.fosl_btnn > 0 ? DVDInfo.Index(nav.pci.hli.hl_gi.fosl_btnn) : nil,
+		          forcedAction: nav.pci.hli.hl_gi.foac_btnn > 0 ? DVDInfo.Index(nav.pci.hli.hl_gi.foac_btnn) : nil,
+		          restrictions: DVDInfo.Restrictions(nav.pci.pci_gi.vobu_uop_ctl))
+	}
+}
+
+private extension Dictionary where Key == DVDInfo.Index<DVDInfo.Interaction.Button>, Value == [DVDInfo.Interaction.ButtonDescriptor: DVDInfo.Interaction.Button] {
+	init(buttons hli: hli_t) {
+		let buttonArray = Array<btni_t>(tuple: hli.btnit)
+		let buttonNumbers = 1...Int(hli.hl_gi.btn_ns)
+		let buttonGroups = 1...Int(hli.hl_gi.btngr_ns)
+
+		let buttons = buttonNumbers.map { buttonNumber -> (Key, Value) in
+			let buttonGroup = buttonGroups.compactMap { buttonGroup -> (Value.Key, Value.Value)? in
+
+				let descriptor: DVDInfo.Interaction.ButtonDescriptor
+				switch buttonGroup {
+				case 1:	descriptor = .init(rawValue: hli.hl_gi.btngr1_dsp_ty)
+				case 2: descriptor = .init(rawValue: hli.hl_gi.btngr2_dsp_ty)
+				case 3: descriptor = .init(rawValue: hli.hl_gi.btngr3_dsp_ty)
+				default: return nil
+				}
+
+				let groupStartIndex = (buttonGroup - 1) * 36 / buttonGroups.count
+				let buttonIndex = groupStartIndex + (buttonNumber - 1)
+				guard buttonIndex < buttonArray.endIndex else { return nil }
+				let button = DVDInfo.Interaction.Button(buttonArray[buttonIndex], color: hli.btn_colit)
+
+				return (descriptor, button)
+			}
+			return (Key(buttonNumber), Value(uniqueKeysWithValues: buttonGroup))
+		}
+		self.init(uniqueKeysWithValues: buttons)
+	}
+}
+
+private extension DVDInfo.Interaction.Button {
+	init(_ btnit: btni_t, color btn_colit: btn_colit_t) {
+		let colorInfo: (UInt32, UInt32)?
+		switch btnit.btn_coln {
+		case 1: colorInfo = btn_colit.btn_coli.0
+		case 2: colorInfo = btn_colit.btn_coli.1
+		case 3: colorInfo = btn_colit.btn_coli.2
+		default: colorInfo = nil
+		}
+
+		self.init(mask: Rectangle(xStart: btnit.x_start, xEnd: btnit.x_end,
+		                          yStart: btnit.y_start, yEnd: btnit.y_end),
+		          up: btnit.up != 0 ? DVDInfo.Reference(button: .init(btnit.up)) : nil,
+		          down: btnit.down != 0 ? DVDInfo.Reference(button: .init(btnit.down)) : nil,
+		          left: btnit.left != 0 ? DVDInfo.Reference(button: .init(btnit.left)) : nil,
+		          right: btnit.right != 0 ? DVDInfo.Reference(button: .init(btnit.right)) : nil,
+		          selectionColors: colorInfo.map { Array(colors: $0.0) },
+		          actionColors: colorInfo.map { Array(colors: $0.1) },
+		          action: DVDInfo.Command(btnit.cmd),
+		          autoActionOnSelect: btnit.auto_action_mode != 0)
+	}
+}
+
+private extension Array where Element == DVDInfo.Interaction.Button.Color {
+	init(colors combined: UInt32) {
+		self = [
+			Element(color: DVDInfo.Reference(color: .init(combined.bits(16...19))),
+			        alpha: Double(16 - combined.bits(0...3)) * 1/16),
+			Element(color: DVDInfo.Reference(color: .init(combined.bits(20...23))),
+			        alpha: Double(16 - combined.bits(4...7)) * 1/16),
+			Element(color: DVDInfo.Reference(color: .init(combined.bits(24...27))),
+			        alpha: Double(16 - combined.bits(8...11)) * 1/16),
+			Element(color: DVDInfo.Reference(color: .init(combined.bits(28...31))),
+			        alpha: Double(16 - combined.bits(12...15)) * 1/16)
+		]
 	}
 }
 
