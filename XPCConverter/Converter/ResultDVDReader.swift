@@ -12,13 +12,16 @@ public struct DVDInfo: Codable {
 	public let volumeIndex: UInt16
 	public let discSide: UInt8
 
+	public let start: ProgramChain?
+
 	public init(specification: Version,
 	            category: UInt32,
 	            provider: String,
 	            posCode: UInt64,
 	            totalVolumeCount: UInt16,
 	            volumeIndex: UInt16,
-	            discSide: UInt8) {
+	            discSide: UInt8,
+	            start: ProgramChain?) {
 		self.specification = specification
 		self.category = category
 		self.provider = provider
@@ -26,6 +29,7 @@ public struct DVDInfo: Codable {
 		self.totalVolumeCount = totalVolumeCount
 		self.volumeIndex = volumeIndex
 		self.discSide = discSide
+		self.start = start
 	}
 
 	public struct Version: Codable {
@@ -36,6 +40,226 @@ public struct DVDInfo: Codable {
 			self.major = major
 			self.minor = minor
 		}
+	}
+
+	public struct Time: Codable, Hashable {
+		public let hours: UInt8
+		public let minutes: UInt8
+		public let seconds: UInt8
+		public let frames: UInt8
+		public let rate: FrameRate
+		public init(hours: UInt8,
+		            minutes: UInt8,
+		            seconds: UInt8,
+		            frames: UInt8,
+		            rate: FrameRate) {
+			self.hours = hours
+			self.minutes = minutes
+			self.seconds = seconds
+			self.frames = frames
+			self.rate = rate
+		}
+		public enum FrameRate: Codable, Hashable {
+			case framesPerSecond(Double), unexpected(UInt8)
+		}
+	}
+
+	public enum LogicalAudioStream {}
+	public enum LogicalSubpictureStream {}
+	public enum VOBAudioStream {}
+	public enum VOBSubpictureStream {}
+	public enum Sector {}
+
+	public struct Domain: Codable {}
+
+	/// Program chains form the playback structure of the DVD.
+	///
+	/// A program chain is a linearly playable (except for special cases) stream.
+	/// DVD virtual machine commands can be executed at the beginning and end of
+	/// the whole program chain or at the end of a cell. Links to a `next` and
+	/// `previous` program chain continue playback beyond the end of the current
+	/// chain. Navigating `up` allows for a hierarchical structure.
+	public struct ProgramChain: Codable {
+		public let programs: [Index<Program>: Program]
+		public let cells: [Index<Cell>: Cell]
+
+		public let duration: Time
+		public let playback: PlaybackMode
+		public let ending: EndingMode
+		public let mapAudio: [Index<LogicalAudioStream>: Index<VOBAudioStream>]
+		public let mapSubpicture: [Index<LogicalSubpictureStream>: [SubpictureDescriptor: Index<VOBSubpictureStream>]]
+
+		public let next: Reference<Domain, Self>?
+		public let previous: Reference<Domain, Self>?
+		public let up: Reference<Domain, Self>?
+
+		public let pre: [Index<Command>: Command]
+		public let post: [Index<Command>: Command]
+		public let cellPost: [Index<Command>: Command]
+		public let buttonPalette: [Index<Color>: Color]
+		public let restrictions: Restrictions
+
+		public init(programs: [Index<Program>: Program],
+		            cells: [Index<Cell>: Cell],
+		            duration: Time,
+		            playback: PlaybackMode,
+		            ending: EndingMode,
+		            mapAudio: [Index<LogicalAudioStream>: Index<VOBAudioStream>],
+		            mapSubpicture: [Index<LogicalSubpictureStream>: [SubpictureDescriptor: Index<VOBSubpictureStream>]],
+		            next: Reference<Domain, Self>?,
+		            previous: Reference<Domain, Self>?,
+		            up: Reference<Domain, Self>?,
+		            pre: [Index<Command>: Command],
+		            post: [Index<Command>: Command],
+		            cellPost: [Index<Command>: Command],
+		            buttonPalette: [Index<Color>: Color],
+		            restrictions: Restrictions) {
+			self.programs = programs
+			self.cells = cells
+			self.duration = duration
+			self.playback = playback
+			self.ending = ending
+			self.mapAudio = mapAudio
+			self.mapSubpicture = mapSubpicture
+			self.next = next
+			self.previous = previous
+			self.up = up
+			self.pre = pre
+			self.post = post
+			self.cellPost = cellPost
+			self.buttonPalette = buttonPalette
+			self.restrictions = restrictions
+		}
+
+		/// Programs are the targets when the user skips forward or backward.
+		public struct Program: Codable {
+			public let start: Reference<ProgramChain, Cell>
+			public init(start: Reference<ProgramChain, Cell>) {
+				self.start = start
+			}
+		}
+
+		/// Cells subdivide programs for fine-grained programmatic interaction.
+		public struct Cell: Codable {
+			public let duration: Time
+			public let playback: PlaybackMode
+			public let ending: EndingMode
+			public let angle: AngleInfo?
+			public let karaoke: KaraokeInfo?
+
+			public let post: Reference<ProgramChain, Command>?
+			public let sectors: ClosedRange<Index<Sector>>
+
+			public init(duration: Time,
+			            playback: PlaybackMode,
+			            ending: EndingMode,
+			            angle: AngleInfo?,
+			            karaoke: KaraokeInfo?,
+			            post: Reference<ProgramChain, Command>?,
+			            sectors: ClosedRange<Index<Sector>>) {
+				self.duration = duration
+				self.playback = playback
+				self.ending = ending
+				self.angle = angle
+				self.karaoke = karaoke
+				self.post = post
+				self.sectors = sectors
+			}
+
+			public struct PlaybackMode: Codable, OptionSet {
+				public let rawValue: UInt8
+				public static let seamless = PlaybackMode(rawValue: 1 << 0)
+				public static let seamlessAngle = PlaybackMode(rawValue: 1 << 1)
+				public static let interleaved = PlaybackMode(rawValue: 1 << 2)
+				public static let timeDiscontinuity = PlaybackMode(rawValue: 1 << 3)
+				public static let allStillFrames = PlaybackMode(rawValue: 1 << 4)
+				public static let stopFastForward = PlaybackMode(rawValue: 1 << 5)
+				public init(rawValue: UInt8) { self.rawValue = rawValue }
+
+			}
+			public typealias EndingMode = ProgramChain.EndingMode
+			public enum AngleInfo: Codable {
+				case firstCellInBlock
+				case innerCellInBlock
+				case lastCellInBlock
+				case externalCell
+				case unexpected(UInt32)
+			}
+			public enum KaraokeInfo: Codable {
+				case titlePicture, introduction, bridge
+				case maleVocal, femaleVocal, mixedVocal
+				case interludeFadeIn, interlude, interludeFadeOut
+				case firstClimax, secondClimax
+				case firstEnding, secondEnding
+				case unexpected(UInt32)
+			}
+		}
+
+		public enum PlaybackMode: Codable {
+			case sequential
+			case random(programCount: UInt8)
+			case shuffle(programCount: UInt8)
+		}
+
+		public enum EndingMode: Codable {
+			case immediate
+			case holdLastFrame(seconds: UInt8)
+			case holdLastFrameIndefinitely
+		}
+
+		public enum SubpictureDescriptor: Codable {
+			case classic, wide, letterbox, panScan
+		}
+
+		public struct Color: Codable {
+			public let Y, Cb, Cr: UInt8
+			public init(Y: UInt8, Cb: UInt8, Cr: UInt8) {
+				self.Y = Y
+				self.Cb = Cb
+				self.Cr = Cr
+			}
+		}
+	}
+
+	public enum Command: Codable {
+		case unexpected(UInt64)
+	}
+
+	/// Playback restrictions disable certain user interaction.
+	public struct Restrictions: Codable, OptionSet {
+		public let rawValue: UInt32
+
+		public static let noStop = Restrictions(rawValue: 1 << 3)
+		public static let noJumpToTitle = Restrictions(rawValue: 1 << 2)
+		public static let noJumpToPart = Restrictions(rawValue: 1 << 1)
+		public static let noJumpIntoTitle = Restrictions(rawValue: 1 << 0)
+		public static let noJumpIntoPart = Restrictions(rawValue: 1 << 5)
+		public static let noJumpUp = Restrictions(rawValue: 1 << 4)
+
+		public static let noJumpToTopLevelMenu = Restrictions(rawValue: 1 << 10)
+		public static let noJumpToPerTitleMenu = Restrictions(rawValue: 1 << 11)
+		public static let noJumpToAudioMenu = Restrictions(rawValue: 1 << 13)
+		public static let noJumpToSubpictureMenu = Restrictions(rawValue: 1 << 12)
+		public static let noJumpToViewingAngleMenu = Restrictions(rawValue: 1 << 14)
+		public static let noJumpToChapterMenu = Restrictions(rawValue: 1 << 15)
+
+		public static let noProgramForward = Restrictions(rawValue: 1 << 7)
+		public static let noProgramBackward = Restrictions(rawValue: 1 << 6)
+		public static let noSeekForward = Restrictions(rawValue: 1 << 8)
+		public static let noSeekBackward = Restrictions(rawValue: 1 << 9)
+
+		public static let noResumeFromMenu = Restrictions(rawValue: 1 << 16)
+		public static let noMenuInteractions = Restrictions(rawValue: 1 << 17)
+		public static let noStillSkip = Restrictions(rawValue: 1 << 18)
+		public static let noPause = Restrictions(rawValue: 1 << 19)
+
+		public static let noChangeAudioStream = Restrictions(rawValue: 1 << 20)
+		public static let noChangeSubpictureStream = Restrictions(rawValue: 1 << 21)
+		public static let noChangeViewingAngle = Restrictions(rawValue: 1 << 22)
+		public static let noChangeVideoMode = Restrictions(rawValue: 1 << 24)
+		public static let noChangeKaraokeMode = Restrictions(rawValue: 1 << 23)
+
+		public init(rawValue: UInt32) { self.rawValue = rawValue }
 	}
 
 	/// Index type tightly coupled to the collection element it indexes.
@@ -70,5 +294,48 @@ public struct DVDInfo: Codable {
 	///
 	/// - Remark: Subscript implementations are available to resolve references.
 	public struct Reference<Root, Value>: Codable {
+		public let programChain: DVDInfo.Index<DVDInfo.ProgramChain>?
+		public let cell: DVDInfo.Index<DVDInfo.ProgramChain.Cell>?
+		public let command: DVDInfo.Index<DVDInfo.Command>?
+	}
+}
+
+
+/* MARK: Reference */
+
+extension DVDInfo.Reference where Root == DVDInfo.Domain, Value == DVDInfo.ProgramChain {
+	public init(programChain: DVDInfo.Index<Value>) {
+		self.programChain = programChain
+		self.cell = nil
+		self.command = nil
+	}
+}
+extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.ProgramChain.Cell {
+	public init(cell: DVDInfo.Index<Value>) {
+		self.programChain = nil
+		self.cell = cell
+		self.command = nil
+	}
+}
+extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.Command {
+	public init(command: DVDInfo.Index<Value>) {
+		self.programChain = nil
+		self.cell = nil
+		self.command = command
+	}
+}
+
+extension DVDInfo.Domain {
+	public subscript(resolve reference: DVDInfo.Reference<Self, DVDInfo.ProgramChain>,
+	                 language: String? = nil) -> DVDInfo.ProgramChain? {
+		return nil  // FIXME: resolve program chain index
+	}
+}
+extension DVDInfo.ProgramChain {
+	public subscript(resolve reference: DVDInfo.Reference<Self, Cell>) -> Cell? {
+		return cells[reference.cell!]
+	}
+	public subscript(resolve reference: DVDInfo.Reference<Self, DVDInfo.Command>) -> DVDInfo.Command? {
+		return cellPost[reference.command!]
 	}
 }
