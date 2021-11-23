@@ -13,6 +13,7 @@ public struct DVDInfo: Codable {
 	public let discSide: UInt8
 
 	public let start: ProgramChain?
+	public let topLevelMenus: Domain
 
 	public init(specification: Version,
 	            category: UInt32,
@@ -21,7 +22,8 @@ public struct DVDInfo: Codable {
 	            totalVolumeCount: UInt16,
 	            volumeIndex: UInt16,
 	            discSide: UInt8,
-	            start: ProgramChain?) {
+	            start: ProgramChain?,
+	            topLevelMenus: Domain) {
 		self.specification = specification
 		self.category = category
 		self.provider = provider
@@ -30,6 +32,7 @@ public struct DVDInfo: Codable {
 		self.volumeIndex = volumeIndex
 		self.discSide = discSide
 		self.start = start
+		self.topLevelMenus = topLevelMenus
 	}
 
 	public struct Version: Codable {
@@ -70,7 +73,163 @@ public struct DVDInfo: Codable {
 	public enum VOBSubpictureStream {}
 	public enum Sector {}
 
-	public struct Domain: Codable {}
+	/// Domains group a set of program chains with common attributes.
+	///
+	/// Three kinds of domains exist on DVDs:
+	/// * Video Manager Menu (VMGM): top-level menu domain occurring once per DVD.
+	/// * Video Title Set Menu (VTSM): menu domain within each title set.
+	/// * Video Title Set (VTS): domain for playable content backing the titles.
+	public struct Domain: Codable {
+		public let video: VideoAttributes
+		public let audio: [Index<LogicalAudioStream>: AudioAttributes]
+		public let subpicture: [Index<LogicalSubpictureStream>: SubpictureAttributes]
+
+		public init(video: VideoAttributes,
+		            audio: [Index<LogicalAudioStream>: AudioAttributes],
+		            subpicture: [Index<LogicalSubpictureStream>: SubpictureAttributes]) {
+			self.video = video
+			self.audio = audio
+			self.subpicture = subpicture
+		}
+
+		public struct VideoAttributes: Codable {
+			public let coding: CodingType
+			public let standard: VideoStandard
+			public let codedPicture: Resolution
+			public let displayAspect: AspectRatio
+			public let allowedDisplay: DisplayModification
+			public let line21cc: Line21ClosedCaption
+			public let content: ContentInfo
+
+			public init(coding: CodingType,
+			            standard: VideoStandard,
+			            codedPicture: Resolution,
+			            displayAspect: AspectRatio,
+			            allowedDisplay: DisplayModification,
+			            line21cc: Line21ClosedCaption,
+			            content: ContentInfo) {
+				self.coding = coding
+				self.standard = standard
+				self.codedPicture = codedPicture
+				self.displayAspect = displayAspect
+				self.allowedDisplay = allowedDisplay
+				self.line21cc = line21cc
+				self.content = content
+			}
+
+			public enum CodingType: Codable {
+				case mpeg1, mpeg2, unexpected(UInt8)
+			}
+			public enum VideoStandard: Codable {
+				case ntsc, pal, unexpected(UInt8)
+			}
+			public struct Resolution: Codable {
+				public let width: UInt16?
+				public let height: UInt16?
+				public init(width: UInt16?, height: UInt16?) {
+					self.width = width
+					self.height = height
+				}
+			}
+			public enum AspectRatio: Codable {
+				case classic(letterboxed: Bool), wide, unspecified, unexpected(UInt8)
+			}
+			public struct DisplayModification: Codable, OptionSet {
+				public let rawValue: UInt8
+				public static let letterbox = DisplayModification(rawValue: 1 << 0)
+				public static let panScan = DisplayModification(rawValue: 1 << 1)
+				public init(rawValue: UInt8) { self.rawValue = rawValue }
+			}
+			public struct Line21ClosedCaption: Codable, OptionSet {
+				public let rawValue: UInt8
+				public static let firstField = Line21ClosedCaption(rawValue: 1 << 0)
+				public static let secondField = Line21ClosedCaption(rawValue: 1 << 1)
+				public init(rawValue: UInt8) { self.rawValue = rawValue }
+			}
+			public enum ContentInfo: Codable {
+				case video, film
+			}
+		}
+
+		public struct AudioAttributes: Codable {
+			public let coding: CodingType
+			public let sampleFrequency: UInt32
+			public let channelCount: UInt8
+			public let rendering: RenderingIntent
+			public let language: String?
+			public let content: ContentInfo
+
+			public init(coding: CodingType,
+			            sampleFrequency: UInt32,
+			            channelCount: UInt8,
+			            rendering: RenderingIntent,
+			            language: String?,
+			            content: ContentInfo) {
+				self.coding = coding
+				self.sampleFrequency = sampleFrequency
+				self.channelCount = channelCount
+				self.rendering = rendering
+				self.language = language
+				self.content = content
+			}
+
+			public enum CodingType: Codable {
+				case ac3, dts
+				case mpeg1(dynamicRangeCompression: Bool)
+				case mpeg2(dynamicRangeCompression: Bool)
+				case lpcm(bitsPerSample: UInt8)
+				case unexpected(UInt8, UInt8)
+			}
+			public enum RenderingIntent: Codable {
+				case normal
+				case surround(dolbyMatrixEncoded: Bool)
+				case karaoke(version: UInt8, mode: Karaoke.Mode, channels: [Karaoke.Channel], multiChannelIntro: Bool)
+				case unexpected(UInt8)
+				public enum Karaoke {
+					public enum Mode: Codable {
+						case solo, duet
+					}
+					public enum Channel: Codable {
+						case left, right, center, surround
+						case guideMelody(String? = nil)
+						case guideVocal(String? = nil)
+						case effect(String? = nil)
+					}
+				}
+			}
+			public enum ContentInfo: Codable {
+				case sourceAudio, audioDescription, commentary, alternateCommentary
+				case unspecified, unexpected(UInt8)
+			}
+		}
+
+		public struct SubpictureAttributes: Codable {
+			public let coding: CodingType
+			public let language: String?
+			public let content: ContentInfo
+
+			public init(coding: CodingType,
+			            language: String?,
+			            content: ContentInfo) {
+				self.coding = coding
+				self.language = language
+				self.content = content
+			}
+
+			public enum CodingType: Codable {
+				case rle, extended, unexpected(UInt8)
+			}
+			public enum ContentInfo: Codable {
+				case subtitles(fontSize: FontSize, forChildren: Bool)
+				case closedCaptions(fontSize: FontSize, forChildren: Bool)
+				case commentary(fontSize: FontSize, forChildren: Bool)
+				case forced, unspecified, unexpected(UInt8)
+				public enum FontSize: Codable {
+					case normal, large
+				}
+			}
+		}
+	}
 
 	/// Program chains form the playback structure of the DVD.
 	///
