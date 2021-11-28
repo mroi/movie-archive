@@ -10,9 +10,15 @@
 		4C1A3593245DFEE700C40FB5 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* App.swift */; };
 		4C1A3595245DFEE700C40FB5 /* IngestDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */; };
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
+		4C300E5C2691124000DF059F /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4C947BDE268234FD00D72937 /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4C947BDD268234FD00D72937 /* MovieArchiveExporters */; };
+		4CA53B872690D4FF002140BC /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA53B862690D4FF002140BC /* Common.swift */; };
+		4CA53B8A2690D5F2002140BC /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA53B892690D5F2002140BC /* MovieArchiveExporters */; };
+		4CA53B8C2690D5F2002140BC /* MovieArchiveImporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA53B8B2690D5F2002140BC /* MovieArchiveImporters */; };
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
+		4CB768F5268BC1BA00FAF9DC /* MovieArchiveConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */; };
 		4CEEFEFA24A108ED00C0357D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEEFEF924A108ED00C0357D /* main.swift */; };
-		4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4CFA77932681FCB900BB9632 /* MovieArchiveImporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CFA77922681FCB900BB9632 /* MovieArchiveImporters */; };
 /* End PBXBuildFile section */
 
@@ -48,15 +54,26 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		4CEEFEFE24A108ED00C0357D /* Embed XPC Services */ = {
+		4C300E5B2690EA6500DF059F /* Embed XPC Service */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = ../../XPCServices;
+			dstSubfolderSpec = 1;
+			files = (
+				4C300E5C2691124000DF059F /* Converter.xpc in Embed XPC Service */,
+			);
+			name = "Embed XPC Service";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CEEFEFE24A108ED00C0357D /* Embed XPC Service */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
 			dstSubfolderSpec = 16;
 			files = (
-				4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Services */,
+				4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Service */,
 			);
-			name = "Embed XPC Services";
+			name = "Embed XPC Service";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -71,9 +88,13 @@
 		4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C1BDC35249E6FB900BBF058 /* Importers */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Importers; sourceTree = "<group>"; };
 		4C1E153724BB9E96000897F9 /* MovieArchive.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MovieArchive.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		4C1F484926A2D44400AF7205 /* XPC-Debug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "XPC-Debug.entitlements"; sourceTree = "<group>"; };
 		4C392A56249E72E000CD7308 /* Exporters */ = {isa = PBXFileReference; lastKnownFileType = text; path = Exporters; sourceTree = SOURCE_ROOT; };
 		4C392A57249E72E000CD7308 /* Model */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model; sourceTree = SOURCE_ROOT; };
+		4C7158F42693A9FC0086A8C8 /* XPC-Release.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "XPC-Release.entitlements"; sourceTree = "<group>"; };
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		4C8AC3D5268B05EB00BF1726 /* Converter */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Converter; sourceTree = "<group>"; };
+		4CA53B862690D4FF002140BC /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		4CAA9C7A249E8DBD005EB90A /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		4CAC9F3D24688E880031A9EE /* UIMacOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMacOS.swift; sourceTree = "<group>"; };
 		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
@@ -88,6 +109,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CFA77932681FCB900BB9632 /* MovieArchiveImporters in Frameworks */,
+				4C947BDE268234FD00D72937 /* MovieArchiveExporters in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,6 +117,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CA53B8C2690D5F2002140BC /* MovieArchiveImporters in Frameworks */,
+				4CA53B8A2690D5F2002140BC /* MovieArchiveExporters in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CB768F5268BC1BA00FAF9DC /* MovieArchiveConverter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +163,7 @@
 		4C1A35A9245DFEE900C40FB5 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				4CA53B862690D4FF002140BC /* Common.swift */,
 				4CAC9F3D24688E880031A9EE /* UIMacOS.swift */,
 			);
 			path = Tests;
@@ -158,7 +184,10 @@
 		4CEEFEF424A108EC00C0357D /* XPCConverter */ = {
 			isa = PBXGroup;
 			children = (
+				4C8AC3D5268B05EB00BF1726 /* Converter */,
 				4CEEFEFB24A108ED00C0357D /* Info.plist */,
+				4C1F484926A2D44400AF7205 /* XPC-Debug.entitlements */,
+				4C7158F42693A9FC0086A8C8 /* XPC-Release.entitlements */,
 				4CEEFEF924A108ED00C0357D /* main.swift */,
 			);
 			path = XPCConverter;
@@ -191,7 +220,7 @@
 				4C1A358B245DFEE700C40FB5 /* Sources */,
 				4C1A358C245DFEE700C40FB5 /* Frameworks */,
 				4C1A358D245DFEE700C40FB5 /* Resources */,
-				4CEEFEFE24A108ED00C0357D /* Embed XPC Services */,
+				4CEEFEFE24A108ED00C0357D /* Embed XPC Service */,
 			);
 			buildRules = (
 			);
@@ -202,6 +231,7 @@
 			name = "Movie Archive";
 			packageProductDependencies = (
 				4CFA77922681FCB900BB9632 /* MovieArchiveImporters */,
+				4C947BDD268234FD00D72937 /* MovieArchiveExporters */,
 			);
 			productName = "Movie Archive";
 			productReference = 4C1A358F245DFEE700C40FB5 /* Movie Archive.app */;
@@ -214,6 +244,7 @@
 				4C1A35AD245DFEE900C40FB5 /* Sources */,
 				4C1A35AE245DFEE900C40FB5 /* Frameworks */,
 				4C1A35AF245DFEE900C40FB5 /* Resources */,
+				4C300E5B2690EA6500DF059F /* Embed XPC Service */,
 			);
 			buildRules = (
 			);
@@ -221,6 +252,10 @@
 				4C1A35B3245DFEE900C40FB5 /* PBXTargetDependency */,
 			);
 			name = "Tests macOS";
+			packageProductDependencies = (
+				4CA53B892690D5F2002140BC /* MovieArchiveExporters */,
+				4CA53B8B2690D5F2002140BC /* MovieArchiveImporters */,
+			);
 			productName = "Movie ArchiveUITests";
 			productReference = 4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -231,7 +266,6 @@
 			buildPhases = (
 				4CEEFEEF24A108EC00C0357D /* Sources */,
 				4CEEFEF024A108EC00C0357D /* Frameworks */,
-				4CEEFEF124A108EC00C0357D /* Resources */,
 			);
 			buildRules = (
 			);
@@ -239,6 +273,9 @@
 				4CD333F424A25A3A00CF1786 /* PBXTargetDependency */,
 			);
 			name = Converter;
+			packageProductDependencies = (
+				4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */,
+			);
 			productName = converter;
 			productReference = 4CEEFEF324A108EC00C0357D /* Converter.xpc */;
 			productType = "com.apple.product-type.xpc-service";
@@ -305,13 +342,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4CEEFEF124A108EC00C0357D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -329,6 +359,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */,
+				4CA53B872690D4FF002140BC /* Common.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +505,7 @@
 		4CEEFF0124A108ED00C0357D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "XPCConverter/XPC-$(CONFIGURATION).entitlements";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -487,6 +519,7 @@
 		4CEEFF0224A108ED00C0357D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "XPCConverter/XPC-$(CONFIGURATION).entitlements";
 				CODE_SIGN_IDENTITY = "Michael Roitzsch";
 				CODE_SIGN_STYLE = Manual;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -548,6 +581,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4C947BDD268234FD00D72937 /* MovieArchiveExporters */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MovieArchiveExporters;
+		};
+		4CA53B892690D5F2002140BC /* MovieArchiveExporters */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MovieArchiveExporters;
+		};
+		4CA53B8B2690D5F2002140BC /* MovieArchiveImporters */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MovieArchiveImporters;
+		};
+		4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MovieArchiveConverter;
+		};
 		4CFA77922681FCB900BB9632 /* MovieArchiveImporters */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MovieArchiveImporters;
