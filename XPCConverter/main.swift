@@ -9,6 +9,9 @@ import MovieArchiveConverter
 /// operations are single-threaded.
 class ConverterImplementation: NSObject {
 
+	/// Stores state of external libraries across function calls.
+	var state: [UUID: OpaquePointer] = [:]
+
 	/// Fetches the proxy object for the return channel to the client.
 	var returnChannel: ReturnInterface? {
 		let proxy = NSXPCConnection.current()?.remoteObjectProxy

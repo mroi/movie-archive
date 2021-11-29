@@ -18,6 +18,7 @@ public enum ConverterOutput {
 /// therefore delivered asynchronously on a `ConverterPublisher`. Other errors
 /// are thrown to immediately unwind control flow.
 public enum ConverterError: Error {
+	case sourceNotSupported
 	case connectionInvalid
 	case connectionInterrupted
 }

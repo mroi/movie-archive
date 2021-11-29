@@ -2,8 +2,14 @@ import Foundation
 import Combine
 
 
+/// Functions from `libdvdread` for reading and interpreting DVD data structures.
+@objc public protocol ConverterDVDReader {
+	func open(_ url: URL, completionHandler: @escaping (_ result: UUID?) -> Void)
+	func close(_ id: UUID)
+}
+
 /// Aggregate interface of all converter interfaces.
-@objc public protocol ConverterInterface {}
+@objc public protocol ConverterInterface: ConverterDVDReader {}
 
 
 /// Low-level access the converter functionality.
@@ -15,6 +21,9 @@ import Combine
 ///
 /// At the same time, the XPC service can send asynchronous feedback to the
 /// client by way of the `ConverterPublisher`.
+///
+/// - Remark: These low-level XPC protocols form an hourglass interface which
+///   is meant to be augmented with client-side currency types like `DVDReader`.
 public class ConverterClient<ProxyInterface> {
 
 	/// Publisher to receive status updates from the converter service.
