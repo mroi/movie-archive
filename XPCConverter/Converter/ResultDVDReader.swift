@@ -82,14 +82,20 @@ public struct DVDInfo: Codable {
 	/// content with common attributes, grouped in one menu and one title domain.
 	public struct TitleSet: Codable {
 		public let titles: [Index<Title>: Title]
+		public let menus: Domain
+		public let content: Domain
 
 		public let specification: Version
 		public let category: UInt32
 
 		public init(titles: [Index<Title>: Title],
+		            menus: Domain,
+		            content: Domain,
 		            specification: Version,
 		            category: UInt32) {
 			self.titles = titles
+			self.menus = menus
+			self.content = content
 			self.specification = specification
 			self.category = category
 		}
@@ -181,6 +187,7 @@ public struct DVDInfo: Codable {
 
 			public enum Descriptor: Codable, Hashable {
 				case menu(language: String, index: Index<ProgramChain>, entryPoint: Bool, type: MenuType?)
+				case title(index: Index<ProgramChain>, entryPoint: Bool, title: Index<DVDInfo.TitleSet.Title>)
 				public enum MenuType: Codable, Hashable {
 					case titles, rootWithinTitle, chapter
 					case audio, subpicture, viewingAngle
@@ -582,6 +589,8 @@ extension DVDInfo.Domain.ProgramChains {
 			switch descriptor {
 			case .menu(language, index, _, _):
 				return true
+			case .title(index, _, _):
+				return true
 			default:
 				return false
 			}
@@ -628,7 +637,7 @@ extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo
 
 extension DVDInfo.TitleSet {
 	public subscript(resolve reference: DVDInfo.Reference<Self, DVDInfo.ProgramChain.Program>) -> DVDInfo.ProgramChain.Program? {
-		return nil  // FIXME: resolve reference
+		return content.programChains[reference.programChain!]?.programs[reference.program!]
 	}
 }
 extension DVDInfo.Domain {
