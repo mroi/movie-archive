@@ -826,8 +826,350 @@ private extension DVDInfo.Command {
 		combined |= UInt64(command.bytes.7) <<  0
 		let command = combined
 
-		// TODO: decode command
-		self = .unexpected(command)
+		let condition: Condition?
+		let action: Self
+		let link: Self
+
+		switch command.bits(61...63) {
+		case 0:
+			// special instructions
+			condition = Self.decode(conditionType1: command)
+			switch command.bits(48...51) {
+			case 0: action = .nop
+			case 1: action = .goto(line: .init(command.bits(0...7)))
+			case 2: action = .break
+			case 3: action = .setParentalLevelAndGoto(level: Int(command.bits(8...11)),
+			                                          line: .init(command.bits(0...7)))
+			default: action = .unexpected(command)
+			}
+			link = .nop
+
+		case 1:
+			// link/jump/call instructions
+			switch command.bit(60) {
+			case false:
+				condition = Self.decode(conditionType1: command)
+				action = Self.decode(link: command)
+			case true:
+				condition = Self.decode(conditionType2: command)
+				action = Self.decode(jumpOrCall: command)
+			}
+			link = .nop
+
+		case 2:
+			// system register set instructions
+			condition = Self.decode(conditionType2: command)
+			action = Self.decode(systemSet: command)
+			link = Self.decode(link: command)
+
+		case 3:
+			// general purpose register calculation instructions
+			condition = Self.decode(conditionType3: command)
+			let lhs, rhs, swap: Operand
+			lhs = .generalRegister(.init(command.bits(32...35)))
+			if command.bit(60) {
+				rhs = .immediate(UInt16(command.bits(16...31)))
+			} else {
+				rhs = Self.decode(register: UInt8(command.bits(16...23)))
+			}
+			swap = .generalRegister(.init(command.bits(16...19)))
+			action = Self.decode(compute: command, lhs: lhs, rhs: rhs, swap: swap)
+			link = Self.decode(link: command)
+
+		case 4...6:
+			// combinations of condition, calculation, and link instructions
+			condition = Self.decode(conditionType4: command)
+			let lhs, rhs, swap: Operand
+			lhs = .generalRegister(.init(command.bits(48...51)))
+			if command.bit(60) {
+				rhs = .immediate(UInt16(command.bits(32...47)))
+			} else {
+				rhs = Self.decode(register: UInt8(command.bits(32...39)))
+			}
+			swap = .generalRegister(.init(command.bits(32...35)))
+			action = Self.decode(compute: command, lhs: lhs, rhs: rhs, swap: swap)
+			link = Self.decode(subLink: command)
+
+		default:
+			condition = nil
+			action = .unexpected(command)
+			link = .nop
+		}
+
+		switch (command.bits(61...63), condition, action, link) {
+		case (_, _, .unexpected, _), (_, _, _, .unexpected):
+			self = .unexpected(command)
+		case (_, .none, _, .nop):
+			self = action
+		case (_, .none, .nop, _):
+			self = link
+		case (_, .none, _, _):
+			self = .compound(action, link)
+		case (_, .some, .nop, .nop):
+			self = .nop
+
+		// conditional action (link and condition cannot appear together)
+		case (0...3, .some(let condition), _, .nop):
+			self = .condition(if: condition, then: action)
+
+		// unconditional action, then conditional link
+		case (4, .some, _, .nop):
+			self = action
+		case (4, .some(let condition), .nop, _):
+			self = .condition(if: condition, then: link)
+		case (4, .some(let condition), _, _):
+			self = .compound(action, .condition(if: condition, then: link))
+
+		// conditional action and link
+		case (5, .some(let condition), _, .nop):
+			self = .condition(if: condition, then: action)
+		case (5, .some(let condition), .nop, _):
+			self = .condition(if: condition, then: link)
+		case (5, .some(let condition), _, _):
+			self = .condition(if: condition, then: .compound(action, link))
+
+		// conditional action, then unconditional link
+		case (6, .some(let condition), _, .nop):
+			self = .condition(if: condition, then: action)
+		case (6, .some, .nop, _):
+			self = link
+		case (6, .some(let condition), _, _):
+			self = .compound(.condition(if: condition, then: action), link)
+
+		default:
+			self = .unexpected(command)
+		}
+	}
+
+	static func decode(conditionType1 command: UInt64) -> Condition? {
+		let lhs, rhs: Operand
+		lhs = decode(register: UInt8(command.bits(32...39)))
+		if command.bit(55) {
+			rhs = .immediate(UInt16(command.bits(16...31)))
+		} else {
+			rhs = decode(register: UInt8(command.bits(16...23)))
+		}
+		return decode(condition: command, lhs: lhs, rhs: rhs)
+	}
+	static func decode(conditionType2 command: UInt64) -> Condition? {
+		let lhs, rhs: Operand
+		lhs = decode(register: UInt8(command.bits(8...15)))
+		rhs = decode(register: UInt8(command.bits(0...7)))
+		return decode(condition: command, lhs: lhs, rhs: rhs)
+	}
+	static func decode(conditionType3 command: UInt64) -> Condition? {
+		let lhs, rhs: Operand
+		lhs = decode(register: UInt8(command.bits(40...47)))
+		if command.bit(55) {
+			rhs = .immediate(UInt16(command.bits(0...15)))
+		} else {
+			rhs = decode(register: UInt8(command.bits(0...7)))
+		}
+		return decode(condition: command, lhs: lhs, rhs: rhs)
+	}
+	static func decode(conditionType4 command: UInt64) -> Condition? {
+		let lhs, rhs: Operand
+		lhs = decode(register: UInt8(command.bits(48...51)))
+		if command.bit(55) {
+			rhs = .immediate(UInt16(command.bits(16...31)))
+		} else {
+			rhs = decode(register: UInt8(command.bits(16...23)))
+		}
+		return decode(condition: command, lhs: lhs, rhs: rhs)
+	}
+	static func decode(condition command: UInt64, lhs: Operand, rhs: Operand) -> Condition? {
+		switch command.bits(52...54) {
+		case 1: return .bitwiseAndNotZero(lhs, rhs)
+		case 2: return .equal(lhs, rhs)
+		case 3: return .notEqual(lhs, rhs)
+		case 4: return .greaterThanOrEqual(lhs, rhs)
+		case 5: return .greaterThan(lhs, rhs)
+		case 6: return .lessThanOrEqual(lhs, rhs)
+		case 7: return .lessThan(lhs, rhs)
+		default: return nil
+		}
+	}
+
+	static func decode(register: UInt8) -> Operand {
+		if register.bit(7) {
+			return .systemRegister(.init(register.bits(0...6)))
+		} else {
+			return .generalRegister(.init(register.bits(0...6)))
+		}
+	}
+
+	static func decode(link command: UInt64) -> Self {
+		let button = DVDInfo.Index<DVDInfo.Interaction.Button>(command.bits(10...15))
+		switch command.bits(48...51) {
+		case 0: return .nop
+		case 1: return decode(subLink: command)
+		case 4: return .jump(to: .programChain(.init(command.bits(0...15))))
+		case 5: return .jump(to: .part(.init(command.bits(0...9)), button))
+		case 6: return .jump(to: .program(.init(command.bits(0...7)), button))
+		case 7: return .jump(to: .cell(.init(command.bits(0...7)), button))
+		default: return .unexpected(command)
+		}
+	}
+	static func decode(subLink command: UInt64) -> Self {
+		let button = DVDInfo.Index<DVDInfo.Interaction.Button>(command.bits(10...15))
+		switch command.bits(0...4) {
+		case 0: return .jump(to: .none(button))
+		case 1: return .jump(to: .startOfCell(button))
+		case 2: return .jump(to: .nextCell(button))
+		case 3: return .jump(to: .previousCell(button))
+		case 5: return .jump(to: .startOfProgram(button))
+		case 6: return .jump(to: .nextProgram(button))
+		case 7: return .jump(to: .previousProgram(button))
+		case 9: return .jump(to: .startOfProgramChain(button))
+		case 10: return .jump(to: .nextProgramChain(button))
+		case 11: return .jump(to: .previousProgramChain(button))
+		case 12: return .jump(to: .upProgramChain(button))
+		case 13: return .jump(to: .endOfProgramChain(button))
+		case 16: return .jump(to: .resume(button))
+		default: return .unexpected(command)
+		}
+	}
+	static func decode(jumpOrCall command: UInt64) -> Self {
+		switch command.bits(48...51) {
+		case 0: return .nop
+		case 1: return .exit
+		case 2: return .jump(to: .title(.init(command.bits(16...23))))
+		case 3: return .jump(to: .titleWithinTitleSet(.init(command.bits(16...23))))
+		case 5: return .jump(to: .partWithinTitleSet(.init(command.bits(16...23)),
+		                                             .init(command.bits(32...40))))
+		case 6:
+			switch command.bits(22...23) {
+			case 0: return .jump(to: .start)
+			case 1: return .jump(to: .topLevelMenu(.init(UInt8(command.bits(16...19)))))
+			case 2: return .jump(to: .titleMenu(.init(command.bits(24...31)),
+			                                    .init(command.bits(32...39)),
+			                                    .init(UInt8(command.bits(16...19)))))
+			case 3: return .jump(to: .topLevelProgramChain(.init(command.bits(32...47))))
+			default: return .unexpected(command)
+			}
+		case 8:
+			let resume = DVDInfo.Index<DVDInfo.ProgramChain.Cell>(command.bits(24...31))
+			switch command.bits(22...23) {
+			case 0: return .call(to: .start, resume: resume)
+			case 1: return .call(to: .topLevelMenu(.init(UInt8(command.bits(16...19)))), resume: resume)
+			case 2: return .call(to: .menu(.init(UInt8(command.bits(16...19)))), resume: resume)
+			case 3: return .call(to: .topLevelProgramChain(.init(command.bits(32...47))), resume: resume)
+			default: return .unexpected(command)
+			}
+		default: return .unexpected(command)
+		}
+	}
+
+	static func decode(systemSet command: UInt64) -> Self {
+		let immediate = command.bit(60)
+		var assignments: [SystemRegister: Operand] = [:]
+
+		switch command.bits(56...59) {
+		case 0:
+			return .nop
+		case 1:
+			for register in 1...3 {
+				let base = 40 - register * 8
+				if command.bit(base + 7) {
+					let value: Operand
+					if immediate {
+						value = .immediate(UInt16(command.bits(base...base+6)))
+					} else {
+						value = .generalRegister(.init(command.bits(base...base+3)))
+					}
+					assignments[SystemRegister(UInt8(register))] = value
+				}
+			}
+			return .setSystemRegisters(assignments)
+		case 2:
+			let value: Operand
+			if immediate {
+				value = .immediate(UInt16(command.bits(32...47)))
+			} else {
+				value = .generalRegister(.init(command.bits(32...35)))
+			}
+			assignments[.navigationTimer] = value
+			assignments[.programChainForTimer] = .immediate(UInt16(command.bits(16...31)))
+			return .setSystemRegisters(assignments)
+		case 3:
+			let registerIndex = DVDInfo.Index<GeneralRegister>(command.bits(16...19))
+			let counterMode = command.bit(23)
+			let value: Operand
+			if immediate {
+				value = .immediate(UInt16(command.bits(32...47)))
+			} else {
+				value = .generalRegister(.init(command.bits(32...35)))
+			}
+			return .setGeneralRegister(registerIndex, counter: counterMode, value: value)
+		case 4:
+			let value: Operand
+			if immediate {
+				value = .immediate(UInt16(command.bits(16...31)))
+			} else {
+				value = .generalRegister(.init(command.bits(16...19)))
+			}
+			assignments[.karaokeMode] = value
+			return .setSystemRegisters(assignments)
+		case 6:
+			let value: Operand
+			if immediate {
+				value = .immediate(UInt16(command.bits(16...31)))
+			} else {
+				value = .generalRegister(.init(command.bits(16...19)))
+			}
+			assignments[.selectedButtonIndex] = value
+			return .setSystemRegisters(assignments)
+		default:
+			return .unexpected(command)
+		}
+	}
+
+	static func decode(compute command: UInt64, lhs: Operand, rhs: Operand, swap: Operand) -> Self {
+		switch command.bits(56...59) {
+		case 0:	return .nop
+		case 1: return .compute(.assign(lhs, rhs))
+		case 2: return .compute(.swap(lhs, swap))
+		case 3: return .compute(.add(lhs, rhs))
+		case 4: return .compute(.subtract(lhs, rhs))
+		case 5: return .compute(.multiply(lhs, rhs))
+		case 6: return .compute(.divide(lhs, rhs))
+		case 7: return .compute(.modulus(lhs, rhs))
+		case 8: return .compute(.random(lhs, rhs))
+		case 9: return .compute(.bitwiseAnd(lhs, rhs))
+		case 10: return .compute(.bitwiseOr(lhs, rhs))
+		case 11: return .compute(.bitwiseXor(lhs, rhs))
+		default: return .unexpected(command)
+		}
+	}
+}
+
+extension DVDInfo.Command.SystemRegister {
+	init(_ register: UInt8) {
+		switch register {
+		case 0: self = .preferredMenuLanguage
+		case 1: self = .audioStreamIndex
+		case 2: self = .subpictureStreamIndex
+		case 3: self = .viewingAngleIndex
+		case 4: self = .globalTitleIndex
+		case 5: self = .titleIndex
+		case 6: self = .programChainIndex
+		case 7: self = .partIndex
+		case 8: self = .selectedButtonIndex
+		case 9: self = .navigationTimer
+		case 10: self = .programChainForTimer
+		case 11: self = .karaokeMode
+		case 12: self = .parentalCountry
+		case 13: self = .parentalLevel
+		case 14: self = .videoMode
+		case 15: self = .playerAudioCapabilities
+		case 16: self = .preferredAudioLanguage
+		case 17: self = .preferredAudioContent
+		case 18: self = .preferredSubpictureLanguage
+		case 19: self = .preferredSubpictureContent
+		case 20: self = .playerRegionMask
+		case 21...23: self = .reserved
+		default: self = .unexpected
+		}
 	}
 }
 

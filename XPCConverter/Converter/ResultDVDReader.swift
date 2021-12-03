@@ -594,8 +594,133 @@ public struct DVDInfo: Codable {
 		}
 	}
 
-	public enum Command: Codable {
+	/// Commands are executed by the DVD virtual machine.
+	public indirect enum Command: Codable {
+		/// Perform a computate operation.
+		case compute(Operation)
+
+		/// Transition playback to a different position.
+		case jump(to: Target)
+
+		/// Transition playback to a different position, while remembering a resume point.
+		case call(to: Target, resume: Index<ProgramChain.Cell>)
+
+		/// Execute a command conditionally.
+		case condition(if: Condition, then: Command)
+
+		/// Compound commands consist of two individual commands.
+		case compound(Command, Command)
+
+		/// Set one or multiple system registers.
+		case setSystemRegisters([SystemRegister: Operand])
+
+		/// Set a general register counter mode and value
+		case setGeneralRegister(Index<GeneralRegister>, counter: Bool, value: Operand)
+
+		/// Temporary change of parental level.
+		case setParentalLevelAndGoto(level: Int, line: Index<Command>)
+
+		/// Jump to a different location within the current command list.
+		case goto(line: Index<Command>)
+
+		/// End the execution of the current command list.
+		case `break`
+
+		/// Terminate DVD playback.
+		case exit
+
+		/// Do nothing.
+		case nop
+
+		/// The command could not be parsed.
 		case unexpected(UInt64)
+
+		public enum Operation: Codable {
+			case assign(Operand, Operand)
+			case swap(Operand, Operand)
+			case add(Operand, Operand)
+			case subtract(Operand, Operand)
+			case multiply(Operand, Operand)
+			case divide(Operand, Operand)
+			case modulus(Operand, Operand)
+			case random(Operand, Operand)
+			case bitwiseAnd(Operand, Operand)
+			case bitwiseOr(Operand, Operand)
+			case bitwiseXor(Operand, Operand)
+		}
+
+		public enum Target: Codable {
+			case start
+			case topLevelMenu(Domain.ProgramChains.Descriptor.MenuType)
+			case topLevelProgramChain(Index<ProgramChain>)
+			case titleMenu(Index<TitleSet>, Index<TitleSet.Title>, Domain.ProgramChains.Descriptor.MenuType)
+			case title(Index<TitleSet.Title.AllTitles>)
+			case titleWithinTitleSet(Index<TitleSet.Title>)
+			case partWithinTitleSet(Index<TitleSet.Title>, Index<TitleSet.Title.Part>)
+			case menu(Domain.ProgramChains.Descriptor.MenuType)
+			case programChain(Index<ProgramChain>)
+			case part(Index<TitleSet.Title.Part>, Index<Interaction.Button>)
+			case program(Index<ProgramChain.Program>, Index<Interaction.Button>)
+			case cell(Index<ProgramChain.Cell>, Index<Interaction.Button>)
+			case startOfProgramChain(Index<Interaction.Button>)
+			case nextProgramChain(Index<Interaction.Button>)
+			case previousProgramChain(Index<Interaction.Button>)
+			case upProgramChain(Index<Interaction.Button>)
+			case endOfProgramChain(Index<Interaction.Button>)
+			case startOfProgram(Index<Interaction.Button>)
+			case nextProgram(Index<Interaction.Button>)
+			case previousProgram(Index<Interaction.Button>)
+			case startOfCell(Index<Interaction.Button>)
+			case nextCell(Index<Interaction.Button>)
+			case previousCell(Index<Interaction.Button>)
+			case resume(Index<Interaction.Button>)
+			case none(Index<Interaction.Button>)
+		}
+
+		public enum Condition: Codable {
+			case equal(Operand, Operand)
+			case notEqual(Operand, Operand)
+			case greaterThanOrEqual(Operand, Operand)
+			case greaterThan(Operand, Operand)
+			case lessThanOrEqual(Operand, Operand)
+			case lessThan(Operand, Operand)
+			case bitwiseAndNotZero(Operand, Operand)
+		}
+
+		public enum Operand: Codable, Hashable {
+			case immediate(UInt16)
+			case generalRegister(Index<GeneralRegister>)
+			case generalRegisterCounterMode(Index<GeneralRegister>)
+			case systemRegister(SystemRegister)
+		}
+
+		public enum GeneralRegister {}
+
+		public enum SystemRegister: Codable {
+			case audioStreamIndex
+			case subpictureStreamIndex
+			case viewingAngleIndex
+			case globalTitleIndex
+			case titleIndex
+			case programChainIndex
+			case partIndex
+			case selectedButtonIndex
+			case navigationTimer
+			case programChainForTimer
+			case videoMode
+			case karaokeMode
+			case preferredMenuLanguage
+			case preferredAudioLanguage
+			case preferredAudioContent
+			case preferredSubpictureLanguage
+			case preferredSubpictureContent
+			case playerAudioCapabilities
+			case playerRegionMask
+			case parentalCountry
+			case parentalLevel
+			case reserved
+			case unexpected
+		}
 	}
 
 	/// Playback restrictions disable certain user interaction.
