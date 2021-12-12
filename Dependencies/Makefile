@@ -1,8 +1,12 @@
-SHELL = ./shell.sh
 ARCHS ?= x86_64
 CONFIGURATION ?= Debug
 JOBS = -j$(shell sysctl -n hw.activecpu)
 BUILD = Build/$(CONFIGURATION)
+
+ifneq ($(wildcard $(HOME)/.nix-profile/bin/nix),)
+# use Nix package manager
+SHELL = $(HOME)/.nix-profile/bin/nix develop --command /bin/sh
+endif
 
 all: \
 	$(BUILD)/HandBrake/libhandbrake.a \
