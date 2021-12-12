@@ -5,6 +5,7 @@ public struct DVDInfo: Codable {
 
 	public let specification: Version
 	public let category: UInt32
+	public let discId: [UInt8]
 
 	public let provider: String
 	public let posCode: UInt64
@@ -18,6 +19,7 @@ public struct DVDInfo: Codable {
 
 	public init(specification: Version,
 	            category: UInt32,
+	            discId: [UInt8],
 	            provider: String,
 	            posCode: UInt64,
 	            totalVolumeCount: UInt16,
@@ -28,6 +30,7 @@ public struct DVDInfo: Codable {
 	            titleSets: [Index<TitleSet>: TitleSet]) {
 		self.specification = specification
 		self.category = category
+		self.discId = discId
 		self.provider = provider
 		self.posCode = posCode
 		self.totalVolumeCount = totalVolumeCount
@@ -418,6 +421,7 @@ public struct DVDInfo: Codable {
 			public let angle: AngleInfo?
 			public let karaoke: KaraokeInfo?
 
+			public let interaction: [Interaction]
 			public let post: Reference<ProgramChain, Command>?
 			public let sectors: ClosedRange<Index<Sector>>
 
@@ -426,6 +430,7 @@ public struct DVDInfo: Codable {
 			            ending: EndingMode,
 			            angle: AngleInfo?,
 			            karaoke: KaraokeInfo?,
+			            interaction: [Interaction],
 			            post: Reference<ProgramChain, Command>?,
 			            sectors: ClosedRange<Index<Sector>>) {
 				self.duration = duration
@@ -433,6 +438,7 @@ public struct DVDInfo: Codable {
 				self.ending = ending
 				self.angle = angle
 				self.karaoke = karaoke
+				self.interaction = interaction
 				self.post = post
 				self.sectors = sectors
 			}
@@ -492,8 +498,232 @@ public struct DVDInfo: Codable {
 		}
 	}
 
-	public enum Command: Codable {
+	/// User interaction is defined by menu buttons with associated commands.
+	public struct Interaction: Codable {
+		public let sector: Index<Sector>
+		public let linearPlaybackTimestamp: Time?
+		public let onlyCommandsChanged: Bool
+
+		public let buttons: [Index<Button>: [ButtonDescriptor: Button]]
+		public let buttonsSelectable: Time
+		public let buttonsVisible: Time
+		public let forcedSelect: Index<Button>?
+		public let forcedAction: Index<Button>?
+
+		public let restrictions: Restrictions
+
+		public init(sector: Index<Sector>,
+		            linearPlaybackTimestamp: Time?,
+		            onlyCommandsChanged: Bool,
+		            buttons: [Index<Button>: [ButtonDescriptor: Button]],
+		            buttonsSelectable: Time,
+		            buttonsVisible: Time,
+		            forcedSelect: Index<Button>?,
+		            forcedAction: Index<Button>?,
+		            restrictions: Restrictions) {
+			self.sector = sector
+			self.linearPlaybackTimestamp = linearPlaybackTimestamp
+			self.onlyCommandsChanged = onlyCommandsChanged
+			self.buttons = buttons
+			self.buttonsSelectable = buttonsSelectable
+			self.buttonsVisible = buttonsVisible
+			self.forcedSelect = forcedSelect
+			self.forcedAction = forcedAction
+			self.restrictions = restrictions
+		}
+
+		public struct ButtonDescriptor: Codable, Hashable, OptionSet {
+			public let rawValue: UInt32
+			public static let classic = ButtonDescriptor([])
+			public static let wide = ButtonDescriptor(rawValue: 1 << 0)
+			public static let letterbox = ButtonDescriptor(rawValue: 1 << 1)
+			public static let panScan = ButtonDescriptor(rawValue: 1 << 2)
+			public init(rawValue: UInt32) { self.rawValue = rawValue }
+		}
+
+		public struct Button: Codable {
+			public let mask: Rectangle
+			public let up: Reference<Interaction, Button>?
+			public let down: Reference<Interaction, Button>?
+			public let left: Reference<Interaction, Button>?
+			public let right: Reference<Interaction, Button>?
+
+			public let selectionColors: [Color]?
+			public let actionColors: [Color]?
+
+			public let action: Command
+			public let autoActionOnSelect: Bool
+
+			public init(mask: Rectangle,
+			            up: Reference<Interaction, Button>?,
+			            down: Reference<Interaction, Button>?,
+			            left: Reference<Interaction, Button>?,
+			            right: Reference<Interaction, Button>?,
+			            selectionColors: [Color]?,
+			            actionColors: [Color]?,
+			            action: Command,
+			            autoActionOnSelect: Bool) {
+				self.mask = mask
+				self.up = up
+				self.down = down
+				self.left = left
+				self.right = right
+				self.selectionColors = selectionColors
+				self.actionColors = actionColors
+				self.action = action
+				self.autoActionOnSelect = autoActionOnSelect
+			}
+
+			public struct Rectangle: Codable {
+				public let xStart, xEnd, yStart, yEnd: UInt32
+				public init(xStart: UInt32, xEnd: UInt32,
+				            yStart: UInt32, yEnd: UInt32) {
+					self.xStart = xStart
+					self.xEnd = xEnd
+					self.yStart = yStart
+					self.yEnd = yEnd
+				}
+			}
+
+			public struct Color: Codable {
+				public let color: Reference<ProgramChain, ProgramChain.Color>
+				public let alpha: Double
+				public init(color: DVDInfo.Reference<ProgramChain, ProgramChain.Color>,
+				            alpha: Double) {
+					self.color = color
+					self.alpha = alpha
+				}
+			}
+		}
+	}
+
+	/// Commands are executed by the DVD virtual machine.
+	public indirect enum Command: Codable {
+		/// Perform a computate operation.
+		case compute(Operation)
+
+		/// Transition playback to a different position.
+		case jump(to: Target)
+
+		/// Transition playback to a different position, while remembering a resume point.
+		case call(to: Target, resume: Index<ProgramChain.Cell>)
+
+		/// Execute a command conditionally.
+		case condition(if: Condition, then: Command)
+
+		/// Compound commands consist of two individual commands.
+		case compound(Command, Command)
+
+		/// Set one or multiple system registers.
+		case setSystemRegisters([SystemRegister: Operand])
+
+		/// Set a general register counter mode and value
+		case setGeneralRegister(Index<GeneralRegister>, counter: Bool, value: Operand)
+
+		/// Temporary change of parental level.
+		case setParentalLevelAndGoto(level: Int, line: Index<Command>)
+
+		/// Jump to a different location within the current command list.
+		case goto(line: Index<Command>)
+
+		/// End the execution of the current command list.
+		case `break`
+
+		/// Terminate DVD playback.
+		case exit
+
+		/// Do nothing.
+		case nop
+
+		/// The command could not be parsed.
 		case unexpected(UInt64)
+
+		public enum Operation: Codable {
+			case assign(Operand, Operand)
+			case swap(Operand, Operand)
+			case add(Operand, Operand)
+			case subtract(Operand, Operand)
+			case multiply(Operand, Operand)
+			case divide(Operand, Operand)
+			case modulus(Operand, Operand)
+			case random(Operand, Operand)
+			case bitwiseAnd(Operand, Operand)
+			case bitwiseOr(Operand, Operand)
+			case bitwiseXor(Operand, Operand)
+		}
+
+		public enum Target: Codable {
+			case start
+			case topLevelMenu(Domain.ProgramChains.Descriptor.MenuType)
+			case topLevelProgramChain(Index<ProgramChain>)
+			case titleMenu(Index<TitleSet>, Index<TitleSet.Title>, Domain.ProgramChains.Descriptor.MenuType)
+			case title(Index<TitleSet.Title.AllTitles>)
+			case titleWithinTitleSet(Index<TitleSet.Title>)
+			case partWithinTitleSet(Index<TitleSet.Title>, Index<TitleSet.Title.Part>)
+			case menu(Domain.ProgramChains.Descriptor.MenuType)
+			case programChain(Index<ProgramChain>)
+			case part(Index<TitleSet.Title.Part>, Index<Interaction.Button>)
+			case program(Index<ProgramChain.Program>, Index<Interaction.Button>)
+			case cell(Index<ProgramChain.Cell>, Index<Interaction.Button>)
+			case startOfProgramChain(Index<Interaction.Button>)
+			case nextProgramChain(Index<Interaction.Button>)
+			case previousProgramChain(Index<Interaction.Button>)
+			case upProgramChain(Index<Interaction.Button>)
+			case endOfProgramChain(Index<Interaction.Button>)
+			case startOfProgram(Index<Interaction.Button>)
+			case nextProgram(Index<Interaction.Button>)
+			case previousProgram(Index<Interaction.Button>)
+			case startOfCell(Index<Interaction.Button>)
+			case nextCell(Index<Interaction.Button>)
+			case previousCell(Index<Interaction.Button>)
+			case resume(Index<Interaction.Button>)
+			case none(Index<Interaction.Button>)
+		}
+
+		public enum Condition: Codable {
+			case equal(Operand, Operand)
+			case notEqual(Operand, Operand)
+			case greaterThanOrEqual(Operand, Operand)
+			case greaterThan(Operand, Operand)
+			case lessThanOrEqual(Operand, Operand)
+			case lessThan(Operand, Operand)
+			case bitwiseAndNotZero(Operand, Operand)
+		}
+
+		public enum Operand: Codable, Hashable {
+			case immediate(UInt16)
+			case generalRegister(Index<GeneralRegister>)
+			case generalRegisterCounterMode(Index<GeneralRegister>)
+			case systemRegister(SystemRegister)
+		}
+
+		public enum GeneralRegister {}
+
+		public enum SystemRegister: Codable {
+			case audioStreamIndex
+			case subpictureStreamIndex
+			case viewingAngleIndex
+			case globalTitleIndex
+			case titleIndex
+			case programChainIndex
+			case partIndex
+			case selectedButtonIndex
+			case navigationTimer
+			case programChainForTimer
+			case videoMode
+			case karaokeMode
+			case preferredMenuLanguage
+			case preferredAudioLanguage
+			case preferredAudioContent
+			case preferredSubpictureLanguage
+			case preferredSubpictureContent
+			case playerAudioCapabilities
+			case playerRegionMask
+			case parentalCountry
+			case parentalLevel
+			case reserved
+			case unexpected
+		}
 	}
 
 	/// Playback restrictions disable certain user interaction.
@@ -569,6 +799,8 @@ public struct DVDInfo: Codable {
 		public let program: DVDInfo.Index<DVDInfo.ProgramChain.Program>?
 		public let cell: DVDInfo.Index<DVDInfo.ProgramChain.Cell>?
 		public let command: DVDInfo.Index<DVDInfo.Command>?
+		public let button: DVDInfo.Index<DVDInfo.Interaction.Button>?
+		public let color: DVDInfo.Index<DVDInfo.ProgramChain.Color>?
 	}
 }
 
@@ -599,6 +831,13 @@ extension DVDInfo.Domain.ProgramChains {
 	}
 }
 
+extension Dictionary where Key == DVDInfo.Interaction.ButtonDescriptor, Value == DVDInfo.Interaction.Button {
+	public subscript(match descriptor: Key) -> Value? {
+		let selected = first { $0.key.contains(descriptor) }
+		return selected?.value
+	}
+}
+
 
 /* MARK: Reference */
 
@@ -608,6 +847,8 @@ extension DVDInfo.Reference where Root == DVDInfo.TitleSet, Value == DVDInfo.Pro
 		self.program = program
 		self.cell = nil
 		self.command = nil
+		self.button = nil
+		self.color = nil
 	}
 }
 extension DVDInfo.Reference where Root == DVDInfo.Domain, Value == DVDInfo.ProgramChain {
@@ -616,6 +857,8 @@ extension DVDInfo.Reference where Root == DVDInfo.Domain, Value == DVDInfo.Progr
 		self.program = nil
 		self.cell = nil
 		self.command = nil
+		self.button = nil
+		self.color = nil
 	}
 }
 extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.ProgramChain.Cell {
@@ -624,6 +867,8 @@ extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo
 		self.program = nil
 		self.cell = cell
 		self.command = nil
+		self.button = nil
+		self.color = nil
 	}
 }
 extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.Command {
@@ -632,6 +877,28 @@ extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo
 		self.program = nil
 		self.cell = nil
 		self.command = command
+		self.button = nil
+		self.color = nil
+	}
+}
+extension DVDInfo.Reference where Root == DVDInfo.Interaction, Value == DVDInfo.Interaction.Button {
+	public init(button: DVDInfo.Index<Value>) {
+		self.programChain = nil
+		self.program = nil
+		self.cell = nil
+		self.command = nil
+		self.button = button
+		self.color = nil
+	}
+}
+extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.ProgramChain.Color {
+	public init(color: DVDInfo.Index<Value>) {
+		self.programChain = nil
+		self.program = nil
+		self.cell = nil
+		self.command = nil
+		self.button = nil
+		self.color = color
 	}
 }
 
@@ -652,5 +919,14 @@ extension DVDInfo.ProgramChain {
 	}
 	public subscript(resolve reference: DVDInfo.Reference<Self, DVDInfo.Command>) -> DVDInfo.Command? {
 		return cellPost[reference.command!]
+	}
+	public subscript(resolve reference: DVDInfo.Reference<Self, Color>) -> Color? {
+		return buttonPalette[reference.color!]
+	}
+}
+extension DVDInfo.Interaction {
+	public subscript(resolve reference: DVDInfo.Reference<Self, Button>,
+	                 descriptor: ButtonDescriptor) -> Button? {
+		return buttons[reference.button!]?[match: descriptor]
 	}
 }

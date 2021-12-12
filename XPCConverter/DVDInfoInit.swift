@@ -5,19 +5,22 @@ import LibDVDRead
 /* MARK: Toplevel */
 
 extension DVDInfo {
-	init?(_ ifoData: DVDData.IFO.All) {
+	init?(_ ifoData: DVDData.IFO.All, _ navData: DVDData.NAV.All, discId: [UInt8]) {
 		guard let vmgi = ifoData[.vmgi]?.pointee else { return nil }
 		guard let vmgiMat = vmgi.vmgi_mat?.pointee else { return nil }
-		guard let titleSets = Dictionary(titleSets: ifoData) else { return nil }
+		guard let titleSets = Dictionary(titleSets: ifoData, navData) else { return nil }
+		let firstPlayNav = navData[.vmgi]?[.firstPlay]?[.firstPlay]
+		let vmgmNav = navData[.vmgi]?[.menus]
 		self.init(specification: Version(vmgiMat.specification_version),
 		          category: vmgiMat.vmg_category,
+		          discId: discId,
 		          provider: String(tuple: vmgiMat.provider_identifier),
 		          posCode: vmgiMat.vmg_pos_code,
 		          totalVolumeCount: vmgiMat.vmg_nr_of_volumes,
 		          volumeIndex: vmgiMat.vmg_this_volume_nr,
 		          discSide: vmgiMat.disc_side,
-		          start: ProgramChain(vmgi.first_play_pgc?.pointee),
-		          topLevelMenus: Domain(vmgi.pgci_ut?.pointee, vmgiMat),
+		          start: ProgramChain(vmgi.first_play_pgc?.pointee, navigation: firstPlayNav),
+		          topLevelMenus: Domain(vmgi.pgci_ut?.pointee, vmgiMat, vmgmNav),
 		          titleSets: titleSets)
 	}
 }
@@ -40,6 +43,22 @@ private extension DVDInfo.Time {
 		          frames: bcd(time.frame_u.bits(0...5)),
 		          rate: FrameRate(time.frame_u))
 	}
+	init(_ time: UInt64, rate: FrameRate) {
+		let (hours, hoursRemainder) = time.quotientAndRemainder(dividingBy: 60 * 60 * 90_000)
+		let (minutes, minutesRemainder) = hoursRemainder.quotientAndRemainder(dividingBy: 60 * 90_000)
+		let (seconds, secondsRemainder) = minutesRemainder.quotientAndRemainder(dividingBy: 90_000)
+		let frames: Double
+		if case .framesPerSecond(let rate) = rate {
+			frames = Double(secondsRemainder) / (90_000 / rate)
+		} else {
+			frames = 0
+		}
+		self.init(hours: UInt8(hours),
+		          minutes: UInt8(minutes),
+		          seconds: UInt8(seconds),
+		          frames: UInt8(frames),
+		          rate: rate)
+	}
 }
 
 private extension DVDInfo.Time.FrameRate {
@@ -56,7 +75,7 @@ private extension DVDInfo.Time.FrameRate {
 /* MARK: Title Set */
 
 private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo.TitleSet {
-	init?(titleSets ifoData: DVDData.IFO.All) {
+	init?(titleSets ifoData: DVDData.IFO.All, _ navData: DVDData.NAV.All) {
 		let titles: [DVDInfo.Index<DVDInfo.TitleSet.Title.AllTitles>: title_info_t]
 		let titleTable = ifoData[.vmgi]?.pointee.tt_srpt?.pointee
 		let titleStart = titleTable?.title
@@ -75,17 +94,18 @@ private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo
 		for titleSetIndex in titleSetIndexes {
 			guard let vtsi = ifoData[.vtsi(titleSetIndex)]?.pointee else { return nil }
 			let titles = titles.filter { $0.value.title_set_nr == titleSetIndex }
-			self[Key(titleSetIndex)] = DVDInfo.TitleSet(vtsi, vmgi: titles)
+			let nav = navData[.vtsi(titleSetIndex)]
+			self[Key(titleSetIndex)] = Value(vtsi, vmgi: titles, navigation: nav)
 		}
 	}
 }
 
 private extension DVDInfo.TitleSet {
-	init?(_ vtsi: ifo_handle_t, vmgi titles: [DVDInfo.Index<DVDInfo.TitleSet.Title.AllTitles>: title_info_t]) {
+	init?(_ vtsi: ifo_handle_t, vmgi titles: [DVDInfo.Index<DVDInfo.TitleSet.Title.AllTitles>: title_info_t], navigation nav: DVDData.NAV.VTS?) {
 		guard let vtsiMat = vtsi.vtsi_mat?.pointee else { return nil }
 		self.init(titles: Dictionary(vtsi.vts_ptt_srpt?.pointee, vmgi: titles),
-		          menus: DVDInfo.Domain(vtsi.pgci_ut?.pointee, vtsiMat),
-		          content: DVDInfo.Domain(vtsi.vts_pgcit?.pointee, vtsiMat),
+		          menus: DVDInfo.Domain(vtsi.pgci_ut?.pointee, vtsiMat, nav?[.menus]),
+		          content: DVDInfo.Domain(vtsi.vts_pgcit?.pointee, vtsiMat, nav?[.titles]),
 		          specification: DVDInfo.Version(vtsiMat.specification_version),
 		          category: vtsiMat.vts_category)
 	}
@@ -143,23 +163,23 @@ private extension DVDInfo.TitleSet.Title.Part {
 /* MARK: Domain */
 
 private extension DVDInfo.Domain {
-	init(_ pgcUt: pgci_ut_t?, _ vmgiMat: vmgi_mat_t) {
+	init(_ pgcUt: pgci_ut_t?, _ vmgiMat: vmgi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let pgcs = Self.convert(pgcsPerLanguage: pgcUt)
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
-		                                       storage: Dictionary(storage: pgcs)),
+		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vmgiMat.vmgm_video_attr),
 		          audio: vmgiMat.nr_of_vmgm_audio_streams == 0 ? [:] : [0: AudioAttributes(vmgiMat.vmgm_audio_attr)],
 		          subpicture: vmgiMat.nr_of_vmgm_subp_streams == 0 ? [:] : [0: SubpictureAttributes(vmgiMat.vmgm_subp_attr)])
 	}
-	init(_ pgcUt: pgci_ut_t?, _ vtsiMat: vtsi_mat_t) {
+	init(_ pgcUt: pgci_ut_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let pgcs = Self.convert(pgcsPerLanguage: pgcUt)
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
-		                                       storage: Dictionary(storage: pgcs)),
+		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vtsiMat.vtsm_video_attr),
 		          audio: vtsiMat.nr_of_vtsm_audio_streams == 0 ? [:] : [0: AudioAttributes(vtsiMat.vtsm_audio_attr)],
 		          subpicture: vtsiMat.nr_of_vtsm_subp_streams == 0 ? [:] : [0: SubpictureAttributes(vtsiMat.vtsm_subp_attr)])
 	}
-	init(_ pgcIt: pgcit_t?, _ vtsiMat: vtsi_mat_t) {
+	init(_ pgcIt: pgcit_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let audioChannel = Array<audio_attr_t>(tuple: vtsiMat.vts_audio_attr)
 			.prefix(upTo: Int(vtsiMat.nr_of_vts_audio_streams))
 		let multichannel = Array<multichannel_ext_t>(tuple: vtsiMat.vts_mu_audio_attr)
@@ -171,7 +191,7 @@ private extension DVDInfo.Domain {
 
 		let pgcs = Self.convert(pgcs: pgcIt)
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
-		                                       storage: Dictionary(storage: pgcs)),
+		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vtsiMat.vts_video_attr),
 		          audio: Dictionary(uniqueKeysWithValues: zip(0..., audio)),
 		          subpicture: Dictionary(uniqueKeysWithValues: zip(0..., subpicture)))
@@ -220,23 +240,26 @@ private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Descripto
 }
 
 private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Id, Value == DVDInfo.ProgramChain {
-	init(storage pgcs: [pgci_lu_t: [pgci_srp_t]]) {
+	init(storage pgcs: [pgci_lu_t: [pgci_srp_t]], navigation: DVDData.NAV.Domain?) {
 		self.init(minimumCapacity: pgcs.map(\.value.count).reduce(0, +))
 		for (language, pgcs) in pgcs {
 			for pgcInfo in pgcs {
 				guard let pgc = pgcInfo.pgc?.pointee else { continue }
 				let id = Key(languageId: language.lang_start_byte,
 				             programChainId: pgcInfo.pgc_start_byte)
-				self[id] = Value(pgc)
+				let nav = navigation?[.menu(language: language.lang_start_byte,
+				                            pgc: pgcInfo.pgc_start_byte)]
+				self[id] = Value(pgc, navigation: nav)
 			}
 		}
 	}
-	init(storage pgcs: [pgci_srp_t]) {
+	init(storage pgcs: [pgci_srp_t], navigation: DVDData.NAV.Domain?) {
 		self.init(minimumCapacity: pgcs.count)
 		for pgcInfo in pgcs {
 			guard let pgc = pgcInfo.pgc?.pointee else { continue }
 			let id = Key(programChainId: pgcInfo.pgc_start_byte)
-			self[id] = Value(pgc)
+			let nav = navigation?[.title(pgc: pgcInfo.pgc_start_byte)]
+			self[id] = Value(pgc, navigation: nav)
 		}
 	}
 }
@@ -477,7 +500,7 @@ private extension DVDInfo.Domain.SubpictureAttributes.ContentInfo {
 /* MARK: Program Chain */
 
 private extension DVDInfo.ProgramChain {
-	init(_ pgc: pgc_t) {
+	init(_ pgc: pgc_t, navigation: DVDData.NAV.PGC?) {
 		let programsStart = pgc.program_map
 		let programsCount = pgc.nr_of_programs
 		let programsBuffer = UnsafeBufferPointer(start: programsStart, count: programsCount)
@@ -508,8 +531,12 @@ private extension DVDInfo.ProgramChain {
 			pre = []; post = []; cellPost = []
 		}
 
+		func cellInit(_ pair: (key: Int, value: cell_playback_t)) -> (DVDInfo.Index<Cell>, Cell) {
+			(DVDInfo.Index(pair.key), Cell(pair.value, navigation: navigation?[pair.key - 1]))
+		}
+
 		self.init(programs: Dictionary(uniqueKeysWithValues: zip(1..., programs.map(Program.init))),
-		          cells: Dictionary(uniqueKeysWithValues: zip(1..., cells.map(Cell.init))),
+		          cells: Dictionary(uniqueKeysWithValues: zip(1..., cells).map(cellInit)),
 		          duration: DVDInfo.Time(pgc.playback_time),
 		          playback: PlaybackMode(pgc.pg_playback_mode),
 		          ending: EndingMode(pgc.still_time),
@@ -521,12 +548,12 @@ private extension DVDInfo.ProgramChain {
 		          pre: Dictionary(uniqueKeysWithValues: zip(1..., pre.map(DVDInfo.Command.init))),
 		          post: Dictionary(uniqueKeysWithValues: zip(1..., post.map(DVDInfo.Command.init))),
 		          cellPost: Dictionary(uniqueKeysWithValues: zip(1..., cellPost.map(DVDInfo.Command.init))),
-		          buttonPalette: Dictionary(palette: pgc.palette),
+		          buttonPalette: Dictionary(palette: pgc.palette, navigation: navigation ?? []),
 		          restrictions: DVDInfo.Restrictions(pgc.prohibited_ops))
 	}
-	init?(_ pgc: pgc_t?) {
+	init?(_ pgc: pgc_t?, navigation: DVDData.NAV.PGC?) {
 		guard let pgc = pgc else { return nil }
-		self.init(pgc)
+		self.init(pgc, navigation: navigation)
 	}
 }
 
@@ -537,7 +564,7 @@ private extension DVDInfo.ProgramChain.Program {
 }
 
 private extension DVDInfo.ProgramChain.Cell {
-	init(_ cell: cell_playback_t) {
+	init(_ cell: cell_playback_t, navigation: DVDData.NAV.Cell?) {
 		var playback = PlaybackMode()
 		if cell.seamless_play != 0 { playback.update(with: .seamless) }
 		if cell.interleaved != 0 { playback.update(with: .interleaved) }
@@ -550,6 +577,7 @@ private extension DVDInfo.ProgramChain.Cell {
 		          ending: EndingMode(cell.still_time),
 		          angle: AngleInfo(block: cell.block_type, cell: cell.block_mode),
 		          karaoke: KaraokeInfo(cell.cell_type),
+		          interaction: navigation?.compactMap(DVDInfo.Interaction.init) ?? [],
 		          post: cell.cell_cmd_nr != 0 ? DVDInfo.Reference(command: .init(cell.cell_cmd_nr)) : nil,
 		          sectors: DVDInfo.Index<DVDInfo.Sector>(cell.first_sector)...DVDInfo.Index<DVDInfo.Sector>(cell.last_sector))
 	}
@@ -647,10 +675,33 @@ private extension Dictionary where Key == DVDInfo.Index<DVDInfo.LogicalSubpictur
 
 private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo.ProgramChain.Color {
 	init(palette: (UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32,
-	               UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32)) {
+	               UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32),
+	     navigation: DVDData.NAV.PGC) {
+		// palette entries cannot be marked as unused, so we detect usage ourselves
+		let usedColors = navigation.reduce(into: Set<Int>()) { result, cellNav in
+			let usedColors = cellNav.reduce(into: Set<Int>()) { result, nav in
+				// only consider new highlight information with active buttons
+				guard nav.pci.hli.hl_gi.hli_ss.bit(0) && nav.pci.hli.hl_gi.btn_ns > 0 else { return }
+				let colors = [
+					nav.pci.hli.btn_colit.btn_coli.0.0,
+					nav.pci.hli.btn_colit.btn_coli.0.1,
+					nav.pci.hli.btn_colit.btn_coli.1.0,
+					nav.pci.hli.btn_colit.btn_coli.1.1,
+					nav.pci.hli.btn_colit.btn_coli.2.0,
+					nav.pci.hli.btn_colit.btn_coli.2.1
+				]
+				colors.forEach {
+					result.insert(Int($0.bits(16...19)))
+					result.insert(Int($0.bits(20...23)))
+					result.insert(Int($0.bits(24...27)))
+					result.insert(Int($0.bits(28...31)))
+				}
+			}
+			result.formUnion(usedColors)
+		}
+		self.init()
 		let elements = Array<UInt32>(tuple: palette)
-		self.init(minimumCapacity: elements.count)
-		for (index, color) in zip(0..., elements) {
+		for (index, color) in zip(0..., elements) where usedColors.contains(index) {
 			self[Key(index)] = Value(color)
 		}
 	}
@@ -661,6 +712,102 @@ private extension DVDInfo.ProgramChain.Color {
 		self.init(Y: UInt8(color.bits(16...23)),
 		          Cb: UInt8(color.bits(8...15)),
 		          Cr: UInt8(color.bits(0...7)))
+	}
+}
+
+
+/* MARK: Interaction */
+
+private extension DVDInfo.Interaction {
+	init?(_ nav: DVDData.NAV.NAVPacket) {
+		// only consider new highlight information with active buttons
+		guard nav.pci.hli.hl_gi.hli_ss.bit(0) && nav.pci.hli.hl_gi.btn_ns > 0 else { return nil }
+
+		let start = nav.timestamp.map { timestamp -> UInt64 in
+			let startOffset = nav.pci.hli.hl_gi.hli_s_ptm - nav.pci.pci_gi.vobu_s_ptm
+			return timestamp + UInt64(startOffset)
+		}
+		let selectable = nav.pci.hli.hl_gi.btn_se_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm
+		let visible = nav.pci.hli.hl_gi.hli_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm
+		let frameRate = DVDInfo.Time.FrameRate(nav.pci.pci_gi.e_eltm.frame_u)
+
+		self.init(sector: DVDInfo.Index(nav.pci.pci_gi.nv_pck_lbn),
+		          linearPlaybackTimestamp: start.map { DVDInfo.Time($0, rate: frameRate) },
+		          onlyCommandsChanged: nav.pci.hli.hl_gi.hli_ss.bits(0...1) == 3,
+		          buttons: Dictionary(buttons: nav.pci.hli),
+		          buttonsSelectable: DVDInfo.Time(UInt64(selectable), rate: frameRate),
+		          buttonsVisible: DVDInfo.Time(UInt64(visible), rate: frameRate),
+		          forcedSelect: nav.pci.hli.hl_gi.fosl_btnn > 0 ? DVDInfo.Index(nav.pci.hli.hl_gi.fosl_btnn) : nil,
+		          forcedAction: nav.pci.hli.hl_gi.foac_btnn > 0 ? DVDInfo.Index(nav.pci.hli.hl_gi.foac_btnn) : nil,
+		          restrictions: DVDInfo.Restrictions(nav.pci.pci_gi.vobu_uop_ctl))
+	}
+}
+
+private extension Dictionary where Key == DVDInfo.Index<DVDInfo.Interaction.Button>, Value == [DVDInfo.Interaction.ButtonDescriptor: DVDInfo.Interaction.Button] {
+	init(buttons hli: hli_t) {
+		let buttonArray = Array<btni_t>(tuple: hli.btnit)
+		let buttonNumbers = 1...Int(hli.hl_gi.btn_ns)
+		let buttonGroups = 1...Int(hli.hl_gi.btngr_ns)
+
+		let buttons = buttonNumbers.map { buttonNumber -> (Key, Value) in
+			let buttonGroup = buttonGroups.compactMap { buttonGroup -> (Value.Key, Value.Value)? in
+
+				let descriptor: DVDInfo.Interaction.ButtonDescriptor
+				switch buttonGroup {
+				case 1:	descriptor = .init(rawValue: hli.hl_gi.btngr1_dsp_ty)
+				case 2: descriptor = .init(rawValue: hli.hl_gi.btngr2_dsp_ty)
+				case 3: descriptor = .init(rawValue: hli.hl_gi.btngr3_dsp_ty)
+				default: return nil
+				}
+
+				let groupStartIndex = (buttonGroup - 1) * 36 / buttonGroups.count
+				let buttonIndex = groupStartIndex + (buttonNumber - 1)
+				guard buttonIndex < buttonArray.endIndex else { return nil }
+				let button = DVDInfo.Interaction.Button(buttonArray[buttonIndex], color: hli.btn_colit)
+
+				return (descriptor, button)
+			}
+			return (Key(buttonNumber), Value(uniqueKeysWithValues: buttonGroup))
+		}
+		self.init(uniqueKeysWithValues: buttons)
+	}
+}
+
+private extension DVDInfo.Interaction.Button {
+	init(_ btnit: btni_t, color btn_colit: btn_colit_t) {
+		let colorInfo: (UInt32, UInt32)?
+		switch btnit.btn_coln {
+		case 1: colorInfo = btn_colit.btn_coli.0
+		case 2: colorInfo = btn_colit.btn_coli.1
+		case 3: colorInfo = btn_colit.btn_coli.2
+		default: colorInfo = nil
+		}
+
+		self.init(mask: Rectangle(xStart: btnit.x_start, xEnd: btnit.x_end,
+		                          yStart: btnit.y_start, yEnd: btnit.y_end),
+		          up: btnit.up != 0 ? DVDInfo.Reference(button: .init(btnit.up)) : nil,
+		          down: btnit.down != 0 ? DVDInfo.Reference(button: .init(btnit.down)) : nil,
+		          left: btnit.left != 0 ? DVDInfo.Reference(button: .init(btnit.left)) : nil,
+		          right: btnit.right != 0 ? DVDInfo.Reference(button: .init(btnit.right)) : nil,
+		          selectionColors: colorInfo.map { Array(colors: $0.0) },
+		          actionColors: colorInfo.map { Array(colors: $0.1) },
+		          action: DVDInfo.Command(btnit.cmd),
+		          autoActionOnSelect: btnit.auto_action_mode != 0)
+	}
+}
+
+private extension Array where Element == DVDInfo.Interaction.Button.Color {
+	init(colors combined: UInt32) {
+		self = [
+			Element(color: DVDInfo.Reference(color: .init(combined.bits(16...19))),
+			        alpha: Double(16 - combined.bits(0...3)) * 1/16),
+			Element(color: DVDInfo.Reference(color: .init(combined.bits(20...23))),
+			        alpha: Double(16 - combined.bits(4...7)) * 1/16),
+			Element(color: DVDInfo.Reference(color: .init(combined.bits(24...27))),
+			        alpha: Double(16 - combined.bits(8...11)) * 1/16),
+			Element(color: DVDInfo.Reference(color: .init(combined.bits(28...31))),
+			        alpha: Double(16 - combined.bits(12...15)) * 1/16)
+		]
 	}
 }
 
@@ -680,8 +827,350 @@ private extension DVDInfo.Command {
 		combined |= UInt64(command.bytes.7) <<  0
 		let command = combined
 
-		// TODO: decode command
-		self = .unexpected(command)
+		let condition: Condition?
+		let action: Self
+		let link: Self
+
+		switch command.bits(61...63) {
+		case 0:
+			// special instructions
+			condition = Self.decode(conditionType1: command)
+			switch command.bits(48...51) {
+			case 0: action = .nop
+			case 1: action = .goto(line: .init(command.bits(0...7)))
+			case 2: action = .break
+			case 3: action = .setParentalLevelAndGoto(level: Int(command.bits(8...11)),
+			                                          line: .init(command.bits(0...7)))
+			default: action = .unexpected(command)
+			}
+			link = .nop
+
+		case 1:
+			// link/jump/call instructions
+			switch command.bit(60) {
+			case false:
+				condition = Self.decode(conditionType1: command)
+				action = Self.decode(link: command)
+			case true:
+				condition = Self.decode(conditionType2: command)
+				action = Self.decode(jumpOrCall: command)
+			}
+			link = .nop
+
+		case 2:
+			// system register set instructions
+			condition = Self.decode(conditionType2: command)
+			action = Self.decode(systemSet: command)
+			link = Self.decode(link: command)
+
+		case 3:
+			// general purpose register calculation instructions
+			condition = Self.decode(conditionType3: command)
+			let lhs, rhs, swap: Operand
+			lhs = .generalRegister(.init(command.bits(32...35)))
+			if command.bit(60) {
+				rhs = .immediate(UInt16(command.bits(16...31)))
+			} else {
+				rhs = Self.decode(register: UInt8(command.bits(16...23)))
+			}
+			swap = .generalRegister(.init(command.bits(16...19)))
+			action = Self.decode(compute: command, lhs: lhs, rhs: rhs, swap: swap)
+			link = Self.decode(link: command)
+
+		case 4...6:
+			// combinations of condition, calculation, and link instructions
+			condition = Self.decode(conditionType4: command)
+			let lhs, rhs, swap: Operand
+			lhs = .generalRegister(.init(command.bits(48...51)))
+			if command.bit(60) {
+				rhs = .immediate(UInt16(command.bits(32...47)))
+			} else {
+				rhs = Self.decode(register: UInt8(command.bits(32...39)))
+			}
+			swap = .generalRegister(.init(command.bits(32...35)))
+			action = Self.decode(compute: command, lhs: lhs, rhs: rhs, swap: swap)
+			link = Self.decode(subLink: command)
+
+		default:
+			condition = nil
+			action = .unexpected(command)
+			link = .nop
+		}
+
+		switch (command.bits(61...63), condition, action, link) {
+		case (_, _, .unexpected, _), (_, _, _, .unexpected):
+			self = .unexpected(command)
+		case (_, .none, _, .nop):
+			self = action
+		case (_, .none, .nop, _):
+			self = link
+		case (_, .none, _, _):
+			self = .compound(action, link)
+		case (_, .some, .nop, .nop):
+			self = .nop
+
+		// conditional action (link and condition cannot appear together)
+		case (0...3, .some(let condition), _, .nop):
+			self = .condition(if: condition, then: action)
+
+		// unconditional action, then conditional link
+		case (4, .some, _, .nop):
+			self = action
+		case (4, .some(let condition), .nop, _):
+			self = .condition(if: condition, then: link)
+		case (4, .some(let condition), _, _):
+			self = .compound(action, .condition(if: condition, then: link))
+
+		// conditional action and link
+		case (5, .some(let condition), _, .nop):
+			self = .condition(if: condition, then: action)
+		case (5, .some(let condition), .nop, _):
+			self = .condition(if: condition, then: link)
+		case (5, .some(let condition), _, _):
+			self = .condition(if: condition, then: .compound(action, link))
+
+		// conditional action, then unconditional link
+		case (6, .some(let condition), _, .nop):
+			self = .condition(if: condition, then: action)
+		case (6, .some, .nop, _):
+			self = link
+		case (6, .some(let condition), _, _):
+			self = .compound(.condition(if: condition, then: action), link)
+
+		default:
+			self = .unexpected(command)
+		}
+	}
+
+	static func decode(conditionType1 command: UInt64) -> Condition? {
+		let lhs, rhs: Operand
+		lhs = decode(register: UInt8(command.bits(32...39)))
+		if command.bit(55) {
+			rhs = .immediate(UInt16(command.bits(16...31)))
+		} else {
+			rhs = decode(register: UInt8(command.bits(16...23)))
+		}
+		return decode(condition: command, lhs: lhs, rhs: rhs)
+	}
+	static func decode(conditionType2 command: UInt64) -> Condition? {
+		let lhs, rhs: Operand
+		lhs = decode(register: UInt8(command.bits(8...15)))
+		rhs = decode(register: UInt8(command.bits(0...7)))
+		return decode(condition: command, lhs: lhs, rhs: rhs)
+	}
+	static func decode(conditionType3 command: UInt64) -> Condition? {
+		let lhs, rhs: Operand
+		lhs = decode(register: UInt8(command.bits(40...47)))
+		if command.bit(55) {
+			rhs = .immediate(UInt16(command.bits(0...15)))
+		} else {
+			rhs = decode(register: UInt8(command.bits(0...7)))
+		}
+		return decode(condition: command, lhs: lhs, rhs: rhs)
+	}
+	static func decode(conditionType4 command: UInt64) -> Condition? {
+		let lhs, rhs: Operand
+		lhs = decode(register: UInt8(command.bits(48...51)))
+		if command.bit(55) {
+			rhs = .immediate(UInt16(command.bits(16...31)))
+		} else {
+			rhs = decode(register: UInt8(command.bits(16...23)))
+		}
+		return decode(condition: command, lhs: lhs, rhs: rhs)
+	}
+	static func decode(condition command: UInt64, lhs: Operand, rhs: Operand) -> Condition? {
+		switch command.bits(52...54) {
+		case 1: return .bitwiseAndNotZero(lhs, rhs)
+		case 2: return .equal(lhs, rhs)
+		case 3: return .notEqual(lhs, rhs)
+		case 4: return .greaterThanOrEqual(lhs, rhs)
+		case 5: return .greaterThan(lhs, rhs)
+		case 6: return .lessThanOrEqual(lhs, rhs)
+		case 7: return .lessThan(lhs, rhs)
+		default: return nil
+		}
+	}
+
+	static func decode(register: UInt8) -> Operand {
+		if register.bit(7) {
+			return .systemRegister(.init(register.bits(0...6)))
+		} else {
+			return .generalRegister(.init(register.bits(0...6)))
+		}
+	}
+
+	static func decode(link command: UInt64) -> Self {
+		let button = DVDInfo.Index<DVDInfo.Interaction.Button>(command.bits(10...15))
+		switch command.bits(48...51) {
+		case 0: return .nop
+		case 1: return decode(subLink: command)
+		case 4: return .jump(to: .programChain(.init(command.bits(0...15))))
+		case 5: return .jump(to: .part(.init(command.bits(0...9)), button))
+		case 6: return .jump(to: .program(.init(command.bits(0...7)), button))
+		case 7: return .jump(to: .cell(.init(command.bits(0...7)), button))
+		default: return .unexpected(command)
+		}
+	}
+	static func decode(subLink command: UInt64) -> Self {
+		let button = DVDInfo.Index<DVDInfo.Interaction.Button>(command.bits(10...15))
+		switch command.bits(0...4) {
+		case 0: return .jump(to: .none(button))
+		case 1: return .jump(to: .startOfCell(button))
+		case 2: return .jump(to: .nextCell(button))
+		case 3: return .jump(to: .previousCell(button))
+		case 5: return .jump(to: .startOfProgram(button))
+		case 6: return .jump(to: .nextProgram(button))
+		case 7: return .jump(to: .previousProgram(button))
+		case 9: return .jump(to: .startOfProgramChain(button))
+		case 10: return .jump(to: .nextProgramChain(button))
+		case 11: return .jump(to: .previousProgramChain(button))
+		case 12: return .jump(to: .upProgramChain(button))
+		case 13: return .jump(to: .endOfProgramChain(button))
+		case 16: return .jump(to: .resume(button))
+		default: return .unexpected(command)
+		}
+	}
+	static func decode(jumpOrCall command: UInt64) -> Self {
+		switch command.bits(48...51) {
+		case 0: return .nop
+		case 1: return .exit
+		case 2: return .jump(to: .title(.init(command.bits(16...23))))
+		case 3: return .jump(to: .titleWithinTitleSet(.init(command.bits(16...23))))
+		case 5: return .jump(to: .partWithinTitleSet(.init(command.bits(16...23)),
+		                                             .init(command.bits(32...40))))
+		case 6:
+			switch command.bits(22...23) {
+			case 0: return .jump(to: .start)
+			case 1: return .jump(to: .topLevelMenu(.init(UInt8(command.bits(16...19)))))
+			case 2: return .jump(to: .titleMenu(.init(command.bits(24...31)),
+			                                    .init(command.bits(32...39)),
+			                                    .init(UInt8(command.bits(16...19)))))
+			case 3: return .jump(to: .topLevelProgramChain(.init(command.bits(32...47))))
+			default: return .unexpected(command)
+			}
+		case 8:
+			let resume = DVDInfo.Index<DVDInfo.ProgramChain.Cell>(command.bits(24...31))
+			switch command.bits(22...23) {
+			case 0: return .call(to: .start, resume: resume)
+			case 1: return .call(to: .topLevelMenu(.init(UInt8(command.bits(16...19)))), resume: resume)
+			case 2: return .call(to: .menu(.init(UInt8(command.bits(16...19)))), resume: resume)
+			case 3: return .call(to: .topLevelProgramChain(.init(command.bits(32...47))), resume: resume)
+			default: return .unexpected(command)
+			}
+		default: return .unexpected(command)
+		}
+	}
+
+	static func decode(systemSet command: UInt64) -> Self {
+		let immediate = command.bit(60)
+		var assignments: [SystemRegister: Operand] = [:]
+
+		switch command.bits(56...59) {
+		case 0:
+			return .nop
+		case 1:
+			for register in 1...3 {
+				let base = 40 - register * 8
+				if command.bit(base + 7) {
+					let value: Operand
+					if immediate {
+						value = .immediate(UInt16(command.bits(base...base+6)))
+					} else {
+						value = .generalRegister(.init(command.bits(base...base+3)))
+					}
+					assignments[SystemRegister(UInt8(register))] = value
+				}
+			}
+			return .setSystemRegisters(assignments)
+		case 2:
+			let value: Operand
+			if immediate {
+				value = .immediate(UInt16(command.bits(32...47)))
+			} else {
+				value = .generalRegister(.init(command.bits(32...35)))
+			}
+			assignments[.navigationTimer] = value
+			assignments[.programChainForTimer] = .immediate(UInt16(command.bits(16...31)))
+			return .setSystemRegisters(assignments)
+		case 3:
+			let registerIndex = DVDInfo.Index<GeneralRegister>(command.bits(16...19))
+			let counterMode = command.bit(23)
+			let value: Operand
+			if immediate {
+				value = .immediate(UInt16(command.bits(32...47)))
+			} else {
+				value = .generalRegister(.init(command.bits(32...35)))
+			}
+			return .setGeneralRegister(registerIndex, counter: counterMode, value: value)
+		case 4:
+			let value: Operand
+			if immediate {
+				value = .immediate(UInt16(command.bits(16...31)))
+			} else {
+				value = .generalRegister(.init(command.bits(16...19)))
+			}
+			assignments[.karaokeMode] = value
+			return .setSystemRegisters(assignments)
+		case 6:
+			let value: Operand
+			if immediate {
+				value = .immediate(UInt16(command.bits(16...31)))
+			} else {
+				value = .generalRegister(.init(command.bits(16...19)))
+			}
+			assignments[.selectedButtonIndex] = value
+			return .setSystemRegisters(assignments)
+		default:
+			return .unexpected(command)
+		}
+	}
+
+	static func decode(compute command: UInt64, lhs: Operand, rhs: Operand, swap: Operand) -> Self {
+		switch command.bits(56...59) {
+		case 0:	return .nop
+		case 1: return .compute(.assign(lhs, rhs))
+		case 2: return .compute(.swap(lhs, swap))
+		case 3: return .compute(.add(lhs, rhs))
+		case 4: return .compute(.subtract(lhs, rhs))
+		case 5: return .compute(.multiply(lhs, rhs))
+		case 6: return .compute(.divide(lhs, rhs))
+		case 7: return .compute(.modulus(lhs, rhs))
+		case 8: return .compute(.random(lhs, rhs))
+		case 9: return .compute(.bitwiseAnd(lhs, rhs))
+		case 10: return .compute(.bitwiseOr(lhs, rhs))
+		case 11: return .compute(.bitwiseXor(lhs, rhs))
+		default: return .unexpected(command)
+		}
+	}
+}
+
+extension DVDInfo.Command.SystemRegister {
+	init(_ register: UInt8) {
+		switch register {
+		case 0: self = .preferredMenuLanguage
+		case 1: self = .audioStreamIndex
+		case 2: self = .subpictureStreamIndex
+		case 3: self = .viewingAngleIndex
+		case 4: self = .globalTitleIndex
+		case 5: self = .titleIndex
+		case 6: self = .programChainIndex
+		case 7: self = .partIndex
+		case 8: self = .selectedButtonIndex
+		case 9: self = .navigationTimer
+		case 10: self = .programChainForTimer
+		case 11: self = .karaokeMode
+		case 12: self = .parentalCountry
+		case 13: self = .parentalLevel
+		case 14: self = .videoMode
+		case 15: self = .playerAudioCapabilities
+		case 16: self = .preferredAudioLanguage
+		case 17: self = .preferredAudioContent
+		case 18: self = .preferredSubpictureLanguage
+		case 19: self = .preferredSubpictureContent
+		case 20: self = .playerRegionMask
+		case 21...23: self = .reserved
+		default: self = .unexpected
+		}
 	}
 }
 
