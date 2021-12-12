@@ -17,5 +17,15 @@ public enum MediaTree {
 	case link
 
 	/// Storage for intermediate states during transformations.
-	case opaque
+	case opaque(OpaqueNode)
+
+	public struct OpaqueNode {
+		var children: [MediaTree]
+		var payload: Any
+
+		public init(children: [MediaTree], payload: Any) {
+			self.children = children
+			self.payload = payload
+		}
+	}
 }

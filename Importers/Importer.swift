@@ -34,4 +34,8 @@ public struct Importer: ImportPass {
 		}
 		throw Error.sourceNotSupported
 	}
+
+	public func generate() throws -> MediaTree {
+		return try selectedImporter.generate()
+	}
 }

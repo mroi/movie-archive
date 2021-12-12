@@ -47,6 +47,83 @@ class ConverterTests: XCTestCase {
 		waitForExpectations(timeout: .infinity)
 	}
 
+	func testMessagePropagation() {
+		class MessageSender {
+			private let returnChannel: ReturnImplementation
+			init(channel: ReturnImplementation) { returnChannel = channel }
+			func message() { returnChannel.sendMessage(level: .default, "test message") }
+		}
+
+		let returnChannel = ReturnImplementation()
+		let sender = MessageSender(channel: returnChannel)
+		var outputs = [ConverterOutput]()
+
+		ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+			let client = ConverterClient<MessageSender>()
+			let subscription = client.publisher
+				.assertNoFailure()
+				.sink { outputs.append($0) }
+			defer { subscription.cancel() }
+
+			client.remote.message()
+		}
+
+		XCTAssertEqual(outputs.count, 1)
+		if case .message(let level, let text) = outputs[0] {
+			XCTAssertEqual(level, .default)
+			XCTAssertEqual(text, "test message")
+		} else {
+			XCTFail("unexpected publisher output")
+		}
+	}
+
+	func testProgressPropagation() {
+		class ProgressSender {
+			private let id = UUID()
+			private let returnChannel: ReturnImplementation
+			init(channel: ReturnImplementation) { returnChannel = channel }
+			func step(_ i: Int64, of n: Int64) {
+				returnChannel.sendProgress(id: id, completed: i, total: n, description: "test")
+			}
+		}
+
+		let returnChannel = ReturnImplementation()
+		let sender = ProgressSender(channel: returnChannel)
+		var outputs = [ConverterOutput]()
+
+		ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+			let client = ConverterClient<ProgressSender>()
+			let subscription = client.publisher
+				.assertNoFailure()
+				.sink { outputs.append($0) }
+			defer { subscription.cancel() }
+
+			client.remote.step(0, of: 0)
+
+			XCTAssertEqual(outputs.count, 1)
+			guard case .progress(let progress) = outputs[0] else {
+				return XCTFail("unexpected publisher output")
+			}
+			XCTAssertEqual(progress.fractionCompleted, 0.0)
+			XCTAssertEqual(progress.isIndeterminate, true)
+			XCTAssertEqual(progress.isFinished, false)
+
+			client.remote.step(1, of: 2)
+
+			XCTAssertEqual(outputs.count, 1)
+			XCTAssertEqual(progress.fractionCompleted, 0.5)
+			XCTAssertEqual(progress.isIndeterminate, false)
+			XCTAssertEqual(progress.isFinished, false)
+
+			client.remote.step(2, of: 2)
+
+			XCTAssertEqual(outputs.count, 1)
+			XCTAssertEqual(progress.fractionCompleted, 1.0)
+			XCTAssertEqual(progress.isIndeterminate, false)
+			XCTAssertEqual(progress.isFinished, true)
+		}
+	}
+
 	func testXPCErrorPropagation() {
 		// set up an invalid XPC connection
 		let returnChannel = ReturnImplementation()
