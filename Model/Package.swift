@@ -7,9 +7,9 @@ let package = Package(
 		.macOS(.v11)
 	],
 	products: [
-//		.library(name: "MovieArchiveModel", targets: ["MovieArchiveModel"])
+		.library(name: "MovieArchiveModel", targets: ["MovieArchiveModel"])
 	],
 	targets: [
-//		.target(name: "MovieArchiveModel", path: ".")
+		.target(name: "MovieArchiveModel", path: ".")
 	]
 )
