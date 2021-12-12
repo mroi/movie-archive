@@ -562,6 +562,7 @@
 				CURRENT_PROJECT_VERSION = 0.1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -579,6 +580,7 @@
 				CURRENT_PROJECT_VERSION = 0.1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
