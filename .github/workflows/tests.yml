@@ -1,0 +1,69 @@
+# run Xcode analyze and test actions
+name: Xcode Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    name: Analyze and test actions
+    runs-on: macOS-11
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v15
+      with:
+        nix_path: nixpkgs=channel:nixpkgs-unstable
+
+    - name: Setup Nix profile
+      run: nix profile install $(dirname $(which nix))
+
+    - name: Install code signing certificate
+      env:
+        CODE_SIGN_CERTIFICATE: ${{ secrets.CODE_SIGN_CERTIFICATE }}
+        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGN_PASSWORD }}
+      run: |
+        echo $CODE_SIGN_CERTIFICATE | base64 --decode > codesign.p12
+        security create-keychain -p $CODE_SIGN_PASSWORD codesign.keychain
+        security set-keychain-settings -lut 21600 codesign.keychain
+        security default-keychain -s codesign.keychain
+        security unlock-keychain -p $CODE_SIGN_PASSWORD codesign.keychain
+        security import codesign.p12 -t cert -f pkcs12 -P $CODE_SIGN_PASSWORD -T /usr/bin/codesign -T /usr/bin/productbuild -k codesign.keychain
+        security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $CODE_SIGN_PASSWORD codesign.keychain
+
+    - name: Fixup code signing settings
+      run: sed -i~ '/CODE_SIGN_STYLE/s/Manual/Automatic/;/CODE_SIGN_IDENTITY/{s/Michael Roitzsch/Apple Development/;s/$/\nDEVELOPMENT_TEAM = 599BKLQ4UG;/;}' MovieArchive.xcodeproj/project.pbxproj
+
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v2
+      with:
+        path: Dependencies/Build
+        key: ${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.git/modules/Dependencies/HandBrake/HEAD', 'Dependencies/*') }}
+
+    - name: Refresh cached dependencies
+      if: steps.cache.outputs.cache-hit == 'true'
+      run: touch Dependencies/Build/*/HandBrake/libhandbrake.a
+
+    - name: Xcode build action
+      run: |
+        xcodebuild build -scheme "Movie Archive" -configuration Debug
+        xcodebuild build -scheme "Movie Archive" -configuration Release
+
+    - name: Xcode analyze action
+      run: xcodebuild analyze -scheme "Movie Archive"
+
+    - name: Xcode test action
+      run: xcodebuild test -scheme "Movie Archive"
+
+    - name: Remove codesigning certificate
+      run: security delete-keychain codesign.keychain

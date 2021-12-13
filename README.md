@@ -1,3 +1,5 @@
+[![Xcode Tests](https://github.com/mroi/movie-archive/actions/workflows/tests.yml/badge.svg)](https://github.com/mroi/movie-archive/actions/workflows/tests.yml)
+
 A Movie Archive to Experience your DVDs in a Modern Way
 =======================================================
 
