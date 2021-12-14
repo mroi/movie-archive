@@ -414,10 +414,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				4C1A358E245DFEE700C40FB5 /* Movie Archive */,
+				4CEEFEF224A108EC00C0357D /* Converter */,
 				4CAA9C76249E8D96005EB90A /* Dependencies */,
 				4CB7800D269C855B0027D46F /* Intercept */,
-				4CEEFEF224A108EC00C0357D /* Converter */,
-				4C1A358E245DFEE700C40FB5 /* Movie Archive */,
 				4C93285F276686A200E65B18 /* Tests */,
 				4C1A35B0245DFEE900C40FB5 /* Tests macOS */,
 			);
