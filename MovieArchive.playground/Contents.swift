@@ -4,6 +4,7 @@ import MovieArchiveImporters
 import MovieArchiveExporters
 
 
+//let source = URL(fileURLWithPath: "/Volumes/DVD_VIDEO")
 let source = Bundle.main.url(forResource: "MinimalDVD", withExtension: "iso")!
 
 let importer = try! Importer(source: source)
