@@ -10,20 +10,20 @@
 		4C1A3593245DFEE700C40FB5 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* App.swift */; };
 		4C1A3595245DFEE700C40FB5 /* IngestDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */; };
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
-		4C300E5C2691124000DF059F /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4C509ECD2700C9330071AC1D /* DVDInfoInit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C509ECC2700C9330071AC1D /* DVDInfoInit.swift */; };
 		4C509ED02700CA600071AC1D /* CTypeInterop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C509ECF2700CA600071AC1D /* CTypeInterop.swift */; };
-		4C6D90A626B49E5200EAA149 /* Importers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6D90A526B49E5200EAA149 /* Importers.swift */; };
-		4C6D90A926B87D8A00EAA149 /* libintercept.dylib in Copy Intercept Library */ = {isa = PBXBuildFile; fileRef = 4CB7800E269C855B0027D46F /* libintercept.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4C932869276687A100E65B18 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA53B862690D4FF002140BC /* Common.swift */; };
+		4C93286A276687A100E65B18 /* Importers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6D90A526B49E5200EAA149 /* Importers.swift */; };
+		4C93286D276687B800E65B18 /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4C93286C276687B800E65B18 /* MovieArchiveExporters */; };
+		4C93286F276687B800E65B18 /* MovieArchiveImporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4C93286E276687B800E65B18 /* MovieArchiveImporters */; };
+		4C93287127668BEE00E65B18 /* Resources in Copy Resources Directory */ = {isa = PBXBuildFile; fileRef = 4C7158F32693A8370086A8C8 /* Resources */; };
+		4C93287327668C1500E65B18 /* libintercept.dylib in Copy Intercept Library */ = {isa = PBXBuildFile; fileRef = 4CB7800E269C855B0027D46F /* libintercept.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4C93287727668FA300E65B18 /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4C947BDE268234FD00D72937 /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4C947BDD268234FD00D72937 /* MovieArchiveExporters */; };
-		4CA53B872690D4FF002140BC /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA53B862690D4FF002140BC /* Common.swift */; };
-		4CA53B8A2690D5F2002140BC /* MovieArchiveExporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA53B892690D5F2002140BC /* MovieArchiveExporters */; };
-		4CA53B8C2690D5F2002140BC /* MovieArchiveImporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA53B8B2690D5F2002140BC /* MovieArchiveImporters */; };
 		4CAB2E99268C5FD9004D9C4B /* DVDReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAB2E98268C5FB3004D9C4B /* DVDReader.swift */; };
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
 		4CB768F5268BC1BA00FAF9DC /* MovieArchiveConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */; };
 		4CB78014269C88700027D46F /* dlopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CB78013269C88700027D46F /* dlopen.c */; };
-		4CD8F9CE26947995003752B3 /* Resources in Copy Resources Directory */ = {isa = PBXBuildFile; fileRef = 4C7158F32693A8370086A8C8 /* Resources */; };
 		4CEEFEFA24A108ED00C0357D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEEFEF924A108ED00C0357D /* main.swift */; };
 		4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4CFA77932681FCB900BB9632 /* MovieArchiveImporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CFA77922681FCB900BB9632 /* MovieArchiveImporters */; };
@@ -61,37 +61,37 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		4C300E5B2690EA6500DF059F /* Embed XPC Service */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = ../../XPCServices;
-			dstSubfolderSpec = 1;
-			files = (
-				4C300E5C2691124000DF059F /* Converter.xpc in Embed XPC Service */,
-			);
-			name = "Embed XPC Service";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4C6D90A826B87D4E00EAA149 /* Copy Intercept Library */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				4C6D90A926B87D8A00EAA149 /* libintercept.dylib in Copy Intercept Library */,
-			);
-			name = "Copy Intercept Library";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4CD8F9CD26947971003752B3 /* Copy Resources Directory */ = {
+		4C93287027668BD000E65B18 /* Copy Resources Directory */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = Contents;
 			dstSubfolderSpec = 1;
 			files = (
-				4CD8F9CE26947995003752B3 /* Resources in Copy Resources Directory */,
+				4C93287127668BEE00E65B18 /* Resources in Copy Resources Directory */,
 			);
 			name = "Copy Resources Directory";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C93287227668BFB00E65B18 /* Copy Intercept Library */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4C93287327668C1500E65B18 /* libintercept.dylib in Copy Intercept Library */,
+			);
+			name = "Copy Intercept Library";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C93287627668F8F00E65B18 /* Embed XPC Service */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
+			files = (
+				4C93287727668FA300E65B18 /* Converter.xpc in Embed XPC Service */,
+			);
+			name = "Embed XPC Service";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4CEEFEFE24A108ED00C0357D /* Embed XPC Service */ = {
@@ -127,6 +127,7 @@
 		4C7158F42693A9FC0086A8C8 /* XPC-Release.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "XPC-Release.entitlements"; sourceTree = "<group>"; };
 		4C874A90245E032C0026B9D7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4C8AC3D5268B05EB00BF1726 /* Converter */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Converter; sourceTree = "<group>"; };
+		4C932860276686A200E65B18 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CA53B862690D4FF002140BC /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		4CAA9C7A249E8DBD005EB90A /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		4CAB2E98268C5FB3004D9C4B /* DVDReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVDReader.swift; sourceTree = "<group>"; };
@@ -150,12 +151,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4C1A35AE245DFEE900C40FB5 /* Frameworks */ = {
+		4C93285D276686A200E65B18 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4CA53B8C2690D5F2002140BC /* MovieArchiveImporters in Frameworks */,
-				4CA53B8A2690D5F2002140BC /* MovieArchiveExporters in Frameworks */,
+				4C93286F276687B800E65B18 /* MovieArchiveImporters in Frameworks */,
+				4C93286D276687B800E65B18 /* MovieArchiveExporters in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,6 +195,7 @@
 				4C1A358F245DFEE700C40FB5 /* Movie Archive.app */,
 				4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */,
 				4CB7800E269C855B0027D46F /* libintercept.dylib */,
+				4C932860276686A200E65B18 /* Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -294,10 +296,6 @@
 			buildConfigurationList = 4C1A35C0245DFEE900C40FB5 /* Build configuration list for PBXNativeTarget "Tests macOS" */;
 			buildPhases = (
 				4C1A35AD245DFEE900C40FB5 /* Sources */,
-				4C1A35AE245DFEE900C40FB5 /* Frameworks */,
-				4CD8F9CD26947971003752B3 /* Copy Resources Directory */,
-				4C6D90A826B87D4E00EAA149 /* Copy Intercept Library */,
-				4C300E5B2690EA6500DF059F /* Embed XPC Service */,
 			);
 			buildRules = (
 			);
@@ -306,12 +304,33 @@
 			);
 			name = "Tests macOS";
 			packageProductDependencies = (
-				4CA53B892690D5F2002140BC /* MovieArchiveExporters */,
-				4CA53B8B2690D5F2002140BC /* MovieArchiveImporters */,
 			);
 			productName = "Movie ArchiveUITests";
 			productReference = 4C1A35B1245DFEE900C40FB5 /* Tests macOS.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		4C93285F276686A200E65B18 /* Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C932866276686A200E65B18 /* Build configuration list for PBXNativeTarget "Tests" */;
+			buildPhases = (
+				4C93285C276686A200E65B18 /* Sources */,
+				4C93285D276686A200E65B18 /* Frameworks */,
+				4C93287027668BD000E65B18 /* Copy Resources Directory */,
+				4C93287227668BFB00E65B18 /* Copy Intercept Library */,
+				4C93287627668F8F00E65B18 /* Embed XPC Service */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Tests;
+			packageProductDependencies = (
+				4C93286C276687B800E65B18 /* MovieArchiveExporters */,
+				4C93286E276687B800E65B18 /* MovieArchiveImporters */,
+			);
+			productName = Tests;
+			productReference = 4C932860276686A200E65B18 /* Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		4CB7800D269C855B0027D46F /* Intercept */ = {
 			isa = PBXNativeTarget;
@@ -357,8 +376,8 @@
 		4C1A3587245DFEE700C40FB5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1140;
-				LastUpgradeCheck = 1300;
+				LastSwiftUpdateCheck = 1310;
+				LastUpgradeCheck = 1320;
 				TargetAttributes = {
 					4C1A358E245DFEE700C40FB5 = {
 						CreatedOnToolsVersion = 11.4.1;
@@ -367,6 +386,9 @@
 						CreatedOnToolsVersion = 11.4.1;
 						LastSwiftMigration = 1140;
 						TestTargetID = 4C1A358E245DFEE700C40FB5;
+					};
+					4C93285F276686A200E65B18 = {
+						CreatedOnToolsVersion = 13.1;
 					};
 					4CAA9C76249E8D96005EB90A = {
 						CreatedOnToolsVersion = 11.5;
@@ -392,10 +414,11 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				4C1A358E245DFEE700C40FB5 /* Movie Archive */,
+				4CEEFEF224A108EC00C0357D /* Converter */,
 				4CAA9C76249E8D96005EB90A /* Dependencies */,
 				4CB7800D269C855B0027D46F /* Intercept */,
-				4CEEFEF224A108EC00C0357D /* Converter */,
-				4C1A358E245DFEE700C40FB5 /* Movie Archive */,
+				4C93285F276686A200E65B18 /* Tests */,
 				4C1A35B0245DFEE900C40FB5 /* Tests macOS */,
 			);
 		};
@@ -472,8 +495,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */,
-				4C6D90A626B49E5200EAA149 /* Importers.swift in Sources */,
-				4CA53B872690D4FF002140BC /* Common.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C93285C276686A200E65B18 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C932869276687A100E65B18 /* Common.swift in Sources */,
+				4C93286A276687A100E65B18 /* Importers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -562,6 +592,7 @@
 				CURRENT_PROJECT_VERSION = 0.1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -579,6 +610,7 @@
 				CURRENT_PROJECT_VERSION = 0.1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.macos";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -612,6 +644,30 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				TEST_TARGET_NAME = "Movie Archive";
+			};
+			name = Release;
+		};
+		4C932867276686A200E65B18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4C932868276686A200E65B18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.reactorcontrol.movie-archive.tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -709,6 +765,7 @@
 				DEVELOPMENT_TEAM = 599BKLQ4UG;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64/contrib/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64/contrib/include";
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
@@ -717,6 +774,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64";
 				"SWIFT_INCLUDE_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64";
 			};
 			name = Debug;
@@ -729,6 +787,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64/contrib/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64/contrib/include";
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
@@ -737,6 +796,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64";
 				"SWIFT_INCLUDE_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64";
 			};
 			name = Release;
@@ -771,6 +831,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		4C932866276686A200E65B18 /* Build configuration list for PBXNativeTarget "Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C932867276686A200E65B18 /* Debug */,
+				4C932868276686A200E65B18 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4CAA9C79249E8D96005EB90A /* Build configuration list for PBXLegacyTarget "Dependencies" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -801,17 +870,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4C93286C276687B800E65B18 /* MovieArchiveExporters */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MovieArchiveExporters;
+		};
+		4C93286E276687B800E65B18 /* MovieArchiveImporters */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MovieArchiveImporters;
+		};
 		4C947BDD268234FD00D72937 /* MovieArchiveExporters */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MovieArchiveExporters;
-		};
-		4CA53B892690D5F2002140BC /* MovieArchiveExporters */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MovieArchiveExporters;
-		};
-		4CA53B8B2690D5F2002140BC /* MovieArchiveImporters */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MovieArchiveImporters;
 		};
 		4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */ = {
 			isa = XCSwiftPackageProductDependency;

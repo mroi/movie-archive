@@ -1,15 +1,19 @@
-SHELL = ./shell.sh
 ARCHS ?= x86_64
 CONFIGURATION ?= Debug
 JOBS = -j$(shell sysctl -n hw.activecpu)
 BUILD = Build/$(CONFIGURATION)
+
+ifneq ($(wildcard $(HOME)/.nix-profile/bin/nix),)
+# use Nix package manager
+SHELL = $(HOME)/.nix-profile/bin/nix develop --command /bin/sh
+endif
 
 all: \
 	$(BUILD)/HandBrake/libhandbrake.a \
 	$(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(arch)/module.modulemap) \
 	$(if $(wildcard libdvdcss),$(BUILD)/libdvdcss/libdvdcss.2.dylib)
 
-.PHONY: all install clean
+.PHONY: all install clean docbuild
 
 
 .INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(arch)/libhb/libhandbrake.a $(BUILD)/HandBrake/$(arch)/GNUmakefile)
@@ -19,11 +23,12 @@ $(BUILD)/HandBrake/libhandbrake.a: $(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(
 	for lib in $(addsuffix /../contrib/lib/lib*.a,$(<D)) ; do \
 		lib=`basename $$lib` ; lipo $(addsuffix /../contrib/lib/$$lib,$(^D)) -create -output $(@D)/$$lib ; \
 	done
-	find $(@D) -mindepth 1 ! -path "$(@D)/lib*.a" $(foreach arch,$(ARCHS),! -path "$(@D)/$(arch)/contrib/include/*" ! -path "$(@D)/$(arch)/libhb/handbrake/*") -delete
+	find $(@D) -depth -mindepth 1 ! -path "$(@D)/lib*.a" $(foreach arch,$(ARCHS),! -path "$(@D)/$(arch)/contrib/include/*" ! -path "$(@D)/$(arch)/libhb/handbrake/*") -delete || true
 	rm -rf HandBrake/download
 
 $(BUILD)/HandBrake/%/libhb/libhandbrake.a: $(BUILD)/HandBrake/%/GNUmakefile
-	$(MAKE) $(JOBS) -C $(<D) libhb.build
+	# FIXME: parallel HandBrake builds fail
+	$(MAKE) -C $(<D) libhb.build
 
 $(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure ../.git/modules/Dependencies/HandBrake/HEAD
 	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
@@ -49,7 +54,7 @@ $(BUILD)/libdvdcss/%/.libs/libdvdcss.2.dylib: $(BUILD)/libdvdcss/%/Makefile
 
 $(BUILD)/libdvdcss/%/Makefile: libdvdcss/configure
 	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
-	arch=$(shell case $* in (i386) echo -m32 ;; (x86_64) echo -m64 ;; esac) ; \
+	arch=$(shell case $* in (i386) echo -m32 ;; (x86_64) echo -m64 ;; (arm64) echo -arch\\ arm64 ;; esac) ; \
 	optimize=$(shell case $(CONFIGURATION) in (Debug) echo -O0 ;; (Release) echo -O3 ;; esac) ; \
 	debug=$(shell case $(CONFIGURATION) in (Debug) echo -g ;; esac) ; \
 	$(abspath $<) --host=$*-apple-darwin10 CFLAGS="$$arch $$optimize $$debug"
@@ -63,3 +68,5 @@ install:
 
 clean:
 	rm -rf Build
+
+docbuild:
