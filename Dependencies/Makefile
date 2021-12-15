@@ -54,7 +54,7 @@ $(BUILD)/libdvdcss/%/.libs/libdvdcss.2.dylib: $(BUILD)/libdvdcss/%/Makefile
 
 $(BUILD)/libdvdcss/%/Makefile: libdvdcss/configure
 	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
-	arch=$(shell case $* in (i386) echo -m32 ;; (x86_64) echo -m64 ;; esac) ; \
+	arch=$(shell case $* in (i386) echo -m32 ;; (x86_64) echo -m64 ;; (arm64) echo -arch\\ arm64 ;; esac) ; \
 	optimize=$(shell case $(CONFIGURATION) in (Debug) echo -O0 ;; (Release) echo -O3 ;; esac) ; \
 	debug=$(shell case $(CONFIGURATION) in (Debug) echo -g ;; esac) ; \
 	$(abspath $<) --host=$*-apple-darwin10 CFLAGS="$$arch $$optimize $$debug"
