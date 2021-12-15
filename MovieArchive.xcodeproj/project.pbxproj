@@ -765,6 +765,7 @@
 				DEVELOPMENT_TEAM = 599BKLQ4UG;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64/contrib/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64/contrib/include";
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
@@ -773,6 +774,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64";
 				"SWIFT_INCLUDE_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64";
 			};
 			name = Debug;
@@ -785,6 +787,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64/contrib/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64/contrib/include";
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
@@ -793,6 +796,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64";
 				"SWIFT_INCLUDE_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64";
 			};
 			name = Release;
