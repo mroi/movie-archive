@@ -1,0 +1,22 @@
+/* MARK: Model Strings */
+
+"unknown operation" = "Unknown operation…";
+
+
+/* MARK: Converter Strings */
+
+"source not supported" = "The selected source is not supported.";
+"error reading from source" = "An error ocurred when reading from the selected source.";
+"internal component unavailable" = "An internal component is unavailable.";
+"processing interrupted unexpectedly" = "Processing was interrupted unexpectedly.";
+
+"reading DVD information" = "Reading DVD information…";
+"could not read VMGI" = "Could not read Video Manager Information (VMGI) from the DVD.";
+"could not read VTSI" = "Could not read Video Title Set Information (VTSI) from the DVD.";
+"could not read VOB" = "Could not read a Video Object (VOB) from the DVD.";
+"NAV data not understood" = "Navigation data from the DVD was not understood.";
+"DVD data not understood" = "Data from the DVD was not understood.";
+"inconsistent VTS count" = "The number of Video Title Sets (VTS) on the DVD is inconsistent.";
+"inconsistent title count" = "The number of titles on the DVD is inconsistent.";
+"inconsistent parts count" = "The number of chapters on the DVD is inconsistent.";
+"inconsistent frame rates" = "The video frame rates reported by the DVD are inconsistent.";
