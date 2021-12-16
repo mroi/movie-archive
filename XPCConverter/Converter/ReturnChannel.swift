@@ -10,7 +10,7 @@ public typealias ConverterPublisher = AnyPublisher<ConverterOutput, ConverterErr
 
 /// Status updates from the converter service.
 public enum ConverterOutput {
-	case message(level: OSLogType, String)
+	case message(level: OSLogType, String.LocalizationValue)
 	case progress(Progress)
 }
 
@@ -26,6 +26,21 @@ public enum ConverterError: Error {
 	case connectionInterrupted
 }
 
+extension ConverterError: LocalizedError {
+	public var errorDescription: String? {
+		switch self {
+		case .sourceNotSupported:
+			return String(localized: "source not supported")
+		case .sourceReadError:
+			return String(localized: "error reading from source")
+		case .connectionInvalid:
+			return String(localized: "internal component unavailable")
+		case .connectionInterrupted:
+			return String(localized: "processing interrupted unexpectedly")
+		}
+	}
+}
+
 
 /* MARK: XPC Return Channel */
 
@@ -36,11 +51,24 @@ public enum ConverterError: Error {
 ///
 /// - Note: This is a low-level interface. Clients use the `ConverterPublisher`.
 @objc public protocol ReturnInterface {
-	func sendMessage(level: OSLogType, _ text: String)
-	func sendProgress(id: UUID, completed: Int64, total: Int64, description: String)
+	func sendMessage(level: OSLogType, _ text: StringLocalizationKey)
+	func sendProgress(id: UUID, completed: Int64, total: Int64, description: StringLocalizationKey)
 	func sendConnectionInvalid()
 	func sendConnectionInterrupted()
 }
+
+/// A non-interpolated string which is used as a localization key.
+///
+/// It would be preferrable to use `String.LocalizationValue` here, but this type
+/// is not `@objc` compatible and thus cannot be used in an XPC protocol. We
+/// therefore pass regular strings, which are converted to
+/// `String.LocalizationValue` when received.
+///
+/// Consequently, these strings must be static, non-interpolated instances.
+/// Otherwise, using them as lookup keys in the localization tables will not
+/// result in a match. This requirement is not enforced by the type system.
+public typealias StringLocalizationKey = String
+
 
 /// Adapts updates coming in via the XPC `ReturnInterface` to a `ConverterPublisher`.
 class ReturnImplementation: NSObject, ReturnInterface {
@@ -53,18 +81,24 @@ class ReturnImplementation: NSObject, ReturnInterface {
 
 	private var progress: [UUID: Progress] = [:]
 
-	func sendMessage(level: OSLogType, _ text: String) {
-		subject.send(.message(level: level, text))
+	func sendMessage(level: OSLogType, _ text: StringLocalizationKey) {
+		subject.send(.message(level: level, String.LocalizationValue(text)))
 	}
-	func sendProgress(id: UUID, completed: Int64, total: Int64, description: String) {
+	func sendProgress(id: UUID, completed: Int64, total: Int64, description: StringLocalizationKey) {
+		// manually keep in sync with ProgressUserInfoKey.localizationKey in the model
+		let localizationKey = ProgressUserInfoKey(rawValue: "StringLocalizationKey")
+		let description = String.LocalizationValue(description)
+
 		if let currentProgress = progress[id] {
 			currentProgress.completedUnitCount = completed
 			currentProgress.totalUnitCount = total
-			currentProgress.localizedDescription = description
+			currentProgress.localizedDescription = String(localized: description)
+			currentProgress.setUserInfoObject(description, forKey: localizationKey)
 		} else {
 			let currentProgress = Progress.discreteProgress(totalUnitCount: total)
 			currentProgress.completedUnitCount = completed
-			currentProgress.localizedDescription = description
+			currentProgress.localizedDescription = String(localized: description)
+			currentProgress.setUserInfoObject(description, forKey: localizationKey)
 			progress.updateValue(currentProgress, forKey: id)
 			subject.send(.progress(currentProgress))
 			// we only ever add instances and rely on class deinit to destroy them
