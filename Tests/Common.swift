@@ -157,7 +157,7 @@ class ConverterTests: XCTestCase {
 		do {
 			let client = TestClient(withExpectations: deinitClient)
 			let returnChannel = TestReturn(withExpectations: deinitReturn)
-			try! ConverterClient.withMocks(proxy: client.remote, publisher: returnChannel.publisher) {
+			try! await ConverterClient.withMocks(proxy: client.remote, publisher: returnChannel.publisher) {
 				XCTAssertNoThrow(
 					try client.withConnectionErrorHandling { done in
 						done(.success(ConverterClient<ConverterInterface>()))
@@ -181,7 +181,7 @@ class ConverterTests: XCTestCase {
 		let sender = MessageSender(channel: returnChannel)
 		var outputs = [ConverterOutput]()
 
-		ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+		await ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
 			let client = ConverterClient<MessageSender>()
 			let subscription = client.publisher
 				.assertNoFailure()
@@ -214,7 +214,7 @@ class ConverterTests: XCTestCase {
 		let sender = ProgressSender(channel: returnChannel)
 		var outputs = [ConverterOutput]()
 
-		ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+		await ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
 			let client = ConverterClient<ProgressSender>()
 			let subscription = client.publisher
 				.assertNoFailure()
@@ -268,7 +268,7 @@ class ConverterTests: XCTestCase {
 		defer { subscription.cancel() }
 
 		// exercise the invalid connection
-		ConverterClient.withMocks(proxy: connection.remoteObjectProxy, publisher: returnChannel.publisher) {
+		await ConverterClient.withMocks(proxy: connection.remoteObjectProxy, publisher: returnChannel.publisher) {
 			let remote = connection.remoteObjectProxy as! ConverterTesting
 			remote.doNothing()
 		}
@@ -296,7 +296,7 @@ class ConverterTests: XCTestCase {
 
 		let returnChannel = ReturnImplementation()
 		let sender = ErrorSender(channel: returnChannel)
-		try! ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+		try! await ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
 			XCTAssertThrowsError(try ErrorClient().test()) {
 				XCTAssertEqual($0 as! ConverterError, .connectionInterrupted)
 			}

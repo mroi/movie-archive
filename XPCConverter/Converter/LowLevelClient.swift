@@ -149,17 +149,18 @@ extension ConverterClient {
 
 #if DEBUG
 extension ConverterClient where ProxyInterface == Any {
-	// TODO: change to @TaskLocal property
 
 	/// Injects mock implementations for testing.
 	static func withMocks(proxy: ProxyInterface, publisher: ConverterPublisher? = nil,
-	                      _ body: () throws -> ()) rethrows {
+	                      _ body: () async throws -> ()) async rethrows {
 		let emptyPublisher = Empty<ConverterOutput, ConverterError>(completeImmediately: false).eraseToAnyPublisher()
-		injected = (proxy, publisher ?? emptyPublisher)
-		try body()
-		injected = nil
+		let inject = (proxy, publisher ?? emptyPublisher)
+		try await $injected.withValue(inject) {
+			try await body()
+		}
 	}
 
+	@TaskLocal
 	private static var injected: (proxy: ProxyInterface, publisher: ConverterPublisher)?
 }
 #endif

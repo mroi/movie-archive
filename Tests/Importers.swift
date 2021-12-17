@@ -49,7 +49,7 @@ class DVDImporterTests: XCTestCase {
 			}
 		}
 
-		try! ConverterClient.withMocks(proxy: ReaderMock(withExpectations: openCall, closeCall)) {
+		try! await ConverterClient.withMocks(proxy: ReaderMock(withExpectations: openCall, closeCall)) {
 			let source = URL(fileURLWithPath: ".")
 			XCTAssertNoThrow(try DVDReader(source: source))
 		}
@@ -76,7 +76,7 @@ class DVDImporterTests: XCTestCase {
 			}
 		}
 
-		try! ConverterClient.withMocks(proxy: ReaderMock(expectations: readCall)) {
+		try! await ConverterClient.withMocks(proxy: ReaderMock(expectations: readCall)) {
 			let source = URL(fileURLWithPath: ".")
 			var reader: DVDReader?
 			XCTAssertNoThrow(reader = try DVDReader(source: source))
