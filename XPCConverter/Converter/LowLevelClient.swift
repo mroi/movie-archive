@@ -10,6 +10,11 @@ import Combine
 }
 
 /// Aggregate interface of all converter interfaces.
+///
+/// - Note: In case of an XPC connection error, completion handlers are
+///   not called. Therefore, these interfaces should not be converted from
+///   completion handlers to `async` functions, because not calling the
+///   completion handler will leave partial tasks dangling in the async runtime.
 @objc public protocol ConverterInterface: ConverterDVDReader {}
 
 
