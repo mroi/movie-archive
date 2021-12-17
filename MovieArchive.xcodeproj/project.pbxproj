@@ -24,6 +24,7 @@
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
 		4CB768F5268BC1BA00FAF9DC /* MovieArchiveConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */; };
 		4CB78014269C88700027D46F /* dlopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CB78013269C88700027D46F /* dlopen.c */; };
+		4CC4585C276CAD0A00B7B7EC /* AsyncAsserts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC4585B276CAD0A00B7B7EC /* AsyncAsserts.swift */; };
 		4CE4581826C1B40E00501102 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4CE4581A26C1B40E00501102 /* Localizable.strings */; };
 		4CEEFEFA24A108ED00C0357D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEEFEF924A108ED00C0357D /* main.swift */; };
 		4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -136,6 +137,7 @@
 		4CB7800E269C855B0027D46F /* libintercept.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libintercept.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CB78013269C88700027D46F /* dlopen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dlopen.c; sourceTree = "<group>"; };
 		4CB7801C269C97610027D46F /* intercept.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = intercept.h; sourceTree = "<group>"; };
+		4CC4585B276CAD0A00B7B7EC /* AsyncAsserts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncAsserts.swift; sourceTree = "<group>"; };
 		4CE4581926C1B40E00501102 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
 		4CEEFEF324A108EC00C0357D /* Converter.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = Converter.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -205,6 +207,7 @@
 		4C1A35A9245DFEE900C40FB5 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				4CC4585B276CAD0A00B7B7EC /* AsyncAsserts.swift */,
 				4CA53B862690D4FF002140BC /* Common.swift */,
 				4C6D90A526B49E5200EAA149 /* Importers.swift */,
 				4CAC9F3D24688E880031A9EE /* UIMacOS.swift */,
@@ -506,6 +509,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CC4585C276CAD0A00B7B7EC /* AsyncAsserts.swift in Sources */,
 				4C932869276687A100E65B18 /* Common.swift in Sources */,
 				4C93286A276687A100E65B18 /* Importers.swift in Sources */,
 			);
