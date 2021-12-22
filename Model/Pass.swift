@@ -119,12 +119,16 @@ extension AnyPass {
 	///
 	/// - ToDo: Reconsider this design whenever function wrappers are added to Swift.
 	func run<Result>(_ body: () async throws -> Result) async throws -> Result {
+		await Task.yield()
+		if await Transform.state == .error { withUnsafeCurrentTask { $0?.cancel() } }
 		try Task.checkCancellation()
 
 		Transform.subject.send(.message(level: .debug, "starting \(self.description)"))
 		let result = try await body()
 		Transform.subject.send(.message(level: .debug, "finished \(self.description)"))
 
+		await Task.yield()
+		if await Transform.state == .error { withUnsafeCurrentTask { $0?.cancel() } }
 		try Task.checkCancellation()
 
 		return result

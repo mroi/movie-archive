@@ -146,6 +146,18 @@ extension Transform {
 	@TaskLocal
 	private static var current: Transform?
 
+	/// The internal state of the currently executing transform.
+	///
+	/// A `Pass` can check the internal state for an error condition. If an
+	/// error is indicated, the pass can cancel the task it is running on.
+	///
+	/// - Returns: The current transform `State` when called from a `Pass`
+	///   running as part of the transform. `nil` for callers from other
+	///   contexts.
+	static var state: State? {
+		get async { await self.current?.state }
+	}
+
 	/// The subject of the currently executing transform.
 	///
 	/// A `Pass` can send status updates into this subject and should subscribe
