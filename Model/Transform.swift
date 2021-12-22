@@ -47,7 +47,12 @@ public class Transform {
 	/// the caller. For status updates and interacting with the transform like
 	/// configuring options, you must subscribe to the `publisher` property.
 	public func execute() {  // TODO: convert to async function
-		// TODO: set up publisher
+		// reference cycle keeps the transform alive until execution is finished
+		Transform.current = self
+		defer { Transform.current = nil }
+
+		// TODO: subscribe to publisher to cancel transform on failure
+
 		do {
 			let mediaTree = try importer.generate()
 			try exporter.consume(mediaTree)
@@ -69,6 +74,34 @@ extension Transform {
 
 	/// Status updates from the transform.
 	public enum Status {
+	}
+}
+
+
+/* MARK: Accessors for Passes */
+
+extension Transform {
+
+	/// Access to the currently executing transform.
+	///
+	/// This property will be populated for the duration of `execute()`, which
+	/// encompasses all calls to `ImportPass.generate()`, `Pass.process()`, or
+	/// `ExportPass.consume()`.
+	///
+	/// - Returns: The current `Transform` when called from a `Pass` running as
+	///   part of the transform. `nil` for callers from other contexts.
+	private static var current: Transform?  // TODO: change to @TaskLocal property
+
+	/// The subject of the currently executing transform.
+	///
+	/// A `Pass` can send status updates into this subject and should subscribe
+	/// any upstream publishers it may use internally.
+	///
+	/// - Returns: The current `Subject` when called from a `Pass` running as
+	///   part of the transform. A generic logging `Subject` for callers from
+	///   other contexts.
+	public static var subject: Subject {
+		self.current?.subject ?? Subject()
 	}
 }
 
