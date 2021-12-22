@@ -19,7 +19,7 @@ import os
 ///
 /// - Remark: Typical clients use a `Transform` together with an appropriate
 ///   importer and exporter as the entry point into model functionality.
-public class Transform {
+public actor Transform {
 
 	let importer: ImportPass
 	let exporter: ExportPass
@@ -37,7 +37,7 @@ public class Transform {
 	/// - Important: It is undefined on which thread or queue clients receive
 	///   values from the publisher. Do not assume the main thread or even the
 	///   same thread between values.
-	public var publisher: Publisher {
+	nonisolated public var publisher: Publisher {
 		subject.eraseToAnyPublisher()
 	}
 
@@ -73,7 +73,7 @@ public class Transform {
 }
 
 extension Transform: CustomStringConvertible {
-	public var description: String { "\(importer) → \(exporter)" }
+	nonisolated public var description: String { "\(importer) → \(exporter)" }
 }
 
 
