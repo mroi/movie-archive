@@ -74,6 +74,12 @@ extension Transform {
 
 	/// Status updates from the transform.
 	public enum Status {
+
+		/// A log message that can be shown to the user.
+		case message(level: OSLogType, String.LocalizationValue)
+
+		/// Shows progress of a long-running operation to the user.
+		case progress(Progress)
 	}
 }
 
