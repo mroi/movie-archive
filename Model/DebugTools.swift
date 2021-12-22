@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 
 #if DEBUG
@@ -15,6 +16,19 @@ struct ThrowingImporter: ImportPass {
 /// Test exporter which black-holes its input.
 struct NullExporter: ExportPass {
 	func consume(_ mediaTree: MediaTree) {}
+}
+
+extension OSLogType: CustomStringConvertible {
+	public var description: String {
+		switch self {
+		case .debug: return "debug"
+		case .info: return "info"
+		case .default: return "notice"
+		case .error: return "error"
+		case .fault: return "fault"
+		default: return "unknown"
+		}
+	}
 }
 
 #endif

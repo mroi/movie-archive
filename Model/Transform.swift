@@ -24,7 +24,7 @@ public class Transform {
 	let importer: ImportPass
 	let exporter: ExportPass
 
-	let subject = Subject()
+	let subject = Subject(logging: true)
 
 	/// Creates an instance combining the provided importer and exporter.
 	public init(importer: ImportPass, exporter: ExportPass) {
@@ -107,7 +107,7 @@ extension Transform {
 	///   part of the transform. A generic logging `Subject` for callers from
 	///   other contexts.
 	public static var subject: Subject {
-		self.current?.subject ?? Subject()
+		self.current?.subject ?? Subject(logging: true)
 	}
 }
 
@@ -120,6 +120,79 @@ extension Transform {
 	public typealias Publisher = AnyPublisher<Status, Error>
 
 	/// Subject by which a `Pass` can send updates.
-	// FIXME: wrap in a custom subject which automatically subscribes a logger
-	public typealias Subject = PassthroughSubject<Publisher.Output, Publisher.Failure>
+	///
+	/// Wraps a `PassthroughSubject` and therefore matches its external
+	/// behavior. The important addition is that an internal `Logging` instance
+	/// is automatically subscribed.
+	///
+	/// - SeeAlso: `Transform.Logging`
+	/// - Remark: Subclassing `PassthroughSubject` would be preferable, but
+	///   is not possible because it is declared `final`.
+	public class Subject: Combine.Subject {
+		public typealias Output = Transform.Publisher.Output
+		public typealias Failure = Transform.Publisher.Failure
+
+		private let wrapped = PassthroughSubject<Output, Failure>()
+
+		init(logging: Bool) {
+			// default logging subscriber
+			if logging { wrapped.subscribe(Logging()) }
+		}
+
+		public func send(_ value: Output) {
+			wrapped.send(value)
+		}
+		public func send(completion: Subscribers.Completion<Failure>) {
+			wrapped.send(completion: completion)
+		}
+		public func send(subscription: Subscription) {
+			wrapped.send(subscription: subscription)
+		}
+		public func receive<Downstream: Subscriber>(subscriber: Downstream) where Downstream.Input == Output, Downstream.Failure == Failure {
+			wrapped.subscribe(subscriber)
+		}
+	}
+
+	/// Logging for transform publisher output.
+	///
+	/// The transform `Subject` automatically subscribes a `Logging` instance.
+	///
+	/// - SeeAlso: `Transform.Subject`
+	private class Logging: Subscriber {
+		typealias Input = Transform.Publisher.Output
+		typealias Failure = Transform.Publisher.Failure
+
+		private static let logger = Logger(
+			subsystem: Bundle.main.bundleIdentifier ?? "de.reactorcontrol.movie-archive",
+			category: "transform")
+		private func log(level: OSLogType, _ text: String) {
+			Self.logger.log(level: level, "\(text)")
+#if DEBUG
+			print(level, text, separator: ": ")
+#endif
+		}
+
+		func receive(subscription: Subscription) {
+			subscription.request(.unlimited)
+		}
+
+		func receive(_ input: Input) -> Subscribers.Demand {
+			switch input {
+			case .message(level: let level, let text):
+				log(level: level, String(unlocalized: text))
+			case .progress(let progress):
+				log(level: .info, "started " + String(unlocalized: progress.localization))
+			}
+			return .none
+		}
+
+		func receive(completion: Subscribers.Completion<Failure>) {
+			switch completion {
+			case .finished:
+				log(level: .info, "transform finished")
+			case .failure(let error):
+				log(level: .error, String(describing: error))
+			}
+		}
+	}
 }
