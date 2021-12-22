@@ -124,6 +124,31 @@ class ModelTests: XCTestCase {
 		XCTAssertEqual(outputs, 1)
 		await waitForExpectations(timeout: .infinity)
 	}
+
+	func testCancellation() async {
+		let cancelled = expectation(description: "transform should be cancelled")
+
+		let importer = ThrowingImporter()
+		let exporter = NullExporter()
+		let transform = Transform(importer: importer, exporter: exporter)
+		XCTAssertEqual(transform.description, "ThrowingImporter → NullExporter")
+
+		let subscription = transform.publisher.sink(
+			receiveCompletion: {
+				if case .failure(let error) = $0, error is CancellationError {
+					cancelled.fulfill()
+				} else {
+					XCTFail("unexpected completion")
+				}
+			},
+			receiveValue: { _ in XCTFail("unexpected value") })
+		defer { subscription.cancel() }
+
+		withUnsafeCurrentTask { $0?.cancel() }
+		await transform.execute()
+
+		await waitForExpectations(timeout: .infinity)
+	}
 }
 
 
