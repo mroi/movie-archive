@@ -105,6 +105,7 @@ class DVDImporterTests: XCTestCase {
 
 		await transform.execute()
 
+		await XCTAssertEqualAsync(await transform.state, .success)
 		XCTAssertEqual(transform.description, "DVDImporter → NullExporter")
 		XCTAssertEqual(outputs, 5)
 	}

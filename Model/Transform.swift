@@ -25,6 +25,15 @@ public actor Transform {
 	let exporter: ExportPass
 
 	let subject = Subject(logging: true)
+	var state = State.initial
+
+	/// Internal state of the transform.
+	///
+	/// A `Transform` can only be executed once. Therefore, the only valid state
+	/// transitions are: `initial` → `running`; `running` → `success` | `error`
+	enum State {
+		case initial, running, success, error
+	}
 
 	/// Creates an instance combining the provided importer and exporter.
 	public init(importer: ImportPass, exporter: ExportPass) {
@@ -47,6 +56,9 @@ public actor Transform {
 	/// the caller. For status updates and interacting with the transform like
 	/// configuring options, you must subscribe to the `publisher` property.
 	public func execute() async {
+		precondition(state == .initial, "transform already executed")
+		state = .running
+
 		// make ourselves available to passes executing within this transform
 		await Self.$current.withValue(self) {
 
@@ -69,6 +81,9 @@ public actor Transform {
 				}
 			}
 		}
+
+		if state == .running { state = .success }
+		assert(state == .success || state == .error)
 	}
 }
 
