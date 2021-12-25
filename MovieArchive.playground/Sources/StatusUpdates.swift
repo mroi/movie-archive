@@ -89,6 +89,22 @@ extension Transform.Status {
 			interaction.finish()
 		}
 	}
+
+	/// Convenience access to the media tree for `mediaTree` status cases.
+	public var mediaTree: MediaTree! {
+		get {
+			if case .mediaTree(let interaction) = self {
+				return interaction.value
+			} else {
+				return nil
+			}
+		}
+		set {
+			if case .mediaTree(let interaction) = self, let newValue = newValue {
+				interaction.value = newValue
+			}
+		}
+	}
 }
 
 extension Transform.Status: CustomPlaygroundDisplayConvertible {
