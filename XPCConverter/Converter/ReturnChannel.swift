@@ -90,8 +90,8 @@ class ReturnImplementation: NSObject, ReturnInterface {
 		let description = String.LocalizationValue(description)
 
 		if let currentProgress = progress[id] {
-			currentProgress.completedUnitCount = completed
 			currentProgress.totalUnitCount = total
+			currentProgress.completedUnitCount = completed
 			currentProgress.localizedDescription = String(localized: description)
 			currentProgress.setUserInfoObject(description, forKey: localizationKey)
 		} else {
@@ -99,6 +99,7 @@ class ReturnImplementation: NSObject, ReturnInterface {
 			currentProgress.completedUnitCount = completed
 			currentProgress.localizedDescription = String(localized: description)
 			currentProgress.setUserInfoObject(description, forKey: localizationKey)
+			currentProgress.localizedAdditionalDescription = ""
 			progress.updateValue(currentProgress, forKey: id)
 			subject.send(.progress(currentProgress))
 			// we only ever add instances and rely on class deinit to destroy them
