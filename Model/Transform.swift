@@ -100,6 +100,15 @@ public actor Transform {
 		if state == .running { state = .success }
 		assert(state == .success || state == .error)
 	}
+
+	/// Execute the transform.
+	///
+	/// This function returns immediately, while the transform runs in the
+	/// background. For status updates and interacting with the transform like
+	/// configuring options, you must subscribe to the `publisher` property.
+	nonisolated public func execute() {
+		Task(priority: .utility) { await execute() }
+	}
 }
 
 extension Transform: CustomStringConvertible {
