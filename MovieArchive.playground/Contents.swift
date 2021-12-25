@@ -1,3 +1,7 @@
+/*:
+ Playground for interactive exploration of the Movie Archive backend APIs. The
+ sample code constructs a `Transform` and iterates over the status updates.
+ */
 import Foundation
 import MovieArchiveModel
 import MovieArchiveImporters
