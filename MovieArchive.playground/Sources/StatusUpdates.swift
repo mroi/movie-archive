@@ -119,3 +119,63 @@ extension Transform.Status: CustomPlaygroundDisplayConvertible {
 		}
 	}
 }
+
+
+/* MARK: Media Tree Visualization */
+
+extension MediaTree {
+
+	/// Inspect the media tree using interactive UI.
+	public func show() {
+
+		struct MirrorItem: Hashable, Identifiable {
+			static var count = 0
+
+			let id: Int = {
+				defer { count += 1 }
+				return count
+			}()
+			let label: String?
+			let value: String
+			let type: String
+			let children: [MirrorItem]?
+
+			init(label: String?, value: Any) {
+				let mirror = Mirror(reflecting: value)
+				self.label = label
+				self.value = String(describing: value)
+				self.type = String(describing: mirror.subjectType)
+				if mirror.children.isEmpty {
+					children = nil
+				} else {
+					children = mirror.children.map {
+						MirrorItem(label: $0.label, value: $0.value)
+					}
+				}
+			}
+
+			func render() -> AttributedString {
+				var label = self.label.map { AttributedString($0 + " = ") } ?? ""
+				label.font = .body.bold()
+				let value = AttributedString(self.value + " ")
+				var type = AttributedString(self.type)
+				type.foregroundColor = .secondaryLabelColor
+				type.font = .body.italic()
+
+				return children == nil ? label + value + type : label + type
+			}
+		}
+
+		var greyText = AttributeContainer()
+		greyText.foregroundColor = .secondaryLabelColor
+
+		@State var selection: Int? = 0
+		let root = MirrorItem(label: "self", value: self)
+		let view = List(selection: $selection) {
+			OutlineGroup(root, children: \.children) { item in
+				Text(item.render())
+			}
+		}.frame(width: 800, height: 300).padding()
+		PlaygroundPage.current.setLiveView(view)
+	}
+}
