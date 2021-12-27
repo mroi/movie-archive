@@ -17,6 +17,7 @@ transform.execute()
 
 var status: Transform.Status!
 status = updates.next()
+status.handle()
 
 // remove this line to inspect and handle status updates interactively
-while updates.next() != nil {}
+while updates.next()?.handle() != nil {}

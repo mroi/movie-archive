@@ -69,6 +69,28 @@ extension PlaygroundTransformUpdates: CustomStringConvertible {
 
 /* MARK: Status Handling */
 
+extension Transform.Status {
+
+	/// Default handling of `Transform` status updates.
+	public func handle() {
+		switch self {
+		case .message:
+			break
+
+		case .progress(let progress):
+			let progressBar = ProgressView(progress)
+				.frame(width: 250)
+				.padding()
+				.background()
+				.padding()
+			PlaygroundPage.current.setLiveView(progressBar)
+
+		case .mediaTree(let interaction):
+			interaction.finish()
+		}
+	}
+}
+
 extension Transform.Status: CustomPlaygroundDisplayConvertible {
 	public var playgroundDescription: Any {
 		switch self {
