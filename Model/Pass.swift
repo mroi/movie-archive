@@ -9,12 +9,14 @@ import Foundation
 /// a single step of a tree transformation. Passes can be combined into larger
 /// operations recursively:
 /// * A pass can invoke a chain of sub-passes on the tree.
+/// * A pass can invoke itself recursively on child trees.
 ///
-/// To get a helpful default implementation of those recursions, a pass can
-/// adopt the `SubPassRecursing` protocol. Specific pass behavior is introduced
-/// by selectively replacing the default implementation.
 ///
-/// - SeeAlso: `SubPassRecursing`, `ImportPass`, `ExportPass`
+/// To get helpful default implementations of these recursions, a pass can
+/// adopt the `SubPassRecursing` or `TreeRecursing` protocols. Specific pass
+/// behavior is introduced by selectively replacing the default implementations.
+///
+/// - SeeAlso: `SubPassRecursing`, `TreeRecursing`, `ImportPass`, `ExportPass`
 public protocol Pass: AnyPass {
 
 	/// Ask the pass to process a `MediaTree`.
@@ -35,6 +37,22 @@ public protocol SubPassRecursing {
 	/// - Important: Replacing the default implementation is not recommended,
 	/// because it performs logging and cancellation for the executed sub-passes.
 	mutating func process(bySubPasses mediaTree: MediaTree) throws -> MediaTree
+}
+
+/// Manipulate a `MediaTree` by tree recursion.
+///
+/// The default implementation recursively traverses the media tree and invokes
+/// `process(singleNode:)` on each node.
+public protocol TreeRecursing {
+
+	/// Have the pass recurse over a `MediaTree`.
+	///
+	/// Recursion is depth-first. The default implementation processes the
+	/// current node before performing recursion to the child nodes.
+	mutating func process(byTreeRecursion mediaTree: MediaTree) throws -> MediaTree
+
+	/// Have the pass process a single `MediaTree` node.
+	mutating func process(singleNode mediaTree: MediaTree) throws -> MediaTree
 }
 
 /// A special pass that receives no input.
@@ -91,11 +109,30 @@ public extension Pass where Self: SubPassRecursing {
 	}
 }
 
+public extension Pass where Self: TreeRecursing {
+	mutating func process(_ mediaTree: MediaTree) throws -> MediaTree {
+		return try process(byTreeRecursion: mediaTree)
+	}
+}
+
 public extension SubPassRecursing {
 	func process(bySubPasses mediaTree: MediaTree) throws -> MediaTree {
 		var result = mediaTree
 		for var pass in subPasses {
 			result = try pass.run { try pass.process(result) }
+		}
+		return result
+	}
+}
+
+public extension TreeRecursing {
+	mutating func process(byTreeRecursion mediaTree: MediaTree) throws -> MediaTree {
+		var result = try process(singleNode: mediaTree)
+		let childTrees = result.childTrees
+		result.childTrees = Array()
+		result.childTrees.reserveCapacity(childTrees.count)
+		for childTree in childTrees {
+			result.childTrees.append(try process(byTreeRecursion: childTree))
 		}
 		return result
 	}
