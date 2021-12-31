@@ -79,6 +79,24 @@ public protocol ExportPass: AnyPass {
 public protocol AnyPass: CustomStringConvertible {}
 
 
+/* MARK: Sub-Pass Builder */
+
+/// A result builder for an array of sub-passes
+@resultBuilder
+public enum SubPassBuilder {
+	public static func buildExpression(_ element: Pass) -> [Pass] { [element] }
+	public static func buildOptional(_ maybe: [Pass]?) -> [Pass] { maybe ?? [] }
+	public static func buildEither(first: [Pass]) -> [Pass] { first }
+	public static func buildEither(second: [Pass]) -> [Pass] { second }
+	public static func buildBlock(_ passes: [Pass]...) -> [Pass] {
+		Array(passes.joined())
+	}
+	public static func buildArray(_ iterations: [[Pass]]) -> [Pass] {
+		Array(iterations.joined())
+	}
+}
+
+
 /* MARK: Default Implementations */
 
 extension AnyPass {
