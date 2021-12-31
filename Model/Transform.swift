@@ -54,8 +54,13 @@ public class Transform {
 		// TODO: subscribe to publisher to cancel transform on failure
 
 		do {
-			let mediaTree = try importer.generate()
-			try exporter.consume(mediaTree)
+			// the actual execution of importer and exporter
+			let mediaTree = try importer.run {
+				try importer.generate()
+			}
+			try exporter.run {
+				try exporter.consume(mediaTree)
+			}
 			subject.send(completion: .finished)
 		} catch {
 			subject.send(completion: .failure(error))

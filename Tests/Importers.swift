@@ -106,6 +106,6 @@ class DVDImporterTests: XCTestCase {
 		transform.execute()
 
 		XCTAssertEqual(transform.description, "DVDImporter → NullExporter")
-		XCTAssertEqual(outputs, 1)
+		XCTAssertEqual(outputs, 5)
 	}
 }

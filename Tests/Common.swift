@@ -16,13 +16,15 @@ class ModelTests: XCTestCase {
 		let transform = Transform(importer: importer, exporter: exporter)
 		XCTAssertEqual(transform.description, "ThrowingImporter → NullExporter")
 
+		var outputs = 0
 		let subscription = transform.publisher.sink(
 			receiveCompletion: { if case .failure = $0 { error.fulfill() } },
-			receiveValue: { _ in XCTFail("unexpected publisher output") })
+			receiveValue: { _ in outputs += 1 })
 		defer { subscription.cancel() }
 
 		transform.execute()
 
+		XCTAssertEqual(outputs, 1)
 		waitForExpectations(timeout: .infinity)
 	}
 }
