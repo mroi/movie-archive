@@ -13,12 +13,19 @@ class ModelTests: XCTestCase {
 			.opaque(.init(payload: 42)),
 			.opaque(.init(payload: 23))
 		]))
+		XCTAssertEqual(tree.count, 3)
 		XCTAssertNotNil(tree.collection)
+		XCTAssertTrue(tree.contains(where: { $0.collection != nil }))
+		XCTAssertTrue(tree.contains(where: { $0.opaque?.payload as? Int == 42 }))
+		XCTAssertTrue(tree.contains(where: { $0.opaque?.payload as? Int == 23 }))
 		tree.withOpaque { $0.children.removeAll() }
+		XCTAssertEqual(tree.count, 3)  // nothing changed
 		tree.withCollection { $0.children.removeLast() }
+		XCTAssertEqual(tree.count, 2)
 		tree.modifyFirst(where: { $0.opaque?.payload as? Int == 42 }) {
 			$0.withOpaque { $0.payload = 17 }
 		}
+		XCTAssertEqual(tree.count, 2)
 		XCTAssertNotNil(tree.collection)
 		XCTAssertEqual(tree.collection?.children.count, 1)
 		XCTAssertEqual(tree.collection?.children.first?.opaque?.payload as? Int, 17)

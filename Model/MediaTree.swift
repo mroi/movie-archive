@@ -220,3 +220,47 @@ extension MediaTree {
 		}
 	}
 }
+
+extension MediaTree: Sequence {
+	public func makeIterator() -> Iterator { Iterator(mediaTree: self) }
+
+	/// Depth-first iterator over the media tree nodes.
+	///
+	/// Adds `Sequence` conformance to `MediaTree`.
+	public struct Iterator: IteratorProtocol {
+		var childIterators: [Array<MediaTree>.Iterator]
+
+		init(mediaTree: MediaTree) {
+			childIterators = [[mediaTree].makeIterator()]
+		}
+
+		mutating public func next() -> MediaTree? {
+			while !childIterators.isEmpty {
+				if let result = childIterators.last?.next() {
+					childIterators.append(result.childTrees.makeIterator())
+					return result
+				} else {
+					childIterators.removeLast()
+				}
+			}
+			return nil
+		}
+	}
+
+	/// The number of nodes in the media tree.
+	public var count: Int { self.reduce(0) { result, _ in result + 1 } }
+}
+
+private extension Array {
+	/// Last array element for usage in mutating optional chains.
+	var last: Element? {
+		get { return self.endIndex > 0 ? self[self.endIndex - 1] : nil }
+		set {
+			if let newValue = newValue {
+				self[self.endIndex - 1] = newValue
+			} else {
+				self.removeLast()
+			}
+		}
+	}
+}
