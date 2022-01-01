@@ -16,7 +16,9 @@ class ModelTests: XCTestCase {
 		XCTAssertNotNil(tree.collection)
 		tree.withOpaque { $0.children.removeAll() }
 		tree.withCollection { $0.children.removeLast() }
-		tree.withCollection { $0.children[0].withOpaque { $0.payload = 17 } }
+		tree.modifyFirst(where: { $0.opaque?.payload as? Int == 42 }) {
+			$0.withOpaque { $0.payload = 17 }
+		}
 		XCTAssertNotNil(tree.collection)
 		XCTAssertEqual(tree.collection?.children.count, 1)
 		XCTAssertEqual(tree.collection?.children.first?.opaque?.payload as? Int, 17)

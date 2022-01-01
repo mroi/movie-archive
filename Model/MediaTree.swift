@@ -164,4 +164,59 @@ extension MediaTree {
 			self = .opaque(node)
 		}
 	}
+
+	/// Modify all media tree nodes matching a predicate.
+	mutating public func modifyAll(where predicate: (MediaTree) -> Bool,
+	                               modifier: (inout MediaTree) -> Void) {
+		if predicate(self) { modifier(&self) }
+		for index in childTrees.indices {
+			childTrees[index].modifyAll(where: predicate, modifier: modifier)
+		}
+	}
+	/// Modify the first media tree node matching a predicate.
+	mutating public func modifyFirst(where predicate: (MediaTree) -> Bool,
+	                                 modifier: (inout MediaTree) -> Void) {
+		var found = false
+		modifyAll(where: { !found && predicate($0) }) {
+			modifier(&$0)
+			found = true
+		}
+	}
+
+	/// The list of immediate child trees of the current node.
+	var childTrees: [Self] {
+		get {
+			switch self {
+			case .asset(let assetNode):
+				return assetNode.successor.map { [$0] } ?? []
+			case .menu(let menuNode):
+				return menuNode.children
+			case .link:
+				return []
+			case .collection(let collectionNode):
+				return collectionNode.children
+			case .opaque(let opaqueNode):
+				return opaqueNode.children
+			}
+		}
+		set {
+			switch self {
+			case .asset(var assetNode):
+				assert(newValue.count <= 1)
+				assetNode.successor = newValue.first
+				self = .asset(assetNode)
+			case .menu(var menuNode):
+				menuNode.children = newValue
+				self = .menu(menuNode)
+			case .link:
+				return
+			case .collection(var collectionNode):
+				collectionNode.children = newValue
+				self = .collection(collectionNode)
+			case .opaque(var opaqueNode):
+				opaqueNode.children = newValue
+				self = .opaque(opaqueNode)
+			}
+		}
+	}
 }
