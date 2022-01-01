@@ -7,15 +7,35 @@ import Foundation
 ///
 /// A `Pass` takes a `MediaTree` as input and outputs a new one. It represents
 /// a single step of a tree transformation. Passes can be combined into larger
-/// operations recursively.
+/// operations recursively:
+/// * A pass can invoke a chain of sub-passes on the tree.
 ///
-///  - SeeAlso: `ImportPass`, `ExportPass`
+/// To get a helpful default implementation of those recursions, a pass can
+/// adopt the `SubPassRecursing` protocol. Specific pass behavior is introduced
+/// by selectively replacing the default implementation.
+///
+/// - SeeAlso: `SubPassRecursing`, `ImportPass`, `ExportPass`
 public protocol Pass: AnyPass {
 
 	/// Ask the pass to process a `MediaTree`.
 	mutating func process(_ mediaTree: MediaTree) throws -> MediaTree
 }
 
+/// Manipulate a `MediaTree` by sub-pass recursion.
+///
+/// The default implementation iteratively processes the media tree by invoking
+/// all sub-passes in array order.
+public protocol SubPassRecursing {
+
+	/// The sub-passes invoked as part of the execution of this pass.
+	var subPasses: [Pass] { get }
+
+	/// Have all sub-passes process the `MediaTree`.
+	///
+	/// - Important: Replacing the default implementation is not recommended,
+	/// because it performs logging and cancellation for the executed sub-passes.
+	mutating func process(bySubPasses mediaTree: MediaTree) throws -> MediaTree
+}
 
 /// A special pass that receives no input.
 public protocol ImportPass: AnyPass {
@@ -61,6 +81,22 @@ extension AnyPass {
 		let result = try body()
 		Transform.subject.send(.message(level: .debug, "finished \(self.description)"))
 
+		return result
+	}
+}
+
+public extension Pass where Self: SubPassRecursing {
+	func process(_ mediaTree: MediaTree) throws -> MediaTree {
+		return try process(bySubPasses: mediaTree)
+	}
+}
+
+public extension SubPassRecursing {
+	func process(bySubPasses mediaTree: MediaTree) throws -> MediaTree {
+		var result = mediaTree
+		for var pass in subPasses {
+			result = try pass.run { try pass.process(result) }
+		}
 		return result
 	}
 }
