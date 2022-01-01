@@ -102,3 +102,66 @@ public struct MediaRecipe {
 public protocol MediaDataSource {
 	// TODO: functionality to fetch data from source media
 }
+
+
+/* MARK: Convenience Accessors */
+
+extension MediaTree {
+
+	/// Convenience accessor for asset nodes.
+	public var asset: AssetNode? {
+		if case .asset(let node) = self { return node } else { return nil }
+	}
+	/// Convenience accessor for menu nodes.
+	public var menu: MenuNode? {
+		if case .menu(let node) = self { return node } else { return nil }
+	}
+	/// Convenience accessor for link nodes.
+	public var link: LinkNode? {
+		if case .link(let node) = self { return node } else { return nil }
+	}
+	/// Convenience accessor for collection nodes.
+	public var collection: CollectionNode? {
+		if case .collection(let node) = self { return node } else { return nil }
+	}
+	/// Convenience accessor for opaque nodes.
+	public var opaque: OpaqueNode? {
+		if case .opaque(let node) = self { return node } else { return nil }
+	}
+
+	/// Convenience modifier for asset nodes.
+	mutating public func withAsset(modifier: (inout AssetNode) -> Void) {
+		if case .asset(var node) = self {
+			modifier(&node)
+			self = .asset(node)
+		}
+	}
+	/// Convenience modifier for menu nodes.
+	mutating public func withMenu(modifier: (inout MenuNode) -> Void) {
+		if case .menu(var node) = self {
+			modifier(&node)
+			self = .menu(node)
+		}
+	}
+	/// Convenience modifier for link nodes.
+	mutating public func withLink(modifier: (inout LinkNode) -> Void) {
+		if case .link(var node) = self {
+			modifier(&node)
+			self = .link(node)
+		}
+	}
+	/// Convenience modifier for collection nodes.
+	mutating public func withCollection(modifier: (inout CollectionNode) -> Void) {
+		if case .collection(var node) = self {
+			modifier(&node)
+			self = .collection(node)
+		}
+	}
+	/// Convenience modifier for opaque nodes.
+	mutating public func withOpaque(modifier: (inout OpaqueNode) -> Void) {
+		if case .opaque(var node) = self {
+			modifier(&node)
+			self = .opaque(node)
+		}
+	}
+}

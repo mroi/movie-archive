@@ -8,6 +8,20 @@ import XCTest
 
 class ModelTests: XCTestCase {
 
+	func testMediaTreeEditing() {
+		var tree = MediaTree.collection(.init(children: [
+			.opaque(.init(payload: 42)),
+			.opaque(.init(payload: 23))
+		]))
+		XCTAssertNotNil(tree.collection)
+		tree.withOpaque { $0.children.removeAll() }
+		tree.withCollection { $0.children.removeLast() }
+		tree.withCollection { $0.children[0].withOpaque { $0.payload = 17 } }
+		XCTAssertNotNil(tree.collection)
+		XCTAssertEqual(tree.collection?.children.count, 1)
+		XCTAssertEqual(tree.collection?.children.first?.opaque?.payload as? Int, 17)
+	}
+
 	func testErrorToPublisher() {
 		let error = expectation(description: "an error should be published")
 
