@@ -59,10 +59,21 @@ public actor Transform {
 		precondition(state == .initial, "transform already executed")
 		state = .running
 
+		// remember when an error is issued asynchronously
+		var errorTask: Task<Void, Never>?
+
 		// make ourselves available to passes executing within this transform
 		await Self.$current.withValue(self) {
 
-			// TODO: subscribe to publisher to cancel transform on failure
+			// update transform state on error
+			let subscription = publisher.sink(
+				receiveCompletion: { [self] in
+					if case .failure = $0 {
+						errorTask = Task(priority: .high) { await errorState() }
+					}
+				},
+				receiveValue: { _ in })
+			defer { subscription.cancel() }
 
 			// install a fresh allocator for media tree node IDs
 			await MediaTree.ID.$allocator.withValue(MediaTree.ID.Allocator()) {
@@ -82,6 +93,9 @@ public actor Transform {
 			}
 		}
 
+		// wait for any error state change to manifest
+		let _ = await errorTask?.result
+
 		if state == .running { state = .success }
 		assert(state == .success || state == .error)
 	}
@@ -89,6 +103,15 @@ public actor Transform {
 
 extension Transform: CustomStringConvertible {
 	nonisolated public var description: String { "\(importer) → \(exporter)" }
+}
+
+extension Transform {
+
+	/// Indicate an error in the internal state
+	///
+	/// - ToDo: Replace with `async` property setter once support for effectful
+	///   mutable properties is available.
+	private func errorState() { state = .error }
 }
 
 

@@ -122,6 +122,7 @@ class ModelTests: XCTestCase {
 		await transform.execute()
 
 		XCTAssertEqual(outputs, 1)
+		await XCTAssertEqualAsync(await transform.state, .error)
 		await waitForExpectations(timeout: .infinity)
 	}
 
@@ -147,6 +148,7 @@ class ModelTests: XCTestCase {
 		withUnsafeCurrentTask { $0?.cancel() }
 		await transform.execute()
 
+		await XCTAssertEqualAsync(await transform.state, .error)
 		await waitForExpectations(timeout: .infinity)
 	}
 }
