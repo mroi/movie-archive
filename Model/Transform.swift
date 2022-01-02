@@ -53,17 +53,21 @@ public class Transform {
 
 		// TODO: subscribe to publisher to cancel transform on failure
 
-		do {
-			// the actual execution of importer and exporter
-			let mediaTree = try await importer.run {
-				try await importer.generate()
+		// install a fresh allocator for media tree node IDs
+		await MediaTree.ID.$allocator.withValue(MediaTree.ID.Allocator()) {
+
+			do {
+				// the actual execution of importer and exporter
+				let mediaTree = try await importer.run {
+					try await importer.generate()
+				}
+				try await exporter.run {
+					try await exporter.consume(mediaTree)
+				}
+				subject.send(completion: .finished)
+			} catch {
+				subject.send(completion: .failure(error))
 			}
-			try await exporter.run {
-				try await exporter.consume(mediaTree)
-			}
-			subject.send(completion: .finished)
-		} catch {
-			subject.send(completion: .failure(error))
 		}
 	}
 }

@@ -53,11 +53,12 @@ class ModelTests: XCTestCase {
 			}
 
 			"""
-		
-		MediaTree.ID.allocator = MediaTree.ID.Allocator()
-		let tree = MediaTree.collection(.init(children: [
-			.opaque(.init(payload: TestPayload()))
-		]))
+
+		let tree = MediaTree.ID.$allocator.withValue(MediaTree.ID.Allocator()) {
+			MediaTree.collection(.init(children: [
+				.opaque(.init(payload: TestPayload()))
+			]))
+		}
 
 		var json: JSON<MediaTree>!
 		XCTAssertNoThrow(json = try tree.json())
