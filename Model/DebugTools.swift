@@ -36,6 +36,17 @@ enum Test {
 	struct Identity: Pass {
 		func process(_ mediaTree: MediaTree) -> MediaTree { mediaTree }
 	}
+
+	/// Test pass signalling a true condition until a countdown reaches zero.
+	struct Countdown: Pass, ConditionFlag {
+		var remaining: Int
+		var condition: Bool { remaining > 0 }
+		init(_ count: Int) { remaining = count }
+		mutating func process(_ mediaTree: MediaTree) -> MediaTree {
+			remaining -= 1
+			return mediaTree
+		}
+	}
 }
 
 /// Test exporter which black-holes its input.

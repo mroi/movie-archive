@@ -78,7 +78,10 @@ class ModelTests: XCTestCase {
 	func testPassExecution() {
 		let importer = TestImporter(.opaque(.init(payload: 42))) {
 			Test.Identity()
-			Test.Identity()
+			Base.Loop {
+				Test.Countdown(3)
+				Test.Identity()
+			}
 		}
 		let exporter = NullExporter()
 		let transform = Transform(importer: importer, exporter: exporter)
@@ -92,7 +95,7 @@ class ModelTests: XCTestCase {
 
 		transform.execute()
 
-		XCTAssertEqual(outputs, 8)
+		XCTAssertEqual(outputs, 20)
 	}
 
 	func testErrorToPublisher() {

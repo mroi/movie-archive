@@ -96,6 +96,9 @@ public enum SubPassBuilder {
 	}
 }
 
+/// A namespace for pass types that help compose larger pass graphs.
+public enum Base {}
+
 
 /* MARK: Default Implementations */
 
