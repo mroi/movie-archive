@@ -304,3 +304,111 @@ private extension Array {
 		}
 	}
 }
+
+
+/* MARK: Protocol-Typed Coding */
+
+/// Manage coding of protocol types where nothing but `Codable` conformance is known.
+///
+/// We have to encode protocol-typed values like `OpaqueNode.payload`, which
+/// is specified as `Any & Codable`. Such types get encoded in a nested
+/// container which is keyed with their own type name. `ProtocolTypeCoding`
+/// acts as the `CodingKey` for this container.
+///
+/// In order to decode protocol-type values from just the type name, we need to
+/// know a mapping of type names to types. This needs to be registered in the
+/// `knownTypes` property before calling the decoder.
+private struct ProtocolTypeCoding: Equatable, Hashable, CodingKey {
+	var stringValue: String
+	var intValue: Int? = nil
+	init?(stringValue: String) {
+		self.stringValue = stringValue
+	}
+	init?(intValue: Int) {
+		self.stringValue = String(intValue)
+	}
+	init(type: Encodable.Type) {
+		self.stringValue = String(describing: type)
+	}
+
+	@TaskLocal
+	static var knownTypes: [ProtocolTypeCoding: Codable.Type]?
+}
+
+/// Error when trying to decode a protocol-typed instance of an unknown type.
+///
+/// Register concrete types the decoder could encounter beforehand.
+/// - SeeAlso: `ProtocolTypeCoding.knownTypes`
+public struct UnknownTypeError: Error {
+	public let context: DecodingError.Context
+	fileprivate init(_ context: DecodingError.Context) { self.context = context }
+}
+
+private extension KeyedEncodingContainer {
+	/// Encode a protocol-typed value under the given key.
+	///
+	/// Encoding is performed in a nested container, keyed with the type’s name.
+	/// The autoclosure here is needed to prove to the Swift compiler that
+	/// `value()` is a concrete type conforming to `Encodable`. Just using an
+	/// `Encodable`-typed parameter would give the error that the protocol does
+	/// not conform to itself.
+	mutating func encode(protocolTyped value: @autoclosure () -> Encodable, forKey key: Key) throws {
+		var nested = nestedContainer(keyedBy: ProtocolTypeCoding.self, forKey: key)
+		try value().encode(to: &nested, forKey: ProtocolTypeCoding(type: type(of: value())))
+	}
+}
+
+private extension KeyedDecodingContainer {
+	/// Decode a protocol-typed value for the given key.
+	///
+	/// The key within a nested container is used to look up the actual type.
+	/// - SeeAlso: `ProtocolTypeCoding.knownTypes`
+	func decode(protocolTypedForKey key: Key) throws -> Codable {
+		let nested = try nestedContainer(keyedBy: ProtocolTypeCoding.self, forKey: key)
+		guard nested.allKeys.count == 1 else {
+			throw DecodingError.dataCorrupted(
+				.init(codingPath: nested.codingPath,
+					  debugDescription: "exactly one type key expected")
+			)
+		}
+		let key = nested.allKeys.first!
+
+		let type = ProtocolTypeCoding.knownTypes?[key]
+		guard let type = type else {
+			var codingPath = nested.codingPath
+			codingPath.append(key)
+			throw UnknownTypeError(
+				.init(codingPath: codingPath,
+					  debugDescription: "unknown type \(key.stringValue)")
+			)
+		}
+
+		return try type.init(from: nested, forKey: key)
+	}
+}
+
+private extension Encodable {
+	/// Encode a protocol-typed `Encodable` into the given keyed container.
+	///
+	/// In Swift, protocols (including `Encodable`) do not conform to
+	/// themselves. Therefore, simply calling `container.encode(_:)` with an
+	/// `Encodable` protocol type does not work.
+	///
+	/// [This workaround](https://forums.swift.org/t/how-to-encode-objects-of-unknown-type/12253/5)
+	/// exploits the fact that existentials (protocol-typed values) are “opened”
+	/// when you call a method on them, which gives the extension implementation
+	/// access to the underlying concrete type, which can then be used to
+	/// satisfy the `Encodable` requirement for `container.encode(_:)`.
+	///
+	/// - ToDo: Revisit the workaround when protocol self-conformance improves.
+	func encode<K>(to container: inout KeyedEncodingContainer<K>, forKey key: K) throws {
+		try container.encode(self, forKey: key)
+	}
+}
+
+private extension Decodable {
+	/// Decode a protocol-typed `Decodable` from the given keyed container.
+	init<K>(from container: KeyedDecodingContainer<K>, forKey key: K) throws {
+		self = try container.decode(Self.self, forKey: key)
+	}
+}
