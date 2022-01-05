@@ -90,10 +90,10 @@ extension MediaTree {
 	public struct OpaqueNode: Identifiable {
 		public let id: ID
 
-		public var payload: Any
+		public var payload: Any & Codable
 		public var children: [MediaTree]
 
-		public init(payload: Any, children: [MediaTree] = []) {
+		public init(payload: Any & Codable, children: [MediaTree] = []) {
 			self.id = ID()
 			self.payload = payload
 			self.children = children
@@ -412,3 +412,102 @@ private extension Decodable {
 		self = try container.decode(Self.self, forKey: key)
 	}
 }
+
+
+/* MARK: Codable Conformance */
+
+extension MediaTree: Codable {
+	// custom encoding: encode single associated value directly, no positional key
+
+	private enum CodingKeys: String, CodingKey {
+		case asset, menu, link, collection, opaque
+	}
+
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		switch self {
+		case .asset(let assetNode):
+			try container.encode(assetNode, forKey: .asset)
+		case .menu(let menuNode):
+			try container.encode(menuNode, forKey: .menu)
+		case .link(let linkNode):
+			try container.encode(linkNode, forKey: .link)
+		case .collection(let collectionNode):
+			try container.encode(collectionNode, forKey: .collection)
+		case .opaque(let opaqueNode):
+			try container.encode(opaqueNode, forKey: .opaque)
+		}
+	}
+
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		guard container.allKeys.count == 1 else {
+			throw DecodingError.dataCorrupted(
+				.init(codingPath: container.codingPath,
+				      debugDescription: "exactly one enum case expected")
+			)
+		}
+		switch container.allKeys.first! {
+		case .asset:
+			self = .asset(try container.decode(AssetNode.self, forKey: .asset))
+		case .menu:
+			self = .menu(try container.decode(MenuNode.self, forKey: .menu))
+		case .link:
+			self = .link(try container.decode(LinkNode.self, forKey: .link))
+		case .collection:
+			self = .collection(try container.decode(CollectionNode.self, forKey: .collection))
+		case .opaque:
+			self = .opaque(try container.decode(OpaqueNode.self, forKey: .opaque))
+		}
+	}
+}
+
+extension MediaTree.AssetNode: Codable {}
+extension MediaTree.AssetNode.Kind: Codable {}
+extension MediaTree.MenuNode: Codable {}
+extension MediaTree.LinkNode: Codable {}
+
+extension MediaTree.CollectionNode: Codable {
+	// custom encoding: encode children directly without key
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.singleValueContainer()
+		try container.encode(children)
+	}
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		children = try container.decode(Array.self)
+	}
+}
+
+extension MediaTree.OpaqueNode: Codable {
+	// custom encoding needed because of Any & Codable typed member
+	private enum CodingKeys: String, CodingKey {
+		case id, payload, children
+	}
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try container.encode(id, forKey: .id)
+		try container.encode(protocolTyped: payload, forKey: .payload)
+		try container.encode(children, forKey: .children)
+	}
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		id = try container.decode(ID.self, forKey: .id)
+		payload = try container.decode(protocolTypedForKey: .payload)
+		children = try container.decode(Array.self, forKey: .children)
+	}
+}
+
+extension MediaTree.ID: Codable {
+	// custom encoding: encode ID value directly
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.singleValueContainer()
+		try container.encode(value)
+	}
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		value = try container.decode(Int.self)
+	}
+}
+
+extension MediaRecipe: Codable {}
