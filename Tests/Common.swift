@@ -82,6 +82,9 @@ class ModelTests: XCTestCase {
 				Test.Countdown(3)
 				Test.Identity()
 			}
+			Base.If({ $0.allSatisfy { $0.opaque != nil } }) {
+				Test.Identity()
+			}
 		}
 		let exporter = NullExporter()
 		let transform = Transform(importer: importer, exporter: exporter)
@@ -95,7 +98,7 @@ class ModelTests: XCTestCase {
 
 		transform.execute()
 
-		XCTAssertEqual(outputs, 20)
+		XCTAssertEqual(outputs, 26)
 	}
 
 	func testErrorToPublisher() {

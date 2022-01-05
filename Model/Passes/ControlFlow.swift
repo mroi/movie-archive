@@ -25,6 +25,43 @@ extension Base {
 			return result
 		}
 	}
+
+	/// A pass which conditionally executes sub-passes.
+	///
+	/// The condition is given by a closure or a `ConditionFlag` pass. The `If` pass itself
+	/// exposes this condition to the outside by itself conforming to `ConditionFlag`.
+	public struct If: Pass, SubPassRecursing, ConditionFlag {
+		private var conditionPass: Pass & ConditionFlag
+		public var condition: Bool { conditionPass.condition }
+		public var subPasses: [Pass]
+
+		public init(_ condition: Pass & ConditionFlag, @SubPassBuilder _ builder: () -> [Pass]) {
+			conditionPass = condition
+			subPasses = builder()
+		}
+		public init(_ condition: @escaping (MediaTree) -> Bool, @SubPassBuilder _ builder: () -> [Pass]) {
+			struct ConditionPass: Pass, ConditionFlag {
+				var condition: Bool = true
+				let body: (MediaTree) -> Bool
+				mutating func process(_ mediaTree: MediaTree) -> MediaTree {
+					condition = body(mediaTree)
+					return mediaTree
+				}
+			}
+			conditionPass = ConditionPass(body: condition)
+			subPasses = builder()
+		}
+
+		public mutating func process(_ mediaTree: MediaTree) throws -> MediaTree {
+			var result = try conditionPass.run {
+				try conditionPass.process(mediaTree)
+			}
+			if conditionPass.condition {
+				result = try process(bySubPasses: mediaTree)
+			}
+			return result
+		}
+	}
 }
 
 /// Conforming passes expose a boolean condition flag.
