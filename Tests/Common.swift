@@ -102,7 +102,36 @@ class ModelTests: XCTestCase {
 
 		await transform.execute()
 
-		XCTAssertEqual(outputs, 42)
+		XCTAssertEqual(outputs, 43)
+	}
+
+	func testClientInteraction() async {
+		let importer = ThrowingImporter()
+		let exporter = NullExporter()
+		let transform = Transform(importer: importer, exporter: exporter)
+		XCTAssertEqual(transform.description, "ThrowingImporter → NullExporter")
+
+		let subscription = transform.publisher
+			.mapError { _ in fatalError("unexpected publisher error") }
+			.sink {
+				if case .mediaTree(let interaction) = $0 {
+					if let node = interaction.opaque {
+						XCTAssertEqual(node.children.count, 0)
+						XCTAssertEqual(node.payload as? Int, 42)
+						interaction.value = .collection(.init(children: []))
+						interaction.finish()
+					} else {
+						XCTFail("unexpected media tree")
+					}
+				} else {
+					XCTFail("unexpected value")
+				}
+			}
+		defer { subscription.cancel() }
+
+		var mediaTree = MediaTree.opaque(.init(payload: 42))
+		await transform.clientInteraction(&mediaTree) { .mediaTree($0) }
+		XCTAssertNotNil(mediaTree.collection)
 	}
 
 	func testErrorToPublisher() async {

@@ -80,9 +80,10 @@ public actor Transform {
 
 				do {
 					// the actual execution of importer and exporter
-					let mediaTree = try await importer.run {
+					var mediaTree = try await importer.run {
 						try await importer.generate()
 					}
+					await clientInteraction(&mediaTree) { .mediaTree($0) }
 					try await exporter.run {
 						try await exporter.consume(mediaTree)
 					}
@@ -127,6 +128,9 @@ extension Transform {
 
 		/// Shows progress of a long-running operation to the user.
 		case progress(Progress)
+
+		/// Allows inspection and editing of an intermediate media tree.
+		case mediaTree(Interaction<MediaTree>)
 	}
 }
 
@@ -299,6 +303,8 @@ extension Transform {
 				log(level: level, String(unlocalized: text))
 			case .progress(let progress):
 				log(level: .info, "started " + String(unlocalized: progress.localization))
+			case .mediaTree(_):
+				log(level: .debug, "interaction with media tree")
 			}
 			return .none
 		}
