@@ -31,6 +31,50 @@ class ModelTests: XCTestCase {
 		XCTAssertEqual(tree.collection?.children.first?.opaque?.payload as? Int, 17)
 	}
 
+	func testMediaTreeJSON() {
+		struct TestPayload: Codable {
+			var someOptional: Int? = 42
+			var noneOptional: Int? = nil
+			var emptyArray: [Int] = []
+			var emptyDictionary: [Int: Int] = [:]
+		}
+		let expectedOutput = """
+			{
+			    "collection" : [
+			        {
+			            "opaque" : {
+			                "id" : 0,
+			                "payload" : {
+			                    "TestPayload" : { "someOptional" : 42 }
+			                }
+			            }
+			        }
+			    ]
+			}
+
+			"""
+		
+		MediaTree.ID.allocator = MediaTree.ID.Allocator()
+		let tree = MediaTree.collection(.init(children: [
+			.opaque(.init(payload: TestPayload()))
+		]))
+
+		var json: JSON<MediaTree>!
+		XCTAssertNoThrow(json = try tree.json())
+		XCTAssertEqual(json.string(tabsAs: .spaces(width: 4)), expectedOutput)
+
+		XCTAssertThrowsError(try json.mediaTree()) {
+			XCTAssertNotNil($0 as? UnknownTypeError)
+		}
+
+		var decoded: MediaTree!
+		let types = [TestPayload.self, TestPayload.self]  // testing non-unique elements
+		XCTAssertNoThrow(decoded = try json.mediaTree(withTypes: types))
+		var json2: JSON<MediaTree>!
+		XCTAssertNoThrow(json2 = try decoded.json())
+		XCTAssertEqual(json.data, json2.data)
+	}
+
 	func testErrorToPublisher() {
 		let error = expectation(description: "an error should be published")
 

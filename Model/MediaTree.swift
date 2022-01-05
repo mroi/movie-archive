@@ -26,6 +26,29 @@ public indirect enum MediaTree {
 
 	/// An intermediate states during transformations.
 	case opaque(OpaqueNode)
+
+	/// A canonical JSON representation of the media tree.
+	public func json() throws -> JSON<MediaTree> {
+		try JSON(self)
+	}
+}
+
+extension JSON where Root == MediaTree {
+
+	/// Convert the JSON data into a `MediaTree`.
+	/// - Parameter types: The JSON data can contain instances of protocol-typed
+	///   properties. When decoding, the concrete types need to be known or
+	///   decoding will fail. Pass types potentially occurring in the data here.
+	public func mediaTree(withTypes types: [Codable.Type] = []) throws -> MediaTree {
+		let typeKeys = types.map(ProtocolTypeCoding.init)
+		let typeDictionary = Dictionary(zip(typeKeys, types), uniquingKeysWith: {
+			(first, _) in first
+		})
+		// register types before decoding
+		return try ProtocolTypeCoding.$knownTypes.withValue(typeDictionary) {
+			try decode()
+		}
+	}
 }
 
 extension MediaTree {
