@@ -62,6 +62,29 @@ extension Base {
 			return result
 		}
 	}
+
+	/// A pass which repeatedly executes sub-passes while a condition remains true.
+	///
+	/// The condition is given by a closure or a `ConditionFlag` pass.
+	public struct While: Pass {
+		private var ifPass: Pass & ConditionFlag
+
+		public init(_ condition: Pass & ConditionFlag, @SubPassBuilder _ builder: () -> [Pass]) {
+			ifPass = If(condition, builder)
+		}
+		public init(_ condition: @escaping (MediaTree) -> Bool, @SubPassBuilder _ builder: () -> [Pass]) {
+			ifPass = If(condition, builder)
+		}
+
+		public mutating func process(_ mediaTree: MediaTree) throws -> MediaTree {
+			var result = mediaTree
+			while ifPass.condition {
+				// invoke internal pass without ifPass.run so it does not log itself
+				result = try ifPass.process(mediaTree)
+			}
+			return result
+		}
+	}
 }
 
 /// Conforming passes expose a boolean condition flag.
