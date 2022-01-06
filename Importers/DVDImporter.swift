@@ -12,7 +12,7 @@ struct DVDImporter: ImportPass {
 		dvdReader = try DVDReader(source: url)
 	}
 
-	func generate() throws -> MediaTree {
+	func generate() async throws -> MediaTree {
 		let subscription = dvdReader.publisher
 			.map { Transform.Status($0) }
 			.mapError { $0 }

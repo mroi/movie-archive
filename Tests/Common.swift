@@ -99,7 +99,7 @@ class ModelTests: XCTestCase {
 			.sink { _ in outputs += 1 }
 		defer { subscription.cancel() }
 
-		transform.execute()
+		await transform.execute()
 
 		XCTAssertEqual(outputs, 42)
 	}
@@ -118,7 +118,7 @@ class ModelTests: XCTestCase {
 			receiveValue: { _ in outputs += 1 })
 		defer { subscription.cancel() }
 
-		transform.execute()
+		await transform.execute()
 
 		XCTAssertEqual(outputs, 1)
 		await waitForExpectations(timeout: .infinity)

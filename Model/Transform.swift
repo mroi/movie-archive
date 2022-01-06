@@ -46,7 +46,7 @@ public class Transform {
 	/// This function is asynchronous, so any long-running work will yield to
 	/// the caller. For status updates and interacting with the transform like
 	/// configuring options, you must subscribe to the `publisher` property.
-	public func execute() {  // TODO: convert to async function
+	public func execute() async {
 		// reference cycle keeps the transform alive until execution is finished
 		Transform.current = self
 		defer { Transform.current = nil }
@@ -55,11 +55,11 @@ public class Transform {
 
 		do {
 			// the actual execution of importer and exporter
-			let mediaTree = try importer.run {
-				try importer.generate()
+			let mediaTree = try await importer.run {
+				try await importer.generate()
 			}
-			try exporter.run {
-				try exporter.consume(mediaTree)
+			try await exporter.run {
+				try await exporter.consume(mediaTree)
 			}
 			subject.send(completion: .finished)
 		} catch {

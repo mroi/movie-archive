@@ -103,7 +103,7 @@ class DVDImporterTests: XCTestCase {
 			.sink { _ in outputs += 1 }
 		defer { subscription.cancel() }
 
-		transform.execute()
+		await transform.execute()
 
 		XCTAssertEqual(transform.description, "DVDImporter → NullExporter")
 		XCTAssertEqual(outputs, 5)
