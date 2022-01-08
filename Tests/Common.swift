@@ -157,12 +157,14 @@ class ConverterTests: XCTestCase {
 		class ErrorSender {
 			private let returnChannel: ReturnImplementation
 			init(channel: ReturnImplementation) { returnChannel = channel }
+			func exercise() { returnChannel.sendMessage(level: .default, "test") }
 			func error() { returnChannel.sendConnectionInterrupted() }
 		}
 		class ErrorClient: ConverterClient<ErrorSender> {
 			func test() throws {
 				// test that this wrapper observes the published error and throws
 				try withConnectionErrorHandling { (_: (Result<Void, ConverterError>) -> Void) in
+					remote.exercise()
 					remote.error()
 				}
 				XCTFail("error handling should throw")
@@ -176,6 +178,13 @@ class ConverterTests: XCTestCase {
 				XCTAssertEqual($0 as! ConverterError, .connectionInterrupted)
 			}
 		}
+	}
+
+	func testErrorLocalization() {
+		XCTAssertNotNil(ConverterError.sourceNotSupported.errorDescription)
+		XCTAssertNotNil(ConverterError.sourceReadError.errorDescription)
+		XCTAssertNotNil(ConverterError.connectionInvalid.errorDescription)
+		XCTAssertNotNil(ConverterError.connectionInterrupted.errorDescription)
 	}
 }
 
@@ -209,6 +218,7 @@ class InterceptTests: XCTestCase {
 
 	func testDlopen() {
 		XCTAssertNotNil(intercept.dlopen("/usr/lib/libSystem.B.dylib", 0))
+		XCTAssertNil(intercept.dlopen("libdvdcss.2.dylib", 0))
 		XCTAssertNil(intercept.dlopen("not existing", 0))
 	}
 }
