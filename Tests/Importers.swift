@@ -81,7 +81,7 @@ class DVDImporterTests: XCTestCase {
 			var reader: DVDReader?
 			XCTAssertNoThrow(reader = try DVDReader(source: source))
 			XCTAssertNotNil(reader)
-			XCTAssertThrowsError(try reader!.info()) {
+			await XCTAssertThrowsErrorAsync(try await reader!.info()) {
 				XCTAssertEqual($0 as! ConverterError, .sourceReadError)
 			}
 		}

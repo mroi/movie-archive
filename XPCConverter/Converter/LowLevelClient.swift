@@ -115,9 +115,35 @@ extension ConverterClient {
 	///   receives a continuation function which must be called exactly once
 	///   if the remote function’s completion handler is called.
 	/// - Returns: Successful results are returned, errors are thrown.
+	func withConnectionErrorHandling<T>(_ body: (_ done: @escaping (Result<T, ConverterError>) -> Void) -> Void) async throws -> T {
+
+		return try await withCheckedThrowingContinuation { continuation in
+
+			// listen for asynchronous errors from the publisher
+			let subscription = publisher.sink(
+				receiveCompletion: {
+					switch $0 {
+					case .failure(let error):
+						continuation.resume(with: .failure(error))
+					case .finished:
+						continuation.resume(with: .failure(ConverterError.connectionInterrupted))
+					}
+				},
+				receiveValue: { _ in })
+			defer { subscription.cancel() }
+
+			// run caller code
+			body { continuation.resume(with: $0) }
+		}
+	}
+
+	/// Wrap a remote converter invocation with connection error handling.
+	///
+	/// - SeeAlso: ``withConnectionErrorHandling<T>(_:) async``
+	/// - Remark: The synchronous variant only remains for Playgrounds
+	///   compatibility.
 	func withConnectionErrorHandling<T>(_ body: (_ done: @escaping (Result<T, ConverterError>) -> Void) -> Void) throws -> T {
 
-		// TODO: replace semaphore with async continuation to not block the caller
 		let resultAvailable = DispatchSemaphore(value: 0)
 		var result: Result<T, ConverterError>?
 

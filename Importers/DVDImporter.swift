@@ -19,7 +19,7 @@ struct DVDImporter: ImportPass {
 			.subscribe(Transform.subject)
 		defer { subscription.cancel() }
 
-		let info = try dvdReader.info()
+		let info = try await dvdReader.info()
 
 		let node = MediaTree.OpaqueNode(payload: info)
 		return .opaque(node)
