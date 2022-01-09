@@ -4,12 +4,37 @@ import os
 
 #if DEBUG
 
+/// Test importer processing a given media tree with sub-passes.
+struct TestImporter: ImportPass, SubPassRecursing {
+	let mediaTree: MediaTree
+	let subPasses: [Pass]
+	init(_ mediaTree: MediaTree, @SubPassBuilder _ builder: () -> [Pass] = {[]}) {
+		self.mediaTree = mediaTree
+		self.subPasses = builder()
+	}
+	init(source: URL = URL(fileURLWithPath: ".")) {
+		self.init(.collection(.init(children: [])))
+	}
+	func generate() throws -> MediaTree {
+		return try process(bySubPasses: mediaTree)
+	}
+}
+
 /// Test importer which throws on `generate()`.
 struct ThrowingImporter: ImportPass {
 	init(source: URL = URL(fileURLWithPath: ".")) {}
 	func generate() throws -> MediaTree {
 		struct EmptyError: Error {}
 		throw EmptyError()
+	}
+}
+
+/// A namespace for test passes.
+enum Test {
+
+	/// Test pass outputting its input.
+	struct Identity: Pass {
+		func process(_ mediaTree: MediaTree) -> MediaTree { mediaTree }
 	}
 }
 
