@@ -75,7 +75,7 @@ class ModelTests: XCTestCase {
 		XCTAssertEqual(json.data, json2.data)
 	}
 
-	func testPassExecution() {
+	func testPassExecution() async {
 		let importer = TestImporter(.opaque(.init(payload: 42))) {
 			Test.Identity()
 			Base.Loop {
@@ -104,7 +104,7 @@ class ModelTests: XCTestCase {
 		XCTAssertEqual(outputs, 42)
 	}
 
-	func testErrorToPublisher() {
+	func testErrorToPublisher() async {
 		let error = expectation(description: "an error should be published")
 
 		let importer = ThrowingImporter()
@@ -121,7 +121,7 @@ class ModelTests: XCTestCase {
 		transform.execute()
 
 		XCTAssertEqual(outputs, 1)
-		waitForExpectations(timeout: .infinity)
+		await waitForExpectations(timeout: .infinity)
 	}
 }
 
@@ -130,7 +130,7 @@ class ModelTests: XCTestCase {
 
 class ConverterTests: XCTestCase {
 
-	func testDeinitialization() {
+	func testDeinitialization() async {
 		let deinitClient = expectation(description: "converter client should be released")
 		let deinitReturn = expectation(description: "return channel should be released")
 
@@ -167,10 +167,10 @@ class ConverterTests: XCTestCase {
 			}
 		}
 
-		waitForExpectations(timeout: .infinity)
+		await waitForExpectations(timeout: .infinity)
 	}
 
-	func testMessagePropagation() {
+	func testMessagePropagation() async {
 		class MessageSender {
 			private let returnChannel: ReturnImplementation
 			init(channel: ReturnImplementation) { returnChannel = channel }
@@ -200,7 +200,7 @@ class ConverterTests: XCTestCase {
 		}
 	}
 
-	func testProgressPropagation() {
+	func testProgressPropagation() async {
 		class ProgressSender {
 			private let id = UUID()
 			private let returnChannel: ReturnImplementation
@@ -247,7 +247,7 @@ class ConverterTests: XCTestCase {
 		}
 	}
 
-	func testXPCErrorPropagation() {
+	func testXPCErrorPropagation() async {
 		// set up an invalid XPC connection
 		let returnChannel = ReturnImplementation()
 		let connection = NSXPCConnection(serviceName: "invalid")
@@ -273,10 +273,10 @@ class ConverterTests: XCTestCase {
 			remote.doNothing()
 		}
 
-		waitForExpectations(timeout: .infinity)
+		await waitForExpectations(timeout: .infinity)
 	}
 
-	func testXPCErrorWrapper() {
+	func testXPCErrorWrapper() async {
 		class ErrorSender {
 			private let returnChannel: ReturnImplementation
 			init(channel: ReturnImplementation) { returnChannel = channel }
