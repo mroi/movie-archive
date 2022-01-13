@@ -13,8 +13,7 @@ public struct JSON<Root: Codable> {
 	}
 
 	func decode() throws -> Root {
-		// TODO: use custom JSON decoder
-		let decoder = JSONDecoder()
+		let decoder = CustomJSONDecoder()
 		return try decoder.decode(Root.self, from: data)
 	}
 }
@@ -529,5 +528,493 @@ private extension CustomJSONEncoder.ElementStorage {
 		case .none:
 			fatalError("unexpected empty container at coding path \(codingPath)")
 		}
+	}
+}
+
+
+/* MARK: Custom JSON Decoder */
+
+private struct CustomJSONDecoder {
+
+	/// Reference-typed storage box.
+	///
+	/// Contrary to the encoder, the decoder does not actually need the
+	/// reference semantics, because the entire nested structure is initialized
+	/// once from `JSONSerialization` output. However, transparent sub-typing by
+	/// inheritance is used, so we keep this class-typed.
+	///
+	/// Conformance to different protocols depends on the `Value` type parameter:
+	/// * `ElementStorage` conforms to `Decoder` and `SingleValueDecodingContainer`
+	/// * `ArrayStorage` conforms to `UnkeyedDecodingContainer`
+	/// * `KeyedDictionaryStorage` conforms to `KeyedDecodingContainerProtocol`
+	class Storage<Value> {
+		var codingPath: [CodingKey]
+		let store: Value
+		init(codingPath: [CodingKey] = [], store: Value) {
+			self.codingPath = codingPath
+			self.store = store
+		}
+	}
+
+	/// Subclass to remember `Key` type for `KeyedDecodingContainerProtocol`
+	class KeyedDictionaryStorage<Key: CodingKey>: DictionaryStorage {}
+
+	class DictionaryStorage: Storage<Dictionary<String, ElementStorage>> {
+		var missingCollectionsAsEmpty: Bool = false
+		init(codingPath: [CodingKey] = [],
+		     store: [String: ElementStorage],
+		     missingCollectionsAsEmpty: Bool = false) {
+			super.init(codingPath: codingPath, store: store)
+			self.missingCollectionsAsEmpty = missingCollectionsAsEmpty
+		}
+	}
+	class ArrayStorage: Storage<Array<ElementStorage>> {
+		var currentIndex: Int = 0
+	}
+	typealias ElementStorage = Storage<Element>
+
+	enum Element {
+		case missingCollectionsAsEmpty
+		case dictionary(DictionaryStorage)
+		case array(ArrayStorage)
+		case string(String)
+		case number(NSNumber)
+		case null
+	}
+
+	func decode<Root: Decodable>(_ type: Root.Type, from data: Data) throws -> Root {
+		let object = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+		let storage = ElementStorage(from: object)
+		return try storage.decode(type)
+	}
+}
+
+private extension CustomJSONDecoder.Storage {
+	typealias KeyedDictionaryStorage = CustomJSONDecoder.KeyedDictionaryStorage
+	typealias DictionaryStorage = CustomJSONDecoder.DictionaryStorage
+	typealias ArrayStorage = CustomJSONDecoder.ArrayStorage
+	typealias ElementStorage = CustomJSONDecoder.ElementStorage
+	typealias Element = CustomJSONDecoder.Element
+}
+
+private extension CustomJSONDecoder.ElementStorage {
+
+	convenience init(from object: Any) {
+		switch object {
+
+		case let dictionary as Dictionary<String, Any>:
+			let converted = dictionary.mapValues { ElementStorage(from: $0) }
+			let storage = DictionaryStorage(store: converted)
+			self.init(store: .dictionary(storage))
+
+		case let array as Array<Any>:
+			let converted = array.map { ElementStorage(from: $0) }
+			let storage = ArrayStorage(store: converted)
+			self.init(store: .array(storage))
+
+		case let string as String:
+			self.init(store: .string(string))
+
+		case let number as NSNumber:
+			self.init(store: .number(number))
+
+		case is NSNull:
+			self.init(store: .null)
+
+		default:
+			fatalError("unexpected JSON object of type \(type(of: object))")
+		}
+	}
+}
+
+private extension CustomJSONDecoder.KeyedDictionaryStorage {
+	func dictionaryStorage<NestedKey: CodingKey>(keyedBy _: NestedKey.Type, forKey key: Key) throws -> KeyedDictionaryStorage<NestedKey> {
+		let codingPath = codingPath + [key]
+		if missingCollectionsAsEmpty && store[key.stringValue] == nil {
+			return KeyedDictionaryStorage<NestedKey>(codingPath: codingPath, store: [:])
+		}
+		if case .dictionary(let storage) = try get(key) {
+			return KeyedDictionaryStorage<NestedKey>(codingPath: codingPath, store: storage.store)
+		}
+		throw typeMismatch(DictionaryStorage.self, forKey: key)
+	}
+	func arrayStorage(forKey key: Key) throws -> ArrayStorage {
+		let codingPath = codingPath + [key]
+		if missingCollectionsAsEmpty && store[key.stringValue] == nil {
+			return ArrayStorage(codingPath: codingPath, store: [])
+		}
+		if case .array(let storage) = try get(key) {
+			storage.codingPath = codingPath
+			return storage
+		}
+		throw typeMismatch(ArrayStorage.self, forKey: key)
+	}
+	/// - Important: This accessor propagates the coding path forward and checks
+	///   for key existence. All other accessors should funnel through here.
+	func elementStorage(forKey key: Key) throws -> ElementStorage {
+		let codingPath = codingPath + [key]
+		if missingCollectionsAsEmpty && store[key.stringValue] == nil {
+			return ElementStorage(codingPath: codingPath, store: .missingCollectionsAsEmpty)
+		}
+		if let storage = store[key.stringValue] {
+			storage.codingPath = codingPath
+			return storage
+		}
+		throw DecodingError.keyNotFound(key, .init(codingPath: codingPath,
+			debugDescription: "expected key \(key.stringValue) not found"))
+	}
+	func get(_ key: Key) throws -> Element {
+		return try elementStorage(forKey: key).store
+	}
+	func typeMismatch(_ type: Any.Type, forKey key: Key) -> DecodingError {
+		let codingPath = codingPath + [key]
+		return DecodingError.typeMismatch(type, .init(codingPath: codingPath,
+			debugDescription: "type found for key: \(store[key.stringValue]!.store)"))
+	}
+}
+
+private extension CustomJSONDecoder.ArrayStorage {
+	typealias ArrayCodingKey = CustomJSONEncoder.ArrayStorage.ArrayCodingKey
+	func nextDictionaryStorage<Key: CodingKey>(keyedBy _: Key.Type) throws -> KeyedDictionaryStorage<Key> {
+		if case .dictionary(let storage) = try next() {
+			let codingPath = codingPath + [ArrayCodingKey(intValue: currentIndex)]
+			return KeyedDictionaryStorage<Key>(codingPath: codingPath, store: storage.store)
+		}
+		throw typeMismatch(DictionaryStorage.self)
+	}
+	func nextArrayStorage() throws -> ArrayStorage {
+		if case .array(let storage) = try next() {
+			storage.codingPath = codingPath + [ArrayCodingKey(intValue: currentIndex)]
+			return storage
+		}
+		throw typeMismatch(ArrayStorage.self)
+	}
+	/// - Important: This accessor propagates the coding path forward and checks
+	///   for element existence. All other accessors should funnel through here.
+	func nextElementStorage() throws -> ElementStorage {
+		guard !isAtEnd else {
+			throw DecodingError.keyNotFound(ArrayCodingKey(intValue: currentIndex), .init(codingPath: codingPath, debugDescription: "no index \(currentIndex)"))
+		}
+		defer { currentIndex += 1 }
+		let codingPath = codingPath + [ArrayCodingKey(intValue: currentIndex)]
+		store[currentIndex].codingPath = codingPath
+		return store[currentIndex]
+	}
+	func next() throws -> Element {
+		return try nextElementStorage().store
+	}
+	func typeMismatch(_ type: Any.Type) -> DecodingError {
+		let codingPath = codingPath + [ArrayCodingKey(intValue: currentIndex - 1)]
+		return DecodingError.typeMismatch(type, .init(codingPath: codingPath,
+			debugDescription: "unexpected type in JSON: \(store[currentIndex - 1].store)"))
+	}
+}
+
+private extension CustomJSONDecoder.ElementStorage {
+	func dictionaryStorage<Key: CodingKey>(keyedBy _: Key.Type) throws -> KeyedDictionaryStorage<Key> {
+		if case .missingCollectionsAsEmpty = store {
+			// propagate missingCollectionsAsEmpty into the dictionary
+			return KeyedDictionaryStorage<Key>(codingPath: codingPath, store: [:],
+			                                   missingCollectionsAsEmpty: true)
+		}
+		if case .dictionary(let storage) = store {
+			storage.codingPath = codingPath
+			return KeyedDictionaryStorage<Key>(codingPath: storage.codingPath, store: storage.store,
+			                                   missingCollectionsAsEmpty: storage.missingCollectionsAsEmpty)
+		}
+		throw typeMismatch(DictionaryStorage.self)
+	}
+	func arrayStorage() throws -> ArrayStorage {
+		if case .missingCollectionsAsEmpty = store {
+			return ArrayStorage(codingPath: codingPath, store: [])
+		}
+		if case .array(let storage) = store {
+			storage.codingPath = codingPath
+			return storage
+		}
+		throw typeMismatch(ArrayStorage.self)
+	}
+	func typeMismatch(_ type: Any.Type) -> DecodingError {
+		return DecodingError.typeMismatch(type, .init(codingPath: codingPath,
+			debugDescription: "unexpected type in JSON: \(store)"))
+	}
+}
+
+extension CustomJSONDecoder.Element: CustomStringConvertible {
+	/// Description without the associated value for brevity of debug messages.
+	var description: String {
+		switch self {
+		case .missingCollectionsAsEmpty: return "emptyCollection"
+		case .dictionary: return "Dictionary"
+		case .array: return "Array"
+		case .string: return "String"
+		case .number: return "NSNumber"
+		case .null: return "NSNull"
+		}
+	}
+}
+
+extension CustomJSONDecoder.ElementStorage: Decoder {
+	var userInfo: [CodingUserInfoKey: Any] { [:] }
+
+	func container<Key: CodingKey>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> {
+		return KeyedDecodingContainer(try dictionaryStorage(keyedBy: type))
+	}
+	func unkeyedContainer() throws -> UnkeyedDecodingContainer {
+		return try arrayStorage()
+	}
+	func singleValueContainer() throws -> SingleValueDecodingContainer {
+		return self
+	}
+}
+
+extension CustomJSONDecoder.KeyedDictionaryStorage: KeyedDecodingContainerProtocol {
+	var allKeys: [Key] { store.keys.map { Key(stringValue: $0)! } }
+	func contains(_ key: Key) -> Bool { store.keys.contains(key.stringValue) }
+
+	func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
+		return KeyedDecodingContainer(try dictionaryStorage(keyedBy: type, forKey: key))
+	}
+	func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
+		return try arrayStorage(forKey: key)
+	}
+	func superDecoder() throws -> Decoder {
+		return try elementStorage(forKey: Key(stringValue: "super")!)
+	}
+	func superDecoder(forKey key: Key) throws -> Decoder {
+		return try elementStorage(forKey: key)
+	}
+
+	func decode<T: Decodable>(_ type: T.Type, forKey key: Key) throws -> T {
+		var storage = try elementStorage(forKey: key)
+		if type is CustomJSONEmptyCollectionSkipping.Type {
+			// modify the stored dictionary to enable missingCollectionsAsEmpty
+			let dictionary = try storage.dictionaryStorage(keyedBy: Key.self)
+			dictionary.missingCollectionsAsEmpty = true
+			storage = ElementStorage(codingPath: storage.codingPath, store: .dictionary(dictionary))
+		}
+		if let type = type as? CustomJSONCodable.Type {
+			return try type.init(fromCustomJSON: storage) as! T
+		} else {
+			return try type.init(from: storage)
+		}
+	}
+
+	func decode(_ type: String.Type, forKey key: Key) throws -> String {
+		if case .string(let string) = try get(key) { return string }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: Int.Type, forKey key: Key) throws -> Int {
+		if case .number(let number) = try get(key) { return number.intValue }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 {
+		if case .number(let number) = try get(key) { return number.int8Value }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 {
+		if case .number(let number) = try get(key) { return number.int16Value }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 {
+		if case .number(let number) = try get(key) { return number.int32Value }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 {
+		if case .number(let number) = try get(key) { return number.int64Value }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt {
+		if case .number(let number) = try get(key) { return number.uintValue }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 {
+		if case .number(let number) = try get(key) { return number.uint8Value }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 {
+		if case .number(let number) = try get(key) { return number.uint16Value }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 {
+		if case .number(let number) = try get(key) { return number.uint32Value }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 {
+		if case .number(let number) = try get(key) { return number.uint64Value }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: Double.Type, forKey key: Key) throws -> Double {
+		if case .number(let number) = try get(key) { return number.doubleValue }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: Float.Type, forKey key: Key) throws -> Float {
+		if case .number(let number) = try get(key) { return number.floatValue }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
+		if case .number(let number) = try get(key) { return number.boolValue }
+		throw typeMismatch(type, forKey: key)
+	}
+	func decodeNil(forKey key: Key) throws -> Bool {
+		if case .null = try get(key) { return true }
+		return false
+	}
+}
+
+extension CustomJSONDecoder.ArrayStorage: UnkeyedDecodingContainer {
+	var isAtEnd: Bool { currentIndex == store.endIndex }
+	var count: Int? { store.count }
+
+	func nestedContainer<Key: CodingKey>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> {
+		return KeyedDecodingContainer(try nextDictionaryStorage(keyedBy: type))
+	}
+	func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer {
+		return try nextArrayStorage()
+	}
+	func superDecoder() throws -> Decoder {
+		return try nextElementStorage()
+	}
+
+	func decode<T: Decodable>(_ type: T.Type) throws -> T {
+		let storage = try nextElementStorage()
+		if let type = type as? CustomJSONCodable.Type {
+			return try type.init(fromCustomJSON: storage) as! T
+		} else {
+			return try type.init(from: storage)
+		}
+	}
+
+	func decode(_ type: String.Type) throws -> String {
+		if case .string(let string) = try next() { return string }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Int.Type) throws -> Int {
+		if case .number(let number) = try next() { return number.intValue }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Int8.Type) throws -> Int8 {
+		if case .number(let number) = try next() { return number.int8Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Int16.Type) throws -> Int16 {
+		if case .number(let number) = try next() { return number.int16Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Int32.Type) throws -> Int32 {
+		if case .number(let number) = try next() { return number.int32Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Int64.Type) throws -> Int64 {
+		if case .number(let number) = try next() { return number.int64Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: UInt.Type) throws -> UInt {
+		if case .number(let number) = try next() { return number.uintValue }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: UInt8.Type) throws -> UInt8 {
+		if case .number(let number) = try next() { return number.uint8Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: UInt16.Type) throws -> UInt16 {
+		if case .number(let number) = try next() { return number.uint16Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: UInt32.Type) throws -> UInt32 {
+		if case .number(let number) = try next() { return number.uint32Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: UInt64.Type) throws -> UInt64 {
+		if case .number(let number) = try next() { return number.uint64Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Double.Type) throws -> Double {
+		if case .number(let number) = try next() { return number.doubleValue }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Float.Type) throws -> Float {
+		if case .number(let number) = try next() { return number.floatValue }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Bool.Type) throws -> Bool {
+		if case .number(let number) = try next() { return number.boolValue }
+		throw typeMismatch(type)
+	}
+	func decodeNil() throws -> Bool {
+		if case .null = try next() { return true }
+		return false
+	}
+}
+
+extension CustomJSONDecoder.ElementStorage: SingleValueDecodingContainer {
+
+	func decode<T: Decodable>(_ type: T.Type) throws -> T {
+		if let type = type as? CustomJSONCodable.Type {
+			return try type.init(fromCustomJSON: self) as! T
+		} else {
+			return try type.init(from: self)
+		}
+	}
+
+	func decode(_ type: String.Type) throws -> String {
+		if case .string(let string) = store { return string }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Int.Type) throws -> Int {
+		if case .number(let number) = store { return number.intValue }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Int8.Type) throws -> Int8 {
+		if case .number(let number) = store { return number.int8Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Int16.Type) throws -> Int16 {
+		if case .number(let number) = store { return number.int16Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Int32.Type) throws -> Int32 {
+		if case .number(let number) = store { return number.int32Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Int64.Type) throws -> Int64 {
+		if case .number(let number) = store { return number.int64Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: UInt.Type) throws -> UInt {
+		if case .number(let number) = store { return number.uintValue }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: UInt8.Type) throws -> UInt8 {
+		if case .number(let number) = store { return number.uint8Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: UInt16.Type) throws -> UInt16 {
+		if case .number(let number) = store { return number.uint16Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: UInt32.Type) throws -> UInt32 {
+		if case .number(let number) = store { return number.uint32Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: UInt64.Type) throws -> UInt64 {
+		if case .number(let number) = store { return number.uint64Value }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Double.Type) throws -> Double {
+		if case .number(let number) = store { return number.doubleValue }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Float.Type) throws -> Float {
+		if case .number(let number) = store { return number.floatValue }
+		throw typeMismatch(type)
+	}
+	func decode(_ type: Bool.Type) throws -> Bool {
+		if case .number(let number) = store { return number.boolValue }
+		throw typeMismatch(type)
+	}
+	func decodeNil() -> Bool {
+		if case .null = store { return true }
+		return false
 	}
 }
