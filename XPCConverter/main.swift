@@ -10,12 +10,20 @@ import MovieArchiveConverter
 class ConverterImplementation: NSObject {
 
 	/// Stores state of external libraries across function calls.
-	var state: [UUID: OpaquePointer] = [:]
+	///
+	/// Each stored pointer has a cleanup handler stored next to it. This
+	/// handler gets called in case of XPC connection invalidation.
+	var state: [UUID: (pointer: OpaquePointer, cleanup: () -> Void)] = [:]
 
 	/// Fetches the proxy object for the return channel to the client.
 	var returnChannel: ReturnInterface? {
 		let proxy = NSXPCConnection.current()?.remoteObjectProxy
 		return proxy as? ReturnInterface
+	}
+
+	deinit {
+		// run all cleanup handlers
+		for (_, cleanup) in state.values { cleanup() }
 	}
 }
 

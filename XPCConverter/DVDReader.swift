@@ -22,19 +22,23 @@ extension ConverterImplementation: ConverterDVDReader {
 			if result == 0 {
 				// valid DVD, remember reader state and return unique handle
 				let id = UUID()
-				state.updateValue(reader, forKey: id)
+				state[id] = (pointer: reader, cleanup: {
+					DVDClose(reader)
+					xpc_transaction_end()
+				})
 				// keep XPC service alive as long as there is active reader state
 				xpc_transaction_begin()
 
 				done(id)
 				return
 			}
+			DVDClose(reader)
 		}
 		done(.none)
 	}
 
 	func readInfo(_ id: UUID, completionHandler done: @escaping (_ result: Data?) -> Void) {
-		guard let reader = state[id] else { return done(nil) }
+		guard let reader = state[id]?.pointer else { return done(nil) }
 
 		do {
 			let progress = DVDData.Progress(channel: returnChannel)
@@ -98,10 +102,9 @@ extension ConverterImplementation: ConverterDVDReader {
 	}
 
 	public func close(_ id: UUID) {
-		guard let reader = state[id] else { return }
+		guard let cleanup = state[id]?.cleanup else { return }
 		state.removeValue(forKey: id)
-		DVDClose(reader)
-		xpc_transaction_end()
+		cleanup()
 	}
 }
 
