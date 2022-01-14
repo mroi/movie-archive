@@ -80,9 +80,10 @@ public actor Transform {
 
 				do {
 					// the actual execution of importer and exporter
-					let mediaTree = try await importer.run {
+					var mediaTree = try await importer.run {
 						try await importer.generate()
 					}
+					await clientInteraction(&mediaTree) { .mediaTree($0) }
 					try await exporter.run {
 						try await exporter.consume(mediaTree)
 					}
@@ -127,6 +128,66 @@ extension Transform {
 
 		/// Shows progress of a long-running operation to the user.
 		case progress(Progress)
+
+		/// Allows inspection and editing of an intermediate media tree.
+		case mediaTree(Interaction<MediaTree>)
+	}
+}
+
+extension Transform {
+
+	/// Wait for a client interaction that may mutate the given value.
+	///
+	/// Status updates are passed to the client via the transform publisher.
+	/// Many of these updates are purely informational, but some require
+	/// feedback from the client. Use this method to send such a status update
+	/// and wait for the client to respond.
+	///
+	/// - Parameter value: The value presented to and mutated by the client.
+	/// - Parameter body: A closure that constructs a `Status` from the given
+	///   `Interaction`. This `Status` is then sent to the client via the
+	///   transform publisher.
+	func clientInteraction<Value>(_ value: inout Value, _ body: (Status.Interaction<Value>) -> Status) async {
+		value = await withCheckedContinuation {
+			let interaction = Status.Interaction(value: value, continuation: $0)
+			subject.send(body(interaction))
+		}
+	}
+}
+
+extension Transform.Status {
+
+	/// Manages status updates that can be interacted with by the client.
+	///
+	/// Clients receiving such a status can interact with the `value`
+	/// property, including mutating changes to it. Afterwards, the client
+	/// should call `finish()` exactly once.
+	@dynamicMemberLookup
+	public class Interaction<Value> {
+		private let continuation: CheckedContinuation<Value, Never>
+		private var finished: Bool = false
+		public var value: Value
+
+		init(value: Value, continuation: CheckedContinuation<Value, Never>) {
+			self.value = value
+			self.continuation = continuation
+		}
+
+		public func finish() {
+			guard !finished else { return }
+			continuation.resume(returning: value)
+			finished = true
+		}
+
+		deinit { finish() }
+
+		subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
+			get { value[keyPath: keyPath] }
+		}
+		subscript<T>(dynamicMember keyPath: WritableKeyPath<Value, T>) -> T {
+			get { value[keyPath: keyPath] }
+			set { value[keyPath: keyPath] = newValue }
+		}
 	}
 }
 
@@ -242,6 +303,8 @@ extension Transform {
 				log(level: level, String(unlocalized: text))
 			case .progress(let progress):
 				log(level: .info, "started " + String(unlocalized: progress.localization))
+			case .mediaTree(_):
+				log(level: .debug, "interaction with media tree")
 			}
 			return .none
 		}
