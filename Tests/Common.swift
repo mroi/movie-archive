@@ -53,11 +53,12 @@ class ModelTests: XCTestCase {
 			}
 
 			"""
-		
-		MediaTree.ID.allocator = MediaTree.ID.Allocator()
-		let tree = MediaTree.collection(.init(children: [
-			.opaque(.init(payload: TestPayload()))
-		]))
+
+		let tree = MediaTree.ID.$allocator.withValue(MediaTree.ID.Allocator()) {
+			MediaTree.collection(.init(children: [
+				.opaque(.init(payload: TestPayload()))
+			]))
+		}
 
 		var json: JSON<MediaTree>!
 		XCTAssertNoThrow(json = try tree.json())
@@ -75,7 +76,7 @@ class ModelTests: XCTestCase {
 		XCTAssertEqual(json.data, json2.data)
 	}
 
-	func testPassExecution() {
+	func testPassExecution() async {
 		let importer = TestImporter(.opaque(.init(payload: 42))) {
 			Test.Identity()
 			Base.Loop {
@@ -99,12 +100,41 @@ class ModelTests: XCTestCase {
 			.sink { _ in outputs += 1 }
 		defer { subscription.cancel() }
 
-		transform.execute()
+		await transform.execute()
 
-		XCTAssertEqual(outputs, 42)
+		XCTAssertEqual(outputs, 43)
 	}
 
-	func testErrorToPublisher() {
+	func testClientInteraction() async {
+		let importer = ThrowingImporter()
+		let exporter = NullExporter()
+		let transform = Transform(importer: importer, exporter: exporter)
+		XCTAssertEqual(transform.description, "ThrowingImporter → NullExporter")
+
+		let subscription = transform.publisher
+			.mapError { _ in fatalError("unexpected publisher error") }
+			.sink {
+				if case .mediaTree(let interaction) = $0 {
+					if let node = interaction.opaque {
+						XCTAssertEqual(node.children.count, 0)
+						XCTAssertEqual(node.payload as? Int, 42)
+						interaction.value = .collection(.init(children: []))
+						interaction.finish()
+					} else {
+						XCTFail("unexpected media tree")
+					}
+				} else {
+					XCTFail("unexpected value")
+				}
+			}
+		defer { subscription.cancel() }
+
+		var mediaTree = MediaTree.opaque(.init(payload: 42))
+		await transform.clientInteraction(&mediaTree) { .mediaTree($0) }
+		XCTAssertNotNil(mediaTree.collection)
+	}
+
+	func testErrorToPublisher() async {
 		let error = expectation(description: "an error should be published")
 
 		let importer = ThrowingImporter()
@@ -118,10 +148,37 @@ class ModelTests: XCTestCase {
 			receiveValue: { _ in outputs += 1 })
 		defer { subscription.cancel() }
 
-		transform.execute()
+		await transform.execute()
 
 		XCTAssertEqual(outputs, 1)
-		waitForExpectations(timeout: .infinity)
+		await XCTAssertEqualAsync(await transform.state, .error)
+		await waitForExpectations(timeout: .infinity)
+	}
+
+	func testCancellation() async {
+		let cancelled = expectation(description: "transform should be cancelled")
+
+		let importer = ThrowingImporter()
+		let exporter = NullExporter()
+		let transform = Transform(importer: importer, exporter: exporter)
+		XCTAssertEqual(transform.description, "ThrowingImporter → NullExporter")
+
+		let subscription = transform.publisher.sink(
+			receiveCompletion: {
+				if case .failure(let error) = $0, error is CancellationError {
+					cancelled.fulfill()
+				} else {
+					XCTFail("unexpected completion")
+				}
+			},
+			receiveValue: { _ in XCTFail("unexpected value") })
+		defer { subscription.cancel() }
+
+		withUnsafeCurrentTask { $0?.cancel() }
+		await transform.execute()
+
+		await XCTAssertEqualAsync(await transform.state, .error)
+		await waitForExpectations(timeout: .infinity)
 	}
 }
 
@@ -130,7 +187,7 @@ class ModelTests: XCTestCase {
 
 class ConverterTests: XCTestCase {
 
-	func testDeinitialization() {
+	func testDeinitialization() async {
 		let deinitClient = expectation(description: "converter client should be released")
 		let deinitReturn = expectation(description: "return channel should be released")
 
@@ -157,9 +214,9 @@ class ConverterTests: XCTestCase {
 		do {
 			let client = TestClient(withExpectations: deinitClient)
 			let returnChannel = TestReturn(withExpectations: deinitReturn)
-			try! ConverterClient.withMocks(proxy: client.remote, publisher: returnChannel.publisher) {
-				XCTAssertNoThrow(
-					try client.withConnectionErrorHandling { done in
+			try! await ConverterClient.withMocks(proxy: client.remote, publisher: returnChannel.publisher) {
+				await XCTAssertNoThrowAsync(
+					try await client.withConnectionErrorHandling { done in
 						done(.success(ConverterClient<ConverterInterface>()))
 					}
 				)
@@ -167,10 +224,10 @@ class ConverterTests: XCTestCase {
 			}
 		}
 
-		waitForExpectations(timeout: .infinity)
+		await waitForExpectations(timeout: .infinity)
 	}
 
-	func testMessagePropagation() {
+	func testMessagePropagation() async {
 		class MessageSender {
 			private let returnChannel: ReturnImplementation
 			init(channel: ReturnImplementation) { returnChannel = channel }
@@ -181,7 +238,7 @@ class ConverterTests: XCTestCase {
 		let sender = MessageSender(channel: returnChannel)
 		var outputs = [ConverterOutput]()
 
-		ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+		await ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
 			let client = ConverterClient<MessageSender>()
 			let subscription = client.publisher
 				.assertNoFailure()
@@ -200,7 +257,7 @@ class ConverterTests: XCTestCase {
 		}
 	}
 
-	func testProgressPropagation() {
+	func testProgressPropagation() async {
 		class ProgressSender {
 			private let id = UUID()
 			private let returnChannel: ReturnImplementation
@@ -214,7 +271,7 @@ class ConverterTests: XCTestCase {
 		let sender = ProgressSender(channel: returnChannel)
 		var outputs = [ConverterOutput]()
 
-		ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+		await ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
 			let client = ConverterClient<ProgressSender>()
 			let subscription = client.publisher
 				.assertNoFailure()
@@ -247,7 +304,7 @@ class ConverterTests: XCTestCase {
 		}
 	}
 
-	func testXPCErrorPropagation() {
+	func testXPCErrorPropagation() async {
 		// set up an invalid XPC connection
 		let returnChannel = ReturnImplementation()
 		let connection = NSXPCConnection(serviceName: "invalid")
@@ -268,15 +325,15 @@ class ConverterTests: XCTestCase {
 		defer { subscription.cancel() }
 
 		// exercise the invalid connection
-		ConverterClient.withMocks(proxy: connection.remoteObjectProxy, publisher: returnChannel.publisher) {
+		await ConverterClient.withMocks(proxy: connection.remoteObjectProxy, publisher: returnChannel.publisher) {
 			let remote = connection.remoteObjectProxy as! ConverterTesting
 			remote.doNothing()
 		}
 
-		waitForExpectations(timeout: .infinity)
+		await waitForExpectations(timeout: .infinity)
 	}
 
-	func testXPCErrorWrapper() {
+	func testXPCErrorWrapper() async {
 		class ErrorSender {
 			private let returnChannel: ReturnImplementation
 			init(channel: ReturnImplementation) { returnChannel = channel }
@@ -284,9 +341,9 @@ class ConverterTests: XCTestCase {
 			func error() { returnChannel.sendConnectionInterrupted() }
 		}
 		class ErrorClient: ConverterClient<ErrorSender> {
-			func test() throws {
+			func test() async throws {
 				// test that this wrapper observes the published error and throws
-				try withConnectionErrorHandling { (_: (Result<Void, ConverterError>) -> Void) in
+				try await withConnectionErrorHandling { (_: (Result<Void, ConverterError>) -> Void) in
 					remote.exercise()
 					remote.error()
 				}
@@ -296,8 +353,8 @@ class ConverterTests: XCTestCase {
 
 		let returnChannel = ReturnImplementation()
 		let sender = ErrorSender(channel: returnChannel)
-		try! ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
-			XCTAssertThrowsError(try ErrorClient().test()) {
+		try! await ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+			await XCTAssertThrowsErrorAsync(try await ErrorClient().test()) {
 				XCTAssertEqual($0 as! ConverterError, .connectionInterrupted)
 			}
 		}

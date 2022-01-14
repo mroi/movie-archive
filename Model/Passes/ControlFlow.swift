@@ -12,13 +12,13 @@ extension Base {
 			subPasses = builder()
 		}
 
-		public mutating func process(_ mediaTree: MediaTree) throws -> MediaTree {
+		public mutating func process(_ mediaTree: MediaTree) async throws -> MediaTree {
 			var result = mediaTree
 			while subPasses.contains(where: { ($0 as? ConditionFlag)?.condition == true }) {
 				for (index, pass) in subPasses.enumerated() {
-					result = try pass.run {
+					result = try await pass.run {
 						// mutate sub-pass state in-place so it survives iterations
-						try subPasses[index].process(result)
+						try await subPasses[index].process(result)
 					}
 				}
 			}
@@ -52,12 +52,12 @@ extension Base {
 			subPasses = builder()
 		}
 
-		public mutating func process(_ mediaTree: MediaTree) throws -> MediaTree {
-			var result = try conditionPass.run {
-				try conditionPass.process(mediaTree)
+		public mutating func process(_ mediaTree: MediaTree) async throws -> MediaTree {
+			var result = try await conditionPass.run {
+				try await conditionPass.process(mediaTree)
 			}
 			if conditionPass.condition {
-				result = try process(bySubPasses: mediaTree)
+				result = try await process(bySubPasses: mediaTree)
 			}
 			return result
 		}
@@ -76,11 +76,11 @@ extension Base {
 			ifPass = If(condition, builder)
 		}
 
-		public mutating func process(_ mediaTree: MediaTree) throws -> MediaTree {
+		public mutating func process(_ mediaTree: MediaTree) async throws -> MediaTree {
 			var result = mediaTree
 			while ifPass.condition {
 				// invoke internal pass without ifPass.run so it does not log itself
-				result = try ifPass.process(mediaTree)
+				result = try await ifPass.process(mediaTree)
 			}
 			return result
 		}
