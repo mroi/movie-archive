@@ -287,6 +287,133 @@ class ConverterTests: XCTestCase {
 }
 
 
+/* MARK: JSON Coding Tests */
+
+class JSONCodingTests: XCTestCase {
+
+	func testKeyedContainer() {
+		struct Test: Codable, Equatable {
+			var string = "test"
+			var int: Int = 0
+			var int8: Int8 = 0
+			var int16: Int16 = 0
+			var int32: Int32 = 0
+			var int64: Int64 = 0
+			var uint: UInt = 0
+			var uint8: UInt8 = 0
+			var uint16: UInt16 = 0
+			var uint32: UInt32 = 0
+			var uint64: UInt64 = 0
+			var double: Double = 0
+			var float: Float = 0
+			var bool = false
+		}
+		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+	}
+
+	func testUnkeyedContainer() {
+		struct Test: Codable, CustomJSONCodable, Equatable {
+			var string = "test"
+			var int: Int = 0
+			var int8: Int8 = 0
+			var int16: Int16 = 0
+			var int32: Int32 = 0
+			var int64: Int64 = 0
+			var uint: UInt = 0
+			var uint8: UInt8 = 0
+			var uint16: UInt16 = 0
+			var uint32: UInt32 = 0
+			var uint64: UInt64 = 0
+			var double: Double = 0
+			var float: Float = 0
+			var bool = false
+			init() {}
+			func encode(toCustomJSON encoder: Encoder) throws {
+				var container = encoder.unkeyedContainer()
+				let _ = container.nestedContainer(keyedBy: CodingKeys.self)
+				let _ = container.nestedUnkeyedContainer()
+				try container.encode(string)
+				try container.encode(int)
+				try container.encode(int8)
+				try container.encode(int16)
+				try container.encode(int32)
+				try container.encode(int64)
+				try container.encode(uint)
+				try container.encode(uint8)
+				try container.encode(uint16)
+				try container.encode(uint32)
+				try container.encode(uint64)
+				try container.encode(double)
+				try container.encode(float)
+				try container.encode(bool)
+				try container.encodeNil()
+			}
+			init(fromCustomJSON decoder: Decoder) throws {
+				var container = try decoder.unkeyedContainer()
+				let _ = try container.nestedContainer(keyedBy: CodingKeys.self)
+				let _ = try container.nestedUnkeyedContainer()
+				string = try container.decode(String.self)
+				int = try container.decode(Int.self)
+				int8 = try container.decode(Int8.self)
+				int16 = try container.decode(Int16.self)
+				int32 = try container.decode(Int32.self)
+				int64 = try container.decode(Int64.self)
+				uint = try container.decode(UInt.self)
+				uint8 = try container.decode(UInt8.self)
+				uint16 = try container.decode(UInt16.self)
+				uint32 = try container.decode(UInt32.self)
+				uint64 = try container.decode(UInt64.self)
+				double = try container.decode(Double.self)
+				float = try container.decode(Float.self)
+				bool = try container.decode(Bool.self)
+				XCTAssertEqual(try container.decodeNil(), true)
+			}
+		}
+		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+	}
+
+	func testSingleValueContainer() {
+		struct Test: Codable, Equatable {
+			var arrayOfString = ["test"]
+			var arrayOfInt: [Int] = [0]
+			var arrayOfInt8: [Int8] = [0]
+			var arrayOfInt16: [Int16] = [0]
+			var arrayOfInt32: [Int32] = [0]
+			var arrayOfInt64: [Int64] = [0]
+			var arrayOfUint: [UInt] = [0]
+			var arrayOfUint8: [UInt8] = [0]
+			var arrayOfUint16: [UInt16] = [0]
+			var arrayOfUint32: [UInt32] = [0]
+			var arrayOfUint64: [UInt64] = [0]
+			var arrayOfDouble: [Double] = [0]
+			var arrayOfFloat: [Float] = [0]
+			var arrayOfBool = [false]
+			var arrayOfNull: [Bool?] = [nil]
+		}
+		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+	}
+
+	func testDecodingErrors() {
+		struct Test: Codable, CustomJSONCodable, Equatable {
+			var int = 0
+			init() {}
+			func encode(toCustomJSON encoder: Encoder) throws {
+				try encode(to: encoder)
+			}
+			init(fromCustomJSON decoder: Decoder) throws {
+				XCTAssertThrowsError(try decoder.unkeyedContainer())
+				let container = try decoder.container(keyedBy: CodingKeys.self)
+				XCTAssertThrowsError(try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .int))
+				XCTAssertThrowsError(try container.nestedUnkeyedContainer(forKey: .int))
+				XCTAssertThrowsError(try container.decode(String.self, forKey: .int))
+				try self.init(from: decoder)
+			}
+		}
+		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+	}
+}
+
+
 /* MARK: Intercept Library Tests */
 
 class InterceptTests: XCTestCase {
