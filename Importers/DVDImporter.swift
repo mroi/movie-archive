@@ -21,7 +21,7 @@ struct DVDImporter: ImportPass {
 
 		let info = try dvdReader.info()
 
-		let node = MediaTree.OpaqueNode(children: [], payload: info)
+		let node = MediaTree.OpaqueNode(payload: info)
 		return .opaque(node)
 	}
 }
