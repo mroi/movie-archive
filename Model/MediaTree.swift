@@ -439,14 +439,10 @@ private extension Decodable {
 
 /* MARK: Codable Conformance */
 
-extension MediaTree: Codable {
+extension MediaTree: Codable, CustomJSONCodable {
 	// custom encoding: encode single associated value directly, no positional key
 
-	private enum CodingKeys: String, CodingKey {
-		case asset, menu, link, collection, opaque
-	}
-
-	public func encode(to encoder: Encoder) throws {
+	public func encode(toCustomJSON encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		switch self {
 		case .asset(let assetNode):
@@ -462,7 +458,7 @@ extension MediaTree: Codable {
 		}
 	}
 
-	public init(from decoder: Decoder) throws {
+	public init(fromCustomJSON decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		guard container.allKeys.count == 1 else {
 			throw DecodingError.dataCorrupted(
@@ -490,19 +486,19 @@ extension MediaTree.AssetNode.Kind: Codable {}
 extension MediaTree.MenuNode: Codable {}
 extension MediaTree.LinkNode: Codable {}
 
-extension MediaTree.CollectionNode: Codable {
+extension MediaTree.CollectionNode: Codable, CustomJSONCodable {
 	// custom encoding: encode children directly without key
-	public func encode(to encoder: Encoder) throws {
+	public func encode(toCustomJSON encoder: Encoder) throws {
 		var container = encoder.singleValueContainer()
 		try container.encode(children)
 	}
-	public init(from decoder: Decoder) throws {
+	public init(fromCustomJSON decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
 		children = try container.decode(Array.self)
 	}
 }
 
-extension MediaTree.OpaqueNode: Codable {
+extension MediaTree.OpaqueNode: Codable, CustomJSONEmptyCollectionSkipping {
 	// custom encoding needed because of Any & Codable typed member
 	private enum CodingKeys: String, CodingKey {
 		case id, payload, children
@@ -521,13 +517,13 @@ extension MediaTree.OpaqueNode: Codable {
 	}
 }
 
-extension MediaTree.ID: Codable {
+extension MediaTree.ID: Codable, CustomJSONCodable {
 	// custom encoding: encode ID value directly
-	public func encode(to encoder: Encoder) throws {
+	public func encode(toCustomJSON encoder: Encoder) throws {
 		var container = encoder.singleValueContainer()
 		try container.encode(value)
 	}
-	public init(from decoder: Decoder) throws {
+	public init(fromCustomJSON decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
 		value = try container.decode(Int.self)
 	}

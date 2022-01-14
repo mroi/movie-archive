@@ -46,6 +46,31 @@ extension JSON {
 // TODO: add initializer/function for reading/writing compressed files
 
 
+/* MARK: Custom JSON Coding */
+
+/// Types can adopt this protocol to customize their JSON representation.
+///
+/// You can still delegate to the original, synthesized functions from `Codable`.
+/// Only the JSON encoding and decoding performed by the `JSON` type respects
+/// these customizations.
+public protocol CustomJSONCodable {
+	func encode(toCustomJSON encoder: Encoder) throws
+	init(fromCustomJSON decoder: Decoder) throws
+}
+
+/// Types can adopt this protocol to enable skipping of empty collections.
+///
+/// For brevity and JSON readability, some types can benefit from not storing
+/// empty collections. Instead, the entire key-value pair containing an empty
+/// collection is skipped. Only the JSON encoding and decoding performed by the
+/// `JSON` type respects these customizations.
+///
+/// This behavior is opt-in, since it can lead to ambiguities during decoding
+/// when applied universally. A good indicator for a type that should **not**
+/// adopt this behavior is inspection of `allKeys` in the decoding initializers.
+public protocol CustomJSONEmptyCollectionSkipping {}
+
+
 /* MARK: Custom JSON Encoder */
 
 /// A JSON encoder with customizable behavior.
@@ -54,6 +79,8 @@ extension JSON {
 /// `JSONEncoder`:
 /// * retain element order in dictionary collections
 /// * rendering of reasonably short collections in a single line
+/// * respect `CustomJSONCodable` to customize JSON encoding of types
+/// * respect `CustomJSONEmptyCollectionSkipping` to skip empty collections
 private struct CustomJSONEncoder {
 
 	/// Reference-typed storage box.
@@ -225,7 +252,32 @@ extension CustomJSONEncoder.KeyedDictionaryStorage: KeyedEncodingContainerProtoc
 
 	func encode<T: Encodable>(_ value: T, forKey key: Key) throws {
 		let storage = emptyElementStorage(forKey: key)
-		try value.encode(to: storage)
+		if let value = value as? CustomJSONCodable {
+			try value.encode(toCustomJSON: storage)
+		} else {
+			try value.encode(to: storage)
+		}
+		if value is CustomJSONEmptyCollectionSkipping {
+			let lastEncoded = store.last!.value.store
+			if case .dictionary(let dictionary) = lastEncoded {
+				// examine all key-value pairs of the last-encoded container
+				dictionary.store = dictionary.store.filter {
+					// skip any empty immediate sub-containers
+					switch $0.value.store {
+					case .dictionary(let container):
+						if container.store.isEmpty { return false }
+					case .array(let container):
+						if container.store.isEmpty { return false }
+					default:
+						break
+					}
+					return true
+				}
+			} else {
+				throw EncodingError.invalidValue(value, .init(codingPath: codingPath,
+					debugDescription: "empty collection skip requires keyed container"))
+			}
+		}
 	}
 
 	func encode(_ value: String, forKey key: Key) {
@@ -290,7 +342,11 @@ extension CustomJSONEncoder.ArrayStorage: UnkeyedEncodingContainer {
 
 	func encode<T: Encodable>(_ value: T) throws {
 		let storage = emptyElementStorage()
-		try value.encode(to: storage)
+		if let value = value as? CustomJSONCodable {
+			try value.encode(toCustomJSON: storage)
+		} else {
+			try value.encode(to: storage)
+		}
 	}
 
 	func encode(_ value: String) {
@@ -343,7 +399,11 @@ extension CustomJSONEncoder.ArrayStorage: UnkeyedEncodingContainer {
 extension CustomJSONEncoder.ElementStorage: SingleValueEncodingContainer {
 
 	func encode<T: Encodable>(_ value: T) throws {
-		try value.encode(to: self)
+		if let value = value as? CustomJSONCodable {
+			try value.encode(toCustomJSON: self)
+		} else {
+			try value.encode(to: self)
+		}
 	}
 
 	func encode(_ value: String) {
