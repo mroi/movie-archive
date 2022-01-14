@@ -41,3 +41,21 @@ public protocol AnyPass: CustomStringConvertible {}
 extension AnyPass {
 	public var description: String { String(describing: type(of: self)) }
 }
+
+extension AnyPass {
+	/// Wraps pass execution with generic logging and cancellation implementations.
+	///
+	/// Invocations of `process()`, `generate()`, and `consume()` should be
+	/// wrapped by this function.
+	///
+	/// - ToDo: Reconsider this design whenever function wrappers are added to Swift.
+	func run<Result>(_ body: () throws -> Result) rethrows -> Result {
+		// TODO: cancellation check
+
+		Transform.subject.send(.message(level: .debug, "starting \(self.description)"))
+		let result = try body()
+		Transform.subject.send(.message(level: .debug, "finished \(self.description)"))
+
+		return result
+	}
+}
