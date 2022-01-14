@@ -38,4 +38,6 @@ public struct Importer: ImportPass {
 	public func generate() throws -> MediaTree {
 		return try selectedImporter.generate()
 	}
+
+	public var description: String { String(describing: selectedImporter) }
 }

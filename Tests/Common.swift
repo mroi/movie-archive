@@ -1,6 +1,129 @@
 import XCTest
 
+@testable import MovieArchiveModel
 @testable import MovieArchiveConverter
+
+
+/* MARK: Model Tests */
+
+class ModelTests: XCTestCase {
+
+	func testMediaTreeEditing() {
+		var tree = MediaTree.collection(.init(children: [
+			.opaque(.init(payload: 42)),
+			.opaque(.init(payload: 23))
+		]))
+		XCTAssertEqual(tree.count, 3)
+		XCTAssertNotNil(tree.collection)
+		XCTAssertTrue(tree.contains(where: { $0.collection != nil }))
+		XCTAssertTrue(tree.contains(where: { $0.opaque?.payload as? Int == 42 }))
+		XCTAssertTrue(tree.contains(where: { $0.opaque?.payload as? Int == 23 }))
+		tree.withOpaque { $0.children.removeAll() }
+		XCTAssertEqual(tree.count, 3)  // nothing changed
+		tree.withCollection { $0.children.removeLast() }
+		XCTAssertEqual(tree.count, 2)
+		tree.modifyFirst(where: { $0.opaque?.payload as? Int == 42 }) {
+			$0.withOpaque { $0.payload = 17 }
+		}
+		XCTAssertEqual(tree.count, 2)
+		XCTAssertNotNil(tree.collection)
+		XCTAssertEqual(tree.collection?.children.count, 1)
+		XCTAssertEqual(tree.collection?.children.first?.opaque?.payload as? Int, 17)
+	}
+
+	func testMediaTreeJSON() {
+		struct TestPayload: Codable, CustomJSONEmptyCollectionSkipping {
+			var someOptional: Int? = 42
+			var noneOptional: Int? = nil
+			var emptyArray: [Int] = []
+			var emptyDictionary: [Int: Int] = [:]
+		}
+		let expectedOutput = """
+			{
+			    "collection" : [
+			        {
+			            "opaque" : {
+			                "id" : 0,
+			                "payload" : {
+			                    "TestPayload" : { "someOptional" : 42 }
+			                }
+			            }
+			        }
+			    ]
+			}
+
+			"""
+		
+		MediaTree.ID.allocator = MediaTree.ID.Allocator()
+		let tree = MediaTree.collection(.init(children: [
+			.opaque(.init(payload: TestPayload()))
+		]))
+
+		var json: JSON<MediaTree>!
+		XCTAssertNoThrow(json = try tree.json())
+		XCTAssertEqual(json.string(tabsAs: .spaces(width: 4)), expectedOutput)
+
+		XCTAssertThrowsError(try json.mediaTree()) {
+			XCTAssertNotNil($0 as? UnknownTypeError)
+		}
+
+		var decoded: MediaTree!
+		let types = [TestPayload.self, TestPayload.self]  // testing non-unique elements
+		XCTAssertNoThrow(decoded = try json.mediaTree(withTypes: types))
+		var json2: JSON<MediaTree>!
+		XCTAssertNoThrow(json2 = try decoded.json())
+		XCTAssertEqual(json.data, json2.data)
+	}
+
+	func testPassExecution() {
+		let importer = TestImporter(.opaque(.init(payload: 42))) {
+			Test.Identity()
+			Base.Loop {
+				Test.Countdown(3)
+				Test.Identity()
+			}
+			Base.If({ $0.allSatisfy { $0.opaque != nil } }) {
+				Test.Identity()
+			}
+			Base.While(Test.Countdown(4)) {
+				Test.Identity()
+			}
+		}
+		let exporter = NullExporter()
+		let transform = Transform(importer: importer, exporter: exporter)
+		XCTAssertEqual(transform.description, "TestImporter → NullExporter")
+
+		var outputs = 0
+		let subscription = transform.publisher
+			.mapError { _ in fatalError("unexpected publisher error") }
+			.sink { _ in outputs += 1 }
+		defer { subscription.cancel() }
+
+		transform.execute()
+
+		XCTAssertEqual(outputs, 42)
+	}
+
+	func testErrorToPublisher() {
+		let error = expectation(description: "an error should be published")
+
+		let importer = ThrowingImporter()
+		let exporter = NullExporter()
+		let transform = Transform(importer: importer, exporter: exporter)
+		XCTAssertEqual(transform.description, "ThrowingImporter → NullExporter")
+
+		var outputs = 0
+		let subscription = transform.publisher.sink(
+			receiveCompletion: { if case .failure = $0 { error.fulfill() } },
+			receiveValue: { _ in outputs += 1 })
+		defer { subscription.cancel() }
+
+		transform.execute()
+
+		XCTAssertEqual(outputs, 1)
+		waitForExpectations(timeout: .infinity)
+	}
+}
 
 
 /* MARK: Converter Tests */
@@ -190,6 +313,133 @@ class ConverterTests: XCTestCase {
 
 @objc private protocol ConverterTesting {
 	func doNothing()
+}
+
+
+/* MARK: JSON Coding Tests */
+
+class JSONCodingTests: XCTestCase {
+
+	func testKeyedContainer() {
+		struct Test: Codable, Equatable {
+			var string = "test"
+			var int: Int = 0
+			var int8: Int8 = 0
+			var int16: Int16 = 0
+			var int32: Int32 = 0
+			var int64: Int64 = 0
+			var uint: UInt = 0
+			var uint8: UInt8 = 0
+			var uint16: UInt16 = 0
+			var uint32: UInt32 = 0
+			var uint64: UInt64 = 0
+			var double: Double = 0
+			var float: Float = 0
+			var bool = false
+		}
+		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+	}
+
+	func testUnkeyedContainer() {
+		struct Test: Codable, CustomJSONCodable, Equatable {
+			var string = "test"
+			var int: Int = 0
+			var int8: Int8 = 0
+			var int16: Int16 = 0
+			var int32: Int32 = 0
+			var int64: Int64 = 0
+			var uint: UInt = 0
+			var uint8: UInt8 = 0
+			var uint16: UInt16 = 0
+			var uint32: UInt32 = 0
+			var uint64: UInt64 = 0
+			var double: Double = 0
+			var float: Float = 0
+			var bool = false
+			init() {}
+			func encode(toCustomJSON encoder: Encoder) throws {
+				var container = encoder.unkeyedContainer()
+				let _ = container.nestedContainer(keyedBy: CodingKeys.self)
+				let _ = container.nestedUnkeyedContainer()
+				try container.encode(string)
+				try container.encode(int)
+				try container.encode(int8)
+				try container.encode(int16)
+				try container.encode(int32)
+				try container.encode(int64)
+				try container.encode(uint)
+				try container.encode(uint8)
+				try container.encode(uint16)
+				try container.encode(uint32)
+				try container.encode(uint64)
+				try container.encode(double)
+				try container.encode(float)
+				try container.encode(bool)
+				try container.encodeNil()
+			}
+			init(fromCustomJSON decoder: Decoder) throws {
+				var container = try decoder.unkeyedContainer()
+				let _ = try container.nestedContainer(keyedBy: CodingKeys.self)
+				let _ = try container.nestedUnkeyedContainer()
+				string = try container.decode(String.self)
+				int = try container.decode(Int.self)
+				int8 = try container.decode(Int8.self)
+				int16 = try container.decode(Int16.self)
+				int32 = try container.decode(Int32.self)
+				int64 = try container.decode(Int64.self)
+				uint = try container.decode(UInt.self)
+				uint8 = try container.decode(UInt8.self)
+				uint16 = try container.decode(UInt16.self)
+				uint32 = try container.decode(UInt32.self)
+				uint64 = try container.decode(UInt64.self)
+				double = try container.decode(Double.self)
+				float = try container.decode(Float.self)
+				bool = try container.decode(Bool.self)
+				XCTAssertEqual(try container.decodeNil(), true)
+			}
+		}
+		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+	}
+
+	func testSingleValueContainer() {
+		struct Test: Codable, Equatable {
+			var arrayOfString = ["test"]
+			var arrayOfInt: [Int] = [0]
+			var arrayOfInt8: [Int8] = [0]
+			var arrayOfInt16: [Int16] = [0]
+			var arrayOfInt32: [Int32] = [0]
+			var arrayOfInt64: [Int64] = [0]
+			var arrayOfUint: [UInt] = [0]
+			var arrayOfUint8: [UInt8] = [0]
+			var arrayOfUint16: [UInt16] = [0]
+			var arrayOfUint32: [UInt32] = [0]
+			var arrayOfUint64: [UInt64] = [0]
+			var arrayOfDouble: [Double] = [0]
+			var arrayOfFloat: [Float] = [0]
+			var arrayOfBool = [false]
+			var arrayOfNull: [Bool?] = [nil]
+		}
+		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+	}
+
+	func testDecodingErrors() {
+		struct Test: Codable, CustomJSONCodable, Equatable {
+			var int = 0
+			init() {}
+			func encode(toCustomJSON encoder: Encoder) throws {
+				try encode(to: encoder)
+			}
+			init(fromCustomJSON decoder: Decoder) throws {
+				XCTAssertThrowsError(try decoder.unkeyedContainer())
+				let container = try decoder.container(keyedBy: CodingKeys.self)
+				XCTAssertThrowsError(try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .int))
+				XCTAssertThrowsError(try container.nestedUnkeyedContainer(forKey: .int))
+				XCTAssertThrowsError(try container.decode(String.self, forKey: .int))
+				try self.init(from: decoder)
+			}
+		}
+		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+	}
 }
 
 
