@@ -75,6 +75,35 @@ class ModelTests: XCTestCase {
 		XCTAssertEqual(json.data, json2.data)
 	}
 
+	func testPassExecution() {
+		let importer = TestImporter(.opaque(.init(payload: 42))) {
+			Test.Identity()
+			Base.Loop {
+				Test.Countdown(3)
+				Test.Identity()
+			}
+			Base.If({ $0.allSatisfy { $0.opaque != nil } }) {
+				Test.Identity()
+			}
+			Base.While(Test.Countdown(4)) {
+				Test.Identity()
+			}
+		}
+		let exporter = NullExporter()
+		let transform = Transform(importer: importer, exporter: exporter)
+		XCTAssertEqual(transform.description, "TestImporter → NullExporter")
+
+		var outputs = 0
+		let subscription = transform.publisher
+			.mapError { _ in fatalError("unexpected publisher error") }
+			.sink { _ in outputs += 1 }
+		defer { subscription.cancel() }
+
+		transform.execute()
+
+		XCTAssertEqual(outputs, 42)
+	}
+
 	func testErrorToPublisher() {
 		let error = expectation(description: "an error should be published")
 

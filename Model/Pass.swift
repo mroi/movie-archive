@@ -1,16 +1,59 @@
 import Foundation
 
 
+/* MARK: Pass Protocols */
+
 /// Operator to manipulate a `MediaTree`.
 ///
 /// A `Pass` takes a `MediaTree` as input and outputs a new one. It represents
 /// a single step of a tree transformation. Passes can be combined into larger
 /// operations recursively:
-/// * A pass can invoke itself recursively on child trees.
 /// * A pass can invoke a chain of sub-passes on the tree.
+/// * A pass can invoke itself recursively on child trees.
+///
+///
+/// To get helpful default implementations of these recursions, a pass can
+/// adopt the `SubPassRecursing` or `TreeRecursing` protocols. Specific pass
+/// behavior is introduced by selectively replacing the default implementations.
+///
+/// - SeeAlso: `SubPassRecursing`, `TreeRecursing`, `ImportPass`, `ExportPass`
 public protocol Pass: AnyPass {
+
+	/// Ask the pass to process a `MediaTree`.
+	mutating func process(_ mediaTree: MediaTree) throws -> MediaTree
 }
 
+/// Manipulate a `MediaTree` by sub-pass recursion.
+///
+/// The default implementation iteratively processes the media tree by invoking
+/// all sub-passes in array order.
+public protocol SubPassRecursing {
+
+	/// The sub-passes invoked as part of the execution of this pass.
+	var subPasses: [Pass] { get }
+
+	/// Have all sub-passes process the `MediaTree`.
+	///
+	/// - Important: Replacing the default implementation is not recommended,
+	/// because it performs logging and cancellation for the executed sub-passes.
+	mutating func process(bySubPasses mediaTree: MediaTree) throws -> MediaTree
+}
+
+/// Manipulate a `MediaTree` by tree recursion.
+///
+/// The default implementation recursively traverses the media tree and invokes
+/// `process(singleNode:)` on each node.
+public protocol TreeRecursing {
+
+	/// Have the pass recurse over a `MediaTree`.
+	///
+	/// Recursion is depth-first. The default implementation processes the
+	/// current node before performing recursion to the child nodes.
+	mutating func process(byTreeRecursion mediaTree: MediaTree) throws -> MediaTree
+
+	/// Have the pass process a single `MediaTree` node.
+	mutating func process(singleNode mediaTree: MediaTree) throws -> MediaTree
+}
 
 /// A special pass that receives no input.
 public protocol ImportPass: AnyPass {
@@ -36,6 +79,27 @@ public protocol ExportPass: AnyPass {
 public protocol AnyPass: CustomStringConvertible {}
 
 
+/* MARK: Sub-Pass Builder */
+
+/// A result builder for an array of sub-passes
+@resultBuilder
+public enum SubPassBuilder {
+	public static func buildExpression(_ element: Pass) -> [Pass] { [element] }
+	public static func buildOptional(_ maybe: [Pass]?) -> [Pass] { maybe ?? [] }
+	public static func buildEither(first: [Pass]) -> [Pass] { first }
+	public static func buildEither(second: [Pass]) -> [Pass] { second }
+	public static func buildBlock(_ passes: [Pass]...) -> [Pass] {
+		Array(passes.joined())
+	}
+	public static func buildArray(_ iterations: [[Pass]]) -> [Pass] {
+		Array(iterations.joined())
+	}
+}
+
+/// A namespace for pass types that help compose larger pass graphs.
+public enum Base {}
+
+
 /* MARK: Default Implementations */
 
 extension AnyPass {
@@ -56,6 +120,41 @@ extension AnyPass {
 		let result = try body()
 		Transform.subject.send(.message(level: .debug, "finished \(self.description)"))
 
+		return result
+	}
+}
+
+public extension Pass where Self: SubPassRecursing {
+	func process(_ mediaTree: MediaTree) throws -> MediaTree {
+		return try process(bySubPasses: mediaTree)
+	}
+}
+
+public extension Pass where Self: TreeRecursing {
+	mutating func process(_ mediaTree: MediaTree) throws -> MediaTree {
+		return try process(byTreeRecursion: mediaTree)
+	}
+}
+
+public extension SubPassRecursing {
+	func process(bySubPasses mediaTree: MediaTree) throws -> MediaTree {
+		var result = mediaTree
+		for var pass in subPasses {
+			result = try pass.run { try pass.process(result) }
+		}
+		return result
+	}
+}
+
+public extension TreeRecursing {
+	mutating func process(byTreeRecursion mediaTree: MediaTree) throws -> MediaTree {
+		var result = try process(singleNode: mediaTree)
+		let childTrees = result.childTrees
+		result.childTrees = Array()
+		result.childTrees.reserveCapacity(childTrees.count)
+		for childTree in childTrees {
+			result.childTrees.append(try process(byTreeRecursion: childTree))
+		}
 		return result
 	}
 }
