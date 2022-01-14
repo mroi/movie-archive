@@ -31,8 +31,8 @@ public struct Exporter: ExportPass {
 		}
 	}
 
-	public func consume(_ mediaTree: MediaTree) throws {
-		try selectedExporter.consume(mediaTree)
+	public func consume(_ mediaTree: MediaTree) async throws {
+		try await selectedExporter.consume(mediaTree)
 	}
 
 	public var description: String { String(describing: selectedExporter) }

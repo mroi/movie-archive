@@ -35,8 +35,8 @@ public final class DVDReader: ConverterClient<ConverterDVDReader> {
 	///
 	/// Information is collected by reading the IFO files and menu NAV packets
 	/// on the DVD.
-	public func info() throws -> DVDInfo {
-		return try withConnectionErrorHandling { done in
+	public func info() async throws -> DVDInfo {
+		return try await withConnectionErrorHandling { done in
 
 			remote.readInfo(readerStateID) { result in
 				do {

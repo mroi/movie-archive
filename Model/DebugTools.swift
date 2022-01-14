@@ -15,8 +15,8 @@ struct TestImporter: ImportPass, SubPassRecursing {
 	init(source: URL = URL(fileURLWithPath: ".")) {
 		self.init(.collection(.init(children: [])))
 	}
-	func generate() throws -> MediaTree {
-		return try process(bySubPasses: mediaTree)
+	func generate() async throws -> MediaTree {
+		return try await process(bySubPasses: mediaTree)
 	}
 }
 

@@ -25,7 +25,7 @@ class DVDImporterTests: XCTestCase {
 	/// The `Bundle` of this test class, can be used to access test resources.
 	private var testBundle: Bundle { Bundle(for: type(of: self)) }
 
-	func testReaderInitDeinit() {
+	func testReaderInitDeinit() async {
 		let openCall = expectation(description: "open should be called")
 		let closeCall = expectation(description: "close should be called")
 
@@ -49,15 +49,15 @@ class DVDImporterTests: XCTestCase {
 			}
 		}
 
-		try! ConverterClient.withMocks(proxy: ReaderMock(withExpectations: openCall, closeCall)) {
+		try! await ConverterClient.withMocks(proxy: ReaderMock(withExpectations: openCall, closeCall)) {
 			let source = URL(fileURLWithPath: ".")
 			XCTAssertNoThrow(try DVDReader(source: source))
 		}
 
-		waitForExpectations(timeout: .infinity)
+		await waitForExpectations(timeout: .infinity)
 	}
 
-	func testInfoError() {
+	func testInfoError() async {
 		let readCall = expectation(description: "read info should be called")
 
 		class ReaderMock: ConverterDVDReader {
@@ -76,20 +76,20 @@ class DVDImporterTests: XCTestCase {
 			}
 		}
 
-		try! ConverterClient.withMocks(proxy: ReaderMock(expectations: readCall)) {
+		try! await ConverterClient.withMocks(proxy: ReaderMock(expectations: readCall)) {
 			let source = URL(fileURLWithPath: ".")
 			var reader: DVDReader?
 			XCTAssertNoThrow(reader = try DVDReader(source: source))
 			XCTAssertNotNil(reader)
-			XCTAssertThrowsError(try reader!.info()) {
+			await XCTAssertThrowsErrorAsync(try await reader!.info()) {
 				XCTAssertEqual($0 as! ConverterError, .sourceReadError)
 			}
 		}
 
-		waitForExpectations(timeout: .infinity)
+		await waitForExpectations(timeout: .infinity)
 	}
 
-	func testMinimalDVD() {
+	func testMinimalDVD() async {
 		let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
 		var importer: Importer?
 		XCTAssertNoThrow(importer = try Importer(source: iso))
@@ -103,8 +103,9 @@ class DVDImporterTests: XCTestCase {
 			.sink { _ in outputs += 1 }
 		defer { subscription.cancel() }
 
-		transform.execute()
+		await transform.execute()
 
+		await XCTAssertEqualAsync(await transform.state, .success)
 		XCTAssertEqual(transform.description, "DVDImporter → NullExporter")
 		XCTAssertEqual(outputs, 5)
 	}

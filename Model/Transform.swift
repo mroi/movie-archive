@@ -19,12 +19,21 @@ import os
 ///
 /// - Remark: Typical clients use a `Transform` together with an appropriate
 ///   importer and exporter as the entry point into model functionality.
-public class Transform {
+public actor Transform {
 
 	let importer: ImportPass
 	let exporter: ExportPass
 
 	let subject = Subject(logging: true)
+	var state = State.initial
+
+	/// Internal state of the transform.
+	///
+	/// A `Transform` can only be executed once. Therefore, the only valid state
+	/// transitions are: `initial` → `running`; `running` → `success` | `error`
+	enum State {
+		case initial, running, success, error
+	}
 
 	/// Creates an instance combining the provided importer and exporter.
 	public init(importer: ImportPass, exporter: ExportPass) {
@@ -37,7 +46,7 @@ public class Transform {
 	/// - Important: It is undefined on which thread or queue clients receive
 	///   values from the publisher. Do not assume the main thread or even the
 	///   same thread between values.
-	public var publisher: Publisher {
+	nonisolated public var publisher: Publisher {
 		subject.eraseToAnyPublisher()
 	}
 
@@ -46,30 +55,63 @@ public class Transform {
 	/// This function is asynchronous, so any long-running work will yield to
 	/// the caller. For status updates and interacting with the transform like
 	/// configuring options, you must subscribe to the `publisher` property.
-	public func execute() {  // TODO: convert to async function
-		// reference cycle keeps the transform alive until execution is finished
-		Transform.current = self
-		defer { Transform.current = nil }
+	public func execute() async {
+		precondition(state == .initial, "transform already executed")
+		state = .running
 
-		// TODO: subscribe to publisher to cancel transform on failure
+		// remember when an error is issued asynchronously
+		var errorTask: Task<Void, Never>?
 
-		do {
-			// the actual execution of importer and exporter
-			let mediaTree = try importer.run {
-				try importer.generate()
+		// make ourselves available to passes executing within this transform
+		await Self.$current.withValue(self) {
+
+			// update transform state on error
+			let subscription = publisher.sink(
+				receiveCompletion: { [self] in
+					if case .failure = $0 {
+						errorTask = Task(priority: .high) { await errorState() }
+					}
+				},
+				receiveValue: { _ in })
+			defer { subscription.cancel() }
+
+			// install a fresh allocator for media tree node IDs
+			await MediaTree.ID.$allocator.withValue(MediaTree.ID.Allocator()) {
+
+				do {
+					// the actual execution of importer and exporter
+					let mediaTree = try await importer.run {
+						try await importer.generate()
+					}
+					try await exporter.run {
+						try await exporter.consume(mediaTree)
+					}
+					subject.send(completion: .finished)
+				} catch {
+					subject.send(completion: .failure(error))
+				}
 			}
-			try exporter.run {
-				try exporter.consume(mediaTree)
-			}
-			subject.send(completion: .finished)
-		} catch {
-			subject.send(completion: .failure(error))
 		}
+
+		// wait for any error state change to manifest
+		let _ = await errorTask?.result
+
+		if state == .running { state = .success }
+		assert(state == .success || state == .error)
 	}
 }
 
 extension Transform: CustomStringConvertible {
-	public var description: String { "\(importer) → \(exporter)" }
+	nonisolated public var description: String { "\(importer) → \(exporter)" }
+}
+
+extension Transform {
+
+	/// Indicate an error in the internal state
+	///
+	/// - ToDo: Replace with `async` property setter once support for effectful
+	///   mutable properties is available.
+	private func errorState() { state = .error }
 }
 
 
@@ -101,7 +143,20 @@ extension Transform {
 	///
 	/// - Returns: The current `Transform` when called from a `Pass` running as
 	///   part of the transform. `nil` for callers from other contexts.
-	private static var current: Transform?  // TODO: change to @TaskLocal property
+	@TaskLocal
+	private static var current: Transform?
+
+	/// The internal state of the currently executing transform.
+	///
+	/// A `Pass` can check the internal state for an error condition. If an
+	/// error is indicated, the pass can cancel the task it is running on.
+	///
+	/// - Returns: The current transform `State` when called from a `Pass`
+	///   running as part of the transform. `nil` for callers from other
+	///   contexts.
+	static var state: State? {
+		get async { await self.current?.state }
+	}
 
 	/// The subject of the currently executing transform.
 	///

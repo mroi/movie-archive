@@ -35,8 +35,8 @@ public struct Importer: ImportPass {
 		throw Error.sourceNotSupported
 	}
 
-	public func generate() throws -> MediaTree {
-		return try selectedImporter.generate()
+	public func generate() async throws -> MediaTree {
+		return try await selectedImporter.generate()
 	}
 
 	public var description: String { String(describing: selectedImporter) }
