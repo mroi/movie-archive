@@ -1,4 +1,4 @@
-import Dispatch
+import Foundation
 
 
 /* MARK: Node Types and Properties */
@@ -140,10 +140,10 @@ extension MediaTree {
 
 		class Allocator: @unchecked Sendable {
 			private var counter = 0
-			private let lock = DispatchSemaphore(value: 1)
+			private let mutex = NSLock()
 			fileprivate func next() -> Int {
-				lock.wait()
-				defer { lock.signal() }
+				mutex.lock()
+				defer { mutex.unlock() }
 				defer { counter += 1 }
 				return counter
 			}
