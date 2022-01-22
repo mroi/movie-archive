@@ -1,4 +1,6 @@
 import Foundation
+import System
+import zlib
 
 
 /* MARK: JSON Data */
@@ -42,7 +44,123 @@ extension JSON {
 	}
 }
 
-// TODO: add initializer/function for reading/writing compressed files
+extension JSON {
+
+	/// Writes the JSON data to a compressed file.
+	///
+	/// The file extension of `.json.gz` is appended to the URL automatically.
+	///
+	/// - Throws: `Errno` in case of file system errors.
+	public func write(to url: URL) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			let task = Task {
+				let file = try FileDescriptor.open(JSON.path(from: url), .writeOnly,
+				                                   options: [ .create, .truncate ],
+				                                   permissions: FilePermissions(rawValue: 0o644))
+				defer { try? file.close() }
+
+				var stream = z_stream()
+				let enableGzipHeader: Int32 = 16
+				var result = deflateInit2_(&stream, Z_BEST_COMPRESSION, Z_DEFLATED,
+				                           enableGzipHeader + MAX_WBITS, MAX_MEM_LEVEL,
+				                           Z_DEFAULT_STRATEGY, ZLIB_VERSION,
+				                           Int32(MemoryLayout<z_stream>.size))
+				assert(result == Z_OK)
+				defer { deflateEnd(&stream) }
+
+				let output = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: 256 * 1024)
+				defer { output.deallocate() }
+
+				try data.withUnsafeBytes { bytes in
+					let pointer = bytes.baseAddress?.assumingMemoryBound(to: UInt8.self)
+					stream.next_in = pointer.map(UnsafeMutablePointer.init)
+					stream.avail_in = UInt32(bytes.count)
+
+					repeat {
+						stream.next_out = output.baseAddress
+						stream.avail_out = UInt32(output.count)
+
+						let finish = stream.avail_in > 0 ? Z_NO_FLUSH : Z_FINISH
+						result = deflate(&stream, finish)
+						assert(result == Z_OK || result == Z_STREAM_END)
+
+						let produced = output.count - Int(stream.avail_out)
+						try file.writeAll(output.prefix(produced))
+					} while result != Z_STREAM_END
+				}
+				assert(stream.avail_in == 0)  // all input has been consumed
+			}
+			Task { continuation.resume(with: await task.result) }
+		}
+	}
+
+	/// Reads JSON data from a compressed file.
+	///
+	/// The file extension of `.json.gz` is appended to the URL automatically.
+	///
+	/// - Throws: `Errno` in case of file system errors;
+	///   `Errno.badFileTypeOrFormat` if the compressed file is malformed.
+	init(contentsOf url: URL) async throws {
+		data = try await withCheckedThrowingContinuation { continuation in
+			let task = Task {
+				let file = try FileDescriptor.open(JSON.path(from: url), .readOnly)
+				defer { try? file.close() }
+
+				var stream = z_stream()
+				let enableGzipHeader: Int32 = 32
+				var result = inflateInit2_(&stream, enableGzipHeader + MAX_WBITS,
+				                           ZLIB_VERSION, Int32(MemoryLayout<z_stream>.size))
+				assert(result == Z_OK)
+				defer { inflateEnd(&stream) }
+
+				let input = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: 256 * 1024)
+				defer { input.deallocate() }
+				let output = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: 256 * 1024)
+				defer { output.deallocate() }
+
+				var data = Data()
+				repeat {
+					let readCount = try file.read(into: UnsafeMutableRawBufferPointer(input))
+					stream.next_in = input.baseAddress
+					stream.avail_in = UInt32(readCount)
+
+					repeat {
+						stream.next_out = output.baseAddress
+						stream.avail_out = UInt32(output.count)
+
+						result = inflate(&stream, Z_NO_FLUSH)
+						guard result == Z_OK || result == Z_STREAM_END else {
+							throw Errno.badFileTypeOrFormat
+						}
+
+						let produced = output.count - Int(stream.avail_out)
+						data.append(contentsOf: output.prefix(produced))
+					} while stream.avail_out == 0
+				} while result != Z_STREAM_END
+
+				return data
+			}
+			Task { continuation.resume(with: await task.result) }
+		}
+	}
+
+	static private func path(from url: URL) throws -> FilePath {
+		// ensure enclosing directory exists
+		let directory = url.deletingLastPathComponent()
+		try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+
+		// ensure file extensions
+		var url = url
+		if url.pathExtension == "gz" { url.deletePathExtension() }
+		if url.pathExtension == "json" { url.deletePathExtension() }
+		url.appendPathExtension("json")
+		url.appendPathExtension("gz")
+
+		// convert to FilePath
+		guard let path = FilePath(url) else { throw Errno.noSuchFileOrDirectory }
+		return path
+	}
+}
 
 
 /* MARK: Custom JSON Coding */
