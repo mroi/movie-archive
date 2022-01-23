@@ -127,11 +127,14 @@ class ModelTests: XCTestCase {
 	}
 
 	func testClientInteraction() async {
-		let importer = ThrowingImporter()
+		let importer = TestImporter(.opaque(.init(payload: 42))) {
+			Base.MediaTreeInteraction()
+		}
 		let exporter = NullExporter()
 		let transform = Transform(importer: importer, exporter: exporter)
-		XCTAssertEqual(transform.description, "ThrowingImporter → NullExporter")
+		XCTAssertEqual(transform.description, "TestImporter → NullExporter")
 
+		var mediaTree: MediaTree?
 		let subscription = transform.publisher
 			.mapError { _ in fatalError("unexpected publisher error") }
 			.sink {
@@ -142,17 +145,15 @@ class ModelTests: XCTestCase {
 						interaction.value = .collection(.init(children: []))
 						interaction.finish()
 					} else {
-						XCTFail("unexpected media tree")
+						mediaTree = interaction.value
 					}
-				} else {
-					XCTFail("unexpected value")
 				}
 			}
 		defer { subscription.cancel() }
 
-		var mediaTree = MediaTree.opaque(.init(payload: 42))
-		await transform.clientInteraction(&mediaTree) { .mediaTree($0) }
-		XCTAssertNotNil(mediaTree.collection)
+		await transform.execute()
+
+		XCTAssertNotNil(mediaTree?.collection)
 	}
 
 	func testErrorToPublisher() async {
