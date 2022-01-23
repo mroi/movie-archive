@@ -319,6 +319,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4C932866276686A200E65B18 /* Build configuration list for PBXNativeTarget "Tests" */;
 			buildPhases = (
+				4CC8ED4E279DB9F600226566 /* Create Resource Symlinks */,
 				4C93285C276686A200E65B18 /* Sources */,
 				4C93285D276686A200E65B18 /* Frameworks */,
 				4C93287027668BD000E65B18 /* Copy Resources Directory */,
@@ -485,6 +486,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# copy intercept library\nmkdir -p \"$(dirname \"$SCRIPT_OUTPUT_FILE_0\")\"\ncp -p \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n\n# patch XPC converter to replace libSystem with intercept library\nif otool -L \"$SCRIPT_INPUT_FILE_1\" | fgrep -q libSystem ; then\n\tcodesign --remove-signature \"$SCRIPT_INPUT_FILE_1\"\n\tinstall_name_tool -change /usr/lib/libSystem.B.dylib \"@executable_path/../Frameworks/$(basename \"$SCRIPT_OUTPUT_FILE_0\")\" \"$SCRIPT_OUTPUT_FILE_1\"\nfi\n";
+		};
+		4CC8ED4E279DB9F600226566 /* Create Resource Symlinks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Resource Symlinks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(PROJECT_DIR)/Tests/Resources/DVD",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if ! test -e \"$SCRIPT_OUTPUT_FILE_0\" ; then\n\tmkdir -p \"$HOME/Library/Containers/de.reactorcontrol.movie-archive.macos/Data/Documents/DVD\"\n\tln -sf \"$HOME/Library/Containers/de.reactorcontrol.movie-archive.macos/Data/Documents/DVD\" \"$SCRIPT_OUTPUT_FILE_0\"\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
