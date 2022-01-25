@@ -8,9 +8,9 @@
 	<array>
 		<string>/</string>
 	</array>
-	<key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
+	<key>com.apple.security.temporary-exception.files.absolute-path.read-write</key>
 	<array>
-		<string>/Library/Containers/de.reactorcontrol.movie-archive.macos.tests.xctrunner/</string>
+		<string>/private/var/folders/</string>
 	</array>
 </dict>
 </plist>
