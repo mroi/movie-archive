@@ -45,7 +45,7 @@ class DVDImporterTests: XCTestCase {
 				closeCall.fulfill()
 			}
 			func readInfo(_: UUID, completionHandler: @escaping (Data?) -> Void) {
-				XCTFail()
+				XCTFail("unexpected read")
 			}
 		}
 
