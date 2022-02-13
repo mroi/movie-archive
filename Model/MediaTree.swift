@@ -351,10 +351,10 @@ private extension Array {
 private struct ProtocolTypeCoding: Equatable, Hashable, CodingKey {
 	var stringValue: String
 	var intValue: Int? = nil
-	init?(stringValue: String) {
+	init(stringValue: String) {
 		self.stringValue = stringValue
 	}
-	init?(intValue: Int) {
+	init(intValue: Int) {
 		self.stringValue = String(intValue)
 	}
 	init(type: Encodable.Type) {
