@@ -14,7 +14,7 @@ public struct DVDInfo: Codable, Sendable {
 	public let discSide: UInt8
 
 	public let start: ProgramChain?
-	public let topLevelMenus: Domain
+	public let topLevelMenus: Domain?
 	public let titleSets: [Index<TitleSet>: TitleSet]
 
 	public init(specification: Version,
@@ -26,7 +26,7 @@ public struct DVDInfo: Codable, Sendable {
 	            volumeIndex: UInt16,
 	            discSide: UInt8,
 	            start: ProgramChain?,
-	            topLevelMenus: Domain,
+	            topLevelMenus: Domain?,
 	            titleSets: [Index<TitleSet>: TitleSet]) {
 		self.specification = specification
 		self.category = category
@@ -85,15 +85,15 @@ public struct DVDInfo: Codable, Sendable {
 	/// content with common attributes, grouped in one menu and one title domain.
 	public struct TitleSet: Codable, Sendable {
 		public let titles: [Index<Title>: Title]
-		public let menus: Domain
-		public let content: Domain
+		public let menus: Domain?
+		public let content: Domain?
 
 		public let specification: Version
 		public let category: UInt32
 
 		public init(titles: [Index<Title>: Title],
-		            menus: Domain,
-		            content: Domain,
+		            menus: Domain?,
+		            content: Domain?,
 		            specification: Version,
 		            category: UInt32) {
 			self.titles = titles
@@ -904,7 +904,7 @@ extension DVDInfo.Reference<DVDInfo.ProgramChain, DVDInfo.ProgramChain.Color> {
 
 extension DVDInfo.TitleSet {
 	public subscript(resolve reference: DVDInfo.Reference<Self, DVDInfo.ProgramChain.Program>) -> DVDInfo.ProgramChain.Program? {
-		return content.programChains[reference.programChain!]?.programs[reference.program!]
+		return content?.programChains[reference.programChain!]?.programs[reference.program!]
 	}
 }
 extension DVDInfo.Domain {
