@@ -199,6 +199,73 @@ extension CustomJSONEmptyCollectionSkipping {
 	}
 }
 
+/// Types can adopt this protocol to enable more readable dictionary coding.
+///
+/// By default, dictionaries are encoded to JSON arrays that alternate between
+/// storing a key and a value. This is not very intuitive to read. However, if
+/// the dictionary’s key type adopts this protocol, it declares that it can
+/// encode and decode itself against a string. Strings can be used directly as
+/// JSON keys, allowing a readable JSON representation of the dictionary.
+///
+/// Furthermore, the same string representation can be used to encode all
+/// instances of the adopting type. All that is needed is to additionally
+/// declare `CustomJSONCodable` conformance.
+///
+/// - Remark: A similar dictionary coding customization could be achieved with
+///   the standard library’s `CodingKeyRepresentable` protocol. However,
+///   adopting this protocol requires more boilerplate (a `CodingKey` type) and
+///   changes the dictionary representation app-wide, not just for custom JSON.
+public protocol CustomJSONStringKeyRepresentable: Comparable {
+	var stringValue: String { get }
+	init?(stringValue: String)
+}
+
+extension CustomJSONStringKeyRepresentable {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		var container = encoder.singleValueContainer()
+		try container.encode(stringValue)
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		guard let result = Self(stringValue: try container.decode(String.self)) else {
+			throw DecodingError.typeMismatch(Self.self, .init(codingPath: container.codingPath,
+				debugDescription: "value of type \(Self.self) expected"))
+		}
+		self = result
+	}
+}
+
+extension Dictionary: CustomJSONCodable where Key: CustomJSONStringKeyRepresentable, Value: Codable {
+	// custom encoding: string-representable keys as direct string keys
+	struct StringKeys: CodingKey {
+		let stringValue: String
+		var intValue: Int? { Int(stringValue) }
+		init(stringValue: String) { self.stringValue = stringValue }
+		init(intValue: Int) { self.stringValue = String(intValue) }
+	}
+
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: StringKeys.self)
+		let sortedKeys = keys.sorted()
+		for key in sortedKeys {
+			try container.encode(self[key]!, forKey: StringKeys(stringValue: key.stringValue))
+		}
+	}
+
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: StringKeys.self)
+		self.init(minimumCapacity: container.allKeys.count)
+		for key in container.allKeys {
+			guard let index = Key(stringValue: key.stringValue) else {
+				throw DecodingError.typeMismatch(Key.self,
+					.init(codingPath: container.codingPath + [key],
+						debugDescription: "key of type \(Key.self) expected"))
+			}
+			self[index] = try container.decode(Value.self, forKey: key)
+		}
+	}
+}
+
 
 /* MARK: Custom JSON Encoder */
 
