@@ -175,6 +175,24 @@ public protocol CustomJSONCodable {
 	init(fromCustomJSON decoder: any Decoder) throws
 }
 
+extension Array<UInt8>: CustomJSONCodable {
+	// custom encoding: byte data as base64 string
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		var container = encoder.singleValueContainer()
+		let base64 = Data(self).base64EncodedString()
+		try container.encode(base64)
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		let base64 = try container.decode(String.self)
+		guard let data = Data(base64Encoded: base64) else {
+			throw DecodingError.dataCorruptedError(in: container,
+				debugDescription: "illegal base64 string")
+		}
+		self.init(data)
+	}
+}
+
 
 /// Types can adopt this protocol to enable skipping of empty collections.
 ///
