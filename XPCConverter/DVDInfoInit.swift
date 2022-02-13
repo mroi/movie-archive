@@ -163,23 +163,25 @@ private extension DVDInfo.TitleSet.Title.Part {
 /* MARK: Domain */
 
 private extension DVDInfo.Domain {
-	init(_ pgcUt: pgci_ut_t?, _ vmgiMat: vmgi_mat_t, _ nav: DVDData.NAV.Domain?) {
+	init?(_ pgcUt: pgci_ut_t?, _ vmgiMat: vmgi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let pgcs = Self.convert(pgcsPerLanguage: pgcUt)
+		guard pgcs.count > 0 else { return nil }
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
 		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vmgiMat.vmgm_video_attr),
 		          audio: vmgiMat.nr_of_vmgm_audio_streams == 0 ? [:] : [0: AudioAttributes(vmgiMat.vmgm_audio_attr)],
 		          subpicture: vmgiMat.nr_of_vmgm_subp_streams == 0 ? [:] : [0: SubpictureAttributes(vmgiMat.vmgm_subp_attr)])
 	}
-	init(_ pgcUt: pgci_ut_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
+	init?(_ pgcUt: pgci_ut_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let pgcs = Self.convert(pgcsPerLanguage: pgcUt)
+		guard pgcs.count > 0 else { return nil }
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
 		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vtsiMat.vtsm_video_attr),
 		          audio: vtsiMat.nr_of_vtsm_audio_streams == 0 ? [:] : [0: AudioAttributes(vtsiMat.vtsm_audio_attr)],
 		          subpicture: vtsiMat.nr_of_vtsm_subp_streams == 0 ? [:] : [0: SubpictureAttributes(vtsiMat.vtsm_subp_attr)])
 	}
-	init(_ pgcIt: pgcit_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
+	init?(_ pgcIt: pgcit_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let audioChannel = Array<audio_attr_t>(tuple: vtsiMat.vts_audio_attr)
 			.prefix(upTo: Int(vtsiMat.nr_of_vts_audio_streams))
 		let multichannel = Array<multichannel_ext_t>(tuple: vtsiMat.vts_mu_audio_attr)
@@ -190,6 +192,7 @@ private extension DVDInfo.Domain {
 			.map(SubpictureAttributes.init)
 
 		let pgcs = Self.convert(pgcs: pgcIt)
+		guard pgcs.count > 0 else { return nil }
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
 		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vtsiMat.vts_video_attr),
