@@ -69,5 +69,8 @@ jobs:
     - name: Xcode test action
       run: xcodebuild test -scheme "Movie Archive"
 
+    - name: Xcode docbuild action
+      run: xcodebuild docbuild -scheme "Movie Archive"
+
     - name: Remove codesigning certificate
       run: security delete-keychain codesign.keychain
