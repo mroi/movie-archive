@@ -38,8 +38,8 @@ extension DVDImporter: SubPassRecursing {
 
 	@SubPassBuilder
 	var subPasses: [any Pass] {
-		// TODO: DVD import passes
-		do {}
+		// TODO: gradually amend with passes until manual editing can be removed
+		Base.MediaTreeInteraction()
 	}
 }
 
