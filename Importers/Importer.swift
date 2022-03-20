@@ -16,7 +16,7 @@ import enum MovieArchiveConverter.ConverterError
 public struct Importer: ImportPass {
 
 	private let availableImporters = [ DVDImporter.self ]
-	private let selectedImporter: ImportPass
+	private let selectedImporter: any ImportPass
 
 	/// Failure cases for importer initialization.
 	public typealias Error = ConverterError

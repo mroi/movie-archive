@@ -21,8 +21,8 @@ import os
 ///   importer and exporter as the entry point into model functionality.
 public actor Transform {
 
-	let importer: ImportPass
-	let exporter: ExportPass
+	let importer: any ImportPass
+	let exporter: any ExportPass
 
 	let subject = Subject(logging: true)
 	var state = State.initial
@@ -36,7 +36,7 @@ public actor Transform {
 	}
 
 	/// Creates an instance combining the provided importer and exporter.
-	public init(importer: ImportPass, exporter: ExportPass) {
+	public init(importer: any ImportPass, exporter: any ExportPass) {
 		self.importer = importer
 		self.exporter = exporter
 	}
@@ -46,6 +46,8 @@ public actor Transform {
 	/// - Important: It is undefined on which thread or queue clients receive
 	///   values from the publisher. Do not assume the main thread or even the
 	///   same thread between values.
+	/// - ToDo: Observe the development around Swift’s `AsyncSequence` and
+	///   consider migrating away from `Combine` at some point.
 	nonisolated public var publisher: Publisher {
 		subject.eraseToAnyPublisher()
 	}
@@ -67,9 +69,9 @@ public actor Transform {
 
 			// update transform state on error
 			let subscription = publisher.sink(
-				receiveCompletion: { [self] in
+				receiveCompletion: {
 					if case .failure = $0 {
-						errorTask = Task(priority: .high) { await errorState() }
+						errorTask = Task.detached(priority: .high) { await self.errorState() }
 					}
 				},
 				receiveValue: { _ in })
@@ -275,7 +277,7 @@ extension Transform {
 		public func send(completion: Subscribers.Completion<Failure>) {
 			wrapped.send(completion: completion)
 		}
-		public func send(subscription: Subscription) {
+		public func send(subscription: any Subscription) {
 			wrapped.send(subscription: subscription)
 		}
 		public func receive<Downstream: Subscriber>(subscriber: Downstream) where Downstream.Input == Output, Downstream.Failure == Failure {
@@ -302,7 +304,7 @@ extension Transform {
 #endif
 		}
 
-		func receive(subscription: Subscription) {
+		func receive(subscription: any Subscription) {
 			subscription.request(.unlimited)
 		}
 

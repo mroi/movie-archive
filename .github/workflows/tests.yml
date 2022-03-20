@@ -13,9 +13,9 @@ on:
 jobs:
   check:
     name: Analyze and test actions
-    runs-on: macOS-11
+    runs-on: macos-12
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.3.app/Contents/Developer
 
     steps:
     - name: Checkout repository
@@ -66,10 +66,11 @@ jobs:
     - name: Xcode analyze action
       run: xcodebuild analyze -scheme "Movie Archive"
 
-# disabled until macOS 12 Monterey runners become available
-# https://github.com/github/roadmap/issues/240
-#    - name: Xcode test action
-#      run: xcodebuild test -scheme "Movie Archive"
+    - name: Xcode test action
+      run: xcodebuild test -scheme "Movie Archive"
+
+    - name: Xcode docbuild action
+      run: xcodebuild docbuild -scheme "Movie Archive"
 
     - name: Remove codesigning certificate
       run: security delete-keychain codesign.keychain

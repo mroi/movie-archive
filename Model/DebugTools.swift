@@ -7,8 +7,8 @@ import os
 /// Test importer processing a given media tree with sub-passes.
 struct TestImporter: ImportPass, SubPassRecursing {
 	let mediaTree: MediaTree
-	let subPasses: [Pass]
-	init(_ mediaTree: MediaTree, @SubPassBuilder _ builder: () -> [Pass] = {[]}) {
+	let subPasses: [any Pass]
+	init(_ mediaTree: MediaTree, @SubPassBuilder _ builder: () -> [any Pass] = {[]}) {
 		self.mediaTree = mediaTree
 		self.subPasses = builder()
 	}

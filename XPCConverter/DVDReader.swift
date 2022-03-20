@@ -388,20 +388,20 @@ private extension DVDData.VOB {
 				guard let currentSector = currentSector else { return nil }
 				self.currentSector = nil
 
-				let buffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: Int(DVD_VIDEO_LB_LEN))
-				defer { buffer.deallocate() }
-				let successful = DVDReadBlocks(fileReader, Int32(currentSector), 1, buffer.baseAddress)
-				guard successful == 1 else { return .failure(.vobReadError) }
+				return withUnsafeTemporaryAllocation(of: UInt8.self, capacity: Int(DVD_VIDEO_LB_LEN)) { buffer in
+					let successful = DVDReadBlocks(fileReader, Int32(currentSector), 1, buffer.baseAddress)
+					guard successful == 1 else { return .failure(.vobReadError) }
 
-				let vobu = VOBU(data: buffer)
-				guard let vobu = vobu else { return .failure(.navImportError) }
+					let vobu = VOBU(data: buffer)
+					guard let vobu = vobu else { return .failure(.navImportError) }
 
-				let nextVobu = vobu.dsi.vobu_sri.next_vobu.bits(0...29)
-				if nextVobu != SRI_END_OF_CELL {
-					self.currentSector = currentSector + Int(nextVobu)
+					let nextVobu = vobu.dsi.vobu_sri.next_vobu.bits(0...29)
+					if nextVobu != SRI_END_OF_CELL {
+						self.currentSector = currentSector + Int(nextVobu)
+					}
+
+					return .success(vobu)
 				}
-
-				return .success(vobu)
 			}
 		}
 	}

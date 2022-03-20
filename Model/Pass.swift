@@ -30,7 +30,7 @@ public protocol Pass: AnyPass {
 public protocol SubPassRecursing {
 
 	/// The sub-passes invoked as part of the execution of this pass.
-	var subPasses: [Pass] { get }
+	var subPasses: [any Pass] { get }
 
 	/// Have all sub-passes process the `MediaTree`.
 	///
@@ -89,14 +89,14 @@ public protocol AnyPass: CustomStringConvertible {}
 /// A result builder for an array of sub-passes
 @resultBuilder
 public enum SubPassBuilder {
-	public static func buildExpression(_ element: Pass) -> [Pass] { [element] }
-	public static func buildOptional(_ maybe: [Pass]?) -> [Pass] { maybe ?? [] }
-	public static func buildEither(first: [Pass]) -> [Pass] { first }
-	public static func buildEither(second: [Pass]) -> [Pass] { second }
-	public static func buildBlock(_ passes: [Pass]...) -> [Pass] {
+	public static func buildExpression(_ element: any Pass) -> [any Pass] { [element] }
+	public static func buildOptional(_ maybe: [any Pass]?) -> [any Pass] { maybe ?? [] }
+	public static func buildEither(first: [any Pass]) -> [any Pass] { first }
+	public static func buildEither(second: [any Pass]) -> [any Pass] { second }
+	public static func buildBlock(_ passes: [any Pass]...) -> [any Pass] {
 		Array(passes.joined())
 	}
-	public static func buildArray(_ iterations: [[Pass]]) -> [Pass] {
+	public static func buildArray(_ iterations: [[any Pass]]) -> [any Pass] {
 		Array(iterations.joined())
 	}
 }
