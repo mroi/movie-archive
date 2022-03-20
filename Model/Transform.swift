@@ -46,6 +46,8 @@ public actor Transform {
 	/// - Important: It is undefined on which thread or queue clients receive
 	///   values from the publisher. Do not assume the main thread or even the
 	///   same thread between values.
+	/// - ToDo: Observe the development around Swift’s `AsyncSequence` and
+	///   consider migrating away from `Combine` at some point.
 	nonisolated public var publisher: Publisher {
 		subject.eraseToAnyPublisher()
 	}
