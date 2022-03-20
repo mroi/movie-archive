@@ -21,8 +21,8 @@ import os
 ///   importer and exporter as the entry point into model functionality.
 public actor Transform {
 
-	let importer: ImportPass
-	let exporter: ExportPass
+	let importer: any ImportPass
+	let exporter: any ExportPass
 
 	let subject = Subject(logging: true)
 	var state = State.initial
@@ -36,7 +36,7 @@ public actor Transform {
 	}
 
 	/// Creates an instance combining the provided importer and exporter.
-	public init(importer: ImportPass, exporter: ExportPass) {
+	public init(importer: any ImportPass, exporter: any ExportPass) {
 		self.importer = importer
 		self.exporter = exporter
 	}
@@ -277,7 +277,7 @@ extension Transform {
 		public func send(completion: Subscribers.Completion<Failure>) {
 			wrapped.send(completion: completion)
 		}
-		public func send(subscription: Subscription) {
+		public func send(subscription: any Subscription) {
 			wrapped.send(subscription: subscription)
 		}
 		public func receive<Downstream: Subscriber>(subscriber: Downstream) where Downstream.Input == Output, Downstream.Failure == Failure {
@@ -304,7 +304,7 @@ extension Transform {
 #endif
 		}
 
-		func receive(subscription: Subscription) {
+		func receive(subscription: any Subscription) {
 			subscription.request(.unlimited)
 		}
 

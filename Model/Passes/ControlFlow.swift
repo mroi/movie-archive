@@ -6,15 +6,15 @@ extension Base {
 	/// condition. If none of the sub-passes conform to `ConditionFlag`, no
 	/// iterations are performed.
 	public struct Loop: Pass, SubPassRecursing {
-		public var subPasses: [Pass]
+		public var subPasses: [any Pass]
 
-		public init(@SubPassBuilder _ builder: () -> [Pass]) {
+		public init(@SubPassBuilder _ builder: () -> [any Pass]) {
 			subPasses = builder()
 		}
 
 		public mutating func process(_ mediaTree: MediaTree) async throws -> MediaTree {
 			var result = mediaTree
-			while subPasses.contains(where: { ($0 as? ConditionFlag)?.condition == true }) {
+			while subPasses.contains(where: { ($0 as? any ConditionFlag)?.condition == true }) {
 				for (index, pass) in subPasses.enumerated() {
 					result = try await pass.run {
 						// mutate sub-pass state in-place so it survives iterations
@@ -31,15 +31,15 @@ extension Base {
 	/// The condition is given by a closure or a `ConditionFlag` pass. The `If` pass itself
 	/// exposes this condition to the outside by itself conforming to `ConditionFlag`.
 	public struct If: Pass, SubPassRecursing, ConditionFlag {
-		private var conditionPass: Pass & ConditionFlag
+		private var conditionPass: any Pass & ConditionFlag
 		public var condition: Bool { conditionPass.condition }
-		public var subPasses: [Pass]
+		public var subPasses: [any Pass]
 
-		public init(_ condition: Pass & ConditionFlag, @SubPassBuilder _ builder: () -> [Pass]) {
+		public init(_ condition: any Pass & ConditionFlag, @SubPassBuilder _ builder: () -> [any Pass]) {
 			conditionPass = condition
 			subPasses = builder()
 		}
-		public init(_ condition: @escaping (MediaTree) -> Bool, @SubPassBuilder _ builder: () -> [Pass]) {
+		public init(_ condition: @escaping (MediaTree) -> Bool, @SubPassBuilder _ builder: () -> [any Pass]) {
 			struct ConditionPass: Pass, ConditionFlag {
 				var condition: Bool = true
 				let body: (MediaTree) -> Bool
@@ -67,12 +67,12 @@ extension Base {
 	///
 	/// The condition is given by a closure or a `ConditionFlag` pass.
 	public struct While: Pass {
-		private var ifPass: Pass & ConditionFlag
+		private var ifPass: any Pass & ConditionFlag
 
-		public init(_ condition: Pass & ConditionFlag, @SubPassBuilder _ builder: () -> [Pass]) {
+		public init(_ condition: any Pass & ConditionFlag, @SubPassBuilder _ builder: () -> [any Pass]) {
 			ifPass = If(condition, builder)
 		}
-		public init(_ condition: @escaping (MediaTree) -> Bool, @SubPassBuilder _ builder: () -> [Pass]) {
+		public init(_ condition: @escaping (MediaTree) -> Bool, @SubPassBuilder _ builder: () -> [any Pass]) {
 			ifPass = If(condition, builder)
 		}
 

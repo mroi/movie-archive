@@ -53,8 +53,8 @@ extension JSON {
 /// Only the JSON encoding and decoding performed by the `JSON` type respects
 /// these customizations.
 public protocol CustomJSONCodable {
-	func encode(toCustomJSON encoder: Encoder) throws
-	init(fromCustomJSON decoder: Decoder) throws
+	func encode(toCustomJSON encoder: any Encoder) throws
+	init(fromCustomJSON decoder: any Decoder) throws
 }
 
 /// Types can adopt this protocol to enable skipping of empty collections.
@@ -93,9 +93,9 @@ private struct CustomJSONEncoder {
 	/// * `ArrayStorage` conforms to `UnkeyedEncodingContainer`
 	/// * `KeyedDictionaryStorage` conforms to `KeyedEncodingContainerProtocol`
 	class Storage<Value> {
-		let codingPath: [CodingKey]
+		let codingPath: [any CodingKey]
 		var store: Value
-		init(codingPath: [CodingKey], store: Value) {
+		init(codingPath: [any CodingKey], store: Value) {
 			self.codingPath = codingPath
 			self.store = store
 		}
@@ -104,7 +104,7 @@ private struct CustomJSONEncoder {
 	/// Subclass to remember `Key` type for `KeyedEncodingContainerProtocol`
 	class KeyedDictionaryStorage<Key: CodingKey>: DictionaryStorage {}
 
-	typealias DictionaryStorage = Storage<Array<(key: CodingKey, value: ElementStorage)>>
+	typealias DictionaryStorage = Storage<Array<(key: any CodingKey, value: ElementStorage)>>
 	typealias ArrayStorage = Storage<Array<ElementStorage>>
 	typealias ElementStorage = Storage<Element?>
 
@@ -155,11 +155,11 @@ private extension CustomJSONEncoder.KeyedDictionaryStorage {
 	}
 	/// - Important: This accessor checks invariants. All other accessors should
 	///   funnel through here.
-	func store(key: CodingKey, value storage: ElementStorage) {
+	func store(key: any CodingKey, value storage: ElementStorage) {
 		precondition(!store.map(\.key.stringValue).contains(key.stringValue), "key already present")
 		store.append((key: key, value: storage))
 	}
-	func store(key: CodingKey, value element: Element) {
+	func store(key: any CodingKey, value element: Element) {
 		let codingPath = codingPath + [key]
 		let storage = ElementStorage(codingPath: codingPath, store: element)
 		store(key: key, value: storage)
@@ -548,9 +548,9 @@ private struct CustomJSONDecoder {
 	/// * `ArrayStorage` conforms to `UnkeyedDecodingContainer`
 	/// * `KeyedDictionaryStorage` conforms to `KeyedDecodingContainerProtocol`
 	class Storage<Value> {
-		var codingPath: [CodingKey]
+		var codingPath: [any CodingKey]
 		let store: Value
-		init(codingPath: [CodingKey] = [], store: Value) {
+		init(codingPath: [any CodingKey] = [], store: Value) {
 			self.codingPath = codingPath
 			self.store = store
 		}
@@ -561,7 +561,7 @@ private struct CustomJSONDecoder {
 
 	class DictionaryStorage: Storage<Dictionary<String, ElementStorage>> {
 		var missingCollectionsAsEmpty: Bool = false
-		init(codingPath: [CodingKey] = [],
+		init(codingPath: [any CodingKey] = [],
 		     store: [String: ElementStorage],
 		     missingCollectionsAsEmpty: Bool = false) {
 			super.init(codingPath: codingPath, store: store)

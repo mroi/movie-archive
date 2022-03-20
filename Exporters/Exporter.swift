@@ -10,7 +10,7 @@ import MovieArchiveModel
 /// - Remark: Exporters form a use case layer on top of the model types.
 public struct Exporter: ExportPass {
 
-	private let selectedExporter: ExportPass
+	private let selectedExporter: any ExportPass
 
 	/// Data formats for which an `Exporter` is available.
 	public enum Format {

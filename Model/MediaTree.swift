@@ -113,10 +113,10 @@ extension MediaTree {
 	public struct OpaqueNode: Identifiable {
 		public let id: ID
 
-		public var payload: Any & Codable
+		public var payload: any Codable
 		public var children: [MediaTree]
 
-		public init(payload: Any & Codable, children: [MediaTree] = []) {
+		public init(payload: any Codable, children: [MediaTree] = []) {
 			self.id = ID()
 			self.payload = payload
 			self.children = children
@@ -356,7 +356,7 @@ private struct ProtocolTypeCoding: Equatable, Hashable, CodingKey {
 	}
 
 	@TaskLocal
-	static var knownTypes: [ProtocolTypeCoding: Codable.Type]?
+	static var knownTypes: [ProtocolTypeCoding: any Codable.Type]?
 }
 
 /// Error when trying to decode a protocol-typed instance of an unknown type.
@@ -376,7 +376,7 @@ private extension KeyedEncodingContainer {
 	/// `value()` is a concrete type conforming to `Encodable`. Just using an
 	/// `Encodable`-typed parameter would give the error that the protocol does
 	/// not conform to itself.
-	mutating func encode(protocolTyped value: @autoclosure () -> Encodable, forKey key: Key) throws {
+	mutating func encode(protocolTyped value: @autoclosure () -> any Encodable, forKey key: Key) throws {
 		var nested = nestedContainer(keyedBy: ProtocolTypeCoding.self, forKey: key)
 		try value().encode(to: &nested, forKey: ProtocolTypeCoding(type: type(of: value())))
 	}
@@ -387,7 +387,7 @@ private extension KeyedDecodingContainer {
 	///
 	/// The key within a nested container is used to look up the actual type.
 	/// - SeeAlso: `ProtocolTypeCoding.knownTypes`
-	func decode(protocolTypedForKey key: Key) throws -> Codable {
+	func decode(protocolTypedForKey key: Key) throws -> any Codable {
 		let nested = try nestedContainer(keyedBy: ProtocolTypeCoding.self, forKey: key)
 		guard nested.allKeys.count == 1 else {
 			throw DecodingError.dataCorrupted(
@@ -443,7 +443,7 @@ private extension Decodable {
 extension MediaTree: Codable, CustomJSONCodable {
 	// custom encoding: encode single associated value directly, no positional key
 
-	public func encode(toCustomJSON encoder: Encoder) throws {
+	public func encode(toCustomJSON encoder: any Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		switch self {
 		case .asset(let assetNode):
@@ -459,7 +459,7 @@ extension MediaTree: Codable, CustomJSONCodable {
 		}
 	}
 
-	public init(fromCustomJSON decoder: Decoder) throws {
+	public init(fromCustomJSON decoder: any Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		guard container.allKeys.count == 1 else {
 			throw DecodingError.dataCorrupted(
@@ -489,11 +489,11 @@ extension MediaTree.LinkNode: Codable {}
 
 extension MediaTree.CollectionNode: Codable, CustomJSONCodable {
 	// custom encoding: encode children directly without key
-	public func encode(toCustomJSON encoder: Encoder) throws {
+	public func encode(toCustomJSON encoder: any Encoder) throws {
 		var container = encoder.singleValueContainer()
 		try container.encode(children)
 	}
-	public init(fromCustomJSON decoder: Decoder) throws {
+	public init(fromCustomJSON decoder: any Decoder) throws {
 		let container = try decoder.singleValueContainer()
 		children = try container.decode(Array.self)
 	}
@@ -504,13 +504,13 @@ extension MediaTree.OpaqueNode: Codable, CustomJSONEmptyCollectionSkipping {
 	private enum CodingKeys: String, CodingKey {
 		case id, payload, children
 	}
-	public func encode(to encoder: Encoder) throws {
+	public func encode(to encoder: any Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try container.encode(id, forKey: .id)
 		try container.encode(protocolTyped: payload, forKey: .payload)
 		try container.encode(children, forKey: .children)
 	}
-	public init(from decoder: Decoder) throws {
+	public init(from decoder: any Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		id = try container.decode(ID.self, forKey: .id)
 		payload = try container.decode(protocolTypedForKey: .payload)
@@ -520,11 +520,11 @@ extension MediaTree.OpaqueNode: Codable, CustomJSONEmptyCollectionSkipping {
 
 extension MediaTree.ID: Codable, CustomJSONCodable {
 	// custom encoding: encode ID value directly
-	public func encode(toCustomJSON encoder: Encoder) throws {
+	public func encode(toCustomJSON encoder: any Encoder) throws {
 		var container = encoder.singleValueContainer()
 		try container.encode(value)
 	}
-	public init(fromCustomJSON decoder: Decoder) throws {
+	public init(fromCustomJSON decoder: any Decoder) throws {
 		let container = try decoder.singleValueContainer()
 		value = try container.decode(Int.self)
 	}
