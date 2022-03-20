@@ -67,9 +67,9 @@ public actor Transform {
 
 			// update transform state on error
 			let subscription = publisher.sink(
-				receiveCompletion: { [self] in
+				receiveCompletion: {
 					if case .failure = $0 {
-						errorTask = Task(priority: .high) { await errorState() }
+						errorTask = Task.detached(priority: .high) { await self.errorState() }
 					}
 				},
 				receiveValue: { _ in })
