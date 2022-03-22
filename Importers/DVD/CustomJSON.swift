@@ -335,3 +335,91 @@ extension DVDInfo.Index: CustomJSONStringKeyRepresentable, CustomJSONCodable {
 extension DVDInfo.Index: CustomStringConvertible {
 	public var description: String { rawValue.description }
 }
+
+extension DVDInfo.Time: CustomJSONCodable {
+	// custom encoding: time as human-readable string
+
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		var container = encoder.singleValueContainer()
+		var string: String
+
+		switch rate {
+		case .framesPerSecond(let fps) where fps.rounded() == 25:
+			string = "25"
+		case .framesPerSecond(let fps) where fps.rounded() == 30:
+			string = "30"
+		case .framesPerSecond(let fps):
+			if (hours, minutes, seconds, frames) == (0, 0, 0, 0) {
+				string = "0"
+			} else {
+				throw EncodingError.invalidValue(fps, .init(codingPath: encoder.codingPath,
+					debugDescription: "unsupported frame rate \(fps)"))
+			}
+		case .unexpected(let value):
+			if (hours, minutes, seconds, frames) == (0, 0, 0, 0) {
+				string = "0"
+			} else {
+				throw EncodingError.invalidValue(value, .init(codingPath: encoder.codingPath,
+					debugDescription: "unexpected frame rate value \(value)"))
+			}
+		}
+
+		if hours != 0 || minutes != 0 || seconds != 0 {
+			string = String(format: "%02d", frames) + "@" + string
+			if hours != 0 || minutes != 0 {
+				string = String(format: "%02d", seconds) + ":" + string
+				if hours != 0 {
+					string = String(format: "%02d", minutes) + ":" + string
+					string = String(hours) + ":" + string
+				} else {
+					string = String(minutes) + ":" + string
+				}
+			} else {
+				string = String(seconds) + ":" + string
+			}
+		} else {
+			string = String(frames) + "@" + string
+		}
+
+		try container.encode(string)
+	}
+
+	/// - ToDo: Simplify using `Regex` once we move to macOS 13
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		let string = try container.decode(String.self)
+		var substrings = string.split(separator: ":")
+		if substrings.count < 1 || substrings.count > 4 {
+			throw DecodingError.dataCorruptedError(in: container,
+				debugDescription: "unexpected number of time components: \(substrings.count)")
+		}
+
+		let framesAndRate = substrings.removeLast().split(separator: "@")
+		if framesAndRate.count != 2 {
+			throw DecodingError.dataCorruptedError(in: container,
+				debugDescription: "frame count or frame rate missing")
+		}
+		substrings.append(contentsOf: framesAndRate)
+
+		let components = try substrings.reversed().map {
+			guard let number = UInt8($0) else {
+				throw DecodingError.dataCorruptedError(in: container,
+					debugDescription: "malformed time component: ‘\($0)’")
+			}
+			return number
+		}
+
+		let fps: Double
+		switch components[0] {
+		case 25: fps = 25.00
+		case 30: fps = 29.97
+		default: fps = Double(substrings.last!) ?? Double(components[0])
+		}
+
+		self.init(hours: components.count > 4 ? components[4] : 0,
+				  minutes: components.count > 3 ? components[3] : 0,
+				  seconds: components.count > 2 ? components[2] : 0,
+				  frames: components[1],
+				  rate: .framesPerSecond(fps))
+	}
+}
