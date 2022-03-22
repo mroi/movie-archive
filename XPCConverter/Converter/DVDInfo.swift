@@ -452,7 +452,6 @@ public struct DVDInfo: Codable, Sendable {
 				public static let allStillFrames = PlaybackMode(rawValue: 1 << 4)
 				public static let stopFastForward = PlaybackMode(rawValue: 1 << 5)
 				public init(rawValue: UInt8) { self.rawValue = rawValue }
-
 			}
 			public typealias EndingMode = ProgramChain.EndingMode
 			public enum AngleInfo: Codable, Sendable {
