@@ -199,6 +199,7 @@ extension CustomJSONEmptyCollectionSkipping {
 	}
 }
 
+
 /// Types can adopt this protocol to enable more readable dictionary coding.
 ///
 /// By default, dictionaries are encoded to JSON arrays that alternate between
