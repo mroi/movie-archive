@@ -1,6 +1,5 @@
 {
 	description = "build environment for dependencies";
-	inputs.nixpkgs.url = "flake:nixpkgs/nixpkgs-unstable";
 	outputs = { self, nixpkgs }: let
 		systems = [ "aarch64-darwin" "x86_64-darwin" ];
 		lib = import "${nixpkgs}/lib";
