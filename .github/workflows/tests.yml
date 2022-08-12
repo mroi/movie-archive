@@ -52,7 +52,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: Dependencies/Build
-        key: ${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.git/modules/Dependencies/HandBrake/HEAD', 'Dependencies/*') }}
+        key: ${{ runner.os }}-${{ runner.arch }}-${{ env.DEVELOPER_DIR }}-${{ hashFiles('.git/modules/Dependencies/HandBrake/HEAD', 'Dependencies/*') }}
 
     - name: Refresh cached dependencies
       if: steps.cache.outputs.cache-hit == 'true'
