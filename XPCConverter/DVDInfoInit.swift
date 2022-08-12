@@ -223,9 +223,9 @@ private extension Dictionary<DVDInfo.Domain.ProgramChains.Descriptor, DVDInfo.Do
 			for (index, pgcInfo) in zip(1..., pgcs) {
 				let menuType = Key.MenuType(pgcInfo.entry_id.bits(0...3))
 				let descriptor = Key.menu(language: String(twoCharacters: language.lang_code),
-				                          index: DVDInfo.Index(index),
 				                          entryPoint: pgcInfo.entry_id.bit(7),
-				                          type: pgcInfo.entry_id.bit(7) ? menuType : nil)
+				                          type: pgcInfo.entry_id.bit(7) ? menuType : nil,
+				                          index: DVDInfo.Index(index))
 				self[descriptor] = Value(languageId: language.lang_start_byte,
 				                         programChainId: pgcInfo.pgc_start_byte)
 			}
@@ -234,9 +234,9 @@ private extension Dictionary<DVDInfo.Domain.ProgramChains.Descriptor, DVDInfo.Do
 	init(mapping pgcs: [pgci_srp_t]) {
 		self.init(minimumCapacity: pgcs.count)
 		for (index, pgcInfo) in zip(1..., pgcs) {
-			let descriptor = Key.title(index: DVDInfo.Index(index),
+			let descriptor = Key.title(title: DVDInfo.Index(pgcInfo.entry_id.bits(0...6)),
 			                           entryPoint: pgcInfo.entry_id.bit(7),
-			                           title: DVDInfo.Index(pgcInfo.entry_id.bits(0...6)))
+			                           index: DVDInfo.Index(index))
 			self[descriptor] = Value(programChainId: pgcInfo.pgc_start_byte)
 		}
 	}
