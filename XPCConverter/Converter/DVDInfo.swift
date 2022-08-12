@@ -84,23 +84,23 @@ public struct DVDInfo: Codable, Sendable {
 	/// A DVD is organized in title sets, which contain menus and playable
 	/// content with common attributes, grouped in one menu and one title domain.
 	public struct TitleSet: Codable, Sendable {
+		public let specification: Version
+		public let category: UInt32
+
 		public let titles: [Index<Title>: Title]
 		public let menus: Domain?
 		public let content: Domain?
 
-		public let specification: Version
-		public let category: UInt32
-
-		public init(titles: [Index<Title>: Title],
+		public init(specification: Version,
+		            category: UInt32,
+		            titles: [Index<Title>: Title],
 		            menus: Domain?,
-		            content: Domain?,
-		            specification: Version,
-		            category: UInt32) {
+		            content: Domain?) {
+			self.specification = specification
+			self.category = category
 			self.titles = titles
 			self.menus = menus
 			self.content = content
-			self.specification = specification
-			self.category = category
 		}
 
 		/// Each title is presented to the user as one playable item.

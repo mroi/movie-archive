@@ -103,11 +103,11 @@ private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo
 private extension DVDInfo.TitleSet {
 	init?(_ vtsi: ifo_handle_t, vmgi titles: [DVDInfo.Index<DVDInfo.TitleSet.Title.AllTitles>: title_info_t], navigation nav: DVDData.NAV.VTS?) {
 		guard let vtsiMat = vtsi.vtsi_mat?.pointee else { return nil }
-		self.init(titles: Dictionary(vtsi.vts_ptt_srpt?.pointee, vmgi: titles),
+		self.init(specification: DVDInfo.Version(vtsiMat.specification_version),
+		          category: vtsiMat.vts_category,
+		          titles: Dictionary(vtsi.vts_ptt_srpt?.pointee, vmgi: titles),
 		          menus: DVDInfo.Domain(vtsi.pgci_ut?.pointee, vtsiMat, nav?[.menus]),
-		          content: DVDInfo.Domain(vtsi.vts_pgcit?.pointee, vtsiMat, nav?[.titles]),
-		          specification: DVDInfo.Version(vtsiMat.specification_version),
-		          category: vtsiMat.vts_category)
+		          content: DVDInfo.Domain(vtsi.vts_pgcit?.pointee, vtsiMat, nav?[.titles]))
 	}
 }
 
