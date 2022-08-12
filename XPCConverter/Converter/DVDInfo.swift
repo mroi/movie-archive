@@ -189,8 +189,8 @@ public struct DVDInfo: Codable, Sendable {
 			}
 
 			public enum Descriptor: Codable, Hashable, Sendable {
-				case menu(language: String, index: Index<ProgramChain>, entryPoint: Bool, type: MenuType?)
-				case title(index: Index<ProgramChain>, entryPoint: Bool, title: Index<DVDInfo.TitleSet.Title>)
+				case menu(language: String, entryPoint: Bool, type: MenuType?, index: Index<ProgramChain>)
+				case title(title: Index<DVDInfo.TitleSet.Title>, entryPoint: Bool, index: Index<ProgramChain>)
 				public enum MenuType: Codable, Hashable, Sendable {
 					case titles, rootWithinTitle, chapter
 					case audio, subpicture, viewingAngle
@@ -819,9 +819,9 @@ extension DVDInfo.Domain.ProgramChains {
 	public subscript(index: DVDInfo.Index<DVDInfo.ProgramChain>, language language: String? = nil) -> DVDInfo.ProgramChain? {
 		let predicate = { (descriptor: Descriptor) -> Bool in
 			switch descriptor {
-			case .menu(language, index, _, _):
+			case .menu(language, _, _, index):
 				return true
-			case .title(index, _, _):
+			case .title(_, _, index):
 				return true
 			default:
 				return false
