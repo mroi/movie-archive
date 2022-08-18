@@ -29,7 +29,7 @@ struct DVDImporter: ImportPass {
 
 private extension Transform.Status {
 
-	/// Translate from `ConverterClient` to `Transform` publisher output.
+	/// Translate from `ConverterConnection` to `Transform` publisher output.
 	///
 	/// This initializer bridges an impedance mismatch in publisher values.
 	/// The `DVDImporter` uses the XPC converter as an internal implementation

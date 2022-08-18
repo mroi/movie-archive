@@ -191,7 +191,7 @@ class ConverterTests: XCTestCase {
 		let deinitClient = expectation(description: "converter client should be released")
 		let deinitReturn = expectation(description: "return channel should be released")
 
-		class TestClient: ConverterClient<ConverterInterface> {
+		class TestClient: ConverterConnection<ConverterInterface> {
 			let deinitClient: XCTestExpectation
 			init(withExpectations expectations: XCTestExpectation...) {
 				deinitClient = expectations[0]
@@ -214,10 +214,10 @@ class ConverterTests: XCTestCase {
 		do {
 			let client = TestClient(withExpectations: deinitClient)
 			let returnChannel = TestReturn(withExpectations: deinitReturn)
-			try! await ConverterClient.withMocks(proxy: client.remote, publisher: returnChannel.publisher) {
+			try! await ConverterConnection.withMocks(proxy: client.remote, publisher: returnChannel.publisher) {
 				await XCTAssertNoThrowAsync(
 					try await client.withConnectionErrorHandling { done in
-						done(.success(ConverterClient<ConverterInterface>()))
+						done(.success(ConverterConnection<ConverterInterface>()))
 					}
 				)
 				returnChannel.sendConnectionInterrupted()
@@ -238,8 +238,8 @@ class ConverterTests: XCTestCase {
 		let sender = MessageSender(channel: returnChannel)
 		var outputs = [ConverterOutput]()
 
-		await ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
-			let client = ConverterClient<MessageSender>()
+		await ConverterConnection.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+			let client = ConverterConnection<MessageSender>()
 			let subscription = client.publisher
 				.assertNoFailure()
 				.sink { outputs.append($0) }
@@ -271,8 +271,8 @@ class ConverterTests: XCTestCase {
 		let sender = ProgressSender(channel: returnChannel)
 		var outputs = [ConverterOutput]()
 
-		await ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
-			let client = ConverterClient<ProgressSender>()
+		await ConverterConnection.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+			let client = ConverterConnection<ProgressSender>()
 			let subscription = client.publisher
 				.assertNoFailure()
 				.sink { outputs.append($0) }
@@ -325,7 +325,7 @@ class ConverterTests: XCTestCase {
 		defer { subscription.cancel() }
 
 		// exercise the invalid connection
-		await ConverterClient.withMocks(proxy: connection.remoteObjectProxy, publisher: returnChannel.publisher) {
+		await ConverterConnection.withMocks(proxy: connection.remoteObjectProxy, publisher: returnChannel.publisher) {
 			let remote = connection.remoteObjectProxy as! ConverterTesting
 			remote.doNothing()
 		}
@@ -340,10 +340,10 @@ class ConverterTests: XCTestCase {
 			func exercise() { returnChannel.sendMessage(level: .default, "test") }
 			func error() { returnChannel.sendConnectionInterrupted() }
 		}
-		class ErrorClient: ConverterClient<ErrorSender> {
+		class ErrorClient: ConverterConnection<ErrorSender> {
 			func test() async throws {
 				// test that this wrapper observes the published error and throws
-				try await withConnectionErrorHandling { (_: (Result<Void, ConverterError>) -> Void) in
+				try await withErrorHandling { (_: (Result<Void, ConverterError>) -> Void) in
 					remote.exercise()
 					remote.error()
 				}
@@ -353,7 +353,7 @@ class ConverterTests: XCTestCase {
 
 		let returnChannel = ReturnImplementation()
 		let sender = ErrorSender(channel: returnChannel)
-		try! await ConverterClient.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+		try! await ConverterConnection.withMocks(proxy: sender, publisher: returnChannel.publisher) {
 			await XCTAssertThrowsErrorAsync(try await ErrorClient().test()) {
 				XCTAssertEqual($0 as! ConverterError, .connectionInterrupted)
 			}

@@ -8,7 +8,7 @@ import Foundation
 /// This client-side type accesses `libdvdread` functionality in the XPC
 /// converter service. It manages the lifetime of the corresponding `libdvdread`
 /// state.
-public final class DVDReader: ConverterClient<ConverterDVDReader> {
+public final class DVDReader: ConverterConnection<ConverterDVDReader> {
 
 	private var readerStateID: UUID!
 
@@ -16,7 +16,7 @@ public final class DVDReader: ConverterClient<ConverterDVDReader> {
 	public init(source url: URL) async throws {
 		super.init()
 
-		readerStateID = try await withConnectionErrorHandling { done in
+		readerStateID = try await withErrorHandling { done in
 			remote.open(url) { result in
 				if let result = result {
 					done(.success(result))
@@ -36,7 +36,7 @@ public final class DVDReader: ConverterClient<ConverterDVDReader> {
 	/// Information is collected by reading the IFO files and menu NAV packets
 	/// on the DVD.
 	public func info() async throws -> DVDInfo {
-		return try await withConnectionErrorHandling { done in
+		return try await withErrorHandling { done in
 
 			remote.readInfo(readerStateID) { result in
 				do {

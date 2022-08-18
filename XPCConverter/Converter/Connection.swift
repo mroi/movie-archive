@@ -28,9 +28,9 @@ import Combine
 /// At the same time, the XPC service can send asynchronous feedback to the
 /// client by way of the `ConverterPublisher`.
 ///
-/// - Remark: These low-level XPC protocols form an hourglass interface which
-///   is meant to be augmented with client-side currency types like `DVDReader`.
-public class ConverterClient<ProxyInterface> {
+/// - Remark: These low-level XPC types form a conduit which is meant to be
+///   wrapped with higher-level types like `DVDReader` for client consumption.
+public class ConverterConnection<Interface> {
 
 	/// Publisher to receive status updates from the converter service.
 	///
@@ -38,15 +38,15 @@ public class ConverterClient<ProxyInterface> {
 	///   clients must expect to receive values on an undefined thread.
 	public let publisher: ConverterPublisher
 
-	let remote: ProxyInterface
+	let remote: Interface
 	private let connection: NSXPCConnection
 	private let subscription: AnyCancellable?
 
 	/// Sets up a client instance managing one XPC connection.
 	init() {
 #if DEBUG
-		if let injected = ConverterClient<Any>.injected {
-			remote = injected.proxy as! ProxyInterface
+		if let injected = ConverterConnection<Any>.injected {
+			remote = injected.proxy as! Interface
 			publisher = injected.publisher
 			connection = NSXPCConnection()
 			subscription = nil
@@ -55,7 +55,7 @@ public class ConverterClient<ProxyInterface> {
 #endif
 
 		let returnChannel = ReturnImplementation()
-		connection = ConverterClient<ProxyInterface>.makeConnection()
+		connection = ConverterConnection<Interface>.makeConnection()
 		connection.remoteObjectInterface = NSXPCInterface(with: ConverterInterface.self)
 		connection.exportedInterface = NSXPCInterface(with: ReturnInterface.self)
 		connection.exportedObject = returnChannel
@@ -63,7 +63,7 @@ public class ConverterClient<ProxyInterface> {
 		connection.interruptionHandler = { returnChannel.sendConnectionInterrupted() }
 		connection.resume()
 
-		remote = connection.remoteObjectProxy as! ProxyInterface
+		remote = connection.remoteObjectProxy as! Interface
 		publisher = returnChannel.publisher
 
 		// invalidate the connection whenever the publisher completes
@@ -98,7 +98,7 @@ public class ConverterClient<ProxyInterface> {
 }
 
 
-extension ConverterClient {
+extension ConverterConnection {
 
 	/// Wrap a remote converter invocation with connection error handling.
 	///
@@ -115,7 +115,7 @@ extension ConverterClient {
 	///   receives a continuation function which must be called exactly once
 	///   if the remote function’s completion handler is called.
 	/// - Returns: Successful results are returned, errors are thrown.
-	func withConnectionErrorHandling<T>(_ body: (_ done: @escaping (Result<T, ConverterError>) -> Void) -> Void) async throws -> T {
+	func withErrorHandling<T>(_ body: (_ done: @escaping (Result<T, ConverterError>) -> Void) -> Void) async throws -> T {
 
 		return try await withCheckedThrowingContinuation { continuation in
 
@@ -140,10 +140,10 @@ extension ConverterClient {
 
 
 #if DEBUG
-extension ConverterClient where ProxyInterface == Any {
+extension ConverterConnection where Interface == Any {
 
 	/// Injects mock implementations for testing.
-	static func withMocks(proxy: ProxyInterface, publisher: ConverterPublisher? = nil,
+	static func withMocks(proxy: Interface, publisher: ConverterPublisher? = nil,
 	                      _ body: () async throws -> ()) async rethrows {
 		let emptyPublisher = Empty<ConverterOutput, ConverterError>(completeImmediately: false).eraseToAnyPublisher()
 		let inject = (proxy, publisher ?? emptyPublisher)
@@ -153,6 +153,6 @@ extension ConverterClient where ProxyInterface == Any {
 	}
 
 	@TaskLocal
-	private static var injected: (proxy: ProxyInterface, publisher: ConverterPublisher)?
+	private static var injected: (proxy: Interface, publisher: ConverterPublisher)?
 }
 #endif
