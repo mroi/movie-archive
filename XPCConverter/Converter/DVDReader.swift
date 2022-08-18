@@ -1,8 +1,6 @@
 import Foundation
 
 
-/* MARK: DVDReader */
-
 /// Reads and interprets DVD data structures.
 ///
 /// This client-side type accesses `libdvdread` functionality in the XPC
