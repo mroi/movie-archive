@@ -112,10 +112,11 @@ extension ConverterConnection {
 	/// wrap every remote invocation individually.
 	///
 	/// - Parameter body: A closure invoking a remote function. The closure
-	///   receives a continuation function which must be called exactly once
-	///   if the remote function’s completion handler is called.
+	///   receives the remote interface as first parameter and a continuation
+	///   function as second parameter. When the remote call completes
+	///   successfully, the continuation function must be called exactly once.
 	/// - Returns: Successful results are returned, errors are thrown.
-	func withErrorHandling<T>(_ body: (_ done: @escaping (Result<T, ConverterError>) -> Void) -> Void) async throws -> T {
+	func withErrorHandling<T>(_ body: (Interface, @escaping (Result<T, ConverterError>) -> Void) -> Void) async throws -> T {
 
 		return try await withCheckedThrowingContinuation { continuation in
 
@@ -133,7 +134,7 @@ extension ConverterConnection {
 			defer { subscription.cancel() }
 
 			// run caller code
-			body { continuation.resume(with: $0) }
+			body(remote) { continuation.resume(with: $0) }
 		}
 	}
 }

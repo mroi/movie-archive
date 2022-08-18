@@ -14,7 +14,7 @@ public final class DVDReader: ConverterConnection<ConverterDVDReader> {
 	public init(source url: URL) async throws {
 		super.init()
 
-		readerStateID = try await withErrorHandling { done in
+		readerStateID = try await withErrorHandling { remote, done in
 			remote.open(url) { result in
 				if let result = result {
 					done(.success(result))
@@ -34,7 +34,7 @@ public final class DVDReader: ConverterConnection<ConverterDVDReader> {
 	/// Information is collected by reading the IFO files and menu NAV packets
 	/// on the DVD.
 	public func info() async throws -> DVDInfo {
-		return try await withErrorHandling { done in
+		return try await withErrorHandling { remote, done in
 
 			remote.readInfo(readerStateID) { result in
 				do {
