@@ -136,45 +136,6 @@ extension ConverterClient {
 			body { continuation.resume(with: $0) }
 		}
 	}
-
-	/// Wrap a remote converter invocation with connection error handling.
-	///
-	/// - SeeAlso: ``withConnectionErrorHandling<T>(_:) async``
-	/// - Remark: The synchronous variant only remains for Playgrounds
-	///   compatibility.
-	func withConnectionErrorHandling<T>(_ body: (_ done: @escaping (Result<T, ConverterError>) -> Void) -> Void) throws -> T {
-
-		let resultAvailable = DispatchSemaphore(value: 0)
-		var result: Result<T, ConverterError>?
-
-		// set the result exclusively and only once via this function
-		func setResult(_ value: Result<T, ConverterError>) {
-			assert(result == nil)
-			result = value  // race-free: called on some thread, but only once
-			resultAvailable.signal()
-		}
-
-		// listen for asynchronous errors from the publisher
-		let subscription = publisher.sink(
-			receiveCompletion: {
-				switch $0 {
-				case .failure(let error):
-					setResult(.failure(error))
-				case .finished:
-					setResult(.failure(.connectionInterrupted))
-				}
-			},
-			receiveValue: { _ in })
-		defer { subscription.cancel() }
-
-		// run caller code
-		body(setResult)
-
-		// wait for continuation, result is definitely valid after this line
-		resultAvailable.wait()
-
-		return try result!.get()
-	}
 }
 
 

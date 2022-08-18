@@ -61,11 +61,6 @@ public protocol ImportPass: AnyPass {
 	/// Creates an appropriate importer if the source is supported.
 	init(source url: URL) async throws
 
-	/// Creates an appropriate importer if the source is supported.
-	/// - Remark: The synchronous variant only remains for Playgrounds
-	///   compatibility.
-	init(source url: URL) throws
-
 	/// Generates an initial `MediaTree` without receiving any input.
 	func generate() async throws -> MediaTree
 }

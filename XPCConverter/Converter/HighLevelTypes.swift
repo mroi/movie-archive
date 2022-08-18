@@ -13,10 +13,10 @@ public final class DVDReader: ConverterClient<ConverterDVDReader> {
 	private var readerStateID: UUID!
 
 	/// Initializes a DVD reader for the given URL
-	public init(source url: URL) throws {
+	public init(source url: URL) async throws {
 		super.init()
 
-		readerStateID = try withConnectionErrorHandling { done in
+		readerStateID = try await withConnectionErrorHandling { done in
 			remote.open(url) { result in
 				if let result = result {
 					done(.success(result))

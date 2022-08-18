@@ -8,8 +8,8 @@ struct DVDImporter: ImportPass {
 
 	private let dvdReader: DVDReader
 
-	init(source url: URL) throws {
-		dvdReader = try DVDReader(source: url)
+	init(source url: URL) async throws {
+		dvdReader = try await DVDReader(source: url)
 	}
 
 	func generate() async throws -> MediaTree {

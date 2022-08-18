@@ -9,9 +9,9 @@ import XCTest
 
 class ImporterTests: XCTestCase {
 
-	func testUnsupportedSource() {
+	func testUnsupportedSource() async {
 		let source = URL(fileURLWithPath: "/var/empty")
-		XCTAssertThrowsError(try Importer(source: source)) {
+		await XCTAssertThrowsErrorAsync(try await Importer(source: source)) {
 			XCTAssertEqual($0 as! Importer.Error, .sourceNotSupported)
 		}
 	}
@@ -51,7 +51,7 @@ class DVDImporterTests: XCTestCase {
 
 		try! await ConverterClient.withMocks(proxy: ReaderMock(withExpectations: openCall, closeCall)) {
 			let source = URL(fileURLWithPath: ".")
-			XCTAssertNoThrow(try DVDReader(source: source))
+			await XCTAssertNoThrowAsync(try await DVDReader(source: source))
 		}
 
 		await waitForExpectations(timeout: .infinity)
@@ -79,7 +79,7 @@ class DVDImporterTests: XCTestCase {
 		try! await ConverterClient.withMocks(proxy: ReaderMock(expectations: readCall)) {
 			let source = URL(fileURLWithPath: ".")
 			var reader: DVDReader?
-			XCTAssertNoThrow(reader = try DVDReader(source: source))
+			await XCTAssertNoThrowAsync(reader = try await DVDReader(source: source))
 			XCTAssertNotNil(reader)
 			await XCTAssertThrowsErrorAsync(try await reader!.info()) {
 				XCTAssertEqual($0 as! ConverterError, .sourceReadError)
@@ -92,7 +92,7 @@ class DVDImporterTests: XCTestCase {
 	func testMinimalDVD() async {
 		let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
 		var importer: Importer?
-		XCTAssertNoThrow(importer = try Importer(source: iso))
+		await XCTAssertNoThrowAsync(importer = try await Importer(source: iso))
 		XCTAssertNotNil(importer)
 
 		let transform = Transform(importer: importer!, exporter: NullExporter())
