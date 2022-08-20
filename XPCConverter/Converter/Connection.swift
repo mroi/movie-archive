@@ -30,13 +30,13 @@ import Combine
 ///
 /// - Remark: These low-level XPC types form a conduit which is meant to be
 ///   wrapped with higher-level types like `DVDReader` for client consumption.
-public class ConverterConnection<Interface> {
+class ConverterConnection<Interface> {
 
 	/// Publisher to receive status updates from the converter service.
 	///
 	/// - Important: Because XPC requests run on an internal serial queue,
 	///   clients must expect to receive values on an undefined thread.
-	public let publisher: ConverterPublisher
+	let publisher: ConverterPublisher
 
 	let remote: Interface
 	private let connection: NSXPCConnection
