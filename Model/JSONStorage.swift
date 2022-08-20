@@ -4,7 +4,7 @@ import Foundation
 /* MARK: JSON Data */
 
 /// JSON representation and compressed file storage.
-public struct JSON<Root: Codable> {
+public struct JSON<Root: Codable>: Sendable {
 	public let data: Data
 
 	init(_ root: Root) throws {

@@ -1,7 +1,7 @@
 /* MARK: DVDInfo */
 
 /// Static information about the navigational and playback structure of the DVD.
-public struct DVDInfo: Codable {
+public struct DVDInfo: Codable, Sendable {
 
 	public let specification: Version
 	public let category: UInt32
@@ -41,7 +41,7 @@ public struct DVDInfo: Codable {
 		self.titleSets = titleSets
 	}
 
-	public struct Version: Codable {
+	public struct Version: Codable, Sendable {
 		public let major: UInt8
 		public let minor: UInt8
 
@@ -51,7 +51,7 @@ public struct DVDInfo: Codable {
 		}
 	}
 
-	public struct Time: Codable, Hashable {
+	public struct Time: Codable, Hashable, Sendable {
 		public let hours: UInt8
 		public let minutes: UInt8
 		public let seconds: UInt8
@@ -68,7 +68,7 @@ public struct DVDInfo: Codable {
 			self.frames = frames
 			self.rate = rate
 		}
-		public enum FrameRate: Codable, Hashable {
+		public enum FrameRate: Codable, Hashable, Sendable {
 			case framesPerSecond(Double), unexpected(UInt8)
 		}
 	}
@@ -83,7 +83,7 @@ public struct DVDInfo: Codable {
 	///
 	/// A DVD is organized in title sets, which contain menus and playable
 	/// content with common attributes, grouped in one menu and one title domain.
-	public struct TitleSet: Codable {
+	public struct TitleSet: Codable, Sendable {
 		public let titles: [Index<Title>: Title]
 		public let menus: Domain
 		public let content: Domain
@@ -104,7 +104,7 @@ public struct DVDInfo: Codable {
 		}
 
 		/// Each title is presented to the user as one playable item.
-		public struct Title: Codable {
+		public struct Title: Codable, Sendable {
 			public let globalIndex: Index<AllTitles>
 
 			public let parts: [Index<Part>: Part]
@@ -131,14 +131,14 @@ public struct DVDInfo: Codable {
 			public enum AllTitles {}
 
 			/// Parts are presented to the user as chapters within a title.
-			public struct Part: Codable {
+			public struct Part: Codable, Sendable {
 				public let start: Reference<TitleSet, ProgramChain.Program>
 				public init(start: Reference<TitleSet, ProgramChain.Program>) {
 					self.start = start
 				}
 			}
 
-			public struct CommandPresence: Codable, OptionSet {
+			public struct CommandPresence: Codable, OptionSet, Sendable {
 				public let rawValue: UInt8
 				public static let features = CommandPresence(rawValue: 1 << 0)
 				public static let prePosts = CommandPresence(rawValue: 1 << 1)
@@ -155,7 +155,7 @@ public struct DVDInfo: Codable {
 	/// * Video Manager Menu (VMGM): top-level menu domain occurring once per DVD.
 	/// * Video Title Set Menu (VTSM): menu domain within each title set.
 	/// * Video Title Set (VTS): domain for playable content backing the titles.
-	public struct Domain: Codable {
+	public struct Domain: Codable, Sendable {
 		public let programChains: ProgramChains
 
 		public let video: VideoAttributes
@@ -179,7 +179,7 @@ public struct DVDInfo: Codable {
 		/// The same program chain can be associated with multiple descriptors.
 		///
 		/// - Remark: Convenience accessor and subscript implementations are available.
-		public struct ProgramChains: Codable {
+		public struct ProgramChains: Codable, Sendable {
 			private let mapping: [Descriptor: Id]
 			private let storage: [Id: ProgramChain]
 
@@ -188,16 +188,16 @@ public struct DVDInfo: Codable {
 				self.storage = storage
 			}
 
-			public enum Descriptor: Codable, Hashable {
+			public enum Descriptor: Codable, Hashable, Sendable {
 				case menu(language: String, index: Index<ProgramChain>, entryPoint: Bool, type: MenuType?)
 				case title(index: Index<ProgramChain>, entryPoint: Bool, title: Index<DVDInfo.TitleSet.Title>)
-				public enum MenuType: Codable, Hashable {
+				public enum MenuType: Codable, Hashable, Sendable {
 					case titles, rootWithinTitle, chapter
 					case audio, subpicture, viewingAngle
 					case unexpected(UInt8)
 				}
 			}
-			public struct Id: Codable, Hashable {
+			public struct Id: Codable, Hashable, Sendable {
 				public let languageId: UInt32?
 				public let programChainId: UInt32
 				public init(languageId: UInt32? = nil, programChainId: UInt32) {
@@ -207,7 +207,7 @@ public struct DVDInfo: Codable {
 			}
 		}
 
-		public struct VideoAttributes: Codable {
+		public struct VideoAttributes: Codable, Sendable {
 			public let coding: CodingType
 			public let standard: VideoStandard
 			public let codedPicture: Resolution
@@ -232,13 +232,13 @@ public struct DVDInfo: Codable {
 				self.content = content
 			}
 
-			public enum CodingType: Codable {
+			public enum CodingType: Codable, Sendable {
 				case mpeg1, mpeg2, unexpected(UInt8)
 			}
-			public enum VideoStandard: Codable {
+			public enum VideoStandard: Codable, Sendable {
 				case ntsc, pal, unexpected(UInt8)
 			}
-			public struct Resolution: Codable {
+			public struct Resolution: Codable, Sendable {
 				public let width: UInt16?
 				public let height: UInt16?
 				public init(width: UInt16?, height: UInt16?) {
@@ -246,27 +246,27 @@ public struct DVDInfo: Codable {
 					self.height = height
 				}
 			}
-			public enum AspectRatio: Codable {
+			public enum AspectRatio: Codable, Sendable {
 				case classic(letterboxed: Bool), wide, unspecified, unexpected(UInt8)
 			}
-			public struct DisplayModification: Codable, OptionSet {
+			public struct DisplayModification: Codable, OptionSet, Sendable {
 				public let rawValue: UInt8
 				public static let letterbox = DisplayModification(rawValue: 1 << 0)
 				public static let panScan = DisplayModification(rawValue: 1 << 1)
 				public init(rawValue: UInt8) { self.rawValue = rawValue }
 			}
-			public struct Line21ClosedCaption: Codable, OptionSet {
+			public struct Line21ClosedCaption: Codable, OptionSet, Sendable {
 				public let rawValue: UInt8
 				public static let firstField = Line21ClosedCaption(rawValue: 1 << 0)
 				public static let secondField = Line21ClosedCaption(rawValue: 1 << 1)
 				public init(rawValue: UInt8) { self.rawValue = rawValue }
 			}
-			public enum ContentInfo: Codable {
+			public enum ContentInfo: Codable, Sendable {
 				case video, film
 			}
 		}
 
-		public struct AudioAttributes: Codable {
+		public struct AudioAttributes: Codable, Sendable {
 			public let coding: CodingType
 			public let sampleFrequency: UInt32
 			public let channelCount: UInt8
@@ -288,23 +288,23 @@ public struct DVDInfo: Codable {
 				self.content = content
 			}
 
-			public enum CodingType: Codable {
+			public enum CodingType: Codable, Sendable {
 				case ac3, dts
 				case mpeg1(dynamicRangeCompression: Bool)
 				case mpeg2(dynamicRangeCompression: Bool)
 				case lpcm(bitsPerSample: UInt8)
 				case unexpected(UInt8, UInt8)
 			}
-			public enum RenderingIntent: Codable {
+			public enum RenderingIntent: Codable, Sendable {
 				case normal
 				case surround(dolbyMatrixEncoded: Bool)
 				case karaoke(version: UInt8, mode: Karaoke.Mode, channels: [Karaoke.Channel], multiChannelIntro: Bool)
 				case unexpected(UInt8)
 				public enum Karaoke {
-					public enum Mode: Codable {
+					public enum Mode: Codable, Sendable {
 						case solo, duet
 					}
-					public enum Channel: Codable {
+					public enum Channel: Codable, Sendable {
 						case left, right, center, surround
 						case guideMelody(String? = nil)
 						case guideVocal(String? = nil)
@@ -312,13 +312,13 @@ public struct DVDInfo: Codable {
 					}
 				}
 			}
-			public enum ContentInfo: Codable {
+			public enum ContentInfo: Codable, Sendable {
 				case sourceAudio, audioDescription, commentary, alternateCommentary
 				case unspecified, unexpected(UInt8)
 			}
 		}
 
-		public struct SubpictureAttributes: Codable {
+		public struct SubpictureAttributes: Codable, Sendable {
 			public let coding: CodingType
 			public let language: String?
 			public let content: ContentInfo
@@ -331,15 +331,15 @@ public struct DVDInfo: Codable {
 				self.content = content
 			}
 
-			public enum CodingType: Codable {
+			public enum CodingType: Codable, Sendable {
 				case rle, extended, unexpected(UInt8)
 			}
-			public enum ContentInfo: Codable {
+			public enum ContentInfo: Codable, Sendable {
 				case subtitles(fontSize: FontSize, forChildren: Bool)
 				case closedCaptions(fontSize: FontSize, forChildren: Bool)
 				case commentary(fontSize: FontSize, forChildren: Bool)
 				case forced, unspecified, unexpected(UInt8)
-				public enum FontSize: Codable {
+				public enum FontSize: Codable, Sendable {
 					case normal, large
 				}
 			}
@@ -353,7 +353,7 @@ public struct DVDInfo: Codable {
 	/// the whole program chain or at the end of a cell. Links to a `next` and
 	/// `previous` program chain continue playback beyond the end of the current
 	/// chain. Navigating `up` allows for a hierarchical structure.
-	public struct ProgramChain: Codable {
+	public struct ProgramChain: Codable, Sendable {
 		public let programs: [Index<Program>: Program]
 		public let cells: [Index<Cell>: Cell]
 
@@ -406,7 +406,7 @@ public struct DVDInfo: Codable {
 		}
 
 		/// Programs are the targets when the user skips forward or backward.
-		public struct Program: Codable {
+		public struct Program: Codable, Sendable {
 			public let start: Reference<ProgramChain, Cell>
 			public init(start: Reference<ProgramChain, Cell>) {
 				self.start = start
@@ -414,7 +414,7 @@ public struct DVDInfo: Codable {
 		}
 
 		/// Cells subdivide programs for fine-grained programmatic interaction.
-		public struct Cell: Codable {
+		public struct Cell: Codable, Sendable {
 			public let duration: Time
 			public let playback: PlaybackMode
 			public let ending: EndingMode
@@ -443,7 +443,7 @@ public struct DVDInfo: Codable {
 				self.sectors = sectors
 			}
 
-			public struct PlaybackMode: Codable, OptionSet {
+			public struct PlaybackMode: Codable, OptionSet, Sendable {
 				public let rawValue: UInt8
 				public static let seamless = PlaybackMode(rawValue: 1 << 0)
 				public static let seamlessAngle = PlaybackMode(rawValue: 1 << 1)
@@ -455,14 +455,14 @@ public struct DVDInfo: Codable {
 
 			}
 			public typealias EndingMode = ProgramChain.EndingMode
-			public enum AngleInfo: Codable {
+			public enum AngleInfo: Codable, Sendable {
 				case firstCellInBlock
 				case innerCellInBlock
 				case lastCellInBlock
 				case externalCell
 				case unexpected(UInt32)
 			}
-			public enum KaraokeInfo: Codable {
+			public enum KaraokeInfo: Codable, Sendable {
 				case titlePicture, introduction, bridge
 				case maleVocal, femaleVocal, mixedVocal
 				case interludeFadeIn, interlude, interludeFadeOut
@@ -472,23 +472,23 @@ public struct DVDInfo: Codable {
 			}
 		}
 
-		public enum PlaybackMode: Codable {
+		public enum PlaybackMode: Codable, Sendable {
 			case sequential
 			case random(programCount: UInt8)
 			case shuffle(programCount: UInt8)
 		}
 
-		public enum EndingMode: Codable {
+		public enum EndingMode: Codable, Sendable {
 			case immediate
 			case holdLastFrame(seconds: UInt8)
 			case holdLastFrameIndefinitely
 		}
 
-		public enum SubpictureDescriptor: Codable {
+		public enum SubpictureDescriptor: Codable, Sendable {
 			case classic, wide, letterbox, panScan
 		}
 
-		public struct Color: Codable {
+		public struct Color: Codable, Sendable {
 			public let Y, Cb, Cr: UInt8
 			public init(Y: UInt8, Cb: UInt8, Cr: UInt8) {
 				self.Y = Y
@@ -499,7 +499,7 @@ public struct DVDInfo: Codable {
 	}
 
 	/// User interaction is defined by menu buttons with associated commands.
-	public struct Interaction: Codable {
+	public struct Interaction: Codable, Sendable {
 		public let sector: Index<Sector>
 		public let linearPlaybackTimestamp: Time?
 		public let onlyCommandsChanged: Bool
@@ -532,7 +532,7 @@ public struct DVDInfo: Codable {
 			self.restrictions = restrictions
 		}
 
-		public struct ButtonDescriptor: Codable, Hashable, OptionSet {
+		public struct ButtonDescriptor: Codable, Hashable, OptionSet, Sendable {
 			public let rawValue: UInt32
 			public static let classic = ButtonDescriptor([])
 			public static let wide = ButtonDescriptor(rawValue: 1 << 0)
@@ -541,7 +541,7 @@ public struct DVDInfo: Codable {
 			public init(rawValue: UInt32) { self.rawValue = rawValue }
 		}
 
-		public struct Button: Codable {
+		public struct Button: Codable, Sendable {
 			public let mask: Rectangle
 			public let up: Reference<Interaction, Button>?
 			public let down: Reference<Interaction, Button>?
@@ -574,7 +574,7 @@ public struct DVDInfo: Codable {
 				self.autoActionOnSelect = autoActionOnSelect
 			}
 
-			public struct Rectangle: Codable {
+			public struct Rectangle: Codable, Sendable {
 				public let xStart, xEnd, yStart, yEnd: UInt32
 				public init(xStart: UInt32, xEnd: UInt32,
 				            yStart: UInt32, yEnd: UInt32) {
@@ -585,7 +585,7 @@ public struct DVDInfo: Codable {
 				}
 			}
 
-			public struct Color: Codable {
+			public struct Color: Codable, Sendable {
 				public let color: Reference<ProgramChain, ProgramChain.Color>
 				public let alpha: Double
 				public init(color: DVDInfo.Reference<ProgramChain, ProgramChain.Color>,
@@ -598,7 +598,7 @@ public struct DVDInfo: Codable {
 	}
 
 	/// Commands are executed by the DVD virtual machine.
-	public indirect enum Command: Codable {
+	public indirect enum Command: Codable, Sendable {
 		/// Perform a computate operation.
 		case compute(Operation)
 
@@ -638,7 +638,7 @@ public struct DVDInfo: Codable {
 		/// The command could not be parsed.
 		case unexpected(UInt64)
 
-		public enum Operation: Codable {
+		public enum Operation: Codable, Sendable {
 			case assign(Operand, Operand)
 			case swap(Operand, Operand)
 			case add(Operand, Operand)
@@ -652,7 +652,7 @@ public struct DVDInfo: Codable {
 			case bitwiseXor(Operand, Operand)
 		}
 
-		public enum Target: Codable {
+		public enum Target: Codable, Sendable {
 			case start
 			case topLevelMenu(Domain.ProgramChains.Descriptor.MenuType)
 			case topLevelProgramChain(Index<ProgramChain>)
@@ -680,7 +680,7 @@ public struct DVDInfo: Codable {
 			case none(Index<Interaction.Button>)
 		}
 
-		public enum Condition: Codable {
+		public enum Condition: Codable, Sendable {
 			case equal(Operand, Operand)
 			case notEqual(Operand, Operand)
 			case greaterThanOrEqual(Operand, Operand)
@@ -690,7 +690,7 @@ public struct DVDInfo: Codable {
 			case bitwiseAndNotZero(Operand, Operand)
 		}
 
-		public enum Operand: Codable, Hashable {
+		public enum Operand: Codable, Hashable, Sendable {
 			case immediate(UInt16)
 			case generalRegister(Index<GeneralRegister>)
 			case generalRegisterCounterMode(Index<GeneralRegister>)
@@ -699,7 +699,7 @@ public struct DVDInfo: Codable {
 
 		public enum GeneralRegister {}
 
-		public enum SystemRegister: Codable {
+		public enum SystemRegister: Codable, Sendable {
 			case audioStreamIndex
 			case subpictureStreamIndex
 			case viewingAngleIndex
@@ -727,7 +727,7 @@ public struct DVDInfo: Codable {
 	}
 
 	/// Playback restrictions disable certain user interaction.
-	public struct Restrictions: Codable, OptionSet {
+	public struct Restrictions: Codable, OptionSet, Sendable {
 		public let rawValue: UInt32
 
 		public static let noStop = Restrictions(rawValue: 1 << 3)
@@ -766,7 +766,7 @@ public struct DVDInfo: Codable {
 	/// Index type tightly coupled to the collection element it indexes.
 	///
 	/// The coupling ensures that different index types cannot be confused for one another.
-	public struct Index<Element>: Codable, Hashable, Strideable, ExpressibleByIntegerLiteral {
+	public struct Index<Element>: Codable, Hashable, Sendable, Strideable, ExpressibleByIntegerLiteral {
 		public typealias IntegerLiteralType = UInt
 		public typealias Stride = Int
 
@@ -794,7 +794,7 @@ public struct DVDInfo: Codable {
 	/// Allows a property inside the `DVDInfo` structure to reference another.
 	///
 	/// - Remark: Subscript implementations are available to resolve references.
-	public struct Reference<Root, Value>: Codable {
+	public struct Reference<Root, Value>: Codable, Sendable {
 		public let programChain: DVDInfo.Index<DVDInfo.ProgramChain>?
 		public let program: DVDInfo.Index<DVDInfo.ProgramChain.Program>?
 		public let cell: DVDInfo.Index<DVDInfo.ProgramChain.Cell>?
