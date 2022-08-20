@@ -146,11 +146,11 @@ extension ConverterConnection {
 extension ConverterConnection<Any> {
 
 	/// Injects mock implementations for testing.
-	static func withMocks(proxy: Interface, publisher: ConverterPublisher? = nil,
-	                      _ body: () async throws -> ()) async rethrows {
+	static func withMocks<R>(proxy: Interface, publisher: ConverterPublisher? = nil,
+	                         _ body: () async throws -> R) async rethrows -> R {
 		let emptyPublisher = Empty<ConverterOutput, ConverterError>(completeImmediately: false).eraseToAnyPublisher()
 		let inject = (proxy, publisher ?? emptyPublisher)
-		try await $injected.withValue(inject) {
+		return try await $injected.withValue(inject) {
 			try await body()
 		}
 	}
