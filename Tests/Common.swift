@@ -304,7 +304,7 @@ class ConverterTests: XCTestCase {
 
 			XCTAssertEqual(outputs.count, 1)
 			guard case .progress(let progress) = outputs[0] else {
-				return XCTFail("unexpected publisher output")
+				fatalError("unexpected publisher output")
 			}
 			XCTAssertEqual(progress.fractionCompleted, 0.0)
 			XCTAssertEqual(progress.isIndeterminate, true)
