@@ -143,7 +143,7 @@ extension ConverterConnection {
 
 
 #if DEBUG
-extension ConverterConnection where Interface == Any {
+extension ConverterConnection<Any> {
 
 	/// Injects mock implementations for testing.
 	static func withMocks(proxy: Interface, publisher: ConverterPublisher? = nil,

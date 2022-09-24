@@ -458,7 +458,7 @@ private extension DVDData.VOB.VOBU {
 
 /* MARK: Extracting Properties */
 
-private extension Dictionary where Key == DVDData.IFO.All.Key, Value == DVDData.IFO.All.Value {
+private extension Dictionary<DVDData.IFO.All.Key, DVDData.IFO.All.Value> {
 	/// The number of Video Title Sets on the DVD.
 	var vtsCount: Int {
 		Int(self[.vmgi]?.pointee.vmgi_mat?.pointee.vmg_nr_of_title_sets ?? 0)

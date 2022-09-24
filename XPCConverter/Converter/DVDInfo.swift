@@ -772,10 +772,10 @@ public struct DVDInfo: Codable, Sendable {
 
 		public let rawValue: UInt
 
-		public init<T>(_ rawValue: T) where T: UnsignedInteger {
+		public init<T: UnsignedInteger>(_ rawValue: T) {
 			self.rawValue = UInt(rawValue)
 		}
-		public init<T>(_ rawValue: T) where T: SignedInteger {
+		public init<T: SignedInteger>(_ rawValue: T) {
 			guard rawValue >= 0 else { fatalError("index cannot be negative") }
 			self.rawValue = UInt(rawValue)
 		}
@@ -831,7 +831,7 @@ extension DVDInfo.Domain.ProgramChains {
 	}
 }
 
-extension Dictionary where Key == DVDInfo.Interaction.ButtonDescriptor, Value == DVDInfo.Interaction.Button {
+extension Dictionary<DVDInfo.Interaction.ButtonDescriptor, DVDInfo.Interaction.Button> {
 	public subscript(match descriptor: Key) -> Value? {
 		let selected = first { $0.key.contains(descriptor) }
 		return selected?.value
@@ -841,7 +841,7 @@ extension Dictionary where Key == DVDInfo.Interaction.ButtonDescriptor, Value ==
 
 /* MARK: Reference */
 
-extension DVDInfo.Reference where Root == DVDInfo.TitleSet, Value == DVDInfo.ProgramChain.Program {
+extension DVDInfo.Reference<DVDInfo.TitleSet, DVDInfo.ProgramChain.Program> {
 	public init(programChain: DVDInfo.Index<DVDInfo.ProgramChain>, program: DVDInfo.Index<Value>) {
 		self.programChain = programChain
 		self.program = program
@@ -851,7 +851,7 @@ extension DVDInfo.Reference where Root == DVDInfo.TitleSet, Value == DVDInfo.Pro
 		self.color = nil
 	}
 }
-extension DVDInfo.Reference where Root == DVDInfo.Domain, Value == DVDInfo.ProgramChain {
+extension DVDInfo.Reference<DVDInfo.Domain, DVDInfo.ProgramChain> {
 	public init(programChain: DVDInfo.Index<Value>) {
 		self.programChain = programChain
 		self.program = nil
@@ -861,7 +861,7 @@ extension DVDInfo.Reference where Root == DVDInfo.Domain, Value == DVDInfo.Progr
 		self.color = nil
 	}
 }
-extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.ProgramChain.Cell {
+extension DVDInfo.Reference<DVDInfo.ProgramChain, DVDInfo.ProgramChain.Cell> {
 	public init(cell: DVDInfo.Index<Value>) {
 		self.programChain = nil
 		self.program = nil
@@ -871,7 +871,7 @@ extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo
 		self.color = nil
 	}
 }
-extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.Command {
+extension DVDInfo.Reference<DVDInfo.ProgramChain, DVDInfo.Command> {
 	public init(command: DVDInfo.Index<Value>) {
 		self.programChain = nil
 		self.program = nil
@@ -881,7 +881,7 @@ extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo
 		self.color = nil
 	}
 }
-extension DVDInfo.Reference where Root == DVDInfo.Interaction, Value == DVDInfo.Interaction.Button {
+extension DVDInfo.Reference<DVDInfo.Interaction, DVDInfo.Interaction.Button> {
 	public init(button: DVDInfo.Index<Value>) {
 		self.programChain = nil
 		self.program = nil
@@ -891,7 +891,7 @@ extension DVDInfo.Reference where Root == DVDInfo.Interaction, Value == DVDInfo.
 		self.color = nil
 	}
 }
-extension DVDInfo.Reference where Root == DVDInfo.ProgramChain, Value == DVDInfo.ProgramChain.Color {
+extension DVDInfo.Reference<DVDInfo.ProgramChain, DVDInfo.ProgramChain.Color> {
 	public init(color: DVDInfo.Index<Value>) {
 		self.programChain = nil
 		self.program = nil

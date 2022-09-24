@@ -33,7 +33,7 @@ public indirect enum MediaTree: Sendable {
 	}
 }
 
-extension JSON where Root == MediaTree {
+extension JSON<MediaTree> {
 
 	/// Convert the JSON data into a `MediaTree`.
 	/// - Parameter types: The JSON data can contain instances of protocol-typed

@@ -213,7 +213,7 @@ private extension DVDInfo.Domain {
 	}
 }
 
-private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Descriptor, Value == DVDInfo.Domain.ProgramChains.Id {
+private extension Dictionary<DVDInfo.Domain.ProgramChains.Descriptor, DVDInfo.Domain.ProgramChains.Id> {
 	init(mapping pgcs: [pgci_lu_t: [pgci_srp_t]]) {
 		self.init(minimumCapacity: pgcs.map(\.value.count).reduce(0, +))
 		for (language, pgcs) in pgcs {
@@ -239,7 +239,7 @@ private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Descripto
 	}
 }
 
-private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Id, Value == DVDInfo.ProgramChain {
+private extension Dictionary<DVDInfo.Domain.ProgramChains.Id, DVDInfo.ProgramChain> {
 	init(storage pgcs: [pgci_lu_t: [pgci_srp_t]], navigation: DVDData.NAV.Domain?) {
 		self.init(minimumCapacity: pgcs.map(\.value.count).reduce(0, +))
 		for (language, pgcs) in pgcs {
@@ -415,7 +415,7 @@ private extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Mode {
 	}
 }
 
-private extension Array where Element == DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Channel {
+private extension Array<DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Channel> {
 	init(_ multiChannel: multichannel_ext_t) {
 		self = [.left, .right, .center, .surround, .surround]
 		if multiChannel.ach0_gme != 0 { self[0] = .guideMelody() }
@@ -796,7 +796,7 @@ private extension DVDInfo.Interaction.Button {
 	}
 }
 
-private extension Array where Element == DVDInfo.Interaction.Button.Color {
+private extension Array<DVDInfo.Interaction.Button.Color> {
 	init(colors combined: UInt32) {
 		self = [
 			Element(color: DVDInfo.Reference(color: .init(combined.bits(16...19))),
