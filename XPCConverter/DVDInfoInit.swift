@@ -552,7 +552,7 @@ private extension DVDInfo.ProgramChain {
 		          restrictions: DVDInfo.Restrictions(pgc.prohibited_ops))
 	}
 	init?(_ pgc: pgc_t?, navigation: DVDData.NAV.PGC?) {
-		guard let pgc = pgc else { return nil }
+		guard let pgc else { return nil }
 		self.init(pgc, navigation: navigation)
 	}
 }

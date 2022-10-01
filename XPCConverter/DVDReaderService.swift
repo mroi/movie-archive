@@ -256,7 +256,7 @@ private extension DVDData.IFO {
 
 		func read(_ file: DVDData.FileId) throws {
 			let ifoData = ifoOpen(reader, file.rawValue)
-			guard let ifoData = ifoData else {
+			guard let ifoData else {
 				switch file {
 				case .vmgi: throw DVDReaderError.vmgiReadError
 				case .vtsi: throw DVDReaderError.vtsiReadError
@@ -362,7 +362,7 @@ private extension DVDData.VOB {
 
 		init(_ file: DVDData.FileId, domain: DVDData.DomainId, reader: OpaquePointer) throws {
 			let fileReader = DVDOpenFile(reader, file.rawValue, domain.rawValue)
-			guard let fileReader = fileReader else { throw DVDReaderError.vobReadError }
+			guard let fileReader else { throw DVDReaderError.vobReadError }
 			self.fileReader = fileReader
 		}
 
@@ -385,7 +385,7 @@ private extension DVDData.VOB {
 			}
 
 			mutating func next() -> Result<VOBU, DVDReaderError>? {
-				guard let currentSector = currentSector else { return nil }
+				guard let currentSector else { return nil }
 				self.currentSector = nil
 
 				return withUnsafeTemporaryAllocation(of: UInt8.self, capacity: Int(DVD_VIDEO_LB_LEN)) { buffer in
@@ -393,7 +393,7 @@ private extension DVDData.VOB {
 					guard successful == 1 else { return .failure(.vobReadError) }
 
 					let vobu = VOBU(data: buffer)
-					guard let vobu = vobu else { return .failure(.navImportError) }
+					guard let vobu else { return .failure(.navImportError) }
 
 					let nextVobu = vobu.dsi.vobu_sri.next_vobu.bits(0...29)
 					if nextVobu != SRI_END_OF_CELL {

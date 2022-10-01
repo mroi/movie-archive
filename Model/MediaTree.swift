@@ -320,7 +320,7 @@ private extension Array {
 	var last: Element? {
 		get { return self.endIndex > 0 ? self[self.endIndex - 1] : nil }
 		set {
-			if let newValue = newValue {
+			if let newValue {
 				self[self.endIndex - 1] = newValue
 			} else {
 				self.removeLast()
@@ -398,7 +398,7 @@ private extension KeyedDecodingContainer {
 		let key = nested.allKeys.first!
 
 		let type = ProtocolTypeCoding.knownTypes?[key]
-		guard let type = type else {
+		guard let type else {
 			var codingPath = nested.codingPath
 			codingPath.append(key)
 			throw UnknownTypeError(

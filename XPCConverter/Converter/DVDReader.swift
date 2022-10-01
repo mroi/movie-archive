@@ -20,7 +20,7 @@ public actor DVDReader {
 	public init(source url: URL) async throws {
 		remoteStateID = try await connection.withErrorHandling { remote, done in
 			remote.open(url) { result in
-				if let result = result {
+				if let result {
 					done(.success(result))
 				} else {
 					done(.failure(.sourceNotSupported))
@@ -42,10 +42,10 @@ public actor DVDReader {
 
 			remote.readInfo(remoteStateID) { result in
 				do {
-					guard let result = result else { throw ConverterError.sourceReadError }
+					guard let result else { throw ConverterError.sourceReadError }
 					let unarchiver = try NSKeyedUnarchiver(forReadingFrom: result)
 					let info = try unarchiver.decodeTopLevelDecodable(DVDInfo.self, forKey: NSKeyedArchiveRootObjectKey)
-					guard let info = info else { throw ConverterError.sourceReadError }
+					guard let info else { throw ConverterError.sourceReadError }
 					done(.success(info))
 				} catch {
 					done(.failure(.sourceReadError))
