@@ -30,6 +30,8 @@ import Combine
 ///
 /// - Remark: These low-level XPC types form a conduit which is meant to be
 ///   wrapped with higher-level types like `DVDReader` for client consumption.
+/// - ToDo: Use distributed actors for the higher-level types once an official
+///   XPC replacement is available.
 class ConverterConnection<Interface> {
 
 	/// Publisher to receive status updates from the converter service.
