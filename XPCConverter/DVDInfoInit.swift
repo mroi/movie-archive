@@ -85,8 +85,8 @@ private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo
 
 		// these two sets of indexes should be identical
 		let titleSetIndexes1 = titles.map(\.value.title_set_nr).map(Int.init)
-		let titleSetIndexes2 = ifoData.keys.compactMap { key -> Int? in
-			if case .vtsi(let index) = key { return index } else { return nil }
+		let titleSetIndexes2 = ifoData.keys.compactMap {
+			if case .vtsi(let index) = $0 { return index } else { return nil }
 		}
 		let titleSetIndexes = Set().union(titleSetIndexes1).union(titleSetIndexes2)
 
@@ -723,10 +723,8 @@ private extension DVDInfo.Interaction {
 		// only consider new highlight information with active buttons
 		guard nav.pci.hli.hl_gi.hli_ss.bit(0) && nav.pci.hli.hl_gi.btn_ns > 0 else { return nil }
 
-		let start = nav.timestamp.map { timestamp -> UInt64 in
-			let startOffset = nav.pci.hli.hl_gi.hli_s_ptm - nav.pci.pci_gi.vobu_s_ptm
-			return timestamp + UInt64(startOffset)
-		}
+		let startOffset = nav.pci.hli.hl_gi.hli_s_ptm - nav.pci.pci_gi.vobu_s_ptm
+		let start = nav.timestamp.map { $0 + UInt64(startOffset) }
 		let selectable = nav.pci.hli.hl_gi.btn_se_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm
 		let visible = nav.pci.hli.hl_gi.hli_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm
 		let frameRate = DVDInfo.Time.FrameRate(nav.pci.pci_gi.e_eltm.frame_u)

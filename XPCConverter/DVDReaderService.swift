@@ -301,7 +301,7 @@ private extension DVDData.NAV {
 			let totalSectors = sectorCounts.reduce(0, +)
 			var completedSectors = 0
 
-			let vtsNav = try vtsData.map { (domain, domainData) -> (DVDData.DomainId, Domain) in
+			let vtsNav = try vtsData.map { domain, domainData -> (DVDData.DomainId, Domain) in
 				guard domainData.contains(where: { $0.value.count > 0 }) else {
 					return (domain, [:])
 				}
