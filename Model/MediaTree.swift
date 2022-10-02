@@ -161,15 +161,91 @@ extension MediaTree {
 /* MARK: Media Data Handling */
 
 /// All information needed to create a new representation of the media asset.
+///
+/// The properties `video`, `audio`, and `subtitles` list the tracks to be
+/// included in the new media representation. The `stop` time is non-inclusive,
+/// the indicated frame will not be part of the new representation.
 public struct MediaRecipe: Codable, Sendable {
-	// TODO: add common properties and customization points
-	// * data source
-	// * video, language, and subtitle track configuration
-	// * metadata dictionary [enum: String]
+
+	/// The data stream containing encoded source video, audio, and subtitles.
+	public var data: any MediaDataSource
+
+	public var start: Time
+	public var stop: Time
+
+	public var video: [TrackIdentifier<Video>: Video]
+	public var audio: [TrackIdentifier<Audio>: Audio]
+	public var subtitles: [TrackIdentifier<Subtitles>: Subtitles]
+
+	public var chapters: [Time: String]
+	public var metadata: [Metadata]
+
+	public init(data: any MediaDataSource,
+	            start: Time = .seconds(0),
+	            stop: Time = .seconds(.infinity),
+	            video: [TrackIdentifier<Video>: Video] = [:],
+	            audio: [TrackIdentifier<Audio>: Audio] = [:],
+	            subtitles: [TrackIdentifier<Subtitles>: Subtitles] = [:],
+	            chapters: [Time: String] = [:],
+	            metadata: [Metadata] = []) {
+		self.data = data
+		self.start = start
+		self.stop = stop
+		self.video = video
+		self.audio = audio
+		self.subtitles = subtitles
+		self.chapters = chapters
+		self.metadata = metadata
+	}
+
+	/// A point in time relative to the beginning of this media asset.
+	public enum Time: Hashable, Codable, Sendable {
+		case seconds(Double)
+		case frames(Int)
+	}
+
+	/// Numerical or string identifier for media track carrying audio, video, or subtitles.
+	public struct TrackIdentifier<Element>: Codable, Hashable, Sendable, ExpressibleByIntegerLiteral, ExpressibleByStringLiteral {
+		public let intValue: Int?
+		public let stringValue: String
+
+		static public var single: Self { Self(0) }
+
+		public init(_ value: Int) {
+			self.intValue = value
+			self.stringValue = String(value)
+		}
+		public init(_ value: String) {
+			self.intValue = Int(value)
+			self.stringValue = value
+		}
+		public init(integerLiteral: IntegerLiteralType) {
+			self.init(integerLiteral)
+		}
+		public init(stringLiteral: StringLiteralType) {
+			self.init(stringLiteral)
+		}
+	}
+
+	/// Configuration for a video track.
+	public struct Video: Codable, Sendable {
+	}
+
+	/// Configuration for an audio track.
+	public struct Audio: Codable, Sendable {
+	}
+
+	/// Configuration for a subtitle track.
+	public struct Subtitles: Codable, Sendable {
+	}
+
+	/// An item of metadata describing the asset.
+	public enum Metadata: Codable, Sendable {
+	}
 }
 
 /// Obtains data for a single asset from its source.
-public protocol MediaDataSource: Codable {
+public protocol MediaDataSource: Codable, Sendable {
 	// TODO: functionality to fetch data from source media
 }
 
@@ -492,4 +568,104 @@ extension MediaTree.ID: CustomJSONCodable {
 		}
 		Self.allocator.raise(ifLessThan: value)
 	}
+}
+
+extension MediaRecipe {
+	// custom encoding needed because of any MediaDataSource typed member
+	private enum CodingKeys: String, CodingKey {
+		case data, start, stop, video, audio, subtitles, chapters, metadata
+	}
+
+	public func encode(to encoder: any Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try container.encode(protocolTyped: data, forKey: .data)
+		try container.encode(start, forKey: .start)
+		try container.encode(stop, forKey: .stop)
+		try container.encode(video, forKey: .video)
+		try container.encode(audio, forKey: .audio)
+		try container.encode(subtitles, forKey: .subtitles)
+		try container.encode(chapters, forKey: .chapters)
+		try container.encode(metadata, forKey: .metadata)
+	}
+
+	public init(from decoder: any Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		let typeErasedData = try container.decode(protocolTypedForKey: .data)
+		guard let dataSource = typeErasedData as? MediaDataSource else {
+			throw DecodingError.typeMismatch(MediaDataSource.self,
+				.init(codingPath: decoder.codingPath, debugDescription:
+					"value of type \(MediaDataSource.self) expected"))
+		}
+		data = dataSource
+		start = try container.decode(Time.self, forKey: .start)
+		stop = try container.decode(Time.self, forKey: .stop)
+		video = try container.decode([TrackIdentifier<Video>: Video].self, forKey: .video)
+		audio = try container.decode([TrackIdentifier<Audio>: Audio].self, forKey: .audio)
+		subtitles = try container.decode([TrackIdentifier<Subtitles>: Subtitles].self, forKey: .subtitles)
+		chapters = try container.decode([Time: String].self, forKey: .chapters)
+		metadata = try container.decode([Metadata].self, forKey: .metadata)
+	}
+}
+
+extension MediaRecipe.Time: CustomJSONStringKeyRepresentable, CustomJSONCodable {
+	// custom encoding: time as human-readable string
+
+	public var stringValue: String {
+		switch self {
+		case .seconds(.infinity):
+			return "∞"
+		case .seconds(let totalSeconds):
+			let totalSeconds = totalSeconds + 0.0005  // round to milliseconds
+			let (hours, hoursRemainder) = Int(totalSeconds).quotientAndRemainder(dividingBy: 60 * 60)
+			let (minutes, seconds) = hoursRemainder.quotientAndRemainder(dividingBy: 60)
+			let milliseconds = Int(totalSeconds.truncatingRemainder(dividingBy: 1) * 1000)
+			var string: String
+			if hours != 0 || minutes != 0 {
+				if hours != 0 {
+					string = String(hours) + ":" + String(format: "%02d", minutes)
+				} else {
+					string = String(minutes)
+				}
+				string += ":" + String(format: "%02d", seconds)
+			} else {
+				string = String(seconds)
+			}
+			return string + "." + String(format: "%03d", milliseconds)
+		case .frames(let frames):
+			return String(frames)
+		}
+	}
+
+	/// - ToDo: Simplify using `Regex` once we move to macOS 13
+	public init?(stringValue: String) {
+		switch stringValue {
+		case "∞": self = .seconds(.infinity)
+		case let string where string.contains("."):
+			let substrings = string.split(separator: ":")
+			guard 0...3 ~= substrings.count else { return nil }
+			var components: [Double] = []
+			for string in substrings.reversed() {
+				guard let number = Double(string) else { return nil }
+				components.append(number)
+			}
+			let hours = components.count > 2 ? components[2] * 60 * 60 : 0
+			let minutes = components.count > 1 ? components[1] * 60 : 0
+			let seconds = components[0]
+			self = .seconds(hours + minutes + seconds)
+		default:
+			guard let frames = Int(stringValue) else { return nil }
+			self = .frames(frames)
+		}
+	}
+}
+
+extension MediaRecipe.TrackIdentifier: CustomJSONStringKeyRepresentable {
+	public static func < (lhs: Self, rhs: Self) -> Bool {
+		if let lhs = lhs.intValue, let rhs = rhs.intValue {
+			return lhs < rhs
+		} else {
+			return lhs.stringValue < rhs.stringValue
+		}
+	}
+	public init(stringValue: String) { self.init(stringValue) }
 }
