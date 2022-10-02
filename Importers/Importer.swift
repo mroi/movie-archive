@@ -22,11 +22,10 @@ public struct Importer: ImportPass {
 	public typealias Error = ConverterError
 
 	/// Instantiates the first available importer supporting the source.
-	public init(source url: URL) throws {
+	public init(source url: URL) async throws {
 		for importerType in availableImporters {
 			do {
-				let importer = try importerType.init(source: url)
-				selectedImporter = importer
+				selectedImporter = try await importerType.init(source: url)
 				return
 			} catch Error.sourceNotSupported {
 				continue

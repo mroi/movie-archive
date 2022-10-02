@@ -1,22 +1,24 @@
 import Foundation
 
 
-/* MARK: DVDReader */
-
 /// Reads and interprets DVD data structures.
 ///
-/// This client-side type accesses `libdvdread` functionality in the XPC
-/// converter service. It manages the lifetime of the corresponding `libdvdread`
-/// state.
-public final class DVDReader: ConverterClient<ConverterDVDReader> {
+/// This actor accesses `libdvdread` functionality in the XPC converter service.
+/// It manages the lifetime of the corresponding `libdvdread` state.
+public actor DVDReader {
 
-	private var readerStateID: UUID!
+	private let connection = ConverterConnection<ConverterDVDReader>()
+	private var remoteStateID: UUID
+
+	/// Publisher to receive status updates for DVD reader operations.
+	///
+	/// - Important: Because XPC requests run on an internal serial queue,
+	///   clients must expect to receive values on an undefined thread.
+	public var publisher: ConverterPublisher { connection.publisher }
 
 	/// Initializes a DVD reader for the given URL
-	public init(source url: URL) throws {
-		super.init()
-
-		readerStateID = try withConnectionErrorHandling { done in
+	public init(source url: URL) async throws {
+		remoteStateID = try await connection.withErrorHandling { remote, done in
 			remote.open(url) { result in
 				if let result = result {
 					done(.success(result))
@@ -36,9 +38,9 @@ public final class DVDReader: ConverterClient<ConverterDVDReader> {
 	/// Information is collected by reading the IFO files and menu NAV packets
 	/// on the DVD.
 	public func info() async throws -> DVDInfo {
-		return try await withConnectionErrorHandling { done in
+		return try await connection.withErrorHandling { remote, done in
 
-			remote.readInfo(readerStateID) { result in
+			remote.readInfo(remoteStateID) { result in
 				do {
 					guard let result = result else { throw ConverterError.sourceReadError }
 					let unarchiver = try NSKeyedUnarchiver(forReadingFrom: result)
@@ -53,8 +55,6 @@ public final class DVDReader: ConverterClient<ConverterDVDReader> {
 	}
 
 	deinit {
-		if readerStateID != nil {
-			remote.close(readerStateID)
-		}
+		connection.remote.close(remoteStateID)
 	}
 }
