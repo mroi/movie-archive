@@ -76,7 +76,7 @@ public protocol ExportPass: AnyPass {
 ///
 /// Consumers of the passes API should rarely need this. It is used internally
 /// to offer protocol extensions and default implementations for all passes.
-public protocol AnyPass: CustomStringConvertible {}
+public protocol AnyPass: Sendable, CustomStringConvertible {}
 
 
 /* MARK: Sub-Pass Builder */

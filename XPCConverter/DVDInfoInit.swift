@@ -85,8 +85,8 @@ private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo
 
 		// these two sets of indexes should be identical
 		let titleSetIndexes1 = titles.map(\.value.title_set_nr).map(Int.init)
-		let titleSetIndexes2 = ifoData.keys.compactMap { key -> Int? in
-			if case .vtsi(let index) = key { return index } else { return nil }
+		let titleSetIndexes2 = ifoData.keys.compactMap {
+			if case .vtsi(let index) = $0 { return index } else { return nil }
 		}
 		let titleSetIndexes = Set().union(titleSetIndexes1).union(titleSetIndexes2)
 
@@ -213,7 +213,7 @@ private extension DVDInfo.Domain {
 	}
 }
 
-private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Descriptor, Value == DVDInfo.Domain.ProgramChains.Id {
+private extension Dictionary<DVDInfo.Domain.ProgramChains.Descriptor, DVDInfo.Domain.ProgramChains.Id> {
 	init(mapping pgcs: [pgci_lu_t: [pgci_srp_t]]) {
 		self.init(minimumCapacity: pgcs.map(\.value.count).reduce(0, +))
 		for (language, pgcs) in pgcs {
@@ -239,7 +239,7 @@ private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Descripto
 	}
 }
 
-private extension Dictionary where Key == DVDInfo.Domain.ProgramChains.Id, Value == DVDInfo.ProgramChain {
+private extension Dictionary<DVDInfo.Domain.ProgramChains.Id, DVDInfo.ProgramChain> {
 	init(storage pgcs: [pgci_lu_t: [pgci_srp_t]], navigation: DVDData.NAV.Domain?) {
 		self.init(minimumCapacity: pgcs.map(\.value.count).reduce(0, +))
 		for (language, pgcs) in pgcs {
@@ -415,7 +415,7 @@ private extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Mode {
 	}
 }
 
-private extension Array where Element == DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Channel {
+private extension Array<DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Channel> {
 	init(_ multiChannel: multichannel_ext_t) {
 		self = [.left, .right, .center, .surround, .surround]
 		if multiChannel.ach0_gme != 0 { self[0] = .guideMelody() }
@@ -552,7 +552,7 @@ private extension DVDInfo.ProgramChain {
 		          restrictions: DVDInfo.Restrictions(pgc.prohibited_ops))
 	}
 	init?(_ pgc: pgc_t?, navigation: DVDData.NAV.PGC?) {
-		guard let pgc = pgc else { return nil }
+		guard let pgc else { return nil }
 		self.init(pgc, navigation: navigation)
 	}
 }
@@ -723,10 +723,8 @@ private extension DVDInfo.Interaction {
 		// only consider new highlight information with active buttons
 		guard nav.pci.hli.hl_gi.hli_ss.bit(0) && nav.pci.hli.hl_gi.btn_ns > 0 else { return nil }
 
-		let start = nav.timestamp.map { timestamp -> UInt64 in
-			let startOffset = nav.pci.hli.hl_gi.hli_s_ptm - nav.pci.pci_gi.vobu_s_ptm
-			return timestamp + UInt64(startOffset)
-		}
+		let startOffset = nav.pci.hli.hl_gi.hli_s_ptm - nav.pci.pci_gi.vobu_s_ptm
+		let start = nav.timestamp.map { $0 + UInt64(startOffset) }
 		let selectable = nav.pci.hli.hl_gi.btn_se_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm
 		let visible = nav.pci.hli.hl_gi.hli_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm
 		let frameRate = DVDInfo.Time.FrameRate(nav.pci.pci_gi.e_eltm.frame_u)
@@ -796,7 +794,7 @@ private extension DVDInfo.Interaction.Button {
 	}
 }
 
-private extension Array where Element == DVDInfo.Interaction.Button.Color {
+private extension Array<DVDInfo.Interaction.Button.Color> {
 	init(colors combined: UInt32) {
 		self = [
 			Element(color: DVDInfo.Reference(color: .init(combined.bits(16...19))),

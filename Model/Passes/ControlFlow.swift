@@ -39,10 +39,10 @@ extension Base {
 			conditionPass = condition
 			subPasses = builder()
 		}
-		public init(_ condition: @escaping (MediaTree) -> Bool, @SubPassBuilder _ builder: () -> [any Pass]) {
+		public init(_ condition: @Sendable @escaping (MediaTree) -> Bool, @SubPassBuilder _ builder: () -> [any Pass]) {
 			struct ConditionPass: Pass, ConditionFlag {
 				var condition: Bool = true
-				let body: (MediaTree) -> Bool
+				let body: @Sendable (MediaTree) -> Bool
 				mutating func process(_ mediaTree: MediaTree) -> MediaTree {
 					condition = body(mediaTree)
 					return mediaTree
@@ -72,7 +72,7 @@ extension Base {
 		public init(_ condition: any Pass & ConditionFlag, @SubPassBuilder _ builder: () -> [any Pass]) {
 			ifPass = If(condition, builder)
 		}
-		public init(_ condition: @escaping (MediaTree) -> Bool, @SubPassBuilder _ builder: () -> [any Pass]) {
+		public init(_ condition: @Sendable @escaping (MediaTree) -> Bool, @SubPassBuilder _ builder: () -> [any Pass]) {
 			ifPass = If(condition, builder)
 		}
 
