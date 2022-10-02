@@ -229,14 +229,93 @@ public struct MediaRecipe: Codable, Sendable {
 
 	/// Configuration for a video track.
 	public struct Video: Codable, Sendable {
+		public let pixelAspect: Double?
+		public let colorSpace: ColorSpace?
+		public let interlace: InterlaceState?
+		public let crop: Cropping?
+
+		public let language: Locale?
+		public let content: ContentInfo
+
+		public init(pixelAspect: Double? = nil,
+		            colorSpace: ColorSpace? = nil,
+		            interlace: InterlaceState? = nil,
+		            crop: Cropping? = nil,
+		            language: Locale? = nil,
+		            content: ContentInfo = .main) {
+			self.pixelAspect = pixelAspect
+			self.colorSpace = colorSpace
+			self.interlace = interlace
+			self.crop = crop
+			self.language = language
+			self.content = content
+		}
+
+		public struct Cropping: Codable, Sendable {
+			public let top, bottom, left, right: Int
+			public init(top: Int = 0, bottom: Int = 0, left: Int = 0, right: Int = 0) {
+				self.top = top
+				self.bottom = bottom
+				self.left = left
+				self.right = right
+			}
+		}
+		public enum ColorSpace: Codable, Sendable {
+			case rec601NTSC, rec601PAL, rec709, rec2020, rec2100PQ, rec2100HLG
+			case sRGB, p3DCI, p3D65
+		}
+		public enum InterlaceState: Codable, Sendable {
+			case progressive, evenFirst, oddFirst
+		}
+		public enum ContentInfo: Codable, Sendable {
+			case main, auxiliary
+		}
 	}
 
 	/// Configuration for an audio track.
 	public struct Audio: Codable, Sendable {
+		public let channels: [Channel]?
+		public let language: Locale?
+		public let content: ContentInfo
+
+		public init(channels: [Channel]? = nil,
+		            language: Locale? = nil,
+		            content: ContentInfo = .main) {
+			self.channels = channels
+			self.language = language
+			self.content = content
+		}
+
+		public enum Channel: Codable, Sendable {
+			case frontLeft, frontCenter, frontRight
+			case matrixSurroundLeft, matrixSurroundRight
+			case frontLeftCenter, frontRightCenter
+			case sideLeft, sideRight
+			case backLeft, backCenter, backRight
+			case lowFrequencyEffects
+		}
+		public enum ContentInfo: Codable, Sendable {
+			case main, commentary, soundtrack, audioDescription, auxiliary
+		}
 	}
 
 	/// Configuration for a subtitle track.
 	public struct Subtitles: Codable, Sendable {
+		public let forced: Bool
+		public let language: Locale?
+		public let content: ContentInfo
+
+		public init(forced: Bool = false,
+		            language: Locale? = nil,
+		            content: ContentInfo = .main) {
+			self.forced = forced
+			self.language = language
+			self.content = content
+		}
+
+		public enum ContentInfo: Codable, Sendable {
+			case main, closedCaption, commentary, auxiliary
+		}
 	}
 
 	/// An item of metadata describing the asset.
@@ -668,4 +747,21 @@ extension MediaRecipe.TrackIdentifier: CustomJSONStringKeyRepresentable {
 		}
 	}
 	public init(stringValue: String) { self.init(stringValue) }
+}
+
+extension MediaRecipe.Video.ColorSpace: CustomJSONCompactEnum {}
+extension MediaRecipe.Video.InterlaceState: CustomJSONCompactEnum {}
+extension MediaRecipe.Video.ContentInfo: CustomJSONCompactEnum {}
+extension MediaRecipe.Audio.Channel: CustomJSONCompactEnum {}
+extension MediaRecipe.Audio.ContentInfo: CustomJSONCompactEnum {}
+extension MediaRecipe.Subtitles.ContentInfo: CustomJSONCompactEnum {}
+
+extension Locale: CustomJSONCodable {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		try identifier.encode(to: encoder)
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let identifier = try String(from: decoder)
+		self = Locale(identifier: identifier)
+	}
 }
