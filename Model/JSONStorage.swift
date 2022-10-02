@@ -4,7 +4,7 @@ import Foundation
 /* MARK: JSON Data */
 
 /// JSON representation and compressed file storage.
-public struct JSON<Root: Codable> {
+public struct JSON<Root: Codable>: Sendable {
 	public let data: Data
 
 	init(_ root: Root) throws {
@@ -25,7 +25,7 @@ extension JSON {
 		var result = String(data: data, encoding: .utf8)!
 		if case .spaces(let width) = format {
 			let lines = result.split(separator: "\n")
-			let spaceIndented = lines.map { line -> String in
+			let spaceIndented = lines.map { line in
 				let firstNonTab = line.firstIndex(where: { !$0.isWhitespace }) ?? line.startIndex
 				let tabCount = line[..<firstNonTab].count
 				let spaces = String(repeating: " ", count: width * tabCount)
@@ -472,7 +472,7 @@ private extension CustomJSONEncoder.ElementStorage {
 		switch store {
 
 		case .dictionary(let dictionary):
-			let dictionaryData = try dictionary.store.map { entry -> Data in
+			let dictionaryData = try dictionary.store.map { entry in
 				let key = try primitive(entry.key.stringValue)
 				let value = try entry.value.serialize()
 				return key + " : ".utf8 + value

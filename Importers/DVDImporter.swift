@@ -8,12 +8,12 @@ struct DVDImporter: ImportPass {
 
 	private let dvdReader: DVDReader
 
-	init(source url: URL) throws {
-		dvdReader = try DVDReader(source: url)
+	init(source url: URL) async throws {
+		dvdReader = try await DVDReader(source: url)
 	}
 
 	func generate() async throws -> MediaTree {
-		let subscription = dvdReader.publisher
+		let subscription = await dvdReader.publisher
 			.map { Transform.Status($0) }
 			.mapError { $0 }
 			.subscribe(Transform.subject)
@@ -29,7 +29,7 @@ struct DVDImporter: ImportPass {
 
 private extension Transform.Status {
 
-	/// Translate from `ConverterClient` to `Transform` publisher output.
+	/// Translate from `ConverterConnection` to `Transform` publisher output.
 	///
 	/// This initializer bridges an impedance mismatch in publisher values.
 	/// The `DVDImporter` uses the XPC converter as an internal implementation

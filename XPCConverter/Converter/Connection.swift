@@ -28,25 +28,27 @@ import Combine
 /// At the same time, the XPC service can send asynchronous feedback to the
 /// client by way of the `ConverterPublisher`.
 ///
-/// - Remark: These low-level XPC protocols form an hourglass interface which
-///   is meant to be augmented with client-side currency types like `DVDReader`.
-public class ConverterClient<ProxyInterface> {
+/// - Remark: These low-level XPC types form a conduit which is meant to be
+///   wrapped with higher-level types like `DVDReader` for client consumption.
+/// - ToDo: Use distributed actors for the higher-level types once an official
+///   XPC replacement is available.
+class ConverterConnection<Interface> {
 
 	/// Publisher to receive status updates from the converter service.
 	///
 	/// - Important: Because XPC requests run on an internal serial queue,
 	///   clients must expect to receive values on an undefined thread.
-	public let publisher: ConverterPublisher
+	let publisher: ConverterPublisher
 
-	let remote: ProxyInterface
+	let remote: Interface
 	private let connection: NSXPCConnection
 	private let subscription: AnyCancellable?
 
 	/// Sets up a client instance managing one XPC connection.
 	init() {
 #if DEBUG
-		if let injected = ConverterClient<Any>.injected {
-			remote = injected.proxy as! ProxyInterface
+		if let injected = ConverterConnection<Any>.injected {
+			remote = injected.proxy as! Interface
 			publisher = injected.publisher
 			connection = NSXPCConnection()
 			subscription = nil
@@ -55,7 +57,7 @@ public class ConverterClient<ProxyInterface> {
 #endif
 
 		let returnChannel = ReturnImplementation()
-		connection = ConverterClient<ProxyInterface>.makeConnection()
+		connection = ConverterConnection<Interface>.makeConnection()
 		connection.remoteObjectInterface = NSXPCInterface(with: ConverterInterface.self)
 		connection.exportedInterface = NSXPCInterface(with: ReturnInterface.self)
 		connection.exportedObject = returnChannel
@@ -63,7 +65,7 @@ public class ConverterClient<ProxyInterface> {
 		connection.interruptionHandler = { returnChannel.sendConnectionInterrupted() }
 		connection.resume()
 
-		remote = connection.remoteObjectProxy as! ProxyInterface
+		remote = connection.remoteObjectProxy as! Interface
 		publisher = returnChannel.publisher
 
 		// invalidate the connection whenever the publisher completes
@@ -98,7 +100,7 @@ public class ConverterClient<ProxyInterface> {
 }
 
 
-extension ConverterClient {
+extension ConverterConnection {
 
 	/// Wrap a remote converter invocation with connection error handling.
 	///
@@ -112,10 +114,11 @@ extension ConverterClient {
 	/// wrap every remote invocation individually.
 	///
 	/// - Parameter body: A closure invoking a remote function. The closure
-	///   receives a continuation function which must be called exactly once
-	///   if the remote function’s completion handler is called.
+	///   receives the remote interface as first parameter and a continuation
+	///   function as second parameter. When the remote call completes
+	///   successfully, the continuation function must be called exactly once.
 	/// - Returns: Successful results are returned, errors are thrown.
-	func withConnectionErrorHandling<T>(_ body: (_ done: @escaping (Result<T, ConverterError>) -> Void) -> Void) async throws -> T {
+	func withErrorHandling<T>(_ body: (Interface, @escaping (Result<T, ConverterError>) -> Void) -> Void) async throws -> T {
 
 		return try await withCheckedThrowingContinuation { continuation in
 
@@ -133,56 +136,17 @@ extension ConverterClient {
 			defer { subscription.cancel() }
 
 			// run caller code
-			body { continuation.resume(with: $0) }
+			body(remote) { continuation.resume(with: $0) }
 		}
-	}
-
-	/// Wrap a remote converter invocation with connection error handling.
-	///
-	/// - SeeAlso: ``withConnectionErrorHandling<T>(_:) async``
-	/// - Remark: The synchronous variant only remains for Playgrounds
-	///   compatibility.
-	func withConnectionErrorHandling<T>(_ body: (_ done: @escaping (Result<T, ConverterError>) -> Void) -> Void) throws -> T {
-
-		let resultAvailable = DispatchSemaphore(value: 0)
-		var result: Result<T, ConverterError>?
-
-		// set the result exclusively and only once via this function
-		func setResult(_ value: Result<T, ConverterError>) {
-			assert(result == nil)
-			result = value  // race-free: called on some thread, but only once
-			resultAvailable.signal()
-		}
-
-		// listen for asynchronous errors from the publisher
-		let subscription = publisher.sink(
-			receiveCompletion: {
-				switch $0 {
-				case .failure(let error):
-					setResult(.failure(error))
-				case .finished:
-					setResult(.failure(.connectionInterrupted))
-				}
-			},
-			receiveValue: { _ in })
-		defer { subscription.cancel() }
-
-		// run caller code
-		body(setResult)
-
-		// wait for continuation, result is definitely valid after this line
-		resultAvailable.wait()
-
-		return try result!.get()
 	}
 }
 
 
 #if DEBUG
-extension ConverterClient where ProxyInterface == Any {
+extension ConverterConnection<Any> {
 
 	/// Injects mock implementations for testing.
-	static func withMocks(proxy: ProxyInterface, publisher: ConverterPublisher? = nil,
+	static func withMocks(proxy: Interface, publisher: ConverterPublisher? = nil,
 	                      _ body: () async throws -> ()) async rethrows {
 		let emptyPublisher = Empty<ConverterOutput, ConverterError>(completeImmediately: false).eraseToAnyPublisher()
 		let inject = (proxy, publisher ?? emptyPublisher)
@@ -192,6 +156,6 @@ extension ConverterClient where ProxyInterface == Any {
 	}
 
 	@TaskLocal
-	private static var injected: (proxy: ProxyInterface, publisher: ConverterPublisher)?
+	private static var injected: (proxy: Interface, publisher: ConverterPublisher)?
 }
 #endif

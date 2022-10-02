@@ -64,18 +64,18 @@ public actor Transform {
 		// remember when an error is issued asynchronously
 		var errorTask: Task<Void, Never>?
 
+		// update transform state on error
+		let subscription = publisher.sink(
+			receiveCompletion: {
+				if case .failure = $0 {
+					errorTask = Task.detached(priority: .high) { await self.setState(.error) }
+				}
+			},
+			receiveValue: { _ in })
+		defer { subscription.cancel() }
+
 		// make ourselves available to passes executing within this transform
 		await Self.$current.withValue(self) {
-
-			// update transform state on error
-			let subscription = publisher.sink(
-				receiveCompletion: {
-					if case .failure = $0 {
-						errorTask = Task.detached(priority: .high) { await self.errorState() }
-					}
-				},
-				receiveValue: { _ in })
-			defer { subscription.cancel() }
 
 			// install a fresh allocator for media tree node IDs
 			await MediaTree.ID.$allocator.withValue(MediaTree.ID.Allocator()) {
@@ -119,11 +119,11 @@ extension Transform: CustomStringConvertible {
 
 extension Transform {
 
-	/// Indicate an error in the internal state
+	/// Set the internal state.
 	///
 	/// - ToDo: Replace with `async` property setter once support for effectful
 	///   mutable properties is available.
-	private func errorState() { state = .error }
+	private func setState(_ value: State) { state = value }
 }
 
 
