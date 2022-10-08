@@ -444,6 +444,8 @@ extension MediaTree: CustomJSONCodable {
 	}
 }
 
+extension MediaTree.AssetNode.Kind: CustomJSONCompactEnum {}
+
 extension MediaTree.CollectionNode: CustomJSONCodable {
 	// custom encoding: encode children directly without key
 	public func encode(toCustomJSON encoder: any Encoder) throws {
