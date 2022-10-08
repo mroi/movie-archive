@@ -175,6 +175,7 @@ public protocol CustomJSONCodable {
 	init(fromCustomJSON decoder: any Decoder) throws
 }
 
+
 /// Types can adopt this protocol to enable skipping of empty collections.
 ///
 /// For brevity and JSON readability, some types can benefit from not storing
@@ -185,7 +186,18 @@ public protocol CustomJSONCodable {
 /// This behavior is opt-in, since it can lead to ambiguities during decoding
 /// when applied universally. A good indicator for a type that should **not**
 /// adopt this behavior is inspection of `allKeys` in the decoding initializers.
-public protocol CustomJSONEmptyCollectionSkipping {}
+public protocol CustomJSONEmptyCollectionSkipping: Codable, CustomJSONCodable {}
+
+extension CustomJSONEmptyCollectionSkipping {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		try encode(to: encoder)
+		try encoder.skipEmptyCollections()
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		try decoder.enableMissingAsEmpty()
+		try self.init(from: decoder)
+	}
+}
 
 
 /* MARK: Custom JSON Encoder */
@@ -197,7 +209,6 @@ public protocol CustomJSONEmptyCollectionSkipping {}
 /// * retain element order in dictionary collections
 /// * rendering of reasonably short collections in a single line
 /// * respect `CustomJSONCodable` to customize JSON encoding of types
-/// * respect `CustomJSONEmptyCollectionSkipping` to skip empty collections
 private struct CustomJSONEncoder {
 
 	/// Reference-typed storage box.
@@ -373,27 +384,6 @@ extension CustomJSONEncoder.KeyedDictionaryStorage: KeyedEncodingContainerProtoc
 			try value.encode(toCustomJSON: storage)
 		} else {
 			try value.encode(to: storage)
-		}
-		if value is CustomJSONEmptyCollectionSkipping {
-			let lastEncoded = store.last!.value.store
-			if case .dictionary(let dictionary) = lastEncoded {
-				// examine all key-value pairs of the last-encoded container
-				dictionary.store = dictionary.store.filter {
-					// skip any empty immediate sub-containers
-					switch $0.value.store {
-					case .dictionary(let container):
-						if container.store.isEmpty { return false }
-					case .array(let container):
-						if container.store.isEmpty { return false }
-					default:
-						break
-					}
-					return true
-				}
-			} else {
-				throw EncodingError.invalidValue(value, .init(codingPath: codingPath,
-					debugDescription: "empty collection skip requires keyed container"))
-			}
 		}
 	}
 
@@ -904,13 +894,7 @@ extension CustomJSONDecoder.KeyedDictionaryStorage: KeyedDecodingContainerProtoc
 	}
 
 	func decode<T: Decodable>(_ type: T.Type, forKey key: Key) throws -> T {
-		var storage = try elementStorage(forKey: key)
-		if type is CustomJSONEmptyCollectionSkipping.Type {
-			// modify the stored dictionary to enable missingCollectionsAsEmpty
-			let dictionary = try storage.dictionaryStorage(keyedBy: Key.self)
-			dictionary.missingCollectionsAsEmpty = true
-			storage = ElementStorage(codingPath: storage.codingPath, store: .dictionary(dictionary))
-		}
+		let storage = try elementStorage(forKey: key)
 		if let type = type as? CustomJSONCodable.Type {
 			return try type.init(fromCustomJSON: storage) as! T
 		} else {
@@ -1134,5 +1118,60 @@ extension CustomJSONDecoder.ElementStorage: SingleValueDecodingContainer {
 	func decodeNil() -> Bool {
 		if case .null = store { return true }
 		return false
+	}
+}
+
+
+/* MARK: Custom Coding Features */
+
+extension Encoder {
+
+	/// Removes empty sub-containers on an already filled encoder.
+	///
+	/// - SeeAlso: `CustomJSONEmptyCollectionSkipping`
+	public func skipEmptyCollections() throws {
+		guard let storage = self as? CustomJSONEncoder.ElementStorage else {
+			throw EncodingError.invalidValue(self, .init(codingPath: codingPath,
+				debugDescription: "empty collection skip requires CustomJSONEncoder"))
+		}
+
+		guard case .dictionary(let dictionary) = storage.store else {
+			throw EncodingError.invalidValue(storage, .init(codingPath: storage.codingPath,
+				debugDescription: "empty collection skip requires keyed container"))
+		}
+
+		// examine all key-value pairs of the last-encoded container
+		dictionary.store = dictionary.store.filter {
+			// skip any empty immediate sub-containers
+			switch $0.value.store {
+			case .dictionary(let container):
+				if container.store.isEmpty { return false }
+			case .array(let container):
+				if container.store.isEmpty { return false }
+			default:
+				break
+			}
+			return true
+		}
+	}
+}
+
+extension Decoder {
+
+	/// Enables the decoder to treat missing container-type elements as empty containers.
+	///
+	/// - SeeAlso: `CustomJSONEmptyCollectionSkipping`
+	public func enableMissingAsEmpty() throws {
+		guard let storage = self as? CustomJSONDecoder.ElementStorage else {
+			throw DecodingError.typeMismatch(Self.self, .init(codingPath: codingPath,
+				debugDescription: "missing-as-empty requires CustomJSONDecoder"))
+		}
+
+		// modify the stored dictionary to enable missingCollectionsAsEmpty
+		guard case .dictionary(let dictionary) = storage.store else {
+			throw DecodingError.typeMismatch(Self.self, .init(codingPath: storage.codingPath,
+				debugDescription: "missing-as-empty requires a dictionary type"))
+		}
+		dictionary.missingCollectionsAsEmpty = true
 	}
 }
