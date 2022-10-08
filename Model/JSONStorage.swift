@@ -295,6 +295,32 @@ extension Dictionary: CustomJSONCodable where Key: CustomJSONStringKeyRepresenta
 }
 
 
+extension KeyedDecodingContainer {
+	/// Ensure that the container holds just a single key and return this key.
+	public var singleKey: Key {
+		get throws {
+			guard allKeys.count == 1 else {
+				throw DecodingError.dataCorrupted(.init(codingPath: codingPath,
+					debugDescription: "exactly one container element expected"))
+			}
+			return allKeys.first!
+		}
+	}
+	/// Decode a type against the single key in the container.
+	public func decode<Result: Decodable>(_ type: Result.Type) throws -> Result {
+		return try decode(type, forKey: singleKey)
+	}
+	/// Obtain a nested unkeyed container against the single key.
+	public func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer {
+		return try nestedUnkeyedContainer(forKey: singleKey)
+	}
+	/// Obtain a nested keyed container against the single key.
+	public func nestedContainer<Key: CodingKey>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> {
+		return try nestedContainer(keyedBy: type, forKey: singleKey)
+	}
+}
+
+
 /* MARK: Custom JSON Encoder */
 
 /// A JSON encoder with customizable behavior.

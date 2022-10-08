@@ -389,13 +389,7 @@ private extension KeyedDecodingContainer {
 	/// - SeeAlso: `ProtocolTypeCoding.knownTypes`
 	func decode(protocolTypedForKey key: Key) throws -> any Codable & Sendable {
 		let nested = try nestedContainer(keyedBy: ProtocolTypeCoding.self, forKey: key)
-		guard nested.allKeys.count == 1 else {
-			throw DecodingError.dataCorrupted(
-				.init(codingPath: nested.codingPath,
-					  debugDescription: "exactly one type key expected")
-			)
-		}
-		let key = nested.allKeys.first!
+		let key = try nested.singleKey
 
 		let type = ProtocolTypeCoding.knownTypes?[key]
 		guard let type else {
@@ -435,13 +429,7 @@ extension MediaTree: CustomJSONCodable {
 
 	public init(fromCustomJSON decoder: any Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
-		guard container.allKeys.count == 1 else {
-			throw DecodingError.dataCorrupted(
-				.init(codingPath: container.codingPath,
-				      debugDescription: "exactly one enum case expected")
-			)
-		}
-		switch container.allKeys.first! {
+		switch try container.singleKey {
 		case .asset:
 			self = .asset(try container.decode(AssetNode.self, forKey: .asset))
 		case .menu:
