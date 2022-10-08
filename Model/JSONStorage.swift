@@ -371,6 +371,42 @@ extension KeyedDecodingContainer<EnumKeys> {
 }
 
 
+/// Option set types can adopt this protocol to customize their JSON representation.
+///
+/// By default, option sets are represented as their raw value, which is not
+/// easily understandable by human readers of the JSON file. By providing a
+/// mapping between option set elements and label strings, the option set is
+/// represented as a JSON array of those labels.
+public protocol CustomJSONOptionSetCoding: OptionSet, CustomJSONCodable {
+
+	/// Mapping between string labels and option set elements.
+	///
+	/// The encoding will maintain the provided element order.
+	var allValues: [(label: String, element: Element)] { get }
+}
+
+extension CustomJSONOptionSetCoding {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		var container = encoder.unkeyedContainer()
+		for (label, element) in allValues where self.contains(element) {
+			try container.encode(label)
+		}
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		var container = try decoder.unkeyedContainer()
+		self.init()
+		while !container.isAtEnd {
+			let label = try container.decode(String.self)
+			guard let element = allValues.first(where: { $0.label == label })?.element else {
+				throw DecodingError.dataCorrupted(.init(codingPath: container.codingPath,
+					debugDescription: "OptionSet \(Self.self) does not understand value ‘\(label)’"))
+			}
+			self.insert(element)
+		}
+	}
+}
+
+
 /* MARK: Custom JSON Encoder */
 
 /// A JSON encoder with customizable behavior.
