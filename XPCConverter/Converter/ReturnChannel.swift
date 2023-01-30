@@ -9,6 +9,7 @@ import os
 public typealias ConverterPublisher = AnyPublisher<ConverterOutput, ConverterError>
 
 /// Status updates from the converter service.
+/// - ToDo: Replace log message with `LocalizedStringResource` once we move to macOS 13.
 public enum ConverterOutput {
 	case message(level: OSLogType, String.LocalizationValue)
 	case progress(Progress)
@@ -67,6 +68,8 @@ extension ConverterError: LocalizedError {
 /// Consequently, these strings must be static, non-interpolated instances.
 /// Otherwise, using them as lookup keys in the localization tables will not
 /// result in a match. This requirement is not enforced by the type system.
+///
+/// - ToDo: Replace with `LocalizedStringResource` once we move to macOS 13.
 public typealias StringLocalizationKey = String
 
 

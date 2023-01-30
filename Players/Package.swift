@@ -3,8 +3,9 @@ import PackageDescription
 
 let package = Package(
 	name: "Players",
+	defaultLocalization: "en",
 	platforms: [
-		.macOS(.v11)
+		.macOS(.v12)
 	],
 	products: [
 //		.library(name: "MovieArchivePlayers", targets: ["MovieArchivePlayers"]),

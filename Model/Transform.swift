@@ -135,6 +135,7 @@ extension Transform {
 	public enum Status {
 
 		/// A log message that can be shown to the user.
+		/// - ToDo: Replace with `LocalizedStringResource` once we move to macOS 13.
 		case message(level: OSLogType, String.LocalizationValue)
 
 		/// Shows progress of a long-running operation to the user.

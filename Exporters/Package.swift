@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
 	name: "Exporters",
+	defaultLocalization: "en",
 	platforms: [
 		.macOS(.v12)
 	],
