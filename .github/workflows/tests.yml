@@ -19,14 +19,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: recursive
 
     - name: Install Nix
-      uses: cachix/install-nix-action@v15
-      with:
-        nix_path: nixpkgs=channel:nixpkgs-unstable
+      uses: cachix/install-nix-action@v18
 
     - name: Setup Nix profile
       run: nix profile install $(dirname $(which nix))
@@ -49,7 +47,7 @@ jobs:
 
     - name: Cache dependencies
       id: cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: Dependencies/Build
         key: ${{ runner.os }}-${{ runner.arch }}-${{ env.DEVELOPER_DIR }}-${{ hashFiles('.git/modules/Dependencies/HandBrake/HEAD', 'Dependencies/*') }}
