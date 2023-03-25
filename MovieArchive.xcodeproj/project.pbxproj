@@ -480,10 +480,11 @@
 			);
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/libintercept.dylib",
+				"$(BUILT_PRODUCTS_DIR)/$(EXECUTABLE_PATH)",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# copy intercept library\nmkdir -p \"$(dirname \"$SCRIPT_OUTPUT_FILE_0\")\"\ncp -p \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n\n# patch XPC converter to replace libSystem with intercept library\nif otool -L \"$SCRIPT_INPUT_FILE_1\" | fgrep -q libSystem ; then\n\tcodesign --remove-signature \"$SCRIPT_INPUT_FILE_1\"\n\tinstall_name_tool -change /usr/lib/libSystem.B.dylib \"@executable_path/../Frameworks/$(basename \"$SCRIPT_OUTPUT_FILE_0\")\" \"$SCRIPT_INPUT_FILE_1\"\nfi\n";
+			shellScript = "# copy intercept library\nmkdir -p \"$(dirname \"$SCRIPT_OUTPUT_FILE_0\")\"\ncp -p \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n\n# patch XPC converter to replace libSystem with intercept library\nif otool -L \"$SCRIPT_INPUT_FILE_1\" | fgrep -q libSystem ; then\n\tcodesign --remove-signature \"$SCRIPT_INPUT_FILE_1\"\n\tinstall_name_tool -change /usr/lib/libSystem.B.dylib \"@executable_path/../Frameworks/$(basename \"$SCRIPT_OUTPUT_FILE_0\")\" \"$SCRIPT_OUTPUT_FILE_1\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
