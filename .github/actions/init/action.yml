@@ -1,0 +1,48 @@
+name: Initialization
+description: 'Initialize the project build environment'
+
+inputs:
+  certificate:
+    description: 'Code signing key and certificate'
+    required: true
+  password:
+    description: 'Password for code signing certificate'
+    required: true
+
+runs:
+  using: 'composite'
+
+  steps:
+  - name: Install Nix
+    uses: cachix/install-nix-action@v18
+
+  - name: Setup Nix profile
+    shell: bash
+    run: nix profile install $(dirname $(which nix))
+
+  - name: Install code signing certificate
+    shell: bash
+    run: |
+      echo ${{ inputs.certificate }} | base64 --decode > codesign.p12
+      security create-keychain -p ${{ inputs.password }} codesign.keychain
+      security set-keychain-settings -lut 21600 codesign.keychain
+      security default-keychain -s codesign.keychain
+      security unlock-keychain -p ${{ inputs.password }} codesign.keychain
+      security import codesign.p12 -t cert -f pkcs12 -P ${{ inputs.password }} -T /usr/bin/codesign -T /usr/bin/productbuild -k codesign.keychain
+      security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ${{ inputs.password }} codesign.keychain
+
+  - name: Fixup code signing settings
+    shell: bash
+    run: sed -i~ '/CODE_SIGN_STYLE/s/Manual/Automatic/;/CODE_SIGN_IDENTITY/{s/Michael Roitzsch/Apple Development/;s/$/\nDEVELOPMENT_TEAM = 599BKLQ4UG;/;}' MovieArchive.xcodeproj/project.pbxproj
+
+  - name: Cache dependencies
+    id: cache
+    uses: actions/cache@v3
+    with:
+      path: Dependencies/Build
+      key: ${{ runner.os }}-${{ env.DEVELOPER_DIR }}-${{ hashFiles('.git/modules/Dependencies/HandBrake/HEAD', 'Dependencies/*') }}
+
+  - name: Refresh cached dependencies
+    if: steps.cache.outputs.cache-hit == 'true'
+    shell: bash
+    run: touch Dependencies/Build/*/HandBrake/libhandbrake.a
