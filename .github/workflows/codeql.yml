@@ -1,0 +1,41 @@
+# static code scan for common security mistakes
+name: CodeQL
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  scan:
+    name: Security scan
+    runs-on: macos-12
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_14.0.app/Contents/Developer
+    permissions:
+      security-events: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Initialize environment
+      uses: ./.github/actions/init
+
+    - name: Initialize CodeQL database
+      uses: github/codeql-action/init@v2
+      with:
+        languages: 'swift'
+
+    - name: Xcode build action
+      run: |
+        xcodebuild build -scheme "Movie Archive" -configuration Debug
+
+    - name: Perform CodeQL analysis
+      uses: github/codeql-action/analyze@v2
