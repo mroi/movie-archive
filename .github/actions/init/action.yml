@@ -4,10 +4,12 @@ description: 'Initialize the project build environment'
 inputs:
   certificate:
     description: 'Code signing key and certificate'
-    required: true
+    required: false
+    default: ''
   password:
     description: 'Password for code signing certificate'
-    required: true
+    required: false
+    default: ''
 
 runs:
   using: 'composite'
@@ -21,6 +23,7 @@ runs:
     run: nix profile install $(dirname $(which nix))
 
   - name: Install code signing certificate
+    if: inputs.certificate != ''
     shell: bash
     run: |
       echo ${{ inputs.certificate }} | base64 --decode > codesign.p12
@@ -32,8 +35,14 @@ runs:
       security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ${{ inputs.password }} codesign.keychain
 
   - name: Fixup code signing settings
+    if: inputs.certificate != ''
     shell: bash
     run: sed -i~ '/CODE_SIGN_STYLE/s/Manual/Automatic/;/CODE_SIGN_IDENTITY/{s/Michael Roitzsch/Apple Development/;s/$/\nDEVELOPMENT_TEAM = 599BKLQ4UG;/;}' MovieArchive.xcodeproj/project.pbxproj
+
+  - name: Disable code signing
+    if: inputs.certificate == ''
+    shell: bash
+    run: sed -i~ '/CODE_SIGN_STYLE/s/^/CODE_SIGNING_ALLOWED = NO;/' MovieArchive.xcodeproj/project.pbxproj
 
   - name: Cache dependencies
     id: cache
