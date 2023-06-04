@@ -40,9 +40,9 @@ runs:
     uses: actions/cache@v3
     with:
       path: Dependencies/Build
-      key: ${{ runner.os }}-${{ env.DEVELOPER_DIR }}-${{ hashFiles('.git/modules/Dependencies/HandBrake/HEAD', 'Dependencies/*') }}
+      key: ${{ runner.os }}-${{ env.DEVELOPER_DIR }}-${{ hashFiles('.git/modules/Dependencies/HandBrake/HEAD', 'Dependencies/*') }}-${{ github.workflow }}
+      restore-keys: ${{ runner.os }}-${{ env.DEVELOPER_DIR }}-${{ hashFiles('.git/modules/Dependencies/HandBrake/HEAD', 'Dependencies/*') }}
 
   - name: Refresh cached dependencies
-    if: steps.cache.outputs.cache-hit == 'true'
     shell: bash
-    run: touch Dependencies/Build/*/HandBrake/libhandbrake.a
+    run: touch -c Dependencies/Build/*/HandBrake/libhandbrake.a
