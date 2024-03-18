@@ -3,9 +3,12 @@ CONFIGURATION ?= Debug
 JOBS = -j$(shell sysctl -n hw.activecpu)
 BUILD = Build/$(CONFIGURATION)
 
-ifneq ($(wildcard $(HOME)/.nix-profile/bin/nix),)
+XDG_STATE_HOME ?= $(HOME)/.local/state
+NIX ?= $(XDG_STATE_HOME)/nix/profile/bin/nix
+
+ifneq ($(wildcard $(NIX)),)
 # use Nix package manager
-SHELL = $(HOME)/.nix-profile/bin/nix develop --command /bin/sh
+SHELL = $(NIX) develop --command /bin/sh
 endif
 
 all: \

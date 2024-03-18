@@ -20,7 +20,7 @@ runs:
 
   - name: Setup Nix profile
     shell: bash
-    run: nix profile install $(dirname $(which nix))
+    run: nix --use-xdg-base-directories profile install $(dirname $(which nix))
 
   - name: Install code signing certificate
     if: inputs.certificate != ''
