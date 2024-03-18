@@ -16,7 +16,7 @@ runs:
 
   steps:
   - name: Install Nix
-    uses: cachix/install-nix-action@v21
+    uses: cachix/install-nix-action@v26
 
   - name: Setup Nix profile
     shell: bash
@@ -46,7 +46,7 @@ runs:
 
   - name: Cache dependencies
     id: cache
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       path: Dependencies/Build
       key: ${{ runner.os }}-${{ env.DEVELOPER_DIR }}-${{ hashFiles('.git/modules/Dependencies/HandBrake/HEAD', 'Dependencies/*') }}-${{ github.workflow }}
