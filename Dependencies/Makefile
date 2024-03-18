@@ -30,6 +30,8 @@ $(BUILD)/HandBrake/libhandbrake.a: $(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(
 	rm -rf HandBrake/download
 
 $(BUILD)/HandBrake/%/libhb/libhandbrake.a: $(BUILD)/HandBrake/%/GNUmakefile
+	# FIXME: needed as an undeclared dependency of libhb.build
+	$(MAKE) -C $(<D) bin2c.build
 	# FIXME: parallel HandBrake builds fail
 	$(MAKE) -C $(<D) libhb.build
 
