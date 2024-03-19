@@ -31,7 +31,7 @@ class ModelTests: XCTestCase {
 		XCTAssertEqual(tree.collection?.children.first?.opaque?.payload as? Int, 17)
 	}
 
-	func testMediaTreeJSON() {
+	func testMediaTreeJSON() async {
 		struct TestPayload: Codable, CustomJSONEmptyCollectionSkipping {
 			var someOptional: Int? = 42
 			var noneOptional: Int? = nil
@@ -60,20 +60,41 @@ class ModelTests: XCTestCase {
 			]))
 		}
 
+		// encode media tree to JSON and compare with expected output
 		var json: JSON<MediaTree>!
 		XCTAssertNoThrow(json = try tree.json())
 		XCTAssertEqual(json.string(tabsAs: .spaces(width: 4)), expectedOutput)
 
+		// decoding without registering payload types fails
 		XCTAssertThrowsError(try json.mediaTree()) {
 			XCTAssertNotNil($0 as? UnknownTypeError)
 		}
 
+		// decoding with type knowledge succeeds
 		var decoded: MediaTree!
 		let types = [TestPayload.self, TestPayload.self]  // testing non-unique elements
 		XCTAssertNoThrow(decoded = try json.mediaTree(withTypes: types))
+
+		// decoded result re-encodes to the original JSON
 		var json2: JSON<MediaTree>!
 		XCTAssertNoThrow(json2 = try decoded.json())
 		XCTAssertEqual(json.data, json2.data)
+
+		// JSON can be stored and read
+		let fileManager = FileManager.default
+		let testUrl = fileManager.temporaryDirectory.appendingPathComponent("test.json.gz")
+		await XCTAssertNoThrowAsync(try await json2.write(to: testUrl))
+		await XCTAssertNoThrowAsync(json2 = try await JSON(contentsOf: testUrl))
+		XCTAssertEqual(json.data, json2.data)
+		try! fileManager.removeItem(at: testUrl)
+
+		// reading an empty file fails
+		let emptyUrl = fileManager.temporaryDirectory.appendingPathComponent("empty.json.gz")
+		fileManager.createFile(atPath: emptyUrl.path, contents: nil)
+		await XCTAssertThrowsErrorAsync(json2 = try await JSON(contentsOf: emptyUrl)) {
+			XCTAssertEqual(String(describing: $0), "Inappropriate file type or format")
+		}
+		try! fileManager.removeItem(at: emptyUrl)
 	}
 
 	func testPassExecution() async {
@@ -106,11 +127,14 @@ class ModelTests: XCTestCase {
 	}
 
 	func testClientInteraction() async {
-		let importer = ThrowingImporter()
+		let importer = TestImporter(.opaque(.init(payload: 42))) {
+			Base.MediaTreeInteraction()
+		}
 		let exporter = NullExporter()
 		let transform = Transform(importer: importer, exporter: exporter)
-		XCTAssertEqual(transform.description, "ThrowingImporter → NullExporter")
+		XCTAssertEqual(transform.description, "TestImporter → NullExporter")
 
+		var mediaTree: MediaTree?
 		let subscription = transform.publisher
 			.mapError { _ in fatalError("unexpected publisher error") }
 			.sink {
@@ -121,17 +145,15 @@ class ModelTests: XCTestCase {
 						interaction.value = .collection(.init(children: []))
 						interaction.finish()
 					} else {
-						XCTFail("unexpected media tree")
+						mediaTree = interaction.value
 					}
-				} else {
-					XCTFail("unexpected value")
 				}
 			}
 		defer { subscription.cancel() }
 
-		var mediaTree = MediaTree.opaque(.init(payload: 42))
-		await transform.clientInteraction(&mediaTree) { .mediaTree($0) }
-		XCTAssertNotNil(mediaTree.collection)
+		await transform.execute()
+
+		XCTAssertNotNil(mediaTree?.collection)
 	}
 
 	func testErrorToPublisher() async {
@@ -282,7 +304,7 @@ class ConverterTests: XCTestCase {
 
 			XCTAssertEqual(outputs.count, 1)
 			guard case .progress(let progress) = outputs[0] else {
-				return XCTFail("unexpected publisher output")
+				fatalError("unexpected publisher output")
 			}
 			XCTAssertEqual(progress.fractionCompleted, 0.0)
 			XCTAssertEqual(progress.isIndeterminate, true)

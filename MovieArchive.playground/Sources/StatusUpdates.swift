@@ -60,6 +60,14 @@ extension PlaygroundTransformUpdates: IteratorProtocol {
 		if result == nil { PlaygroundPage.current.finishExecution() }
 		return result
 	}
+
+	public func handleAll() {
+		Task {
+			while let status = next() {
+				await MainActor.run { status.handle() }
+			}
+		}
+	}
 }
 
 extension PlaygroundTransformUpdates: CustomStringConvertible {

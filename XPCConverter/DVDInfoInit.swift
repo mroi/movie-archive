@@ -103,11 +103,11 @@ private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo
 private extension DVDInfo.TitleSet {
 	init?(_ vtsi: ifo_handle_t, vmgi titles: [DVDInfo.Index<DVDInfo.TitleSet.Title.AllTitles>: title_info_t], navigation nav: DVDData.NAV.VTS?) {
 		guard let vtsiMat = vtsi.vtsi_mat?.pointee else { return nil }
-		self.init(titles: Dictionary(vtsi.vts_ptt_srpt?.pointee, vmgi: titles),
+		self.init(specification: DVDInfo.Version(vtsiMat.specification_version),
+		          category: vtsiMat.vts_category,
+		          titles: Dictionary(vtsi.vts_ptt_srpt?.pointee, vmgi: titles),
 		          menus: DVDInfo.Domain(vtsi.pgci_ut?.pointee, vtsiMat, nav?[.menus]),
-		          content: DVDInfo.Domain(vtsi.vts_pgcit?.pointee, vtsiMat, nav?[.titles]),
-		          specification: DVDInfo.Version(vtsiMat.specification_version),
-		          category: vtsiMat.vts_category)
+		          content: DVDInfo.Domain(vtsi.vts_pgcit?.pointee, vtsiMat, nav?[.titles]))
 	}
 }
 
@@ -163,23 +163,25 @@ private extension DVDInfo.TitleSet.Title.Part {
 /* MARK: Domain */
 
 private extension DVDInfo.Domain {
-	init(_ pgcUt: pgci_ut_t?, _ vmgiMat: vmgi_mat_t, _ nav: DVDData.NAV.Domain?) {
+	init?(_ pgcUt: pgci_ut_t?, _ vmgiMat: vmgi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let pgcs = Self.convert(pgcsPerLanguage: pgcUt)
+		guard pgcs.count > 0 else { return nil }
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
 		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vmgiMat.vmgm_video_attr),
 		          audio: vmgiMat.nr_of_vmgm_audio_streams == 0 ? [:] : [0: AudioAttributes(vmgiMat.vmgm_audio_attr)],
 		          subpicture: vmgiMat.nr_of_vmgm_subp_streams == 0 ? [:] : [0: SubpictureAttributes(vmgiMat.vmgm_subp_attr)])
 	}
-	init(_ pgcUt: pgci_ut_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
+	init?(_ pgcUt: pgci_ut_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let pgcs = Self.convert(pgcsPerLanguage: pgcUt)
+		guard pgcs.count > 0 else { return nil }
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
 		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vtsiMat.vtsm_video_attr),
 		          audio: vtsiMat.nr_of_vtsm_audio_streams == 0 ? [:] : [0: AudioAttributes(vtsiMat.vtsm_audio_attr)],
 		          subpicture: vtsiMat.nr_of_vtsm_subp_streams == 0 ? [:] : [0: SubpictureAttributes(vtsiMat.vtsm_subp_attr)])
 	}
-	init(_ pgcIt: pgcit_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
+	init?(_ pgcIt: pgcit_t?, _ vtsiMat: vtsi_mat_t, _ nav: DVDData.NAV.Domain?) {
 		let audioChannel = Array<audio_attr_t>(tuple: vtsiMat.vts_audio_attr)
 			.prefix(upTo: Int(vtsiMat.nr_of_vts_audio_streams))
 		let multichannel = Array<multichannel_ext_t>(tuple: vtsiMat.vts_mu_audio_attr)
@@ -190,6 +192,7 @@ private extension DVDInfo.Domain {
 			.map(SubpictureAttributes.init)
 
 		let pgcs = Self.convert(pgcs: pgcIt)
+		guard pgcs.count > 0 else { return nil }
 		self.init(programChains: ProgramChains(mapping: Dictionary(mapping: pgcs),
 		                                       storage: Dictionary(storage: pgcs, navigation: nav)),
 		          video: VideoAttributes(vtsiMat.vts_video_attr),
@@ -220,9 +223,9 @@ private extension Dictionary<DVDInfo.Domain.ProgramChains.Descriptor, DVDInfo.Do
 			for (index, pgcInfo) in zip(1..., pgcs) {
 				let menuType = Key.MenuType(pgcInfo.entry_id.bits(0...3))
 				let descriptor = Key.menu(language: String(twoCharacters: language.lang_code),
-				                          index: DVDInfo.Index(index),
 				                          entryPoint: pgcInfo.entry_id.bit(7),
-				                          type: pgcInfo.entry_id.bit(7) ? menuType : nil)
+				                          type: pgcInfo.entry_id.bit(7) ? menuType : nil,
+				                          index: DVDInfo.Index(index))
 				self[descriptor] = Value(languageId: language.lang_start_byte,
 				                         programChainId: pgcInfo.pgc_start_byte)
 			}
@@ -231,9 +234,9 @@ private extension Dictionary<DVDInfo.Domain.ProgramChains.Descriptor, DVDInfo.Do
 	init(mapping pgcs: [pgci_srp_t]) {
 		self.init(minimumCapacity: pgcs.count)
 		for (index, pgcInfo) in zip(1..., pgcs) {
-			let descriptor = Key.title(index: DVDInfo.Index(index),
+			let descriptor = Key.title(title: DVDInfo.Index(pgcInfo.entry_id.bits(0...6)),
 			                           entryPoint: pgcInfo.entry_id.bit(7),
-			                           title: DVDInfo.Index(pgcInfo.entry_id.bits(0...6)))
+			                           index: DVDInfo.Index(index))
 			self[descriptor] = Value(programChainId: pgcInfo.pgc_start_byte)
 		}
 	}
