@@ -77,21 +77,40 @@ extension MediaTree {
 		recipe.metadata = mp4.metadata.items.compactMap({
 			MediaRecipe.Metadata(identifier: $0.identifier, value: $0.value)
 		}).reduce(into: []) { result, item in
-			// merge all partial title metadata items into one
-			if case .title = item {
-				let previousTitleIndex = result.firstIndex {
-					if case .title = $0 { return true } else { return false }
-				}
-				if let previousTitleIndex {
-					result.append(item.merge(result[previousTitleIndex]))
-					result.remove(at: previousTitleIndex)
-					return
+			// merge partial metadata items into one
+			let matches: [(MediaRecipe.Metadata) -> Bool] = [
+				{ if case .title = $0 { return true } else { return false } },
+				{ if case .series = $0 { return true } else { return false } },
+				{ if case .episode = $0 { return true } else { return false } }
+			]
+			for match in matches {
+				if match(item) {
+					let previousIndex = result.firstIndex(where: match)
+					if let previousIndex {
+						result.append(item.merge(result[previousIndex]))
+						result.remove(at: previousIndex)
+						return
+					}
 				}
 			}
 			result.append(item)
 		}
 
 		self = .asset(.init(kind: .movie, content: recipe))
+	}
+
+	/// Create an asset collection media tree from existing MP4 files of TV series episodes.
+	public init(fromEpisodes paths: [URL]) throws {
+		var episodes = try paths.map { try MediaTree(fromMovie: $0) }
+		episodes = episodes.map {
+			// remove artist entry: MP4 files of TV episodes abuse it to store the series name
+			var node = $0.asset!
+			node.content.metadata.removeAll {
+				if case .artist = $0 { return true } else { return false }
+			}
+			return .asset(node)
+		}
+		self = .collection(.init(children: episodes))
 	}
 }
 
@@ -155,6 +174,10 @@ fileprivate extension MediaRecipe.Metadata {
 		case MP42MetadataKeyGrouping: self = .title("", original: (value as! String))
 		case MP42MetadataKeyUserGenre: self = .genre(Genre(fromString: value as! String))
 		case MP42MetadataKeyReleaseDate: self = .release(value as! Date)
+		case MP42MetadataKeyTrackNumber:
+			let track = value as! [Int]
+			self = .episode(track[0], of: track[1], id: nil)
+		case MP42MetadataKeyDiscNumber: return nil
 		case MP42MetadataKeyDescription: return nil
 		case MP42MetadataKeyLongDescription: self = .description(value as! String)
 		case MP42MetadataKeyRating: self = .rating(Rating(fromString: value as! String))
@@ -168,11 +191,16 @@ fileprivate extension MediaRecipe.Metadata {
 		case MP42MetadataKeyProducer: self = .producers(value as! [String])
 		case MP42MetadataKeyExecProducer: return nil
 		case MP42MetadataKeyScreenwriters: self = .writers(value as! [String])
+		case MP42MetadataKeyTVShow: self = .series(value as! String)
+		case MP42MetadataKeyTVEpisodeNumber: self = .episode(value as! Int)
+		case MP42MetadataKeyTVEpisodeID: self = .episode(0, of: nil, id: (value as! String))
+		case MP42MetadataKeyTVSeason: self = .season(value as! Int)
 		case MP42MetadataKeyContentID: return nil
 		case MP42MetadataKeyGenreID: return nil
 		case MP42MetadataKeyAccountCountry: return nil
 		case MP42MetadataKeyPurchasedDate: return nil
 		case MP42MetadataKeySortName: self = .title("", sortAs: (value as! String))
+		case MP42MetadataKeySortTVShow: self = .series("", sortAs: (value as! String))
 		default: fatalError("unknown metadata item: \(identifier)")
 		}
 	}
@@ -185,6 +213,23 @@ fileprivate extension MediaRecipe.Metadata {
 				if original == title { original = nil }
 				if sort == title { sort = nil }
 				return .title(title, original: original, sortAs: sort)
+			}
+		}
+		if case var .series(series, sort) = self {
+			if case let .series(otherSeries, otherSort) = other {
+				series = series.count > otherSeries.count ? series : otherSeries
+				sort = sort ?? otherSort
+				if sort == series { sort = nil }
+				return .series(series, sortAs: sort)
+			}
+		}
+		if case var .episode(index, total, id) = self {
+			if case let .episode(otherIndex, otherTotal, otherId) = other {
+				index = index > otherIndex ? index : otherIndex
+				total = total ?? otherTotal
+				id = id ?? otherId
+				if id == String(index) { id = nil }
+				return .episode(index, of: total, id: id)
 			}
 		}
 		return self
