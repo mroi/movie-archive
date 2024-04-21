@@ -25,6 +25,8 @@
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
 		4CB768F5268BC1BA00FAF9DC /* MovieArchiveConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */; };
 		4CB78014269C88700027D46F /* dlopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CB78013269C88700027D46F /* dlopen.c */; };
+		4CBA49932BFE768A00B1B7F8 /* MP42Foundation.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CBA49922BFE768A00B1B7F8 /* MP42Foundation.xcframework */; };
+		4CBA49972BFE768C00B1B7F8 /* MP4v2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CBA49962BFE768C00B1B7F8 /* MP4v2.xcframework */; };
 		4CC4585C276CAD0A00B7B7EC /* AsyncAsserts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC4585B276CAD0A00B7B7EC /* AsyncAsserts.swift */; };
 		4CE4581826C1B40E00501102 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4CE4581A26C1B40E00501102 /* Localizable.strings */; };
 		4CEEFEFA24A108ED00C0357D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEEFEF924A108ED00C0357D /* main.swift */; };
@@ -139,6 +141,8 @@
 		4CB7800E269C855B0027D46F /* libintercept.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libintercept.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CB78013269C88700027D46F /* dlopen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dlopen.c; sourceTree = "<group>"; };
 		4CB7801C269C97610027D46F /* intercept.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = intercept.h; sourceTree = "<group>"; };
+		4CBA49922BFE768A00B1B7F8 /* MP42Foundation.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MP42Foundation.xcframework; path = MovieArchive.playground/Sources/MP42Foundation.xcframework; sourceTree = "<group>"; };
+		4CBA49962BFE768C00B1B7F8 /* MP4v2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MP4v2.xcframework; path = MovieArchive.playground/Sources/MP4v2.xcframework; sourceTree = "<group>"; };
 		4CC4585B276CAD0A00B7B7EC /* AsyncAsserts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncAsserts.swift; sourceTree = "<group>"; };
 		4CE4581926C1B40E00501102 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
@@ -153,7 +157,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CFA77932681FCB900BB9632 /* MovieArchiveImporters in Frameworks */,
+				4CBA49972BFE768C00B1B7F8 /* MP4v2.xcframework in Frameworks */,
 				4C947BDE268234FD00D72937 /* MovieArchiveExporters in Frameworks */,
+				4CBA49932BFE768A00B1B7F8 /* MP42Foundation.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,6 +196,7 @@
 				4CEEFEF424A108EC00C0357D /* XPCConverter */,
 				4C1A35A9245DFEE900C40FB5 /* Tests */,
 				4CAA9C7A249E8DBD005EB90A /* Dependencies */,
+				4CBA49912BFE768A00B1B7F8 /* Frameworks */,
 				4C1A3590245DFEE700C40FB5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -239,6 +246,15 @@
 				4CB78013269C88700027D46F /* dlopen.c */,
 			);
 			path = Intercept;
+			sourceTree = "<group>";
+		};
+		4CBA49912BFE768A00B1B7F8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4CBA49922BFE768A00B1B7F8 /* MP42Foundation.xcframework */,
+				4CBA49962BFE768C00B1B7F8 /* MP4v2.xcframework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		4CEEFEF424A108EC00C0357D /* XPCConverter */ = {
