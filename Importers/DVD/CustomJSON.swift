@@ -12,6 +12,26 @@ extension DVDInfo.ProgramChain: CustomJSONEmptyCollectionSkipping {}
 extension DVDInfo.ProgramChain.Cell: CustomJSONEmptyCollectionSkipping {}
 extension DVDInfo.Interaction: CustomJSONEmptyCollectionSkipping {}
 
+extension DVDInfo.Domain.VideoAttributes.CodingType: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.VideoAttributes.VideoStandard: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.VideoAttributes.ContentInfo: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.CodingType: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.RenderingIntent: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Mode: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Channel: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.ContentInfo: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.SubpictureAttributes.CodingType: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.SubpictureAttributes.ContentInfo: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.SubpictureAttributes.ContentInfo.FontSize: CustomJSONCompactEnum {}
+extension DVDInfo.ProgramChain.Cell.AngleInfo: CustomJSONCompactEnum {}
+extension DVDInfo.ProgramChain.Cell.KaraokeInfo: CustomJSONCompactEnum {}
+extension DVDInfo.ProgramChain.PlaybackMode: CustomJSONCompactEnum {}
+extension DVDInfo.ProgramChain.EndingMode: CustomJSONCompactEnum {}
+extension DVDInfo.Command.Operation: CustomJSONCompactEnum {}
+extension DVDInfo.Command.Target: CustomJSONCompactEnum {}
+extension DVDInfo.Command.Condition: CustomJSONCompactEnum {}
+extension DVDInfo.Command.Operand: CustomJSONCompactEnum {}
+
 extension DVDInfo.Domain.ProgramChains.Descriptor: CustomJSONStringKeyRepresentable {
 	public var stringValue: String {
 		switch self {
@@ -175,6 +195,29 @@ extension DVDInfo.Domain.ProgramChains.Id: CustomJSONStringKeyRepresentable, Cus
 	}
 }
 
+extension DVDInfo.Domain.VideoAttributes.AspectRatio: CustomJSONCodable {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		switch self {
+		case .classic(letterboxed: let letterboxed):
+			var container = encoder.singleValueContainer()
+			try container.encode(letterboxed ? "letterboxed" : "classic")
+		default:
+			try encode(to: encoder)
+			try encoder.compactifyEnum()
+		}
+	}
+
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let container = try? decoder.singleValueContainer()
+		let label = try? container?.decode(String.self)
+		switch label {
+		case "classic": self = .classic(letterboxed: false)
+		case "letterboxed": self = .classic(letterboxed: true)
+		default: try self.init(from: decoder.reconstructedEnum())
+		}
+	}
+}
+
 extension DVDInfo.ProgramChain.SubpictureDescriptor: CustomJSONStringKeyRepresentable {
 	public var stringValue: String { String(describing: self) }
 
@@ -232,6 +275,29 @@ extension DVDInfo.Interaction.ButtonDescriptor: CustomJSONStringKeyRepresentable
 			case "panScan": self.insert(.panScan)
 			default: return nil
 			}
+		}
+	}
+}
+
+extension DVDInfo.Command: CustomJSONCodable {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		switch self {
+		case .setSystemRegisters(let settings):
+			var container = encoder.container(keyedBy: EnumKeys.self)
+			try container.encode(settings, forKey: "setSystemRegisters")
+		default:
+			try encode(to: encoder)
+			try encoder.compactifyEnum()
+		}
+	}
+
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let container = try? decoder.container(keyedBy: EnumKeys.self)
+		let label = try? container?.singleKey.stringValue
+		switch label {
+		case "setSystemRegisters":
+			self = .setSystemRegisters(try container!.decode([SystemRegister: Operand].self))
+		default: try self.init(from: decoder.reconstructedEnum())
 		}
 	}
 }
