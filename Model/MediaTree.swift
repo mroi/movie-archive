@@ -320,6 +320,36 @@ public struct MediaRecipe: Codable, Sendable {
 
 	/// An item of metadata describing the asset.
 	public enum Metadata: Codable, Sendable {
+		case artwork(data: Data, format: ImageFormat)
+		case title(String, original: String? = nil, sortAs: String? = nil)
+		case artist(String)
+		case series(String, sortAs: String? = nil)
+		case season(Int)
+		case episode(Int, of: Int? = nil, id: String? = nil)
+		case genre(Genre)
+		case release(Date)
+		case summary(String)
+		case description(String)
+		case rating(Rating)
+		case studio(String)
+		case cast([String])
+		case directors([String])
+		case producers([String])
+		case writers([String])
+
+		public enum ImageFormat: Codable, Sendable {
+			case jpeg, heic, png, tiff
+		}
+		public enum Genre: Codable, Sendable {
+			case action, comedy, drama, horror, romance, thriller
+			case scienceFictionAndFantasy, kidsAndFamily
+			case animation, musical, sport, western
+			case documentary, independent, shorts
+		}
+		public enum Rating: Codable, Sendable {
+			case unrated, unrestricted
+			case age(Int), parentalGuidance
+		}
 	}
 }
 
@@ -755,6 +785,52 @@ extension MediaRecipe.Video.ContentInfo: CustomJSONCompactEnum {}
 extension MediaRecipe.Audio.Channel: CustomJSONCompactEnum {}
 extension MediaRecipe.Audio.ContentInfo: CustomJSONCompactEnum {}
 extension MediaRecipe.Subtitles.ContentInfo: CustomJSONCompactEnum {}
+extension MediaRecipe.Metadata.ImageFormat: CustomJSONCompactEnum {}
+extension MediaRecipe.Metadata.Genre: CustomJSONCompactEnum {}
+extension MediaRecipe.Metadata.Rating: CustomJSONCompactEnum {}
+
+extension MediaRecipe.Metadata: CustomJSONCodable {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		switch self {
+		case .rating(let rating):
+			var container = encoder.container(keyedBy: EnumKeys.self)
+			try container.encode(rating, forKey: "rating")
+		case .cast(let cast):
+			var container = encoder.container(keyedBy: EnumKeys.self)
+			try container.encode(cast, forKey: "cast")
+		case .directors(let directors):
+			var container = encoder.container(keyedBy: EnumKeys.self)
+			try container.encode(directors, forKey: "directors")
+		case .producers(let producers):
+			var container = encoder.container(keyedBy: EnumKeys.self)
+			try container.encode(producers, forKey: "producers")
+		case .writers(let writers):
+			var container = encoder.container(keyedBy: EnumKeys.self)
+			try container.encode(writers, forKey: "writers")
+		default:
+			try encode(to: encoder)
+			try encoder.compactifyEnum()
+		}
+	}
+
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let container = try? decoder.container(keyedBy: EnumKeys.self)
+		let label = try? container?.singleKey.stringValue
+		switch label {
+		case "rating":
+			self = .rating(try container!.decode(Rating.self))
+		case "cast":
+			self = .cast(try container!.decode([String].self))
+		case "directors":
+			self = .directors(try container!.decode([String].self))
+		case "producers":
+			self = .producers(try container!.decode([String].self))
+		case "writers":
+			self = .writers(try container!.decode([String].self))
+		default: try self.init(from: decoder.reconstructedEnum())
+		}
+	}
+}
 
 extension Locale: CustomJSONCodable {
 	public func encode(toCustomJSON encoder: Encoder) throws {
@@ -763,5 +839,15 @@ extension Locale: CustomJSONCodable {
 	public init(fromCustomJSON decoder: Decoder) throws {
 		let identifier = try String(from: decoder)
 		self = Locale(identifier: identifier)
+	}
+}
+
+extension Date: CustomJSONCodable {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		try ISO8601Format().encode(to: encoder)
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let iso8601Date = try String(from: decoder)
+		self = try Date.ISO8601FormatStyle().parse(iso8601Date)
 	}
 }
