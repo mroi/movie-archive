@@ -32,6 +32,17 @@ extension DVDInfo.Command.Target: CustomJSONCompactEnum {}
 extension DVDInfo.Command.Condition: CustomJSONCompactEnum {}
 extension DVDInfo.Command.Operand: CustomJSONCompactEnum {}
 
+extension DVDInfo.TitleSet.Title.CommandPresence: CustomJSONOptionSetCoding {
+	public var allValues: [(label: String, element: Element)] {
+		[
+			("features", .features),
+			("prePosts", .prePosts),
+			("cells", .cells),
+			("buttons", .buttons)
+		]
+	}
+}
+
 extension DVDInfo.Domain.ProgramChains.Descriptor: CustomJSONStringKeyRepresentable {
 	public var stringValue: String {
 		switch self {
@@ -218,6 +229,37 @@ extension DVDInfo.Domain.VideoAttributes.AspectRatio: CustomJSONCodable {
 	}
 }
 
+extension DVDInfo.Domain.VideoAttributes.DisplayModification: CustomJSONOptionSetCoding {
+	public var allValues: [(label: String, element: Element)] {
+		[
+			("letterbox", .letterbox),
+			("pan&scan", .panScan)
+		]
+	}
+}
+
+extension DVDInfo.Domain.VideoAttributes.Line21ClosedCaption: CustomJSONOptionSetCoding {
+	public var allValues: [(label: String, element: Element)] {
+		[
+			("firstField", .firstField),
+			("secondField", .secondField)
+		]
+	}
+}
+
+extension DVDInfo.ProgramChain.Cell.PlaybackMode: CustomJSONOptionSetCoding {
+	public var allValues: [(label: String, element: Element)] {
+		[
+			("seamless", .seamless),
+			("seamlessAngle", .seamlessAngle),
+			("interleaved", .interleaved),
+			("timeDiscontinuity", .timeDiscontinuity),
+			("allStillFrames", .allStillFrames),
+			("stopFastForward", .stopFastForward)
+		]
+	}
+}
+
 extension DVDInfo.ProgramChain.SubpictureDescriptor: CustomJSONStringKeyRepresentable {
 	public var stringValue: String { String(describing: self) }
 
@@ -386,6 +428,38 @@ extension DVDInfo.Command.SystemRegister: CustomJSONStringKeyRepresentable, Cust
 		case "unexpected": self = .unexpected
 		default: return nil
 		}
+	}
+}
+
+extension DVDInfo.Restrictions: CustomJSONOptionSetCoding {
+	public var allValues: [(label: String, element: Self)] {
+		[
+			("noStop", .noStop),
+			("noJumpToTitle", .noJumpToTitle),
+			("noJumpToPart", .noJumpToPart),
+			("noJumpIntoTitle", .noJumpIntoTitle),
+			("noJumpIntoPart", .noJumpIntoPart),
+			("noJumpUp", .noJumpUp),
+			("noJumpToTopLevelMenu", .noJumpToTopLevelMenu),
+			("noJumpToPerTitleMenu", .noJumpToPerTitleMenu),
+			("noJumpToAudioMenu", .noJumpToAudioMenu),
+			("noJumpToSubpictureMenu", .noJumpToSubpictureMenu),
+			("noJumpToViewingAngleMenu", .noJumpToViewingAngleMenu),
+			("noJumpToChapterMenu", .noJumpToChapterMenu),
+			("noProgramForward", .noProgramForward),
+			("noProgramBackward", .noProgramBackward),
+			("noSeekForward", .noSeekForward),
+			("noSeekBackward", .noSeekBackward),
+			("noResumeFromMenu", .noResumeFromMenu),
+			("noMenuInteractions", .noMenuInteractions),
+			("noStillSkip", .noStillSkip),
+			("noPause", .noPause),
+			("noChangeAudioStream", .noChangeAudioStream),
+			("noChangeSubpictureStream", .noChangeSubpictureStream),
+			("noChangeViewingAngle", .noChangeViewingAngle),
+			("noChangeVideoMode", .noChangeVideoMode),
+			("noChangeKaraokeMode", .noChangeKaraokeMode)
+		]
 	}
 }
 
