@@ -1218,8 +1218,12 @@ private extension String {
 		self.init()
 		let unicodePoint0 = Unicode.Scalar(UInt8(combined.bits(8...15)))
 		let unicodePoint1 = Unicode.Scalar(UInt8(combined.bits(0...7)))
-		self.append(Character(unicodePoint0))
-		self.append(Character(unicodePoint1))
+		if unicodePoint0.isASCII && unicodePoint1.isASCII {
+			self.append(Character(unicodePoint0))
+			self.append(Character(unicodePoint1))
+		} else {
+			self.append("un")
+		}
 	}
 }
 
