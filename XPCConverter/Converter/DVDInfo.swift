@@ -505,8 +505,8 @@ public struct DVDInfo: Codable, Sendable {
 		public let onlyCommandsChanged: Bool
 
 		public let buttons: [Index<Button>: [ButtonDescriptor: Button]]
-		public let buttonsSelectable: Time
-		public let buttonsVisible: Time
+		public let buttonsSelectable: Time?
+		public let buttonsVisible: Time?
 		public let forcedSelect: Index<Button>?
 		public let forcedAction: Index<Button>?
 
@@ -516,8 +516,8 @@ public struct DVDInfo: Codable, Sendable {
 		            linearPlaybackTimestamp: Time?,
 		            onlyCommandsChanged: Bool,
 		            buttons: [Index<Button>: [ButtonDescriptor: Button]],
-		            buttonsSelectable: Time,
-		            buttonsVisible: Time,
+		            buttonsSelectable: Time?,
+		            buttonsVisible: Time?,
 		            forcedSelect: Index<Button>?,
 		            forcedAction: Index<Button>?,
 		            restrictions: Restrictions) {

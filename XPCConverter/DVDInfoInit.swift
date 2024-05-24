@@ -728,16 +728,16 @@ private extension DVDInfo.Interaction {
 
 		let startOffset = nav.pci.hli.hl_gi.hli_s_ptm - nav.pci.pci_gi.vobu_s_ptm
 		let start = nav.timestamp.map { $0 + UInt64(startOffset) }
-		let selectable = nav.pci.hli.hl_gi.btn_se_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm
-		let visible = nav.pci.hli.hl_gi.hli_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm
+		let selectable = nav.pci.hli.hl_gi.btn_se_e_ptm < UInt32.max ? nav.pci.hli.hl_gi.btn_se_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm : nil
+		let visible = nav.pci.hli.hl_gi.hli_e_ptm < UInt32.max ? nav.pci.hli.hl_gi.hli_e_ptm - nav.pci.hli.hl_gi.hli_s_ptm : nil
 		let frameRate = DVDInfo.Time.FrameRate(nav.pci.pci_gi.e_eltm.frame_u)
 
 		self.init(sector: DVDInfo.Index(nav.pci.pci_gi.nv_pck_lbn),
 		          linearPlaybackTimestamp: start.map { DVDInfo.Time($0, rate: frameRate) },
 		          onlyCommandsChanged: nav.pci.hli.hl_gi.hli_ss.bits(0...1) == 3,
 		          buttons: Dictionary(buttons: nav.pci.hli),
-		          buttonsSelectable: DVDInfo.Time(UInt64(selectable), rate: frameRate),
-		          buttonsVisible: DVDInfo.Time(UInt64(visible), rate: frameRate),
+		          buttonsSelectable: selectable.map { DVDInfo.Time(UInt64($0), rate: frameRate) },
+		          buttonsVisible: visible.map { DVDInfo.Time(UInt64($0), rate: frameRate) },
 		          forcedSelect: nav.pci.hli.hl_gi.fosl_btnn > 0 ? DVDInfo.Index(nav.pci.hli.hl_gi.fosl_btnn) : nil,
 		          forcedAction: nav.pci.hli.hl_gi.foac_btnn > 0 ? DVDInfo.Index(nav.pci.hli.hl_gi.foac_btnn) : nil,
 		          restrictions: DVDInfo.Restrictions(nav.pci.pci_gi.vobu_uop_ctl))
