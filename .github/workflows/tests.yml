@@ -10,12 +10,13 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+
 jobs:
   tests:
     name: Analyze and run test
     runs-on: macos-12
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
 
     steps:
     - name: Checkout repository
@@ -42,3 +43,35 @@ jobs:
 
     - name: Xcode docbuild action
       run: xcodebuild docbuild -scheme "Movie Archive"
+
+  dvds:
+    name: Test recorded DVDs
+    runs-on: macos-12
+    needs: tests
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Initialize environment
+      uses: ./.github/actions/init
+      with:
+        certificate: ${{ secrets.CODE_SIGN_CERTIFICATE }}
+        password: ${{ secrets.CODE_SIGN_PASSWORD }}
+
+    - name: Checkout recorded test cases
+      uses: actions/checkout@v4
+      with:
+        repository: mroi/movie-archive-tests
+        token: ${{ secrets.ACCESS_TOKEN_TESTS }}
+        path: Tests/Resources
+
+    - name: Xcode build action
+      run: xcodebuild build -scheme "Movie Archive" -configuration Debug
+
+    - name: Xcode test for DVDs
+      run: |
+        ln -shf movie-archive-tests/DVD Tests/Resources/DVD
+        xcodebuild test -scheme "Movie Archive" -only-testing Tests/RecordedTests/testRecordedDVDs
