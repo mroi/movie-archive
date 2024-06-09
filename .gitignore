@@ -1,3 +1,4 @@
-Dependencies/Build
-Dependencies/libdvdcss
+/Dependencies/Build
+/Dependencies/libdvdcss
+/Tests/Resources/DVD
 xcuserdata
