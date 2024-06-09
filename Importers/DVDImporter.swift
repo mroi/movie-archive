@@ -20,9 +20,26 @@ struct DVDImporter: ImportPass {
 		defer { subscription.cancel() }
 
 		let info = try await dvdReader.info()
+		let tree = MediaTree.opaque(.init(payload: info))
 
-		let node = MediaTree.OpaqueNode(payload: info)
-		return .opaque(node)
+#if DEBUG
+		// record DVD source data and resulting media tree for use in testing
+		let wrapper = Base.Record(toPath: "DVD", identifier: info.discId) {
+			return subPasses
+		}
+		return try await wrapper.process(tree)
+#else
+		return try await process(bySubPasses: tree)
+#endif
+	}
+}
+
+extension DVDImporter: SubPassRecursing {
+
+	@SubPassBuilder
+	var subPasses: [any Pass] {
+		// TODO: gradually amend with passes until manual editing can be removed
+		Base.MediaTreeInteraction()
 	}
 }
 

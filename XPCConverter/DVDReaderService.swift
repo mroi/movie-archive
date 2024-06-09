@@ -567,9 +567,10 @@ private extension DVDInfo {
 		}
 
 		// all durations and time stamps in program chains should use the same frame rate
-		let allProgramChains = (self.start.map { [$0] } ?? []) +
+		let allProgramChains = (self.start.map(Array.init) ?? []) +
 			self.titleSets.values.flatMap {
-				Array($0.menus.programChains.all) + Array($0.content.programChains.all)
+				(($0.menus?.programChains.all).map(Array.init) ?? []) +
+				(($0.content?.programChains.all).map(Array.init) ?? [])
 			}
 		let ratesPerProgramChain = allProgramChains.map { pgc in
 			[pgc.duration.rate] + pgc.cells.values.flatMap { cell in

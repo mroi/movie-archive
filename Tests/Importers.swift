@@ -45,7 +45,7 @@ class DVDImporterTests: XCTestCase {
 				closeCall.fulfill()
 			}
 			func readInfo(_: UUID, completionHandler: @escaping (Data?) -> Void) {
-				XCTFail()
+				XCTFail("unexpected read")
 			}
 		}
 
@@ -107,6 +107,6 @@ class DVDImporterTests: XCTestCase {
 
 		await XCTAssertEqualAsync(await transform.state, .success)
 		XCTAssertEqual(transform.description, "DVDImporter → NullExporter")
-		XCTAssertEqual(outputs, 6)
+		XCTAssertEqual(outputs, 9)
 	}
 }

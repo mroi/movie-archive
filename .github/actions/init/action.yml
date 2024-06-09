@@ -54,4 +54,6 @@ runs:
 
   - name: Refresh cached dependencies
     shell: bash
-    run: touch -c Dependencies/Build/*/HandBrake/libhandbrake.a
+    run: |
+      touch -c Dependencies/Build/*/HandBrake/libhandbrake.a
+      touch -c Dependencies/Build/*/MP42Foundation/libmp42.a

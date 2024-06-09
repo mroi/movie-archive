@@ -10,6 +10,7 @@
 		4C1A3593245DFEE700C40FB5 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3592245DFEE700C40FB5 /* App.swift */; };
 		4C1A3595245DFEE700C40FB5 /* IngestDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */; };
 		4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C1A3598245DFEE800C40FB5 /* Assets.xcassets */; };
+		4C4908C327A48C7D001BA47B /* Recorded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4908C227A48C7D001BA47B /* Recorded.swift */; };
 		4C509ECD2700C9330071AC1D /* DVDInfoInit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C509ECC2700C9330071AC1D /* DVDInfoInit.swift */; };
 		4C509ED02700CA600071AC1D /* CTypeInterop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C509ECF2700CA600071AC1D /* CTypeInterop.swift */; };
 		4C932869276687A100E65B18 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA53B862690D4FF002140BC /* Common.swift */; };
@@ -24,6 +25,8 @@
 		4CAC9F3E24688E880031A9EE /* UIMacOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC9F3D24688E880031A9EE /* UIMacOS.swift */; };
 		4CB768F5268BC1BA00FAF9DC /* MovieArchiveConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 4CB768F4268BC1BA00FAF9DC /* MovieArchiveConverter */; };
 		4CB78014269C88700027D46F /* dlopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CB78013269C88700027D46F /* dlopen.c */; };
+		4CBA49932BFE768A00B1B7F8 /* MP42Foundation.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CBA49922BFE768A00B1B7F8 /* MP42Foundation.xcframework */; };
+		4CBA49972BFE768C00B1B7F8 /* MP4v2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CBA49962BFE768C00B1B7F8 /* MP4v2.xcframework */; };
 		4CC4585C276CAD0A00B7B7EC /* AsyncAsserts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC4585B276CAD0A00B7B7EC /* AsyncAsserts.swift */; };
 		4CE4581826C1B40E00501102 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4CE4581A26C1B40E00501102 /* Localizable.strings */; };
 		4CEEFEFA24A108ED00C0357D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEEFEF924A108ED00C0357D /* main.swift */; };
@@ -122,6 +125,7 @@
 		4C1F484926A2D44400AF7205 /* XPC-Debug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "XPC-Debug.entitlements"; sourceTree = "<group>"; };
 		4C392A56249E72E000CD7308 /* Exporters */ = {isa = PBXFileReference; lastKnownFileType = text; path = Exporters; sourceTree = SOURCE_ROOT; };
 		4C392A57249E72E000CD7308 /* Model */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model; sourceTree = SOURCE_ROOT; };
+		4C4908C227A48C7D001BA47B /* Recorded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorded.swift; sourceTree = "<group>"; };
 		4C509ECC2700C9330071AC1D /* DVDInfoInit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVDInfoInit.swift; sourceTree = "<group>"; };
 		4C509ECF2700CA600071AC1D /* CTypeInterop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTypeInterop.swift; sourceTree = "<group>"; };
 		4C6D90A526B49E5200EAA149 /* Importers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Importers.swift; sourceTree = "<group>"; };
@@ -137,6 +141,8 @@
 		4CB7800E269C855B0027D46F /* libintercept.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libintercept.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CB78013269C88700027D46F /* dlopen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dlopen.c; sourceTree = "<group>"; };
 		4CB7801C269C97610027D46F /* intercept.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = intercept.h; sourceTree = "<group>"; };
+		4CBA49922BFE768A00B1B7F8 /* MP42Foundation.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MP42Foundation.xcframework; path = MovieArchive.playground/Sources/MP42Foundation.xcframework; sourceTree = "<group>"; };
+		4CBA49962BFE768C00B1B7F8 /* MP4v2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MP4v2.xcframework; path = MovieArchive.playground/Sources/MP4v2.xcframework; sourceTree = "<group>"; };
 		4CC4585B276CAD0A00B7B7EC /* AsyncAsserts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncAsserts.swift; sourceTree = "<group>"; };
 		4CE4581926C1B40E00501102 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
@@ -151,7 +157,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CFA77932681FCB900BB9632 /* MovieArchiveImporters in Frameworks */,
+				4CBA49972BFE768C00B1B7F8 /* MP4v2.xcframework in Frameworks */,
 				4C947BDE268234FD00D72937 /* MovieArchiveExporters in Frameworks */,
+				4CBA49932BFE768A00B1B7F8 /* MP42Foundation.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,6 +196,7 @@
 				4CEEFEF424A108EC00C0357D /* XPCConverter */,
 				4C1A35A9245DFEE900C40FB5 /* Tests */,
 				4CAA9C7A249E8DBD005EB90A /* Dependencies */,
+				4CBA49912BFE768A00B1B7F8 /* Frameworks */,
 				4C1A3590245DFEE700C40FB5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -210,6 +219,7 @@
 				4CC4585B276CAD0A00B7B7EC /* AsyncAsserts.swift */,
 				4CA53B862690D4FF002140BC /* Common.swift */,
 				4C6D90A526B49E5200EAA149 /* Importers.swift */,
+				4C4908C227A48C7D001BA47B /* Recorded.swift */,
 				4CAC9F3D24688E880031A9EE /* UIMacOS.swift */,
 				4C7158F32693A8370086A8C8 /* Resources */,
 			);
@@ -236,6 +246,15 @@
 				4CB78013269C88700027D46F /* dlopen.c */,
 			);
 			path = Intercept;
+			sourceTree = "<group>";
+		};
+		4CBA49912BFE768A00B1B7F8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4CBA49922BFE768A00B1B7F8 /* MP42Foundation.xcframework */,
+				4CBA49962BFE768C00B1B7F8 /* MP4v2.xcframework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		4CEEFEF424A108EC00C0357D /* XPCConverter */ = {
@@ -319,6 +338,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4C932866276686A200E65B18 /* Build configuration list for PBXNativeTarget "Tests" */;
 			buildPhases = (
+				4CC8ED4E279DB9F600226566 /* Create Resource Symlinks */,
 				4C93285C276686A200E65B18 /* Sources */,
 				4C93285D276686A200E65B18 /* Frameworks */,
 				4C93287027668BD000E65B18 /* Copy Resources Directory */,
@@ -486,6 +506,26 @@
 			shellPath = /bin/sh;
 			shellScript = "# copy intercept library\nmkdir -p \"$(dirname \"$SCRIPT_OUTPUT_FILE_0\")\"\ncp -p \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n\n# patch XPC converter to replace libSystem with intercept library\nif otool -L \"$SCRIPT_INPUT_FILE_1\" | fgrep -q libSystem ; then\n\tcodesign --remove-signature \"$SCRIPT_INPUT_FILE_1\"\n\tinstall_name_tool -change /usr/lib/libSystem.B.dylib \"@executable_path/../Frameworks/$(basename \"$SCRIPT_OUTPUT_FILE_0\")\" \"$SCRIPT_OUTPUT_FILE_1\"\nfi\n";
 		};
+		4CC8ED4E279DB9F600226566 /* Create Resource Symlinks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Resource Symlinks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(PROJECT_DIR)/Tests/Resources/DVD",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if ! test -e \"$SCRIPT_OUTPUT_FILE_0\" ; then\n\tmkdir -p \"$HOME/Library/Containers/de.reactorcontrol.movie-archive.macos/Data/Documents/DVD\"\n\tln -sf \"$HOME/Library/Containers/de.reactorcontrol.movie-archive.macos/Data/Documents/DVD\" \"$SCRIPT_OUTPUT_FILE_0\"\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -512,6 +552,7 @@
 			files = (
 				4CC4585C276CAD0A00B7B7EC /* AsyncAsserts.swift in Sources */,
 				4C932869276687A100E65B18 /* Common.swift in Sources */,
+				4C4908C327A48C7D001BA47B /* Recorded.swift in Sources */,
 				4C93286A276687A100E65B18 /* Importers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

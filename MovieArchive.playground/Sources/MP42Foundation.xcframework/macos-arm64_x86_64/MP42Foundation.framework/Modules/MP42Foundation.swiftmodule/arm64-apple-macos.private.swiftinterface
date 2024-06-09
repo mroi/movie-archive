@@ -1,0 +1,47 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.7.2 (swiftlang-5.7.2.135.5 clang-1400.0.29.51)
+// swift-module-flags: -target arm64-apple-macos10.13 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Onone -module-name MP42Foundation
+// swift-module-flags-ignorable: -enable-bare-slash-regex
+import Foundation
+@_exported import MP42Foundation
+import Swift
+import _Concurrency
+import _StringProcessing
+import mp4v2
+@objc(MP42SampleDescription) public class SampleDescription : ObjectiveC.NSObject {
+  @objc public init(fileHandle: MP42Foundation.MP42FileHandle, trackId: MP42Foundation.MP42TrackId, index: Swift.UInt32)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc(MP42VideoSampleDescription) public class VideoSampleDescription : MP42Foundation.SampleDescription {
+  @objc override public init(fileHandle: MP42Foundation.MP42FileHandle, trackId: MP42Foundation.MP42TrackId, index: Swift.UInt32)
+  @objc deinit
+}
+extension Swift.UInt32 : Swift.ExpressibleByStringLiteral {
+  public init(stringLiteral value: Swift.StringLiteralType)
+  public init(extendedGraphemeClusterLiteral value: Swift.String)
+  public init(unicodeScalarLiteral value: Swift.String)
+  public init(_ value: Swift.String)
+  public var string: Swift.String? {
+    get
+  }
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias StringLiteralType = Swift.StringLiteralType
+  public typealias UnicodeScalarLiteralType = Swift.String
+}
+@objc(MP42SampleCursor) public class SampleCursor : ObjectiveC.NSObject {
+  @objc public init?(fileHandle: mp4v2.MP4FileHandle, trackId: mp4v2.MP4TrackId)
+  @objc public var currentSampleId: mp4v2.MP4SampleId {
+    get
+  }
+  @objc public var currentSampleDuration: mp4v2.MP4Duration {
+    get
+  }
+  @objc public var presentationTimeStamp: mp4v2.MP4Timestamp {
+    get
+  }
+  @objc public var decodeTimeStamp: mp4v2.MP4Timestamp {
+    get
+  }
+  @objc public func stepInDecodeOrder(byCount stepCount: Swift.Int64) -> Swift.Int64
+  @objc deinit
+}

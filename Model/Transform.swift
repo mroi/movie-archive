@@ -85,7 +85,7 @@ public actor Transform {
 					var mediaTree = try await importer.run {
 						try await importer.generate()
 					}
-					await clientInteraction(&mediaTree) { .mediaTree($0) }
+					await Self.clientInteraction(&mediaTree, Status.mediaTree)
 					try await exporter.run {
 						try await exporter.consume(mediaTree)
 					}
@@ -159,7 +159,7 @@ extension Transform {
 	/// - Parameter body: A closure that constructs a `Status` from the given
 	///   `Interaction`. This `Status` is then sent to the client via the
 	///   transform publisher.
-	func clientInteraction<Value>(_ value: inout Value, _ body: (Status.Interaction<Value>) -> Status) async {
+	static func clientInteraction<Value>(_ value: inout Value, _ body: (Status.Interaction<Value>) -> Status) async {
 		value = await withCheckedContinuation {
 			let interaction = Status.Interaction(value: value, continuation: $0)
 			subject.send(body(interaction))
@@ -180,7 +180,7 @@ extension Transform.Status {
 		private var finished: Bool = false
 		public var value: Value
 
-		init(value: Value, continuation: CheckedContinuation<Value, Never>) {
+		fileprivate init(value: Value, continuation: CheckedContinuation<Value, Never>) {
 			self.value = value
 			self.continuation = continuation
 		}

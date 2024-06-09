@@ -14,7 +14,7 @@ public struct DVDInfo: Codable, Sendable {
 	public let discSide: UInt8
 
 	public let start: ProgramChain?
-	public let topLevelMenus: Domain
+	public let topLevelMenus: Domain?
 	public let titleSets: [Index<TitleSet>: TitleSet]
 
 	public init(specification: Version,
@@ -26,7 +26,7 @@ public struct DVDInfo: Codable, Sendable {
 	            volumeIndex: UInt16,
 	            discSide: UInt8,
 	            start: ProgramChain?,
-	            topLevelMenus: Domain,
+	            topLevelMenus: Domain?,
 	            titleSets: [Index<TitleSet>: TitleSet]) {
 		self.specification = specification
 		self.category = category
@@ -84,23 +84,23 @@ public struct DVDInfo: Codable, Sendable {
 	/// A DVD is organized in title sets, which contain menus and playable
 	/// content with common attributes, grouped in one menu and one title domain.
 	public struct TitleSet: Codable, Sendable {
-		public let titles: [Index<Title>: Title]
-		public let menus: Domain
-		public let content: Domain
-
 		public let specification: Version
 		public let category: UInt32
 
-		public init(titles: [Index<Title>: Title],
-		            menus: Domain,
-		            content: Domain,
-		            specification: Version,
-		            category: UInt32) {
+		public let titles: [Index<Title>: Title]
+		public let menus: Domain?
+		public let content: Domain?
+
+		public init(specification: Version,
+		            category: UInt32,
+		            titles: [Index<Title>: Title],
+		            menus: Domain?,
+		            content: Domain?) {
+			self.specification = specification
+			self.category = category
 			self.titles = titles
 			self.menus = menus
 			self.content = content
-			self.specification = specification
-			self.category = category
 		}
 
 		/// Each title is presented to the user as one playable item.
@@ -189,8 +189,8 @@ public struct DVDInfo: Codable, Sendable {
 			}
 
 			public enum Descriptor: Codable, Hashable, Sendable {
-				case menu(language: String, index: Index<ProgramChain>, entryPoint: Bool, type: MenuType?)
-				case title(index: Index<ProgramChain>, entryPoint: Bool, title: Index<DVDInfo.TitleSet.Title>)
+				case menu(language: String, entryPoint: Bool, type: MenuType?, index: Index<ProgramChain>)
+				case title(title: Index<DVDInfo.TitleSet.Title>, entryPoint: Bool, index: Index<ProgramChain>)
 				public enum MenuType: Codable, Hashable, Sendable {
 					case titles, rootWithinTitle, chapter
 					case audio, subpicture, viewingAngle
@@ -452,7 +452,6 @@ public struct DVDInfo: Codable, Sendable {
 				public static let allStillFrames = PlaybackMode(rawValue: 1 << 4)
 				public static let stopFastForward = PlaybackMode(rawValue: 1 << 5)
 				public init(rawValue: UInt8) { self.rawValue = rawValue }
-
 			}
 			public typealias EndingMode = ProgramChain.EndingMode
 			public enum AngleInfo: Codable, Sendable {
@@ -505,8 +504,8 @@ public struct DVDInfo: Codable, Sendable {
 		public let onlyCommandsChanged: Bool
 
 		public let buttons: [Index<Button>: [ButtonDescriptor: Button]]
-		public let buttonsSelectable: Time
-		public let buttonsVisible: Time
+		public let buttonsSelectable: Time?
+		public let buttonsVisible: Time?
 		public let forcedSelect: Index<Button>?
 		public let forcedAction: Index<Button>?
 
@@ -516,8 +515,8 @@ public struct DVDInfo: Codable, Sendable {
 		            linearPlaybackTimestamp: Time?,
 		            onlyCommandsChanged: Bool,
 		            buttons: [Index<Button>: [ButtonDescriptor: Button]],
-		            buttonsSelectable: Time,
-		            buttonsVisible: Time,
+		            buttonsSelectable: Time?,
+		            buttonsVisible: Time?,
 		            forcedSelect: Index<Button>?,
 		            forcedAction: Index<Button>?,
 		            restrictions: Restrictions) {
@@ -819,9 +818,9 @@ extension DVDInfo.Domain.ProgramChains {
 	public subscript(index: DVDInfo.Index<DVDInfo.ProgramChain>, language language: String? = nil) -> DVDInfo.ProgramChain? {
 		let predicate = { (descriptor: Descriptor) -> Bool in
 			switch descriptor {
-			case .menu(language, index, _, _):
+			case .menu(language, _, _, index):
 				return true
-			case .title(index, _, _):
+			case .title(_, _, index):
 				return true
 			default:
 				return false
@@ -904,7 +903,7 @@ extension DVDInfo.Reference<DVDInfo.ProgramChain, DVDInfo.ProgramChain.Color> {
 
 extension DVDInfo.TitleSet {
 	public subscript(resolve reference: DVDInfo.Reference<Self, DVDInfo.ProgramChain.Program>) -> DVDInfo.ProgramChain.Program? {
-		return content.programChains[reference.programChain!]?.programs[reference.program!]
+		return content?.programChains[reference.programChain!]?.programs[reference.program!]
 	}
 }
 extension DVDInfo.Domain {
