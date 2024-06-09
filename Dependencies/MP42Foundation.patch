@@ -1,0 +1,13 @@
+diff --git a/MP42/mp42-Bridging-Header.h b/MP42/mp42-Bridging-Header.h
+index 6809fe2..0428d9d 100644
+--- a/MP42/mp42-Bridging-Header.h
++++ b/MP42/mp42-Bridging-Header.h
+@@ -6,5 +6,8 @@
+ #ifndef mp42_Bridging_Header_h
+ #define mp42_Bridging_Header_h
+ 
++#import <MP42Foundation/MP42MediaFormat.h>
++#import <MP42Foundation/MP42MasteringDisplayMetadata.h>
++#import <MP42Foundation/MP42DolbyVisionMetadata.h>
+ 
+ #endif /* mp42_Bridging_Header_h */

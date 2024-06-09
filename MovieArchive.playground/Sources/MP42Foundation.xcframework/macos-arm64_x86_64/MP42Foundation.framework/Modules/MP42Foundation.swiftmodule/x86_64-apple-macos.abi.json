@@ -1,0 +1,4761 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "TopLevel",
+    "printedName": "TopLevel",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "MP42Foundation",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "mp4v2",
+        "printedName": "mp4v2",
+        "declKind": "Import",
+        "moduleName": "MP42Foundation"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "SampleDescription",
+        "printedName": "SampleDescription",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "format",
+            "printedName": "format",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation17SampleDescriptionC6formats6UInt32Vvp",
+            "mangledName": "$s14MP42Foundation17SampleDescriptionC6formats6UInt32Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "Final",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation17SampleDescriptionC6formats6UInt32Vvg",
+                "mangledName": "$s14MP42Foundation17SampleDescriptionC6formats6UInt32Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(fileHandle:trackId:index:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "SampleDescription",
+                "printedName": "MP42Foundation.SampleDescription",
+                "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleDescription"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UnsafeMutableRawPointer",
+                "printedName": "Swift.UnsafeMutableRawPointer",
+                "usr": "s:Sv"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleDescription(im)initWithFileHandle:trackId:index:",
+            "mangledName": "$s14MP42Foundation17SampleDescriptionC10fileHandle7trackId5indexACSv_s6UInt32VAHtcfc",
+            "moduleName": "MP42Foundation",
+            "objc_name": "initWithFileHandle:trackId:index:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "SampleDescription",
+                "printedName": "MP42Foundation.SampleDescription",
+                "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleDescription"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleDescription(im)init",
+            "mangledName": "$s14MP42Foundation17SampleDescriptionCACycfc",
+            "moduleName": "MP42Foundation",
+            "overriding": true,
+            "implicit": true,
+            "objc_name": "init",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Override"
+            ],
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleDescription",
+        "mangledName": "$s14MP42Foundation17SampleDescriptionC",
+        "moduleName": "MP42Foundation",
+        "isOpen": true,
+        "objc_name": "MP42SampleDescription",
+        "declAttributes": [
+          "AccessControl",
+          "ObjC"
+        ],
+        "superclassUsr": "c:objc(cs)NSObject",
+        "superclassNames": [
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "Size",
+        "printedName": "Size",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "width",
+            "printedName": "width",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation4SizeV5widths6UInt16Vvp",
+            "mangledName": "$s14MP42Foundation4SizeV5widths6UInt16Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 0,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation4SizeV5widths6UInt16Vvg",
+                "mangledName": "$s14MP42Foundation4SizeV5widths6UInt16Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation4SizeV5widths6UInt16Vvs",
+                "mangledName": "$s14MP42Foundation4SizeV5widths6UInt16Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation4SizeV5widths6UInt16VvM",
+                "mangledName": "$s14MP42Foundation4SizeV5widths6UInt16VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "height",
+            "printedName": "height",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation4SizeV6heights6UInt16Vvp",
+            "mangledName": "$s14MP42Foundation4SizeV6heights6UInt16Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 1,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation4SizeV6heights6UInt16Vvg",
+                "mangledName": "$s14MP42Foundation4SizeV6heights6UInt16Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation4SizeV6heights6UInt16Vvs",
+                "mangledName": "$s14MP42Foundation4SizeV6heights6UInt16Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation4SizeV6heights6UInt16VvM",
+                "mangledName": "$s14MP42Foundation4SizeV6heights6UInt16VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(width:height:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Size",
+                "printedName": "MP42Foundation.Size",
+                "usr": "s:14MP42Foundation4SizeV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:14MP42Foundation4SizeV5width6heightACs6UInt16V_AGtcfc",
+            "mangledName": "$s14MP42Foundation4SizeV5width6heightACs6UInt16V_AGtcfc",
+            "moduleName": "MP42Foundation",
+            "implicit": true,
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:14MP42Foundation4SizeV",
+        "mangledName": "$s14MP42Foundation4SizeV",
+        "moduleName": "MP42Foundation",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "ColorInfo",
+        "printedName": "ColorInfo",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "colorPrimaries",
+            "printedName": "colorPrimaries",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation9ColorInfoV14colorPrimariess6UInt16Vvp",
+            "mangledName": "$s14MP42Foundation9ColorInfoV14colorPrimariess6UInt16Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 0,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV14colorPrimariess6UInt16Vvg",
+                "mangledName": "$s14MP42Foundation9ColorInfoV14colorPrimariess6UInt16Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV14colorPrimariess6UInt16Vvs",
+                "mangledName": "$s14MP42Foundation9ColorInfoV14colorPrimariess6UInt16Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV14colorPrimariess6UInt16VvM",
+                "mangledName": "$s14MP42Foundation9ColorInfoV14colorPrimariess6UInt16VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "transferCharacteristics",
+            "printedName": "transferCharacteristics",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation9ColorInfoV23transferCharacteristicss6UInt16Vvp",
+            "mangledName": "$s14MP42Foundation9ColorInfoV23transferCharacteristicss6UInt16Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 1,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV23transferCharacteristicss6UInt16Vvg",
+                "mangledName": "$s14MP42Foundation9ColorInfoV23transferCharacteristicss6UInt16Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV23transferCharacteristicss6UInt16Vvs",
+                "mangledName": "$s14MP42Foundation9ColorInfoV23transferCharacteristicss6UInt16Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV23transferCharacteristicss6UInt16VvM",
+                "mangledName": "$s14MP42Foundation9ColorInfoV23transferCharacteristicss6UInt16VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "matrixCoefficients",
+            "printedName": "matrixCoefficients",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation9ColorInfoV18matrixCoefficientss6UInt16Vvp",
+            "mangledName": "$s14MP42Foundation9ColorInfoV18matrixCoefficientss6UInt16Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 2,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV18matrixCoefficientss6UInt16Vvg",
+                "mangledName": "$s14MP42Foundation9ColorInfoV18matrixCoefficientss6UInt16Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV18matrixCoefficientss6UInt16Vvs",
+                "mangledName": "$s14MP42Foundation9ColorInfoV18matrixCoefficientss6UInt16Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV18matrixCoefficientss6UInt16VvM",
+                "mangledName": "$s14MP42Foundation9ColorInfoV18matrixCoefficientss6UInt16VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "colorRange",
+            "printedName": "colorRange",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation9ColorInfoV10colorRanges6UInt16Vvp",
+            "mangledName": "$s14MP42Foundation9ColorInfoV10colorRanges6UInt16Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 3,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV10colorRanges6UInt16Vvg",
+                "mangledName": "$s14MP42Foundation9ColorInfoV10colorRanges6UInt16Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV10colorRanges6UInt16Vvs",
+                "mangledName": "$s14MP42Foundation9ColorInfoV10colorRanges6UInt16Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation9ColorInfoV10colorRanges6UInt16VvM",
+                "mangledName": "$s14MP42Foundation9ColorInfoV10colorRanges6UInt16VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(colorPrimaries:transferCharacteristics:matrixCoefficients:colorRange:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "ColorInfo",
+                "printedName": "MP42Foundation.ColorInfo",
+                "usr": "s:14MP42Foundation9ColorInfoV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:14MP42Foundation9ColorInfoV14colorPrimaries23transferCharacteristics18matrixCoefficients0E5RangeACs6UInt16V_A3Itcfc",
+            "mangledName": "$s14MP42Foundation9ColorInfoV14colorPrimaries23transferCharacteristics18matrixCoefficients0E5RangeACs6UInt16V_A3Itcfc",
+            "moduleName": "MP42Foundation",
+            "implicit": true,
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:14MP42Foundation9ColorInfoV",
+        "mangledName": "$s14MP42Foundation9ColorInfoV",
+        "moduleName": "MP42Foundation",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "PixelAspectRatio",
+        "printedName": "PixelAspectRatio",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "hSpacing",
+            "printedName": "hSpacing",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation16PixelAspectRatioV8hSpacings6UInt64Vvp",
+            "mangledName": "$s14MP42Foundation16PixelAspectRatioV8hSpacings6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 0,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation16PixelAspectRatioV8hSpacings6UInt64Vvg",
+                "mangledName": "$s14MP42Foundation16PixelAspectRatioV8hSpacings6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation16PixelAspectRatioV8hSpacings6UInt64Vvs",
+                "mangledName": "$s14MP42Foundation16PixelAspectRatioV8hSpacings6UInt64Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation16PixelAspectRatioV8hSpacings6UInt64VvM",
+                "mangledName": "$s14MP42Foundation16PixelAspectRatioV8hSpacings6UInt64VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "vSpacing",
+            "printedName": "vSpacing",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation16PixelAspectRatioV8vSpacings6UInt64Vvp",
+            "mangledName": "$s14MP42Foundation16PixelAspectRatioV8vSpacings6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 1,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation16PixelAspectRatioV8vSpacings6UInt64Vvg",
+                "mangledName": "$s14MP42Foundation16PixelAspectRatioV8vSpacings6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation16PixelAspectRatioV8vSpacings6UInt64Vvs",
+                "mangledName": "$s14MP42Foundation16PixelAspectRatioV8vSpacings6UInt64Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation16PixelAspectRatioV8vSpacings6UInt64VvM",
+                "mangledName": "$s14MP42Foundation16PixelAspectRatioV8vSpacings6UInt64VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(hSpacing:vSpacing:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "PixelAspectRatio",
+                "printedName": "MP42Foundation.PixelAspectRatio",
+                "usr": "s:14MP42Foundation16PixelAspectRatioV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:14MP42Foundation16PixelAspectRatioV8hSpacing01vF0ACs6UInt64V_AGtcfc",
+            "mangledName": "$s14MP42Foundation16PixelAspectRatioV8hSpacing01vF0ACs6UInt64V_AGtcfc",
+            "moduleName": "MP42Foundation",
+            "implicit": true,
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:14MP42Foundation16PixelAspectRatioV",
+        "mangledName": "$s14MP42Foundation16PixelAspectRatioV",
+        "moduleName": "MP42Foundation",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "CleanAperture",
+        "printedName": "CleanAperture",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "widthN",
+            "printedName": "widthN",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation13CleanApertureV6widthNs6UInt64Vvp",
+            "mangledName": "$s14MP42Foundation13CleanApertureV6widthNs6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 0,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV6widthNs6UInt64Vvg",
+                "mangledName": "$s14MP42Foundation13CleanApertureV6widthNs6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV6widthNs6UInt64Vvs",
+                "mangledName": "$s14MP42Foundation13CleanApertureV6widthNs6UInt64Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV6widthNs6UInt64VvM",
+                "mangledName": "$s14MP42Foundation13CleanApertureV6widthNs6UInt64VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "widthD",
+            "printedName": "widthD",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation13CleanApertureV6widthDs6UInt64Vvp",
+            "mangledName": "$s14MP42Foundation13CleanApertureV6widthDs6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 1,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV6widthDs6UInt64Vvg",
+                "mangledName": "$s14MP42Foundation13CleanApertureV6widthDs6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV6widthDs6UInt64Vvs",
+                "mangledName": "$s14MP42Foundation13CleanApertureV6widthDs6UInt64Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV6widthDs6UInt64VvM",
+                "mangledName": "$s14MP42Foundation13CleanApertureV6widthDs6UInt64VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "heightN",
+            "printedName": "heightN",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation13CleanApertureV7heightNs6UInt64Vvp",
+            "mangledName": "$s14MP42Foundation13CleanApertureV7heightNs6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 2,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV7heightNs6UInt64Vvg",
+                "mangledName": "$s14MP42Foundation13CleanApertureV7heightNs6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV7heightNs6UInt64Vvs",
+                "mangledName": "$s14MP42Foundation13CleanApertureV7heightNs6UInt64Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV7heightNs6UInt64VvM",
+                "mangledName": "$s14MP42Foundation13CleanApertureV7heightNs6UInt64VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "heightD",
+            "printedName": "heightD",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation13CleanApertureV7heightDs6UInt64Vvp",
+            "mangledName": "$s14MP42Foundation13CleanApertureV7heightDs6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 3,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV7heightDs6UInt64Vvg",
+                "mangledName": "$s14MP42Foundation13CleanApertureV7heightDs6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV7heightDs6UInt64Vvs",
+                "mangledName": "$s14MP42Foundation13CleanApertureV7heightDs6UInt64Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV7heightDs6UInt64VvM",
+                "mangledName": "$s14MP42Foundation13CleanApertureV7heightDs6UInt64VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "horizOffN",
+            "printedName": "horizOffN",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation13CleanApertureV9horizOffNs6UInt64Vvp",
+            "mangledName": "$s14MP42Foundation13CleanApertureV9horizOffNs6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 4,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV9horizOffNs6UInt64Vvg",
+                "mangledName": "$s14MP42Foundation13CleanApertureV9horizOffNs6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV9horizOffNs6UInt64Vvs",
+                "mangledName": "$s14MP42Foundation13CleanApertureV9horizOffNs6UInt64Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV9horizOffNs6UInt64VvM",
+                "mangledName": "$s14MP42Foundation13CleanApertureV9horizOffNs6UInt64VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "horizOffD",
+            "printedName": "horizOffD",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation13CleanApertureV9horizOffDs6UInt64Vvp",
+            "mangledName": "$s14MP42Foundation13CleanApertureV9horizOffDs6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 5,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV9horizOffDs6UInt64Vvg",
+                "mangledName": "$s14MP42Foundation13CleanApertureV9horizOffDs6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV9horizOffDs6UInt64Vvs",
+                "mangledName": "$s14MP42Foundation13CleanApertureV9horizOffDs6UInt64Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV9horizOffDs6UInt64VvM",
+                "mangledName": "$s14MP42Foundation13CleanApertureV9horizOffDs6UInt64VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "vertOffN",
+            "printedName": "vertOffN",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation13CleanApertureV8vertOffNs6UInt64Vvp",
+            "mangledName": "$s14MP42Foundation13CleanApertureV8vertOffNs6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 6,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV8vertOffNs6UInt64Vvg",
+                "mangledName": "$s14MP42Foundation13CleanApertureV8vertOffNs6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV8vertOffNs6UInt64Vvs",
+                "mangledName": "$s14MP42Foundation13CleanApertureV8vertOffNs6UInt64Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV8vertOffNs6UInt64VvM",
+                "mangledName": "$s14MP42Foundation13CleanApertureV8vertOffNs6UInt64VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "vertOffD",
+            "printedName": "vertOffD",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation13CleanApertureV8vertOffDs6UInt64Vvp",
+            "mangledName": "$s14MP42Foundation13CleanApertureV8vertOffDs6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 7,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV8vertOffDs6UInt64Vvg",
+                "mangledName": "$s14MP42Foundation13CleanApertureV8vertOffDs6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV8vertOffDs6UInt64Vvs",
+                "mangledName": "$s14MP42Foundation13CleanApertureV8vertOffDs6UInt64Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation13CleanApertureV8vertOffDs6UInt64VvM",
+                "mangledName": "$s14MP42Foundation13CleanApertureV8vertOffDs6UInt64VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(widthN:widthD:heightN:heightD:horizOffN:horizOffD:vertOffN:vertOffD:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CleanAperture",
+                "printedName": "MP42Foundation.CleanAperture",
+                "usr": "s:14MP42Foundation13CleanApertureV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:14MP42Foundation13CleanApertureV6widthN0E1D7heightN0F1D9horizOffN0gH1D04vertH1N0iH1DACs6UInt64V_A7Mtcfc",
+            "mangledName": "$s14MP42Foundation13CleanApertureV6widthN0E1D7heightN0F1D9horizOffN0gH1D04vertH1N0iH1DACs6UInt64V_A7Mtcfc",
+            "moduleName": "MP42Foundation",
+            "implicit": true,
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:14MP42Foundation13CleanApertureV",
+        "mangledName": "$s14MP42Foundation13CleanApertureV",
+        "moduleName": "MP42Foundation",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "H264Profile",
+        "printedName": "H264Profile",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "origProfile",
+            "printedName": "origProfile",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt8",
+                "printedName": "Swift.UInt8",
+                "usr": "s:s5UInt8V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation11H264ProfileV04origD0s5UInt8Vvp",
+            "mangledName": "$s14MP42Foundation11H264ProfileV04origD0s5UInt8Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 0,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt8",
+                    "printedName": "Swift.UInt8",
+                    "usr": "s:s5UInt8V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV04origD0s5UInt8Vvg",
+                "mangledName": "$s14MP42Foundation11H264ProfileV04origD0s5UInt8Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt8",
+                    "printedName": "Swift.UInt8",
+                    "usr": "s:s5UInt8V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV04origD0s5UInt8Vvs",
+                "mangledName": "$s14MP42Foundation11H264ProfileV04origD0s5UInt8Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV04origD0s5UInt8VvM",
+                "mangledName": "$s14MP42Foundation11H264ProfileV04origD0s5UInt8VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "origLevel",
+            "printedName": "origLevel",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt8",
+                "printedName": "Swift.UInt8",
+                "usr": "s:s5UInt8V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation11H264ProfileV9origLevels5UInt8Vvp",
+            "mangledName": "$s14MP42Foundation11H264ProfileV9origLevels5UInt8Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 1,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt8",
+                    "printedName": "Swift.UInt8",
+                    "usr": "s:s5UInt8V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV9origLevels5UInt8Vvg",
+                "mangledName": "$s14MP42Foundation11H264ProfileV9origLevels5UInt8Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt8",
+                    "printedName": "Swift.UInt8",
+                    "usr": "s:s5UInt8V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV9origLevels5UInt8Vvs",
+                "mangledName": "$s14MP42Foundation11H264ProfileV9origLevels5UInt8Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV9origLevels5UInt8VvM",
+                "mangledName": "$s14MP42Foundation11H264ProfileV9origLevels5UInt8VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "newProfile",
+            "printedName": "newProfile",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt8",
+                "printedName": "Swift.UInt8",
+                "usr": "s:s5UInt8V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation11H264ProfileV03newD0s5UInt8Vvp",
+            "mangledName": "$s14MP42Foundation11H264ProfileV03newD0s5UInt8Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 2,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt8",
+                    "printedName": "Swift.UInt8",
+                    "usr": "s:s5UInt8V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV03newD0s5UInt8Vvg",
+                "mangledName": "$s14MP42Foundation11H264ProfileV03newD0s5UInt8Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt8",
+                    "printedName": "Swift.UInt8",
+                    "usr": "s:s5UInt8V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV03newD0s5UInt8Vvs",
+                "mangledName": "$s14MP42Foundation11H264ProfileV03newD0s5UInt8Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV03newD0s5UInt8VvM",
+                "mangledName": "$s14MP42Foundation11H264ProfileV03newD0s5UInt8VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "newLevel",
+            "printedName": "newLevel",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt8",
+                "printedName": "Swift.UInt8",
+                "usr": "s:s5UInt8V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation11H264ProfileV8newLevels5UInt8Vvp",
+            "mangledName": "$s14MP42Foundation11H264ProfileV8newLevels5UInt8Vvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 3,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt8",
+                    "printedName": "Swift.UInt8",
+                    "usr": "s:s5UInt8V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV8newLevels5UInt8Vvg",
+                "mangledName": "$s14MP42Foundation11H264ProfileV8newLevels5UInt8Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt8",
+                    "printedName": "Swift.UInt8",
+                    "usr": "s:s5UInt8V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV8newLevels5UInt8Vvs",
+                "mangledName": "$s14MP42Foundation11H264ProfileV8newLevels5UInt8Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation11H264ProfileV8newLevels5UInt8VvM",
+                "mangledName": "$s14MP42Foundation11H264ProfileV8newLevels5UInt8VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(origProfile:origLevel:newProfile:newLevel:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "H264Profile",
+                "printedName": "MP42Foundation.H264Profile",
+                "usr": "s:14MP42Foundation11H264ProfileV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt8",
+                "printedName": "Swift.UInt8",
+                "usr": "s:s5UInt8V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt8",
+                "printedName": "Swift.UInt8",
+                "usr": "s:s5UInt8V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt8",
+                "printedName": "Swift.UInt8",
+                "usr": "s:s5UInt8V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt8",
+                "printedName": "Swift.UInt8",
+                "usr": "s:s5UInt8V"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:14MP42Foundation11H264ProfileV04origD00E5Level03newD00gF0ACs5UInt8V_A3Itcfc",
+            "mangledName": "$s14MP42Foundation11H264ProfileV04origD00E5Level03newD00gF0ACs5UInt8V_A3Itcfc",
+            "moduleName": "MP42Foundation",
+            "implicit": true,
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:14MP42Foundation11H264ProfileV",
+        "mangledName": "$s14MP42Foundation11H264ProfileV",
+        "moduleName": "MP42Foundation",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "VideoSampleDescription",
+        "printedName": "VideoSampleDescription",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "size",
+            "printedName": "size",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Size",
+                "printedName": "MP42Foundation.Size",
+                "usr": "s:14MP42Foundation4SizeV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation22VideoSampleDescriptionC4sizeAA4SizeVvp",
+            "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4sizeAA4SizeVvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Size",
+                    "printedName": "MP42Foundation.Size",
+                    "usr": "s:14MP42Foundation4SizeV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC4sizeAA4SizeVvg",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4sizeAA4SizeVvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Size",
+                    "printedName": "MP42Foundation.Size",
+                    "usr": "s:14MP42Foundation4SizeV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC4sizeAA4SizeVvs",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4sizeAA4SizeVvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC4sizeAA4SizeVvM",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4sizeAA4SizeVvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "color",
+            "printedName": "color",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "MP42Foundation.ColorInfo?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ColorInfo",
+                    "printedName": "MP42Foundation.ColorInfo",
+                    "usr": "s:14MP42Foundation9ColorInfoV"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation22VideoSampleDescriptionC5colorAA9ColorInfoVSgvp",
+            "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC5colorAA9ColorInfoVSgvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.ColorInfo?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ColorInfo",
+                        "printedName": "MP42Foundation.ColorInfo",
+                        "usr": "s:14MP42Foundation9ColorInfoV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC5colorAA9ColorInfoVSgvg",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC5colorAA9ColorInfoVSgvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.ColorInfo?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ColorInfo",
+                        "printedName": "MP42Foundation.ColorInfo",
+                        "usr": "s:14MP42Foundation9ColorInfoV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC5colorAA9ColorInfoVSgvs",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC5colorAA9ColorInfoVSgvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC5colorAA9ColorInfoVSgvM",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC5colorAA9ColorInfoVSgvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "mastering",
+            "printedName": "mastering",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "MP42Foundation.MP42MasteringDisplayMetadata?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "MP42MasteringDisplayMetadata",
+                    "printedName": "MP42Foundation.MP42MasteringDisplayMetadata",
+                    "usr": "c:@S@MP42MasteringDisplayMetadata"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation22VideoSampleDescriptionC9masteringSo0A24MasteringDisplayMetadataVSgvp",
+            "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC9masteringSo0A24MasteringDisplayMetadataVSgvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.MP42MasteringDisplayMetadata?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "MP42MasteringDisplayMetadata",
+                        "printedName": "MP42Foundation.MP42MasteringDisplayMetadata",
+                        "usr": "c:@S@MP42MasteringDisplayMetadata"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC9masteringSo0A24MasteringDisplayMetadataVSgvg",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC9masteringSo0A24MasteringDisplayMetadataVSgvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.MP42MasteringDisplayMetadata?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "MP42MasteringDisplayMetadata",
+                        "printedName": "MP42Foundation.MP42MasteringDisplayMetadata",
+                        "usr": "c:@S@MP42MasteringDisplayMetadata"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC9masteringSo0A24MasteringDisplayMetadataVSgvs",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC9masteringSo0A24MasteringDisplayMetadataVSgvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC9masteringSo0A24MasteringDisplayMetadataVSgvM",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC9masteringSo0A24MasteringDisplayMetadataVSgvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "coll",
+            "printedName": "coll",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "MP42Foundation.MP42ContentLightMetadata?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "MP42ContentLightMetadata",
+                    "printedName": "MP42Foundation.MP42ContentLightMetadata",
+                    "usr": "c:@S@MP42ContentLightMetadata"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation22VideoSampleDescriptionC4collSo0A20ContentLightMetadataVSgvp",
+            "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4collSo0A20ContentLightMetadataVSgvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.MP42ContentLightMetadata?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "MP42ContentLightMetadata",
+                        "printedName": "MP42Foundation.MP42ContentLightMetadata",
+                        "usr": "c:@S@MP42ContentLightMetadata"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC4collSo0A20ContentLightMetadataVSgvg",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4collSo0A20ContentLightMetadataVSgvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.MP42ContentLightMetadata?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "MP42ContentLightMetadata",
+                        "printedName": "MP42Foundation.MP42ContentLightMetadata",
+                        "usr": "c:@S@MP42ContentLightMetadata"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC4collSo0A20ContentLightMetadataVSgvs",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4collSo0A20ContentLightMetadataVSgvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC4collSo0A20ContentLightMetadataVSgvM",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4collSo0A20ContentLightMetadataVSgvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "dolbyVision",
+            "printedName": "dolbyVision",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "MP42Foundation.MP42DolbyVisionMetadata?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "MP42DolbyVisionMetadata",
+                    "printedName": "MP42Foundation.MP42DolbyVisionMetadata",
+                    "usr": "c:@S@MP42DolbyVisionMetadata"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation22VideoSampleDescriptionC11dolbyVisionSo0a5DolbyG8MetadataVSgvp",
+            "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC11dolbyVisionSo0a5DolbyG8MetadataVSgvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.MP42DolbyVisionMetadata?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "MP42DolbyVisionMetadata",
+                        "printedName": "MP42Foundation.MP42DolbyVisionMetadata",
+                        "usr": "c:@S@MP42DolbyVisionMetadata"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC11dolbyVisionSo0a5DolbyG8MetadataVSgvg",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC11dolbyVisionSo0a5DolbyG8MetadataVSgvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.MP42DolbyVisionMetadata?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "MP42DolbyVisionMetadata",
+                        "printedName": "MP42Foundation.MP42DolbyVisionMetadata",
+                        "usr": "c:@S@MP42DolbyVisionMetadata"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC11dolbyVisionSo0a5DolbyG8MetadataVSgvs",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC11dolbyVisionSo0a5DolbyG8MetadataVSgvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC11dolbyVisionSo0a5DolbyG8MetadataVSgvM",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC11dolbyVisionSo0a5DolbyG8MetadataVSgvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "pasp",
+            "printedName": "pasp",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "PixelAspectRatio",
+                "printedName": "MP42Foundation.PixelAspectRatio",
+                "usr": "s:14MP42Foundation16PixelAspectRatioV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation22VideoSampleDescriptionC4paspAA16PixelAspectRatioVvp",
+            "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4paspAA16PixelAspectRatioVvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "PixelAspectRatio",
+                    "printedName": "MP42Foundation.PixelAspectRatio",
+                    "usr": "s:14MP42Foundation16PixelAspectRatioV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC4paspAA16PixelAspectRatioVvg",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4paspAA16PixelAspectRatioVvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "PixelAspectRatio",
+                    "printedName": "MP42Foundation.PixelAspectRatio",
+                    "usr": "s:14MP42Foundation16PixelAspectRatioV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC4paspAA16PixelAspectRatioVvs",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4paspAA16PixelAspectRatioVvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC4paspAA16PixelAspectRatioVvM",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC4paspAA16PixelAspectRatioVvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "cleanAperture",
+            "printedName": "cleanAperture",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "MP42Foundation.CleanAperture?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CleanAperture",
+                    "printedName": "MP42Foundation.CleanAperture",
+                    "usr": "s:14MP42Foundation13CleanApertureV"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation22VideoSampleDescriptionC13cleanApertureAA05CleanG0VSgvp",
+            "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC13cleanApertureAA05CleanG0VSgvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.CleanAperture?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CleanAperture",
+                        "printedName": "MP42Foundation.CleanAperture",
+                        "usr": "s:14MP42Foundation13CleanApertureV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC13cleanApertureAA05CleanG0VSgvg",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC13cleanApertureAA05CleanG0VSgvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.CleanAperture?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CleanAperture",
+                        "printedName": "MP42Foundation.CleanAperture",
+                        "usr": "s:14MP42Foundation13CleanApertureV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC13cleanApertureAA05CleanG0VSgvs",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC13cleanApertureAA05CleanG0VSgvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC13cleanApertureAA05CleanG0VSgvM",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC13cleanApertureAA05CleanG0VSgvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "profile",
+            "printedName": "profile",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "MP42Foundation.H264Profile?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "H264Profile",
+                    "printedName": "MP42Foundation.H264Profile",
+                    "usr": "s:14MP42Foundation11H264ProfileV"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation22VideoSampleDescriptionC7profileAA11H264ProfileVSgvp",
+            "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC7profileAA11H264ProfileVSgvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.H264Profile?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "H264Profile",
+                        "printedName": "MP42Foundation.H264Profile",
+                        "usr": "s:14MP42Foundation11H264ProfileV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC7profileAA11H264ProfileVSgvg",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC7profileAA11H264ProfileVSgvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "MP42Foundation.H264Profile?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "H264Profile",
+                        "printedName": "MP42Foundation.H264Profile",
+                        "usr": "s:14MP42Foundation11H264ProfileV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC7profileAA11H264ProfileVSgvs",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC7profileAA11H264ProfileVSgvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22VideoSampleDescriptionC7profileAA11H264ProfileVSgvM",
+                "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC7profileAA11H264ProfileVSgvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(fileHandle:trackId:index:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "VideoSampleDescription",
+                "printedName": "MP42Foundation.VideoSampleDescription",
+                "usr": "c:@M@MP42Foundation@objc(cs)MP42VideoSampleDescription"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UnsafeMutableRawPointer",
+                "printedName": "Swift.UnsafeMutableRawPointer",
+                "usr": "s:Sv"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@MP42Foundation@objc(cs)MP42VideoSampleDescription(im)initWithFileHandle:trackId:index:",
+            "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC10fileHandle7trackId5indexACSv_s6UInt32VAHtcfc",
+            "moduleName": "MP42Foundation",
+            "overriding": true,
+            "objc_name": "initWithFileHandle:trackId:index:",
+            "declAttributes": [
+              "ObjC",
+              "Override",
+              "AccessControl"
+            ],
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@MP42Foundation@objc(cs)MP42VideoSampleDescription",
+        "mangledName": "$s14MP42Foundation22VideoSampleDescriptionC",
+        "moduleName": "MP42Foundation",
+        "isOpen": true,
+        "objc_name": "MP42VideoSampleDescription",
+        "declAttributes": [
+          "AccessControl",
+          "ObjC"
+        ],
+        "superclassUsr": "c:@M@MP42Foundation@objc(cs)MP42SampleDescription",
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "MP42Foundation.SampleDescription",
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "AudioSampleDescription",
+        "printedName": "AudioSampleDescription",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "channels",
+            "printedName": "channels",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation22AudioSampleDescriptionC8channelss6UInt32Vvp",
+            "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC8channelss6UInt32Vvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 0,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22AudioSampleDescriptionC8channelss6UInt32Vvg",
+                "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC8channelss6UInt32Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22AudioSampleDescriptionC8channelss6UInt32Vvs",
+                "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC8channelss6UInt32Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22AudioSampleDescriptionC8channelss6UInt32VvM",
+                "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC8channelss6UInt32VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "channelLayoutTag",
+            "printedName": "channelLayoutTag",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation22AudioSampleDescriptionC16channelLayoutTags6UInt32Vvp",
+            "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC16channelLayoutTags6UInt32Vvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 1,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22AudioSampleDescriptionC16channelLayoutTags6UInt32Vvg",
+                "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC16channelLayoutTags6UInt32Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22AudioSampleDescriptionC16channelLayoutTags6UInt32Vvs",
+                "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC16channelLayoutTags6UInt32Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22AudioSampleDescriptionC16channelLayoutTags6UInt32VvM",
+                "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC16channelLayoutTags6UInt32VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "extensionType",
+            "printedName": "extensionType",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14MP42Foundation22AudioSampleDescriptionC13extensionTypes6UInt32Vvp",
+            "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC13extensionTypes6UInt32Vvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 2,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22AudioSampleDescriptionC13extensionTypes6UInt32Vvg",
+                "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC13extensionTypes6UInt32Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22AudioSampleDescriptionC13extensionTypes6UInt32Vvs",
+                "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC13extensionTypes6UInt32Vvs",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14MP42Foundation22AudioSampleDescriptionC13extensionTypes6UInt32VvM",
+                "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC13extensionTypes6UInt32VvM",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(fileHandle:trackId:index:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "AudioSampleDescription",
+                "printedName": "MP42Foundation.AudioSampleDescription",
+                "usr": "c:@M@MP42Foundation@objc(cs)AudioSampleDescription"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UnsafeMutableRawPointer",
+                "printedName": "Swift.UnsafeMutableRawPointer",
+                "usr": "s:Sv"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@MP42Foundation@objc(cs)AudioSampleDescription(im)initWithFileHandle:trackId:index:",
+            "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC10fileHandle7trackId5indexACSv_s6UInt32VAHtcfc",
+            "moduleName": "MP42Foundation",
+            "overriding": true,
+            "objc_name": "initWithFileHandle:trackId:index:",
+            "declAttributes": [
+              "ObjC",
+              "Override"
+            ],
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@MP42Foundation@objc(cs)AudioSampleDescription",
+        "mangledName": "$s14MP42Foundation22AudioSampleDescriptionC",
+        "moduleName": "MP42Foundation",
+        "isOpen": true,
+        "declAttributes": [
+          "ObjC"
+        ],
+        "superclassUsr": "c:@M@MP42Foundation@objc(cs)MP42SampleDescription",
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "MP42Foundation.SampleDescription",
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "MP42Foundation",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "mp4v2",
+        "printedName": "mp4v2",
+        "declKind": "Import",
+        "moduleName": "MP42Foundation"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "SampleCursor",
+        "printedName": "SampleCursor",
+        "children": [
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(fileHandle:trackId:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "MP42Foundation.SampleCursor?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SampleCursor",
+                    "printedName": "MP42Foundation.SampleCursor",
+                    "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UnsafeMutableRawPointer",
+                "printedName": "Swift.UnsafeMutableRawPointer",
+                "usr": "s:Sv"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor(im)initWithFileHandle:trackId:",
+            "mangledName": "$s14MP42Foundation12SampleCursorC10fileHandle7trackIdACSgSv_s6UInt32Vtcfc",
+            "moduleName": "MP42Foundation",
+            "objc_name": "initWithFileHandle:trackId:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Var",
+            "name": "currentSampleId",
+            "printedName": "currentSampleId",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor(py)currentSampleId",
+            "mangledName": "$s14MP42Foundation12SampleCursorC07currentC2Ids6UInt32Vvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasStorage",
+              "SetterAccess",
+              "AccessControl",
+              "ObjC"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor(im)currentSampleId",
+                "mangledName": "$s14MP42Foundation12SampleCursorC07currentC2Ids6UInt32Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "declAttributes": [
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "currentSampleDuration",
+            "printedName": "currentSampleDuration",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor(py)currentSampleDuration",
+            "mangledName": "$s14MP42Foundation12SampleCursorC07currentC8Durations6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasStorage",
+              "SetterAccess",
+              "AccessControl",
+              "ObjC"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor(im)currentSampleDuration",
+                "mangledName": "$s14MP42Foundation12SampleCursorC07currentC8Durations6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "declAttributes": [
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "presentationTimeStamp",
+            "printedName": "presentationTimeStamp",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor(py)presentationTimeStamp",
+            "mangledName": "$s14MP42Foundation12SampleCursorC21presentationTimeStamps6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasStorage",
+              "SetterAccess",
+              "AccessControl",
+              "ObjC"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor(im)presentationTimeStamp",
+                "mangledName": "$s14MP42Foundation12SampleCursorC21presentationTimeStamps6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "declAttributes": [
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "decodeTimeStamp",
+            "printedName": "decodeTimeStamp",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor(py)decodeTimeStamp",
+            "mangledName": "$s14MP42Foundation12SampleCursorC15decodeTimeStamps6UInt64Vvp",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "declAttributes": [
+              "HasStorage",
+              "SetterAccess",
+              "AccessControl",
+              "ObjC"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor(im)decodeTimeStamp",
+                "mangledName": "$s14MP42Foundation12SampleCursorC15decodeTimeStamps6UInt64Vvg",
+                "moduleName": "MP42Foundation",
+                "implicit": true,
+                "isOpen": true,
+                "declAttributes": [
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "stepInDecodeOrder",
+            "printedName": "stepInDecodeOrder(byCount:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int64",
+                "printedName": "Swift.Int64",
+                "usr": "s:s5Int64V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int64",
+                "printedName": "Swift.Int64",
+                "usr": "s:s5Int64V"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor(im)stepInDecodeOrderByCount:",
+            "mangledName": "$s14MP42Foundation12SampleCursorC17stepInDecodeOrder7byCounts5Int64VAG_tF",
+            "moduleName": "MP42Foundation",
+            "isOpen": true,
+            "objc_name": "stepInDecodeOrderByCount:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "SampleCursor",
+                "printedName": "MP42Foundation.SampleCursor",
+                "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor(im)init",
+            "mangledName": "$s14MP42Foundation12SampleCursorCACycfc",
+            "moduleName": "MP42Foundation",
+            "overriding": true,
+            "implicit": true,
+            "objc_name": "init",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Override"
+            ],
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@MP42Foundation@objc(cs)MP42SampleCursor",
+        "mangledName": "$s14MP42Foundation12SampleCursorC",
+        "moduleName": "MP42Foundation",
+        "isOpen": true,
+        "objc_name": "MP42SampleCursor",
+        "declAttributes": [
+          "AccessControl",
+          "ObjC"
+        ],
+        "superclassUsr": "c:objc(cs)NSObject",
+        "superclassNames": [
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "UInt32",
+        "printedName": "UInt32",
+        "children": [
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(stringLiteral:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:s6UInt32V14MP42FoundationE13stringLiteralABSS_tcfc",
+            "mangledName": "$ss6UInt32V14MP42FoundationE13stringLiteralABSS_tcfc",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(extendedGraphemeClusterLiteral:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:s6UInt32V14MP42FoundationE30extendedGraphemeClusterLiteralABSS_tcfc",
+            "mangledName": "$ss6UInt32V14MP42FoundationE30extendedGraphemeClusterLiteralABSS_tcfc",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(unicodeScalarLiteral:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:s6UInt32V14MP42FoundationE20unicodeScalarLiteralABSS_tcfc",
+            "mangledName": "$ss6UInt32V14MP42FoundationE20unicodeScalarLiteralABSS_tcfc",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:s6UInt32V14MP42FoundationEyABSScfc",
+            "mangledName": "$ss6UInt32V14MP42FoundationEyABSScfc",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Var",
+            "name": "string",
+            "printedName": "string",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:s6UInt32V14MP42FoundationE6stringSSSgvp",
+            "mangledName": "$ss6UInt32V14MP42FoundationE6stringSSSgvp",
+            "moduleName": "MP42Foundation",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:s6UInt32V14MP42FoundationE6stringSSSgvg",
+                "mangledName": "$ss6UInt32V14MP42FoundationE6stringSSSgvg",
+                "moduleName": "MP42Foundation",
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:s6UInt32V",
+        "mangledName": "$ss6UInt32V",
+        "moduleName": "Swift",
+        "declAttributes": [
+          "Frozen"
+        ],
+        "isExternal": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "FixedWidthInteger",
+            "printedName": "FixedWidthInteger",
+            "usr": "s:s17FixedWidthIntegerP",
+            "mangledName": "$ss17FixedWidthIntegerP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UnsignedInteger",
+            "printedName": "UnsignedInteger",
+            "usr": "s:SU",
+            "mangledName": "$sSU"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_ExpressibleByBuiltinIntegerLiteral",
+            "printedName": "_ExpressibleByBuiltinIntegerLiteral",
+            "usr": "s:s35_ExpressibleByBuiltinIntegerLiteralP",
+            "mangledName": "$ss35_ExpressibleByBuiltinIntegerLiteralP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "BinaryInteger",
+            "printedName": "BinaryInteger",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "Words",
+                "printedName": "Words",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Words",
+                    "printedName": "Swift.UInt32.Words",
+                    "usr": "s:s6UInt32V5WordsV"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:Sz",
+            "mangledName": "$sSz"
+          },
+          {
+            "kind": "Conformance",
+            "name": "LosslessStringConvertible",
+            "printedName": "LosslessStringConvertible",
+            "usr": "s:s25LosslessStringConvertibleP",
+            "mangledName": "$ss25LosslessStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Numeric",
+            "printedName": "Numeric",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "Magnitude",
+                "printedName": "Magnitude",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:Sj",
+            "mangledName": "$sSj"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Strideable",
+            "printedName": "Strideable",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "Stride",
+                "printedName": "Stride",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:Sx",
+            "mangledName": "$sSx"
+          },
+          {
+            "kind": "Conformance",
+            "name": "AdditiveArithmetic",
+            "printedName": "AdditiveArithmetic",
+            "usr": "s:s18AdditiveArithmeticP",
+            "mangledName": "$ss18AdditiveArithmeticP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ExpressibleByIntegerLiteral",
+            "printedName": "ExpressibleByIntegerLiteral",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "IntegerLiteralType",
+                "printedName": "IntegerLiteralType",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:s27ExpressibleByIntegerLiteralP",
+            "mangledName": "$ss27ExpressibleByIntegerLiteralP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Comparable",
+            "printedName": "Comparable",
+            "usr": "s:SL",
+            "mangledName": "$sSL"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ExpressibleByStringLiteral",
+            "printedName": "ExpressibleByStringLiteral",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "StringLiteralType",
+                "printedName": "StringLiteralType",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:s26ExpressibleByStringLiteralP",
+            "mangledName": "$ss26ExpressibleByStringLiteralP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ExpressibleByExtendedGraphemeClusterLiteral",
+            "printedName": "ExpressibleByExtendedGraphemeClusterLiteral",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "ExtendedGraphemeClusterLiteralType",
+                "printedName": "ExtendedGraphemeClusterLiteralType",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:s43ExpressibleByExtendedGraphemeClusterLiteralP",
+            "mangledName": "$ss43ExpressibleByExtendedGraphemeClusterLiteralP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ExpressibleByUnicodeScalarLiteral",
+            "printedName": "ExpressibleByUnicodeScalarLiteral",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "UnicodeScalarLiteralType",
+                "printedName": "UnicodeScalarLiteralType",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:s33ExpressibleByUnicodeScalarLiteralP",
+            "mangledName": "$ss33ExpressibleByUnicodeScalarLiteralP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Decodable",
+            "printedName": "Decodable",
+            "usr": "s:Se",
+            "mangledName": "$sSe"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Encodable",
+            "printedName": "Encodable",
+            "usr": "s:SE",
+            "mangledName": "$sSE"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomReflectable",
+            "printedName": "CustomReflectable",
+            "usr": "s:s17CustomReflectableP",
+            "mangledName": "$ss17CustomReflectableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_CustomPlaygroundQuickLookable",
+            "printedName": "_CustomPlaygroundQuickLookable",
+            "usr": "s:s30_CustomPlaygroundQuickLookableP",
+            "mangledName": "$ss30_CustomPlaygroundQuickLookableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_HasCustomAnyHashableRepresentation",
+            "printedName": "_HasCustomAnyHashableRepresentation",
+            "usr": "s:s35_HasCustomAnyHashableRepresentationP",
+            "mangledName": "$ss35_HasCustomAnyHashableRepresentationP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SIMDScalar",
+            "printedName": "SIMDScalar",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "SIMDMaskScalar",
+                "printedName": "SIMDMaskScalar",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int32",
+                    "printedName": "Swift.Int32",
+                    "usr": "s:s5Int32V"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeWitness",
+                "name": "SIMD2Storage",
+                "printedName": "SIMD2Storage",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SIMD2Storage",
+                    "printedName": "Swift.UInt32.SIMD2Storage",
+                    "usr": "s:s6UInt32V12SIMD2StorageV"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeWitness",
+                "name": "SIMD4Storage",
+                "printedName": "SIMD4Storage",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SIMD4Storage",
+                    "printedName": "Swift.UInt32.SIMD4Storage",
+                    "usr": "s:s6UInt32V12SIMD4StorageV"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeWitness",
+                "name": "SIMD8Storage",
+                "printedName": "SIMD8Storage",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SIMD8Storage",
+                    "printedName": "Swift.UInt32.SIMD8Storage",
+                    "usr": "s:s6UInt32V12SIMD8StorageV"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeWitness",
+                "name": "SIMD16Storage",
+                "printedName": "SIMD16Storage",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SIMD16Storage",
+                    "printedName": "Swift.UInt32.SIMD16Storage",
+                    "usr": "s:s6UInt32V13SIMD16StorageV"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeWitness",
+                "name": "SIMD32Storage",
+                "printedName": "SIMD32Storage",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SIMD32Storage",
+                    "printedName": "Swift.UInt32.SIMD32Storage",
+                    "usr": "s:s6UInt32V13SIMD32StorageV"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeWitness",
+                "name": "SIMD64Storage",
+                "printedName": "SIMD64Storage",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SIMD64Storage",
+                    "printedName": "Swift.UInt32.SIMD64Storage",
+                    "usr": "s:s6UInt32V13SIMD64StorageV"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:s10SIMDScalarP",
+            "mangledName": "$ss10SIMDScalarP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_FormatSpecifiable",
+            "printedName": "_FormatSpecifiable",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "_Arg",
+                "printedName": "_Arg",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:10Foundation18_FormatSpecifiableP",
+            "mangledName": "$s10Foundation18_FormatSpecifiableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_ObjectiveCBridgeable",
+            "printedName": "_ObjectiveCBridgeable",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "_ObjectiveCType",
+                "printedName": "_ObjectiveCType",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "NSNumber",
+                    "printedName": "Foundation.NSNumber",
+                    "usr": "c:objc(cs)NSNumber"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:s21_ObjectiveCBridgeableP",
+            "mangledName": "$ss21_ObjectiveCBridgeableP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8
+  },
+  "ConstValues": [
+    {
+      "filePath": "\/Users\/Michael\/Desktop\/MP42Foundation\/MP42\/SampleDescription.swift",
+      "kind": "StringLiteral",
+      "offset": 236,
+      "length": 17,
+      "value": "\"MP42Foundation.SampleDescription\""
+    },
+    {
+      "filePath": "\/Users\/Michael\/Desktop\/MP42Foundation\/MP42\/SampleCursor.swift",
+      "kind": "StringLiteral",
+      "offset": 1114,
+      "length": 12,
+      "value": "\"MP42Foundation.SampleCursor\""
+    }
+  ]
+}

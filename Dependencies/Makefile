@@ -14,10 +14,13 @@ endif
 all: \
 	$(BUILD)/HandBrake/libhandbrake.a \
 	$(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(arch)/module.modulemap) \
+	$(BUILD)/MP42Foundation/libmp42.a \
 	$(if $(wildcard libdvdcss),$(BUILD)/libdvdcss/libdvdcss.2.dylib)
 
 .PHONY: all install clean docbuild
 
+
+# MARK: HandBrake
 
 .INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/HandBrake/$(arch)/libhb/libhandbrake.a $(BUILD)/HandBrake/$(arch)/GNUmakefile)
 
@@ -35,16 +38,30 @@ $(BUILD)/HandBrake/%/libhb/libhandbrake.a: $(BUILD)/HandBrake/%/GNUmakefile
 	# FIXME: parallel HandBrake builds fail
 	$(MAKE) -C $(<D) libhb.build
 
-$(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure ../.git/modules/Dependencies/HandBrake/HEAD
+$(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure
 	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
 	optimize=$(shell case $(CONFIGURATION) in (Debug) echo none ;; (Release) echo speed ;; esac) ; \
 	debug=$(shell case $(CONFIGURATION) in (Debug) echo std ;; (Release) echo none ;; esac) ; \
 	$(abspath $<) --arch=$* --optimize=$$optimize --debug=$$debug --disable-xcode
 
+HandBrake/configure: ../.git/modules/Dependencies/HandBrake/HEAD
 
 $(BUILD)/HandBrake/%/module.modulemap: HandBrake.modulemap
 	ln -sf ../../../../$< $@
 
+
+# MARK: MP42Foundation
+
+$(BUILD)/MP42Foundation/libmp42.a: ../.git/modules/Dependencies/MP42Foundation/HEAD
+	patch -p1 -dMP42Foundation < MP42Foundation.patch
+	rm -rf $(@D) ; mkdir -p $(@D) ; cd MP42Foundation ; \
+	xcodebuild build -configuration $(CONFIGURATION) -target mp42 ARCHS="$(ARCHS)" \
+		CONFIGURATION_BUILD_DIR="../$(@D)"
+	patch -p1 -dMP42Foundation -R < MP42Foundation.patch
+	rm -rf MP42Foundation/build
+
+
+# MARK: libdvdcss
 
 .INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/.libs/libdvdcss.2.dylib $(BUILD)/libdvdcss/$(arch)/Makefile)
 .PRECIOUS: libdvdcss/configure
@@ -67,6 +84,9 @@ $(BUILD)/libdvdcss/%/Makefile: libdvdcss/configure
 libdvdcss/configure: ../.git/modules/Dependencies/libdvdcss/HEAD
 	cd $(@D) ; autoreconf -i
 
+
+../.git/modules/Dependencies/%/HEAD:
+	git submodule update --init --depth 1 --single-branch --recursive $*
 
 install:
 	unset BUILD_ROOT ; $(MAKE) all

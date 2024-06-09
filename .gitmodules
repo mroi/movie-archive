@@ -1,3 +1,6 @@
 [submodule "Dependencies/HandBrake"]
 	path = Dependencies/HandBrake
 	url = https://github.com/HandBrake/HandBrake.git
+[submodule "Dependencies/MP42Foundation"]
+	path = Dependencies/MP42Foundation
+	url = https://bitbucket.org/galad87/mp42foundation.git
