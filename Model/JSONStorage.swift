@@ -175,6 +175,33 @@ public protocol CustomJSONCodable {
 	init(fromCustomJSON decoder: any Decoder) throws
 }
 
+extension Data: CustomJSONCodable {
+	// custom encoding: data as base64 string
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		try base64EncodedString().encode(to: encoder)
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		let base64 = try container.decode(String.self)
+		guard let data = Data(base64Encoded: base64) else {
+			throw DecodingError.dataCorruptedError(in: container,
+				debugDescription: "illegal base64 string")
+		}
+		self = data
+	}
+}
+
+extension Array<UInt8>: CustomJSONCodable {
+	// custom encoding: byte array as data
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		try Data(self).encode(toCustomJSON: encoder)
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let data = try Data(fromCustomJSON: decoder)
+		self.init(data)
+	}
+}
+
 
 /// Types can adopt this protocol to enable skipping of empty collections.
 ///
@@ -196,6 +223,186 @@ extension CustomJSONEmptyCollectionSkipping {
 	public init(fromCustomJSON decoder: Decoder) throws {
 		try decoder.enableMissingAsEmpty()
 		try self.init(from: decoder)
+	}
+}
+
+
+/// Types can adopt this protocol to enable more readable dictionary coding.
+///
+/// By default, dictionaries are encoded to JSON arrays that alternate between
+/// storing a key and a value. This is not very intuitive to read. However, if
+/// the dictionary’s key type adopts this protocol, it declares that it can
+/// encode and decode itself against a string. Strings can be used directly as
+/// JSON keys, allowing a readable JSON representation of the dictionary.
+///
+/// Furthermore, the same string representation can be used to encode all
+/// instances of the adopting type. All that is needed is to additionally
+/// declare `CustomJSONCodable` conformance.
+///
+/// - Remark: A similar dictionary coding customization could be achieved with
+///   the standard library’s `CodingKeyRepresentable` protocol. However,
+///   adopting this protocol requires more boilerplate (a `CodingKey` type) and
+///   changes the dictionary representation app-wide, not just for custom JSON.
+public protocol CustomJSONStringKeyRepresentable: Comparable {
+	var stringValue: String { get }
+	init?(stringValue: String)
+}
+
+extension CustomJSONStringKeyRepresentable {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		var container = encoder.singleValueContainer()
+		try container.encode(stringValue)
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		guard let result = Self(stringValue: try container.decode(String.self)) else {
+			throw DecodingError.typeMismatch(Self.self, .init(codingPath: container.codingPath,
+				debugDescription: "value of type \(Self.self) expected"))
+		}
+		self = result
+	}
+}
+
+extension Dictionary: CustomJSONCodable where Key: CustomJSONStringKeyRepresentable, Value: Codable {
+	// custom encoding: string-representable keys as direct string keys
+	struct StringKeys: CodingKey {
+		let stringValue: String
+		var intValue: Int? { Int(stringValue) }
+		init(stringValue: String) { self.stringValue = stringValue }
+		init(intValue: Int) { self.stringValue = String(intValue) }
+	}
+
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: StringKeys.self)
+		let sortedKeys = keys.sorted()
+		for key in sortedKeys {
+			try container.encode(self[key]!, forKey: StringKeys(stringValue: key.stringValue))
+		}
+	}
+
+	public init(fromCustomJSON decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: StringKeys.self)
+		self.init(minimumCapacity: container.allKeys.count)
+		for key in container.allKeys {
+			guard let index = Key(stringValue: key.stringValue) else {
+				throw DecodingError.typeMismatch(Key.self,
+					.init(codingPath: container.codingPath + [key],
+						debugDescription: "key of type \(Key.self) expected"))
+			}
+			self[index] = try container.decode(Value.self, forKey: key)
+		}
+	}
+}
+
+
+/// Enum types can adopt this protocol to enable a compact coded representation.
+///
+/// The default coding synthesized by the compiler stores enums as an outer
+/// keyed container holding a single key signifying the instantiated enum case.
+/// This key’s value holds an inner keyed container to store associated values.
+/// This representation is general, but too noisy for many enum types.
+///
+/// By adopting this protocol, three compactions are performed:
+/// * Enum cases without any associated values collapse to a plain string.
+/// * Cases with a single unlabeled non-container associated value directly
+///   store that value within their outer container.
+/// * Multiple unlabeled associated values are stored in an unkeyed inner
+///   container.
+///
+/// Only the JSON encoding and decoding performed by the `JSON` type respects
+/// these customizations.
+///
+/// - Remark: Further customization is possible by implementing
+///   `CustomJSONCodable` conformance and invoking the internal functions
+///   `Encoder.compactifyEnum()` and `Decoder.reconstructedEnum()` manually.
+///   This allows for example to manually encode specific cases, while
+///   deferring to the synthesized `Codable` conformance for the remaining cases.
+public protocol CustomJSONCompactEnum: Codable, CustomJSONCodable {}
+
+extension CustomJSONCompactEnum {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		try encode(to: encoder)
+		try encoder.compactifyEnum()
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		try self.init(from: decoder.reconstructedEnum())
+	}
+}
+
+/// Coding keys for enum case labels and associated value labels.
+public struct EnumKeys: CodingKey, ExpressibleByStringLiteral {
+	public let stringValue: String
+	public var intValue: Int? { Int(stringValue.drop(while: { $0 == "_" })) }
+	public init(stringValue: String) { self.stringValue = stringValue }
+	public init(stringLiteral: String) { self.stringValue = stringLiteral }
+	public init(intValue: Int) { self.stringValue = "_\(intValue)" }
+}
+
+extension KeyedDecodingContainer {
+	/// Ensure that the container holds just a single key and return this key.
+	public var singleKey: Key {
+		get throws {
+			guard allKeys.count == 1 else {
+				throw DecodingError.dataCorrupted(.init(codingPath: codingPath,
+					debugDescription: "exactly one container element expected"))
+			}
+			return allKeys.first!
+		}
+	}
+	/// Decode a type against the single key in the container.
+	public func decode<Result: Decodable>(_ type: Result.Type) throws -> Result {
+		return try decode(type, forKey: singleKey)
+	}
+	/// Obtain a nested unkeyed container against the single key.
+	public func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer {
+		return try nestedUnkeyedContainer(forKey: singleKey)
+	}
+	/// Obtain a nested keyed container against the single key.
+	public func nestedContainer<Key: CodingKey>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> {
+		return try nestedContainer(keyedBy: type, forKey: singleKey)
+	}
+}
+
+extension KeyedDecodingContainer<EnumKeys> {
+	/// Obtain a nested keyed container against the single key.
+	public func nestedKeyedContainer() throws -> Self {
+		return try nestedContainer(keyedBy: EnumKeys.self)
+	}
+}
+
+
+/// Option set types can adopt this protocol to customize their JSON representation.
+///
+/// By default, option sets are represented as their raw value, which is not
+/// easily understandable by human readers of the JSON file. By providing a
+/// mapping between option set elements and label strings, the option set is
+/// represented as a JSON array of those labels.
+public protocol CustomJSONOptionSetCoding: OptionSet, CustomJSONCodable {
+
+	/// Mapping between string labels and option set elements.
+	///
+	/// The encoding will maintain the provided element order.
+	var allValues: [(label: String, element: Element)] { get }
+}
+
+extension CustomJSONOptionSetCoding {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		var container = encoder.unkeyedContainer()
+		for (label, element) in allValues where self.contains(element) {
+			try container.encode(label)
+		}
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		var container = try decoder.unkeyedContainer()
+		self.init()
+		while !container.isAtEnd {
+			let label = try container.decode(String.self)
+			guard let element = allValues.first(where: { $0.label == label })?.element else {
+				throw DecodingError.dataCorrupted(.init(codingPath: container.codingPath,
+					debugDescription: "OptionSet \(Self.self) does not understand value ‘\(label)’"))
+			}
+			self.insert(element)
+		}
 	}
 }
 
@@ -1154,6 +1361,52 @@ extension Encoder {
 			return true
 		}
 	}
+
+	/// Compacts a default enum encoding to a more dense representation.
+	///
+	/// - SeeAlso: `CustomJSONCompactEnum`
+	public func compactifyEnum() throws {
+		guard let storage = self as? CustomJSONEncoder.ElementStorage else {
+			throw EncodingError.invalidValue(self, .init(codingPath: codingPath,
+				debugDescription: "enum compaction requires CustomJSONEncoder"))
+		}
+
+		// unpack the already encoded enum container hierarchy
+		guard case .dictionary(let outer) = storage.store else {
+			throw EncodingError.invalidValue(storage, .init(codingPath: storage.codingPath,
+				debugDescription: "enum compaction requires outer keyed container"))
+		}
+		guard outer.store.count == 1, let enumCase = outer.store.first else {
+			throw EncodingError.invalidValue(outer, .init(codingPath: outer.codingPath,
+				debugDescription: "enum outer container must hold a single key"))
+		}
+		guard case .dictionary(let inner) = enumCase.value.store! else {
+			throw EncodingError.invalidValue(enumCase.value, .init(codingPath: enumCase.value.codingPath,
+				debugDescription: "enum compaction requires inner keyed container"))
+		}
+
+		switch inner.store.count {
+		case 0:
+			// no associated values: store plain case label string
+			storage.store = .string(enumCase.key.stringValue)
+		case 1:
+			// store a single unlabeled associated value directly
+			if inner.store.first!.key.stringValue == "_0" {
+				let singleValue = inner.store.first!.value
+				if case .dictionary = singleValue.store { break }
+				if case .array = singleValue.store { break }
+				outer.store = [(key: enumCase.key, value: singleValue)]
+			}
+		default:
+			// store unlabeled associated values as unkeyed container
+			if inner.store.allSatisfy({ $0.key.stringValue.starts(with: "_") }) {
+				let values = inner.store.map { $0.value }
+				let unkeyed = CustomJSONEncoder.ArrayStorage(codingPath: inner.codingPath, store: values)
+				let element = CustomJSONEncoder.ElementStorage(codingPath: unkeyed.codingPath, store: .array(unkeyed))
+				outer.store = [(key: enumCase.key, value: element)]
+			}
+		}
+	}
 }
 
 extension Decoder {
@@ -1173,5 +1426,52 @@ extension Decoder {
 				debugDescription: "missing-as-empty requires a dictionary type"))
 		}
 		dictionary.missingCollectionsAsEmpty = true
+	}
+
+	/// Reconstructs an enum representation compatible with default decoding from a compact one.
+	///
+	/// - SeeAlso: `CustomJSONCompactEnum`
+	public func reconstructedEnum() throws -> some Decoder {
+		guard let storage = self as? CustomJSONDecoder.ElementStorage else {
+			throw DecodingError.typeMismatch(Self.self, .init(codingPath: codingPath,
+				debugDescription: "enum reconstruction requires CustomJSONDecoder"))
+		}
+
+		// reconstruct original enum representation from compact one
+		let caseLabel: String
+		let innerContainer: [String: CustomJSONDecoder.ElementStorage]
+
+		if let string = try? storage.decode(String.self) {
+			// plain string: add empty inner container, wrap in outer container
+			caseLabel = string
+			innerContainer = [:]
+		} else {
+			let outer = try storage.dictionaryStorage(keyedBy: EnumKeys.self)
+			guard outer.store.count == 1, let enumCase = outer.store.first else {
+				throw DecodingError.typeMismatch(Self.self, .init(codingPath: storage.codingPath,
+					debugDescription: "enum reconstruction requires a single case label"))
+			}
+			caseLabel = enumCase.key
+			switch enumCase.value.store {
+			case .string, .number, .null:
+				// directly stored single associated value: wrap in inner container
+				innerContainer = ["_0": enumCase.value]
+			case .array(let array):
+				// unkeyed container stores unlabeled associated values: add labels
+				innerContainer = Dictionary(uniqueKeysWithValues: array.store.enumerated().map {
+					("_\($0)", $1)
+				})
+			default:
+				// no reconstruction needed, pass container umodified
+				let inner = try enumCase.value.dictionaryStorage(keyedBy: EnumKeys.self)
+				innerContainer = inner.store
+			}
+		}
+
+		let innerPath = storage.codingPath + [EnumKeys(stringValue: caseLabel)]
+		let innerDict = CustomJSONDecoder.DictionaryStorage(codingPath: innerPath, store: innerContainer)
+		let innerElem = CustomJSONDecoder.ElementStorage(codingPath: innerPath, store: .dictionary(innerDict))
+		let outer = CustomJSONDecoder.DictionaryStorage(codingPath: storage.codingPath, store: [caseLabel: innerElem])
+		return CustomJSONDecoder.ElementStorage(codingPath: storage.codingPath, store: .dictionary(outer))
 	}
 }
