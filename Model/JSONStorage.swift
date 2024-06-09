@@ -1,4 +1,6 @@
 import Foundation
+import System
+import zlib
 
 
 /* MARK: JSON Data */
@@ -42,7 +44,123 @@ extension JSON {
 	}
 }
 
-// TODO: add initializer/function for reading/writing compressed files
+extension JSON {
+
+	/// Writes the JSON data to a compressed file.
+	///
+	/// The file extension of `.json.gz` is appended to the URL automatically.
+	///
+	/// - Throws: `Errno` in case of file system errors.
+	public func write(to url: URL) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			let task = Task {
+				let file = try FileDescriptor.open(JSON.path(from: url), .writeOnly,
+				                                   options: [ .create, .truncate ],
+				                                   permissions: FilePermissions(rawValue: 0o644))
+				defer { try? file.close() }
+
+				var stream = z_stream()
+				let enableGzipHeader: Int32 = 16
+				var result = deflateInit2_(&stream, Z_BEST_COMPRESSION, Z_DEFLATED,
+				                           enableGzipHeader + MAX_WBITS, MAX_MEM_LEVEL,
+				                           Z_DEFAULT_STRATEGY, ZLIB_VERSION,
+				                           Int32(MemoryLayout<z_stream>.size))
+				assert(result == Z_OK)
+				defer { deflateEnd(&stream) }
+
+				let output = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: 256 * 1024)
+				defer { output.deallocate() }
+
+				try data.withUnsafeBytes { bytes in
+					let pointer = bytes.baseAddress?.assumingMemoryBound(to: UInt8.self)
+					stream.next_in = pointer.map(UnsafeMutablePointer.init)
+					stream.avail_in = UInt32(bytes.count)
+
+					repeat {
+						stream.next_out = output.baseAddress
+						stream.avail_out = UInt32(output.count)
+
+						let finish = stream.avail_in > 0 ? Z_NO_FLUSH : Z_FINISH
+						result = deflate(&stream, finish)
+						assert(result == Z_OK || result == Z_STREAM_END)
+
+						let produced = output.count - Int(stream.avail_out)
+						try file.writeAll(output.prefix(produced))
+					} while result != Z_STREAM_END
+				}
+				assert(stream.avail_in == 0)  // all input has been consumed
+			}
+			Task { continuation.resume(with: await task.result) }
+		}
+	}
+
+	/// Reads JSON data from a compressed file.
+	///
+	/// The file extension of `.json.gz` is appended to the URL automatically.
+	///
+	/// - Throws: `Errno` in case of file system errors;
+	///   `Errno.badFileTypeOrFormat` if the compressed file is malformed.
+	init(contentsOf url: URL) async throws {
+		data = try await withCheckedThrowingContinuation { continuation in
+			let task = Task {
+				let file = try FileDescriptor.open(JSON.path(from: url), .readOnly)
+				defer { try? file.close() }
+
+				var stream = z_stream()
+				let enableGzipHeader: Int32 = 32
+				var result = inflateInit2_(&stream, enableGzipHeader + MAX_WBITS,
+				                           ZLIB_VERSION, Int32(MemoryLayout<z_stream>.size))
+				assert(result == Z_OK)
+				defer { inflateEnd(&stream) }
+
+				let input = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: 256 * 1024)
+				defer { input.deallocate() }
+				let output = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: 256 * 1024)
+				defer { output.deallocate() }
+
+				var data = Data()
+				repeat {
+					let readCount = try file.read(into: UnsafeMutableRawBufferPointer(input))
+					stream.next_in = input.baseAddress
+					stream.avail_in = UInt32(readCount)
+
+					repeat {
+						stream.next_out = output.baseAddress
+						stream.avail_out = UInt32(output.count)
+
+						result = inflate(&stream, Z_NO_FLUSH)
+						guard result == Z_OK || result == Z_STREAM_END else {
+							throw Errno.badFileTypeOrFormat
+						}
+
+						let produced = output.count - Int(stream.avail_out)
+						data.append(contentsOf: output.prefix(produced))
+					} while stream.avail_out == 0
+				} while result != Z_STREAM_END
+
+				return data
+			}
+			Task { continuation.resume(with: await task.result) }
+		}
+	}
+
+	static private func path(from url: URL) throws -> FilePath {
+		// ensure enclosing directory exists
+		let directory = url.deletingLastPathComponent()
+		try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+
+		// ensure file extensions
+		var url = url
+		if url.pathExtension == "gz" { url.deletePathExtension() }
+		if url.pathExtension == "json" { url.deletePathExtension() }
+		url.appendPathExtension("json")
+		url.appendPathExtension("gz")
+
+		// convert to FilePath
+		guard let path = FilePath(url) else { throw Errno.noSuchFileOrDirectory }
+		return path
+	}
+}
 
 
 /* MARK: Custom JSON Coding */
@@ -57,6 +175,7 @@ public protocol CustomJSONCodable {
 	init(fromCustomJSON decoder: any Decoder) throws
 }
 
+
 /// Types can adopt this protocol to enable skipping of empty collections.
 ///
 /// For brevity and JSON readability, some types can benefit from not storing
@@ -67,7 +186,18 @@ public protocol CustomJSONCodable {
 /// This behavior is opt-in, since it can lead to ambiguities during decoding
 /// when applied universally. A good indicator for a type that should **not**
 /// adopt this behavior is inspection of `allKeys` in the decoding initializers.
-public protocol CustomJSONEmptyCollectionSkipping {}
+public protocol CustomJSONEmptyCollectionSkipping: Codable, CustomJSONCodable {}
+
+extension CustomJSONEmptyCollectionSkipping {
+	public func encode(toCustomJSON encoder: Encoder) throws {
+		try encode(to: encoder)
+		try encoder.skipEmptyCollections()
+	}
+	public init(fromCustomJSON decoder: Decoder) throws {
+		try decoder.enableMissingAsEmpty()
+		try self.init(from: decoder)
+	}
+}
 
 
 /* MARK: Custom JSON Encoder */
@@ -79,7 +209,6 @@ public protocol CustomJSONEmptyCollectionSkipping {}
 /// * retain element order in dictionary collections
 /// * rendering of reasonably short collections in a single line
 /// * respect `CustomJSONCodable` to customize JSON encoding of types
-/// * respect `CustomJSONEmptyCollectionSkipping` to skip empty collections
 private struct CustomJSONEncoder {
 
 	/// Reference-typed storage box.
@@ -255,27 +384,6 @@ extension CustomJSONEncoder.KeyedDictionaryStorage: KeyedEncodingContainerProtoc
 			try value.encode(toCustomJSON: storage)
 		} else {
 			try value.encode(to: storage)
-		}
-		if value is CustomJSONEmptyCollectionSkipping {
-			let lastEncoded = store.last!.value.store
-			if case .dictionary(let dictionary) = lastEncoded {
-				// examine all key-value pairs of the last-encoded container
-				dictionary.store = dictionary.store.filter {
-					// skip any empty immediate sub-containers
-					switch $0.value.store {
-					case .dictionary(let container):
-						if container.store.isEmpty { return false }
-					case .array(let container):
-						if container.store.isEmpty { return false }
-					default:
-						break
-					}
-					return true
-				}
-			} else {
-				throw EncodingError.invalidValue(value, .init(codingPath: codingPath,
-					debugDescription: "empty collection skip requires keyed container"))
-			}
 		}
 	}
 
@@ -786,13 +894,7 @@ extension CustomJSONDecoder.KeyedDictionaryStorage: KeyedDecodingContainerProtoc
 	}
 
 	func decode<T: Decodable>(_ type: T.Type, forKey key: Key) throws -> T {
-		var storage = try elementStorage(forKey: key)
-		if type is CustomJSONEmptyCollectionSkipping.Type {
-			// modify the stored dictionary to enable missingCollectionsAsEmpty
-			let dictionary = try storage.dictionaryStorage(keyedBy: Key.self)
-			dictionary.missingCollectionsAsEmpty = true
-			storage = ElementStorage(codingPath: storage.codingPath, store: .dictionary(dictionary))
-		}
+		let storage = try elementStorage(forKey: key)
 		if let type = type as? CustomJSONCodable.Type {
 			return try type.init(fromCustomJSON: storage) as! T
 		} else {
@@ -1016,5 +1118,60 @@ extension CustomJSONDecoder.ElementStorage: SingleValueDecodingContainer {
 	func decodeNil() -> Bool {
 		if case .null = store { return true }
 		return false
+	}
+}
+
+
+/* MARK: Custom Coding Features */
+
+extension Encoder {
+
+	/// Removes empty sub-containers on an already filled encoder.
+	///
+	/// - SeeAlso: `CustomJSONEmptyCollectionSkipping`
+	public func skipEmptyCollections() throws {
+		guard let storage = self as? CustomJSONEncoder.ElementStorage else {
+			throw EncodingError.invalidValue(self, .init(codingPath: codingPath,
+				debugDescription: "empty collection skip requires CustomJSONEncoder"))
+		}
+
+		guard case .dictionary(let dictionary) = storage.store else {
+			throw EncodingError.invalidValue(storage, .init(codingPath: storage.codingPath,
+				debugDescription: "empty collection skip requires keyed container"))
+		}
+
+		// examine all key-value pairs of the last-encoded container
+		dictionary.store = dictionary.store.filter {
+			// skip any empty immediate sub-containers
+			switch $0.value.store {
+			case .dictionary(let container):
+				if container.store.isEmpty { return false }
+			case .array(let container):
+				if container.store.isEmpty { return false }
+			default:
+				break
+			}
+			return true
+		}
+	}
+}
+
+extension Decoder {
+
+	/// Enables the decoder to treat missing container-type elements as empty containers.
+	///
+	/// - SeeAlso: `CustomJSONEmptyCollectionSkipping`
+	public func enableMissingAsEmpty() throws {
+		guard let storage = self as? CustomJSONDecoder.ElementStorage else {
+			throw DecodingError.typeMismatch(Self.self, .init(codingPath: codingPath,
+				debugDescription: "missing-as-empty requires CustomJSONDecoder"))
+		}
+
+		// modify the stored dictionary to enable missingCollectionsAsEmpty
+		guard case .dictionary(let dictionary) = storage.store else {
+			throw DecodingError.typeMismatch(Self.self, .init(codingPath: storage.codingPath,
+				debugDescription: "missing-as-empty requires a dictionary type"))
+		}
+		dictionary.missingCollectionsAsEmpty = true
 	}
 }
