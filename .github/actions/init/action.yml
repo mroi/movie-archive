@@ -16,7 +16,7 @@ runs:
 
   steps:
   - name: Install Nix
-    uses: cachix/install-nix-action@v26
+    uses: cachix/install-nix-action@v27
 
   - name: Setup Nix profile
     shell: bash
