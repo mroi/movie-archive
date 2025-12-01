@@ -20,7 +20,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
@@ -51,7 +51,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
@@ -62,7 +62,7 @@ jobs:
         password: ${{ secrets.CODE_SIGN_PASSWORD }}
 
     - name: Checkout recorded test cases
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: mroi/movie-archive-tests
         token: ${{ secrets.ACCESS_TOKEN_TESTS }}
