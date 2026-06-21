@@ -1,4 +1,4 @@
-ARCHS ?= x86_64
+ARCHS ?= arm64
 CONFIGURATION ?= Debug
 JOBS = -j$(shell sysctl -n hw.activecpu)
 BUILD = Build/$(CONFIGURATION)
