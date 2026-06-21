@@ -587,7 +587,7 @@ private extension DVDInfo.ProgramChain.Cell {
 }
 
 private extension DVDInfo.ProgramChain.Cell.AngleInfo {
-	init?(block: UInt32, cell: UInt32) {
+	init?(block: UInt8, cell: UInt8) {
 		if block == 0 && cell == 0 {
 			return nil
 		} else if block == 1 {
@@ -605,7 +605,7 @@ private extension DVDInfo.ProgramChain.Cell.AngleInfo {
 }
 
 private extension DVDInfo.ProgramChain.Cell.KaraokeInfo {
-	init?(_ cellType: UInt32) {
+	init?(_ cellType: UInt8) {
 		switch cellType {
 		case 0: return nil
 		case 1: self = .titlePicture
