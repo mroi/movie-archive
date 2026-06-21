@@ -39,6 +39,8 @@ $(BUILD)/HandBrake/%/libhb/libhandbrake.a: $(BUILD)/HandBrake/%/GNUmakefile
 	$(MAKE) -C $(<D) libhb.build
 
 $(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure
+	# make sure the metal toolchain is installed
+	@xcrun metal --version > /dev/null
 	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
 	optimize=$(shell case $(CONFIGURATION) in (Debug) echo none ;; (Release) echo speed ;; esac) ; \
 	debug=$(shell case $(CONFIGURATION) in (Debug) echo std ;; (Release) echo none ;; esac) ; \
@@ -47,7 +49,7 @@ $(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure
 HandBrake/configure: ../.git/modules/Dependencies/HandBrake/HEAD
 
 $(BUILD)/HandBrake/%/module.modulemap: HandBrake.modulemap
-	ln -sf ../../../../$< $@
+	mkdir -p $(@D) ; ln -sf ../../../../$< $@
 
 
 # MARK: MP42Foundation

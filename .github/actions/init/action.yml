@@ -44,6 +44,10 @@ runs:
     shell: bash
     run: sed -i~ '/CODE_SIGN_STYLE/s/^/CODE_SIGNING_ALLOWED = NO;/' MovieArchive.xcodeproj/project.pbxproj
 
+  - name: Load Metal toolchain
+    shell: bash
+    run: xcodebuild -downloadComponent MetalToolchain
+
   - name: Cache dependencies
     id: cache
     uses: actions/cache@v4
