@@ -47,7 +47,7 @@ $(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure
 HandBrake/configure: ../.git/modules/Dependencies/HandBrake/HEAD
 
 $(BUILD)/HandBrake/%/module.modulemap: HandBrake.modulemap
-	ln -sf ../../../../$< $@
+	mkdir -p $(@D) ; ln -sf ../../../../$< $@
 
 
 # MARK: MP42Foundation
