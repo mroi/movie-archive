@@ -71,7 +71,7 @@ extension ConverterImplementation: ConverterDVDReader {
 
 			// get disc ID from libdvdread
 			let discId = Array<UInt8>(unsafeUninitializedCapacity: 16) { buffer, initializedCount in
-				buffer.assign(repeating: 0)
+				buffer.update(repeating: 0)
 				initializedCount = buffer.count
 				DVDDiscID(reader, buffer.baseAddress)
 			}
