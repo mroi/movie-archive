@@ -1227,7 +1227,7 @@ private extension String {
 	}
 }
 
-extension pgci_lu_t: Hashable {
+extension pgci_lu_t: @retroactive Hashable {
 	public func hash(into hasher: inout Hasher) {
 		withUnsafeBytes(of: self) {
 			hasher.combine(bytes: $0)

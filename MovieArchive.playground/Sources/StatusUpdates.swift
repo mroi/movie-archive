@@ -115,7 +115,7 @@ extension Transform.Status {
 	}
 }
 
-extension Transform.Status: CustomPlaygroundDisplayConvertible {
+extension Transform.Status: @retroactive CustomPlaygroundDisplayConvertible {
 	public var playgroundDescription: Any {
 		switch self {
 		case .message(level: _, let stringKey):

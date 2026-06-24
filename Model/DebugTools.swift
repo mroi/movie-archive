@@ -54,7 +54,7 @@ struct NullExporter: ExportPass {
 	func consume(_ mediaTree: MediaTree) {}
 }
 
-extension OSLogType: CustomStringConvertible {
+extension OSLogType: @retroactive CustomStringConvertible {
 	public var description: String {
 		switch self {
 		case .debug: return "debug"

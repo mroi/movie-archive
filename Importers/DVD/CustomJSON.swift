@@ -4,35 +4,35 @@ import MovieArchiveConverter
 
 /* MARK: DVDInfo Custom JSON */
 
-extension DVDInfo: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.TitleSet: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.TitleSet.Title: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.Domain: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.ProgramChain: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.ProgramChain.Cell: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.Interaction: CustomJSONEmptyCollectionSkipping {}
+extension DVDInfo: @retroactive CustomJSONEmptyCollectionSkipping {}
+extension DVDInfo.TitleSet: @retroactive CustomJSONEmptyCollectionSkipping {}
+extension DVDInfo.TitleSet.Title: @retroactive CustomJSONEmptyCollectionSkipping {}
+extension DVDInfo.Domain: @retroactive CustomJSONEmptyCollectionSkipping {}
+extension DVDInfo.ProgramChain: @retroactive CustomJSONEmptyCollectionSkipping {}
+extension DVDInfo.ProgramChain.Cell: @retroactive CustomJSONEmptyCollectionSkipping {}
+extension DVDInfo.Interaction: @retroactive CustomJSONEmptyCollectionSkipping {}
 
-extension DVDInfo.Domain.VideoAttributes.CodingType: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.VideoAttributes.VideoStandard: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.VideoAttributes.ContentInfo: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.AudioAttributes.CodingType: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.AudioAttributes.RenderingIntent: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Mode: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Channel: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.AudioAttributes.ContentInfo: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.SubpictureAttributes.CodingType: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.SubpictureAttributes.ContentInfo: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.SubpictureAttributes.ContentInfo.FontSize: CustomJSONCompactEnum {}
-extension DVDInfo.ProgramChain.Cell.AngleInfo: CustomJSONCompactEnum {}
-extension DVDInfo.ProgramChain.Cell.KaraokeInfo: CustomJSONCompactEnum {}
-extension DVDInfo.ProgramChain.PlaybackMode: CustomJSONCompactEnum {}
-extension DVDInfo.ProgramChain.EndingMode: CustomJSONCompactEnum {}
-extension DVDInfo.Command.Operation: CustomJSONCompactEnum {}
-extension DVDInfo.Command.Target: CustomJSONCompactEnum {}
-extension DVDInfo.Command.Condition: CustomJSONCompactEnum {}
-extension DVDInfo.Command.Operand: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.VideoAttributes.CodingType: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Domain.VideoAttributes.VideoStandard: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Domain.VideoAttributes.ContentInfo: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.CodingType: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.RenderingIntent: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Mode: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Channel: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.ContentInfo: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Domain.SubpictureAttributes.CodingType: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Domain.SubpictureAttributes.ContentInfo: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Domain.SubpictureAttributes.ContentInfo.FontSize: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.ProgramChain.Cell.AngleInfo: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.ProgramChain.Cell.KaraokeInfo: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.ProgramChain.PlaybackMode: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.ProgramChain.EndingMode: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Command.Operation: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Command.Target: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Command.Condition: @retroactive CustomJSONCompactEnum {}
+extension DVDInfo.Command.Operand: @retroactive CustomJSONCompactEnum {}
 
-extension DVDInfo.TitleSet.Title.CommandPresence: CustomJSONOptionSetCoding {
+extension DVDInfo.TitleSet.Title.CommandPresence: @retroactive CustomJSONOptionSetCoding {
 	public var allValues: [(label: String, element: Element)] {
 		[
 			("features", .features),
@@ -43,7 +43,7 @@ extension DVDInfo.TitleSet.Title.CommandPresence: CustomJSONOptionSetCoding {
 	}
 }
 
-extension DVDInfo.Domain.ProgramChains.Descriptor: CustomJSONStringKeyRepresentable {
+extension DVDInfo.Domain.ProgramChains.Descriptor: @retroactive CustomJSONStringKeyRepresentable {
 	public var stringValue: String {
 		switch self {
 		case .menu(language: let language, entryPoint: let entryPoint, type: let type, index: let index):
@@ -129,7 +129,7 @@ extension DVDInfo.Domain.ProgramChains.Descriptor: CustomJSONStringKeyRepresenta
 	}
 }
 
-extension DVDInfo.Domain.ProgramChains.Descriptor.MenuType: CustomJSONStringKeyRepresentable, CustomJSONCodable {
+extension DVDInfo.Domain.ProgramChains.Descriptor.MenuType: @retroactive CustomJSONStringKeyRepresentable, @retroactive CustomJSONCodable {
 	public var stringValue: String { String(describing: self) }
 
 	public static func < (lhs: Self, rhs: Self) -> Bool {
@@ -172,7 +172,7 @@ extension DVDInfo.Domain.ProgramChains.Descriptor.MenuType: CustomJSONStringKeyR
 	}
 }
 
-extension DVDInfo.Domain.ProgramChains.Id: CustomJSONStringKeyRepresentable, CustomJSONCodable {
+extension DVDInfo.Domain.ProgramChains.Id: @retroactive CustomJSONStringKeyRepresentable, @retroactive CustomJSONCodable {
 	public var stringValue: String {
 		(languageId.map { String($0) + ":" } ?? "") + String(programChainId)
 	}
@@ -206,7 +206,7 @@ extension DVDInfo.Domain.ProgramChains.Id: CustomJSONStringKeyRepresentable, Cus
 	}
 }
 
-extension DVDInfo.Domain.VideoAttributes.AspectRatio: CustomJSONCodable {
+extension DVDInfo.Domain.VideoAttributes.AspectRatio: @retroactive CustomJSONCodable {
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		switch self {
 		case .classic(letterboxed: let letterboxed):
@@ -229,7 +229,7 @@ extension DVDInfo.Domain.VideoAttributes.AspectRatio: CustomJSONCodable {
 	}
 }
 
-extension DVDInfo.Domain.VideoAttributes.DisplayModification: CustomJSONOptionSetCoding {
+extension DVDInfo.Domain.VideoAttributes.DisplayModification: @retroactive CustomJSONOptionSetCoding {
 	public var allValues: [(label: String, element: Element)] {
 		[
 			("letterbox", .letterbox),
@@ -238,7 +238,7 @@ extension DVDInfo.Domain.VideoAttributes.DisplayModification: CustomJSONOptionSe
 	}
 }
 
-extension DVDInfo.Domain.VideoAttributes.Line21ClosedCaption: CustomJSONOptionSetCoding {
+extension DVDInfo.Domain.VideoAttributes.Line21ClosedCaption: @retroactive CustomJSONOptionSetCoding {
 	public var allValues: [(label: String, element: Element)] {
 		[
 			("firstField", .firstField),
@@ -247,7 +247,7 @@ extension DVDInfo.Domain.VideoAttributes.Line21ClosedCaption: CustomJSONOptionSe
 	}
 }
 
-extension DVDInfo.ProgramChain.Cell.PlaybackMode: CustomJSONOptionSetCoding {
+extension DVDInfo.ProgramChain.Cell.PlaybackMode: @retroactive CustomJSONOptionSetCoding {
 	public var allValues: [(label: String, element: Element)] {
 		[
 			("seamless", .seamless),
@@ -260,7 +260,7 @@ extension DVDInfo.ProgramChain.Cell.PlaybackMode: CustomJSONOptionSetCoding {
 	}
 }
 
-extension DVDInfo.ProgramChain.SubpictureDescriptor: CustomJSONStringKeyRepresentable {
+extension DVDInfo.ProgramChain.SubpictureDescriptor: @retroactive CustomJSONStringKeyRepresentable {
 	public var stringValue: String { String(describing: self) }
 
 	public static func < (lhs: Self, rhs: Self) -> Bool {
@@ -290,7 +290,7 @@ extension DVDInfo.ProgramChain.SubpictureDescriptor: CustomJSONStringKeyRepresen
 	}
 }
 
-extension DVDInfo.Interaction.ButtonDescriptor: CustomJSONStringKeyRepresentable {
+extension DVDInfo.Interaction.ButtonDescriptor: @retroactive CustomJSONStringKeyRepresentable {
 	public var stringValue: String {
 		var elements: [String] = []
 		if rawValue == 0 { elements = ["classic"] }
@@ -321,7 +321,7 @@ extension DVDInfo.Interaction.ButtonDescriptor: CustomJSONStringKeyRepresentable
 	}
 }
 
-extension DVDInfo.Command: CustomJSONCodable {
+extension DVDInfo.Command: @retroactive CustomJSONCodable {
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		switch self {
 		case .setSystemRegisters(let settings):
@@ -344,7 +344,7 @@ extension DVDInfo.Command: CustomJSONCodable {
 	}
 }
 
-extension DVDInfo.Command.SystemRegister: CustomJSONStringKeyRepresentable, CustomJSONCodable {
+extension DVDInfo.Command.SystemRegister: @retroactive CustomJSONStringKeyRepresentable, @retroactive CustomJSONCodable {
 	public var stringValue: String { String(describing: self) }
 
 	public static func < (lhs: Self, rhs: Self) -> Bool {
@@ -431,7 +431,7 @@ extension DVDInfo.Command.SystemRegister: CustomJSONStringKeyRepresentable, Cust
 	}
 }
 
-extension DVDInfo.Restrictions: CustomJSONOptionSetCoding {
+extension DVDInfo.Restrictions: @retroactive CustomJSONOptionSetCoding {
 	public var allValues: [(label: String, element: Self)] {
 		[
 			("noStop", .noStop),
@@ -463,7 +463,7 @@ extension DVDInfo.Restrictions: CustomJSONOptionSetCoding {
 	}
 }
 
-extension DVDInfo.Index: CustomJSONStringKeyRepresentable, CustomJSONCodable {
+extension DVDInfo.Index: @retroactive CustomJSONStringKeyRepresentable, @retroactive CustomJSONCodable {
 	// custom encoding: directly use internal integer value
 	public var stringValue: String { String(rawValue) }
 	public init?(stringValue: String) {
@@ -472,11 +472,11 @@ extension DVDInfo.Index: CustomJSONStringKeyRepresentable, CustomJSONCodable {
 	}
 }
 
-extension DVDInfo.Index: CustomStringConvertible {
+extension DVDInfo.Index: @retroactive CustomStringConvertible {
 	public var description: String { rawValue.description }
 }
 
-extension DVDInfo.Time: CustomJSONCodable {
+extension DVDInfo.Time: @retroactive CustomJSONCodable {
 	// custom encoding: time as human-readable string
 
 	public func encode(toCustomJSON encoder: Encoder) throws {
