@@ -72,7 +72,7 @@ class RecordedTests: XCTestCase {
 
 /* MARK: Equatable Conformance */
 
-extension MediaTree: Equatable {
+extension MediaTree: @retroactive Equatable {
 	public static func == (lhs: Self, rhs: Self) -> Bool {
 		switch lhs {
 		case .asset(let lhsNode):
@@ -106,7 +106,7 @@ extension MediaTree: Equatable {
 	}
 }
 
-extension MediaTree.AssetNode: Equatable {
+extension MediaTree.AssetNode: @retroactive Equatable {
 	public static func == (lhs: Self, rhs: Self) -> Bool {
 		return lhs.id == rhs.id
 			&& lhs.kind == rhs.kind
@@ -115,7 +115,7 @@ extension MediaTree.AssetNode: Equatable {
 	}
 }
 
-extension MediaTree.MenuNode: Equatable {
+extension MediaTree.MenuNode: @retroactive Equatable {
 	public static func == (lhs: Self, rhs: Self) -> Bool {
 		return lhs.id == rhs.id
 			&& lhs.children == rhs.children
@@ -123,19 +123,19 @@ extension MediaTree.MenuNode: Equatable {
 	}
 }
 
-extension MediaTree.LinkNode: Equatable {
+extension MediaTree.LinkNode: @retroactive Equatable {
 	public static func == (lhs: Self, rhs: Self) -> Bool {
 		return lhs.target == rhs.target
 	}
 }
 
-extension MediaTree.CollectionNode: Equatable {
+extension MediaTree.CollectionNode: @retroactive Equatable {
 	public static func == (lhs: Self, rhs: Self) -> Bool {
 		return lhs.children == rhs.children
 	}
 }
 
-extension MediaRecipe: Equatable {
+extension MediaRecipe: @retroactive Equatable {
 	public static func == (lhs: Self, rhs: Self) -> Bool {
 		return true
 	}
