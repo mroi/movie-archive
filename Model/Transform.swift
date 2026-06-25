@@ -193,10 +193,10 @@ extension Transform.Status {
 
 		deinit { finish() }
 
-		subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
+		public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
 			get { value[keyPath: keyPath] }
 		}
-		subscript<T>(dynamicMember keyPath: WritableKeyPath<Value, T>) -> T {
+		public subscript<T>(dynamicMember keyPath: WritableKeyPath<Value, T>) -> T {
 			get { value[keyPath: keyPath] }
 			set { value[keyPath: keyPath] = newValue }
 		}
