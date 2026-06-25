@@ -54,7 +54,7 @@ class DVDImporterTests: XCTestCase {
 			await XCTAssertNoThrowAsync(try await DVDReader(source: source))
 		}
 
-		await waitForExpectations(timeout: .infinity)
+		await fulfillment(of: [openCall, closeCall], timeout: .infinity)
 	}
 
 	func testInfoError() async {
@@ -86,7 +86,7 @@ class DVDImporterTests: XCTestCase {
 			}
 		}
 
-		await waitForExpectations(timeout: .infinity)
+		await fulfillment(of: [readCall], timeout: .infinity)
 	}
 
 	func testMinimalDVD() async {
