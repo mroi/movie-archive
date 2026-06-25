@@ -1,0 +1,173 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "could not read VMGI" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not read Video Manager Information (VMGI) from the DVD."
+          }
+        }
+      }
+    },
+    "could not read VOB" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not read a Video Object (VOB) from the DVD."
+          }
+        }
+      }
+    },
+    "could not read VTSI" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not read Video Title Set Information (VTSI) from the DVD."
+          }
+        }
+      }
+    },
+    "DVD data not understood" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data from the DVD was not understood."
+          }
+        }
+      }
+    },
+    "error reading from source" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An error ocurred when reading from the selected source."
+          }
+        }
+      }
+    },
+    "inconsistent frame rates" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The video frame rates reported by the DVD are inconsistent."
+          }
+        }
+      }
+    },
+    "inconsistent parts count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The number of chapters on the DVD is inconsistent."
+          }
+        }
+      }
+    },
+    "inconsistent title count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The number of titles on the DVD is inconsistent."
+          }
+        }
+      }
+    },
+    "inconsistent VTS count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The number of Video Title Sets (VTS) on the DVD is inconsistent."
+          }
+        }
+      }
+    },
+    "internal component unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An internal component is unavailable."
+          }
+        }
+      }
+    },
+    "NAV data not understood" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navigation data from the DVD was not understood."
+          }
+        }
+      }
+    },
+    "processing interrupted unexpectedly" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processing was interrupted unexpectedly."
+          }
+        }
+      }
+    },
+    "reading DVD information" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading DVD information…"
+          }
+        }
+      }
+    },
+    "source not supported" : {
+      "comment" : "MARK: Converter Strings",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected source is not supported."
+          }
+        }
+      }
+    },
+    "unknown operation" : {
+      "comment" : "MARK: Model Strings",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown operation…"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

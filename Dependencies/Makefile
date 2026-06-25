@@ -17,7 +17,7 @@ all: \
 	$(BUILD)/MP42Foundation/libmp42.a \
 	$(if $(wildcard libdvdcss),$(BUILD)/libdvdcss/libdvdcss.2.dylib)
 
-.PHONY: all install clean docbuild
+.PHONY: all install clean docbuild exportloc
 
 
 # MARK: HandBrake
@@ -92,4 +92,4 @@ install:
 clean:
 	rm -rf Build
 
-docbuild:
+docbuild exportloc:
