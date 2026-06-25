@@ -24,7 +24,7 @@ public actor Transform {
 	let importer: any ImportPass
 	let exporter: any ExportPass
 
-	let subject = Subject(logging: true)
+	nonisolated let subject = Subject(logging: true)
 	var state = State.initial
 
 	/// Internal state of the transform.
