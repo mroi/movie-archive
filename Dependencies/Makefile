@@ -65,26 +65,22 @@ $(BUILD)/MP42Foundation/libmp42.a: ../.git/modules/Dependencies/MP42Foundation/H
 
 # MARK: libdvdcss
 
-.INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/.libs/libdvdcss.2.dylib $(BUILD)/libdvdcss/$(arch)/Makefile)
-.PRECIOUS: libdvdcss/configure
+.INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/src/libdvdcss.2.dylib $(BUILD)/libdvdcss/$(arch)/build.ninja)
 
-$(BUILD)/libdvdcss/libdvdcss.2.dylib: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/.libs/libdvdcss.2.dylib)
+$(BUILD)/libdvdcss/libdvdcss.2.dylib: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/src/libdvdcss.2.dylib)
 	lipo $^ -create -output $@
-	$(foreach arch,$(ARCHS),$(MAKE) -C $(BUILD)/libdvdcss/$(arch) maintainer-clean ;)
+	$(foreach arch,$(ARCHS),ninja -C $(BUILD)/libdvdcss/$(arch) clean ;)
 	find $(@D) -type d -empty -delete
 
-$(BUILD)/libdvdcss/%/.libs/libdvdcss.2.dylib: $(BUILD)/libdvdcss/%/Makefile
-	$(MAKE) $(JOBS) -C $(<D)
+$(BUILD)/libdvdcss/%/src/libdvdcss.2.dylib: $(BUILD)/libdvdcss/%/build.ninja
+	ninja -C $(<D)
 
-$(BUILD)/libdvdcss/%/Makefile: libdvdcss/configure
-	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
-	arch=$(shell case $* in (i386) echo -m32 ;; (x86_64) echo -m64 ;; (arm64) echo -arch\\ arm64 ;; esac) ; \
+$(BUILD)/libdvdcss/%/build.ninja: ../.git/modules/Dependencies/libdvdcss/HEAD
+	rm -rf $(@D) ; mkdir -p $(@D) ; cd libdvdcss \
+	arch=$(shell case $* in (x86_64) echo --target=x86_64-apple-macos ;; (arm64) echo --target=arm64-apple-macos ;; esac) ; \
 	optimize=$(shell case $(CONFIGURATION) in (Debug) echo -O0 ;; (Release) echo -O3 ;; esac) ; \
 	debug=$(shell case $(CONFIGURATION) in (Debug) echo -g ;; esac) ; \
-	$(abspath $<) --host=$*-apple-darwin10 CFLAGS="$$arch $$optimize $$debug"
-
-libdvdcss/configure: ../.git/modules/Dependencies/libdvdcss/HEAD
-	cd $(@D) ; autoreconf -i
+	CFLAGS="$$arch $$optimize $$debug" meson setup ../$(@D)
 
 
 ../.git/modules/Dependencies/%/HEAD:
