@@ -5,7 +5,7 @@ let package = Package(
 	name: "Model",
 	defaultLocalization: "en",
 	platforms: [
-		.macOS(.v12)
+		.macOS(.v13)
 	],
 	products: [
 		.library(name: "MovieArchiveModel", targets: ["MovieArchiveModel"])

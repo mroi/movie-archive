@@ -5,7 +5,7 @@ let package = Package(
 	name: "Players",
 	defaultLocalization: "en",
 	platforms: [
-		.macOS(.v12)
+		.macOS(.v13)
 	],
 	products: [
 //		.library(name: "MovieArchivePlayers", targets: ["MovieArchivePlayers"]),

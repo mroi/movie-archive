@@ -174,7 +174,7 @@ class ModelTests: XCTestCase {
 
 		XCTAssertEqual(outputs, 1)
 		await XCTAssertEqualAsync(await transform.state, .error)
-		await waitForExpectations(timeout: .infinity)
+		await fulfillment(of: [error], timeout: .infinity)
 	}
 
 	func testCancellation() async {
@@ -200,7 +200,7 @@ class ModelTests: XCTestCase {
 		await transform.execute()
 
 		await XCTAssertEqualAsync(await transform.state, .error)
-		await waitForExpectations(timeout: .infinity)
+		await fulfillment(of: [cancelled], timeout: .infinity)
 	}
 }
 
@@ -246,7 +246,7 @@ class ConverterTests: XCTestCase {
 			}
 		}
 
-		await waitForExpectations(timeout: .infinity)
+		await fulfillment(of: [deinitClient, deinitReturn], timeout: .infinity)
 	}
 
 	func testMessagePropagation() async {
@@ -352,7 +352,7 @@ class ConverterTests: XCTestCase {
 			remote.doNothing()
 		}
 
-		await waitForExpectations(timeout: .infinity)
+		await fulfillment(of: [publisherFailure], timeout: .infinity)
 	}
 
 	func testXPCErrorWrapper() async {

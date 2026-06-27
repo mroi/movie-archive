@@ -5,7 +5,7 @@ let package = Package(
 	name: "Converter",
 	defaultLocalization: "en",
 	platforms: [
-		.macOS(.v12)
+		.macOS(.v13)
 	],
 	products: [
 		.library(name: "MovieArchiveConverter", targets: ["MovieArchiveConverter"])

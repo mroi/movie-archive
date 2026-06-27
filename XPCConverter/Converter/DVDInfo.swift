@@ -459,7 +459,7 @@ public struct DVDInfo: Codable, Sendable {
 				case innerCellInBlock
 				case lastCellInBlock
 				case externalCell
-				case unexpected(UInt32)
+				case unexpected(UInt8)
 			}
 			public enum KaraokeInfo: Codable, Sendable {
 				case titlePicture, introduction, bridge
@@ -467,7 +467,7 @@ public struct DVDInfo: Codable, Sendable {
 				case interludeFadeIn, interlude, interludeFadeOut
 				case firstClimax, secondClimax
 				case firstEnding, secondEnding
-				case unexpected(UInt32)
+				case unexpected(UInt8)
 			}
 		}
 
@@ -532,12 +532,12 @@ public struct DVDInfo: Codable, Sendable {
 		}
 
 		public struct ButtonDescriptor: Codable, Hashable, OptionSet, Sendable {
-			public let rawValue: UInt32
+			public let rawValue: UInt8
 			public static let classic = ButtonDescriptor([])
 			public static let wide = ButtonDescriptor(rawValue: 1 << 0)
 			public static let letterbox = ButtonDescriptor(rawValue: 1 << 1)
 			public static let panScan = ButtonDescriptor(rawValue: 1 << 2)
-			public init(rawValue: UInt32) { self.rawValue = rawValue }
+			public init(rawValue: UInt8) { self.rawValue = rawValue }
 		}
 
 		public struct Button: Codable, Sendable {

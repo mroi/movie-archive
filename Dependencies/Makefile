@@ -1,4 +1,4 @@
-ARCHS ?= x86_64
+ARCHS ?= arm64
 CONFIGURATION ?= Debug
 JOBS = -j$(shell sysctl -n hw.activecpu)
 BUILD = Build/$(CONFIGURATION)
@@ -39,6 +39,8 @@ $(BUILD)/HandBrake/%/libhb/libhandbrake.a: $(BUILD)/HandBrake/%/GNUmakefile
 	$(MAKE) -C $(<D) libhb.build
 
 $(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure
+	# make sure the metal toolchain is installed
+	@xcrun metal --version > /dev/null
 	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
 	optimize=$(shell case $(CONFIGURATION) in (Debug) echo none ;; (Release) echo speed ;; esac) ; \
 	debug=$(shell case $(CONFIGURATION) in (Debug) echo std ;; (Release) echo none ;; esac) ; \
@@ -47,7 +49,7 @@ $(BUILD)/HandBrake/%/GNUmakefile: HandBrake/configure
 HandBrake/configure: ../.git/modules/Dependencies/HandBrake/HEAD
 
 $(BUILD)/HandBrake/%/module.modulemap: HandBrake.modulemap
-	ln -sf ../../../../$< $@
+	mkdir -p $(@D) ; ln -sf ../../../../$< $@
 
 
 # MARK: MP42Foundation
@@ -63,26 +65,22 @@ $(BUILD)/MP42Foundation/libmp42.a: ../.git/modules/Dependencies/MP42Foundation/H
 
 # MARK: libdvdcss
 
-.INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/.libs/libdvdcss.2.dylib $(BUILD)/libdvdcss/$(arch)/Makefile)
-.PRECIOUS: libdvdcss/configure
+.INTERMEDIATE: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/src/libdvdcss.2.dylib $(BUILD)/libdvdcss/$(arch)/build.ninja)
 
-$(BUILD)/libdvdcss/libdvdcss.2.dylib: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/.libs/libdvdcss.2.dylib)
+$(BUILD)/libdvdcss/libdvdcss.2.dylib: $(foreach arch,$(ARCHS),$(BUILD)/libdvdcss/$(arch)/src/libdvdcss.2.dylib)
 	lipo $^ -create -output $@
-	$(foreach arch,$(ARCHS),$(MAKE) -C $(BUILD)/libdvdcss/$(arch) maintainer-clean ;)
+	$(foreach arch,$(ARCHS),ninja -C $(BUILD)/libdvdcss/$(arch) clean ;)
 	find $(@D) -type d -empty -delete
 
-$(BUILD)/libdvdcss/%/.libs/libdvdcss.2.dylib: $(BUILD)/libdvdcss/%/Makefile
-	$(MAKE) $(JOBS) -C $(<D)
+$(BUILD)/libdvdcss/%/src/libdvdcss.2.dylib: $(BUILD)/libdvdcss/%/build.ninja
+	ninja -C $(<D)
 
-$(BUILD)/libdvdcss/%/Makefile: libdvdcss/configure
-	rm -rf $(@D) ; mkdir -p $(@D) ; cd $(@D) ; \
-	arch=$(shell case $* in (i386) echo -m32 ;; (x86_64) echo -m64 ;; (arm64) echo -arch\\ arm64 ;; esac) ; \
+$(BUILD)/libdvdcss/%/build.ninja: ../.git/modules/Dependencies/libdvdcss/HEAD
+	rm -rf $(@D) ; mkdir -p $(@D) ; cd libdvdcss \
+	arch=$(shell case $* in (x86_64) echo --target=x86_64-apple-macos ;; (arm64) echo --target=arm64-apple-macos ;; esac) ; \
 	optimize=$(shell case $(CONFIGURATION) in (Debug) echo -O0 ;; (Release) echo -O3 ;; esac) ; \
 	debug=$(shell case $(CONFIGURATION) in (Debug) echo -g ;; esac) ; \
-	$(abspath $<) --host=$*-apple-darwin10 CFLAGS="$$arch $$optimize $$debug"
-
-libdvdcss/configure: ../.git/modules/Dependencies/libdvdcss/HEAD
-	cd $(@D) ; autoreconf -i
+	CFLAGS="$$arch $$optimize $$debug" meson setup ../$(@D)
 
 
 ../.git/modules/Dependencies/%/HEAD:

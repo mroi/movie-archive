@@ -24,7 +24,7 @@ public actor Transform {
 	let importer: any ImportPass
 	let exporter: any ExportPass
 
-	let subject = Subject(logging: true)
+	nonisolated let subject = Subject(logging: true)
 	var state = State.initial
 
 	/// Internal state of the transform.
@@ -193,10 +193,10 @@ extension Transform.Status {
 
 		deinit { finish() }
 
-		subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
+		public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
 			get { value[keyPath: keyPath] }
 		}
-		subscript<T>(dynamicMember keyPath: WritableKeyPath<Value, T>) -> T {
+		public subscript<T>(dynamicMember keyPath: WritableKeyPath<Value, T>) -> T {
 			get { value[keyPath: keyPath] }
 			set { value[keyPath: keyPath] = newValue }
 		}

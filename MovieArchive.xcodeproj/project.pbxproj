@@ -403,7 +403,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1310;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					4C1A358E245DFEE700C40FB5 = {
 						CreatedOnToolsVersion = 11.4.1;
@@ -504,7 +504,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# copy intercept library\nmkdir -p \"$(dirname \"$SCRIPT_OUTPUT_FILE_0\")\"\ncp -p \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n\n# patch XPC converter to replace libSystem with intercept library\nif otool -L \"$SCRIPT_INPUT_FILE_1\" | fgrep -q libSystem ; then\n\tcodesign --remove-signature \"$SCRIPT_INPUT_FILE_1\"\n\tinstall_name_tool -change /usr/lib/libSystem.B.dylib \"@executable_path/../Frameworks/$(basename \"$SCRIPT_OUTPUT_FILE_0\")\" \"$SCRIPT_OUTPUT_FILE_1\"\nfi\n";
+			shellScript = "# copy intercept library\nmkdir -p \"$(dirname \"$SCRIPT_OUTPUT_FILE_0\")\"\ncp -p \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n\n# patch XPC converter to replace libSystem with intercept library\nif otool -L \"$SCRIPT_INPUT_FILE_1\" | fgrep -q libSystem ; then\n\tinstall_name_tool -change /usr/lib/libSystem.B.dylib \"@executable_path/../Frameworks/$(basename \"$SCRIPT_OUTPUT_FILE_0\")\" \"$SCRIPT_OUTPUT_FILE_1\"\nfi\n";
 		};
 		4CC8ED4E279DB9F600226566 /* Create Resource Symlinks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -617,12 +617,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = arm64;
 				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTABILITY = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				ONLY_ACTIVE_ARCH = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
@@ -633,10 +631,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = arm64;
 				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -749,9 +746,12 @@
 		4CB78010269C855B0027D46F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_IMPLICIT_FALLTHROUGH = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
@@ -769,6 +769,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -786,9 +787,12 @@
 		4CB78011269C855B0027D46F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_IMPLICIT_FALLTHROUGH = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
@@ -805,6 +809,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -829,7 +834,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
 				"HEADER_SEARCH_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64/contrib/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64/contrib/include";
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
 				OTHER_CODE_SIGN_FLAGS = "--deep";
@@ -838,7 +842,6 @@
 				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "";
 				"SWIFT_INCLUDE_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64";
-				"SWIFT_INCLUDE_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64";
 			};
 			name = Debug;
 		};
@@ -851,7 +854,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
 				"HEADER_SEARCH_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64/contrib/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64/contrib/include";
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
 				OTHER_CODE_SIGN_FLAGS = "--deep";
@@ -860,7 +862,6 @@
 				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "";
 				"SWIFT_INCLUDE_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64";
-				"SWIFT_INCLUDE_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64";
 			};
 			name = Release;
 		};
