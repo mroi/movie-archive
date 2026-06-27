@@ -1,5 +1,5 @@
+@preconcurrency import Combine
 import Foundation
-import Combine
 import MovieArchiveModel
 import MovieArchiveConverter
 
