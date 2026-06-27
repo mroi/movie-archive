@@ -118,7 +118,9 @@ extension ConverterConnection {
 	///   function as second parameter. When the remote call completes
 	///   successfully, the continuation function must be called exactly once.
 	/// - Returns: Successful results are returned, errors are thrown.
-	func withErrorHandling<T>(_ body: (Interface, @escaping (Result<T, ConverterError>) -> Void) -> Void) async throws -> T {
+	/// - ToDo: Remove `nonisolated(nonsending)` annotation when
+	///   `NonisolatedNonsendingByDefault` feature is enabled (Swift 7?)
+	nonisolated(nonsending) func withErrorHandling<T>(_ body: (Interface, @escaping (sending Result<T, ConverterError>) -> Void) -> Void) async throws -> T {
 
 		return try await withCheckedThrowingContinuation { continuation in
 
