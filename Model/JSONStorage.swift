@@ -53,8 +53,9 @@ extension JSON {
 	/// - Throws: `Errno` in case of file system errors.
 	public func write(to url: URL) async throws {
 		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			let data = self.data
 			let task = Task {
-				let file = try FileDescriptor.open(JSON.path(from: url), .writeOnly,
+				let file = try FileDescriptor.open(path(from: url), .writeOnly,
 				                                   options: [ .create, .truncate ],
 				                                   permissions: FilePermissions(rawValue: 0o644))
 				defer { try? file.close() }
@@ -103,7 +104,7 @@ extension JSON {
 	init(contentsOf url: URL) async throws {
 		data = try await withCheckedThrowingContinuation { continuation in
 			let task = Task {
-				let file = try FileDescriptor.open(JSON.path(from: url), .readOnly)
+				let file = try FileDescriptor.open(path(from: url), .readOnly)
 				defer { try? file.close() }
 
 				var stream = z_stream()
@@ -143,23 +144,23 @@ extension JSON {
 			Task { continuation.resume(with: await task.result) }
 		}
 	}
+}
 
-	static private func path(from url: URL) throws -> FilePath {
-		// ensure enclosing directory exists
-		let directory = url.deletingLastPathComponent()
-		try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+private func path(from url: URL) throws -> FilePath {
+	// ensure enclosing directory exists
+	let directory = url.deletingLastPathComponent()
+	try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
 
-		// ensure file extensions
-		var url = url
-		if url.pathExtension == "gz" { url.deletePathExtension() }
-		if url.pathExtension == "json" { url.deletePathExtension() }
-		url.appendPathExtension("json")
-		url.appendPathExtension("gz")
+	// ensure file extensions
+	var url = url
+	if url.pathExtension == "gz" { url.deletePathExtension() }
+	if url.pathExtension == "json" { url.deletePathExtension() }
+	url.appendPathExtension("json")
+	url.appendPathExtension("gz")
 
-		// convert to FilePath
-		guard let path = FilePath(url) else { throw Errno.noSuchFileOrDirectory }
-		return path
-	}
+	// convert to FilePath
+	guard let path = FilePath(url) else { throw Errno.noSuchFileOrDirectory }
+	return path
 }
 
 
