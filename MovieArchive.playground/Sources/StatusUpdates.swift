@@ -11,6 +11,7 @@ import MovieArchiveModel
 ///
 /// Subscribe an instance to a transform publisher and call `next()` repeatedly
 /// to synchronously pull individual status updates from a running transform.
+@MainActor
 public class PlaygroundTransformUpdates {
 	let resultAvailable = DispatchSemaphore(value: 0)
 	var result: Element?
@@ -21,7 +22,7 @@ public class PlaygroundTransformUpdates {
 	}
 }
 
-extension PlaygroundTransformUpdates: Subscriber {
+extension PlaygroundTransformUpdates: @MainActor Subscriber {
 	public typealias Input = Transform.Publisher.Output
 	public typealias Failure = Transform.Publisher.Failure
 
@@ -51,7 +52,7 @@ extension PlaygroundTransformUpdates: Subscriber {
 	}
 }
 
-extension PlaygroundTransformUpdates: IteratorProtocol {
+extension PlaygroundTransformUpdates: @MainActor IteratorProtocol {
 	public typealias Element = Transform.Publisher.Output
 
 	public func next() -> Element? {
@@ -70,7 +71,7 @@ extension PlaygroundTransformUpdates: IteratorProtocol {
 	}
 }
 
-extension PlaygroundTransformUpdates: CustomStringConvertible {
+extension PlaygroundTransformUpdates: @MainActor CustomStringConvertible {
 	public var description: String { "TransformUpdates" }
 }
 
@@ -134,25 +135,27 @@ extension Transform.Status: @retroactive CustomPlaygroundDisplayConvertible {
 extension MediaTree {
 
 	/// Inspect the media tree using interactive UI.
-	public func show() {
+	@MainActor public func show() {
 
+		@MainActor
 		struct MirrorItem: Hashable, Identifiable {
 			static var count = 0
 
-			let id: Int = {
-				defer { count += 1 }
-				return count
-			}()
+			let id: Int
 			let label: String?
 			let value: String
 			let type: String
 			let children: [MirrorItem]?
 
 			init(label: String?, value: Any) {
-				let mirror = Mirror(reflecting: value)
+				id = MirrorItem.count
+				MirrorItem.count += 1
+
 				self.label = label
 				self.value = String(describing: value)
-				self.type = String(describing: mirror.subjectType)
+
+				let mirror = Mirror(reflecting: value)
+				type = String(describing: mirror.subjectType)
 				if mirror.children.isEmpty {
 					children = nil
 				} else {
