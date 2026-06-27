@@ -174,7 +174,7 @@ extension Transform.Status {
 	/// property, including mutating changes to it. Afterwards, the client
 	/// should call `finish()` exactly once.
 	@dynamicMemberLookup
-	public class Interaction<Value> {
+	public class Interaction<Value: Sendable> {
 		private let continuation: CheckedContinuation<Value, Never>
 		private var finished: Bool = false
 		public var value: Value
@@ -260,7 +260,7 @@ extension Transform {
 	/// - SeeAlso: `Transform.Logging`
 	/// - Remark: Subclassing `PassthroughSubject` would be preferable, but
 	///   is not possible because it is declared `final`.
-	public class Subject: Combine.Subject {
+	public final class Subject: Combine.Subject, Sendable {
 		public typealias Output = Transform.Publisher.Output
 		public typealias Failure = Transform.Publisher.Failure
 
