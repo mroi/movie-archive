@@ -135,8 +135,7 @@ extension Transform {
 	public enum Status {
 
 		/// A log message that can be shown to the user.
-		/// - ToDo: Replace with `LocalizedStringResource` once we move to macOS 13.
-		case message(level: OSLogType, String.LocalizationValue)
+		case message(level: OSLogType, LocalizedStringResource)
 
 		/// Shows progress of a long-running operation to the user.
 		case progress(Progress)
@@ -297,7 +296,8 @@ extension Transform {
 
 		private static let logger = Logger(
 			subsystem: Bundle.main.bundleIdentifier ?? "de.reactorcontrol.movie-archive",
-			category: "transform")
+			category: "transform"
+		)
 		private func log(level: OSLogType, _ text: String) {
 			Self.logger.log(level: level, "\(text)")
 #if DEBUG
@@ -314,7 +314,7 @@ extension Transform {
 			case .message(level: let level, let text):
 				log(level: level, String(unlocalized: text))
 			case .progress(let progress):
-				log(level: .info, "started " + String(unlocalized: progress.localization))
+				log(level: .info, "started " + String(unlocalized: progress.localizable))
 			case .mediaTree(_):
 				log(level: .debug, "interaction with media tree")
 			}

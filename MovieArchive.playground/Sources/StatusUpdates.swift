@@ -118,10 +118,10 @@ extension Transform.Status {
 extension Transform.Status: @retroactive CustomPlaygroundDisplayConvertible {
 	public var playgroundDescription: Any {
 		switch self {
-		case .message(level: _, let stringKey):
-			return String(unlocalized: stringKey)
+		case .message(level: _, let text):
+			return String(localized: text)
 		case .progress(let progress):
-			return progress.localizedDescription ?? "Progress"
+			return String(localized: progress.localizable)
 		case .mediaTree:
 			return "media tree"
 		}
