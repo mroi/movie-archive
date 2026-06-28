@@ -1,11 +1,11 @@
-// swift-tools-version:5.7
+// swift-tools-version:6.3
 import PackageDescription
 
 let package = Package(
 	name: "Model",
 	defaultLocalization: "en",
 	platforms: [
-		.macOS(.v13)
+		.macOS(.v26)
 	],
 	products: [
 		.library(name: "MovieArchiveModel", targets: ["MovieArchiveModel"])
