@@ -26,7 +26,7 @@ class RecordedTests: XCTestCase {
 
 		// setup DVD importer
 		let source = URL(fileURLWithPath: ".")
-		let importer = await ConverterConnection.withMocks(proxy: ReaderMock()) {
+		let importer = await ConverterConnection.withUnsafeMocks(proxy: ReaderMock()) {
 			try! await DVDImporter(source: source)
 		}
 

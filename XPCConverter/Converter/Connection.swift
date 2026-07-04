@@ -118,7 +118,9 @@ extension ConverterConnection {
 	///   function as second parameter. When the remote call completes
 	///   successfully, the continuation function must be called exactly once.
 	/// - Returns: Successful results are returned, errors are thrown.
-	func withErrorHandling<T>(_ body: (Interface, @escaping (Result<T, ConverterError>) -> Void) -> Void) async throws -> T {
+	/// - ToDo: Remove `nonisolated(nonsending)` annotation when
+	///   `NonisolatedNonsendingByDefault` feature is enabled (Swift 7?)
+	nonisolated(nonsending) func withErrorHandling<T>(_ body: (Interface, @escaping (sending Result<T, ConverterError>) -> Void) -> Void) async throws -> T {
 
 		return try await withCheckedThrowingContinuation { continuation in
 
@@ -146,16 +148,26 @@ extension ConverterConnection {
 extension ConverterConnection<Any> {
 
 	/// Injects mock implementations for testing.
-	static func withMocks<R>(proxy: Interface, publisher: ConverterPublisher? = nil,
-	                         _ body: () async throws -> R) async rethrows -> R {
+	///
+	/// - Important: Checking for `Sendable` is unsafely elided to gain flexibility
+	///   in the supported mock types. Callers must ensure that the `proxy` and
+	///   `publisher` parameters are not used concurrently and that `body` creates
+	///   no child tasks accessing `ConverterConnection`.
+	static func withUnsafeMocks<R>(proxy: Interface, publisher: ConverterPublisher? = nil,
+	                               _ body: () async throws -> R) async rethrows -> R {
 		let emptyPublisher = Empty<ConverterOutput, ConverterError>(completeImmediately: false).eraseToAnyPublisher()
-		let inject = (proxy, publisher ?? emptyPublisher)
-		return try await $injected.withValue(inject) {
+		let mocks = Mocks(proxy: proxy, publisher: publisher ?? emptyPublisher)
+		return try await $injected.withValue(mocks) {
 			try await body()
 		}
 	}
 
+	private struct Mocks: @unchecked Sendable {
+		let proxy: Interface
+		let publisher: ConverterPublisher
+	}
+
 	@TaskLocal
-	private static var injected: (proxy: Interface, publisher: ConverterPublisher)?
+	private static var injected: Mocks?
 }
 #endif

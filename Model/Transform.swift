@@ -1,5 +1,5 @@
+@preconcurrency import Combine
 import Foundation
-import Combine
 import os
 
 
@@ -61,19 +61,6 @@ public actor Transform {
 		precondition(state == .initial, "transform already executed")
 		state = .running
 
-		// remember when an error is issued asynchronously
-		var errorTask: Task<Void, Never>?
-
-		// update transform state on error
-		let subscription = publisher.sink(
-			receiveCompletion: {
-				if case .failure = $0 {
-					errorTask = Task.detached(priority: .high) { await self.setState(.error) }
-				}
-			},
-			receiveValue: { _ in })
-		defer { subscription.cancel() }
-
 		// make ourselves available to passes executing within this transform
 		await Self.$current.withValue(self) {
 
@@ -90,16 +77,14 @@ public actor Transform {
 						try await exporter.consume(mediaTree)
 					}
 					subject.send(completion: .finished)
+					state = .success
 				} catch {
 					subject.send(completion: .failure(error))
+					state = .error
 				}
 			}
 		}
 
-		// wait for any error state change to manifest
-		let _ = await errorTask?.result
-
-		if state == .running { state = .success }
 		assert(state == .success || state == .error)
 	}
 
@@ -115,15 +100,6 @@ public actor Transform {
 
 extension Transform: CustomStringConvertible {
 	nonisolated public var description: String { "\(importer) → \(exporter)" }
-}
-
-extension Transform {
-
-	/// Set the internal state.
-	///
-	/// - ToDo: Replace with `async` property setter once support for effectful
-	///   mutable properties is available.
-	private func setState(_ value: State) { state = value }
 }
 
 
@@ -174,7 +150,7 @@ extension Transform.Status {
 	/// property, including mutating changes to it. Afterwards, the client
 	/// should call `finish()` exactly once.
 	@dynamicMemberLookup
-	public class Interaction<Value> {
+	public class Interaction<Value: Sendable> {
 		private let continuation: CheckedContinuation<Value, Never>
 		private var finished: Bool = false
 		public var value: Value
@@ -260,7 +236,7 @@ extension Transform {
 	/// - SeeAlso: `Transform.Logging`
 	/// - Remark: Subclassing `PassthroughSubject` would be preferable, but
 	///   is not possible because it is declared `final`.
-	public class Subject: Combine.Subject {
+	public final class Subject: Combine.Subject, Sendable {
 		public typealias Output = Transform.Publisher.Output
 		public typealias Failure = Transform.Publisher.Failure
 
