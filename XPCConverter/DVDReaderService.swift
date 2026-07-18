@@ -388,11 +388,11 @@ private extension DVDData.VOB {
 				guard let currentSector else { return nil }
 				self.currentSector = nil
 
-				return withUnsafeTemporaryAllocation(of: UInt8.self, capacity: Int(DVD_VIDEO_LB_LEN)) { buffer in
-					let successful = DVDReadBlocks(fileReader, Int32(currentSector), 1, buffer.baseAddress)
-					guard successful == 1 else { return .failure(.vobReadError) }
+				return MutableSpan<UInt8>.withTemporaryAllocation(capacity: Int(DVD_VIDEO_LB_LEN)) { buffer in
+					let success = DVDReadBlock(fileReader, offset: currentSector, into: &buffer)
+					guard success else { return .failure(.vobReadError) }
 
-					let vobu = VOBU(data: buffer)
+					let vobu = VOBU(data: buffer.span)
 					guard let vobu else { return .failure(.navImportError) }
 
 					let nextVobu = vobu.dsi.vobu_sri.next_vobu.bits(0...29)
@@ -409,7 +409,7 @@ private extension DVDData.VOB {
 
 private extension DVDData.VOB.VOBU {
 	/// Initialize by parsing the first sector of VOBU data, which should contain the NAV packet.
-	init?(data: UnsafeMutableBufferPointer<UInt8>) {
+	init?(data: Span<UInt8>) {
 		func packetLength(at position: Int) -> Int {
 			var length = 0
 			length |= Int(data[position + 4]) << 8
@@ -417,7 +417,7 @@ private extension DVDData.VOB.VOBU {
 			return length
 		}
 
-		var position = data.startIndex
+		var position = data.indices.lowerBound
 
 		if data[position + 3] == 0xBA {
 			// program stream pack header
@@ -434,24 +434,21 @@ private extension DVDData.VOB.VOBU {
 			// program stream system header
 			position += 6 + packetLength(at: position)
 		}
-		guard data[position...position + 3].elementsEqual([0, 0, 1, 0xBF]) else { return nil }
+		let header = data.extracting(position...position + 3)
+		guard header.elementsEqual([0, 0, 1, 0xBF]) else { return nil }
 		// private stream 2 packet reached
 		let length = packetLength(at: position)
 
 		position += 6
 		guard data[position] == 0 else { return nil }
 		// NAV PCI packet reached
-		var pci = pci_t()
-		navRead_PCI(&pci, data.baseAddress?.advanced(by: position + 1))
-		self.pci = pci
+		self.pci = pci_t(from: data.extracting(droppingFirst: position + 1))
 		position += length
 
 		position += 6
 		guard data[position] == 1 else { return nil }
 		// NAV DSI packet reached
-		var dsi = dsi_t()
-		navRead_DSI(&dsi, data.baseAddress?.advanced(by: position + 1))
-		self.dsi = dsi
+		self.dsi = dsi_t(from: data.extracting(droppingFirst: position + 1))
 	}
 }
 
