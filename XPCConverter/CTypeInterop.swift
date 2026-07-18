@@ -1,12 +1,17 @@
-/* Extensions for more convenient interaction with C types. */
+/* Extensions for more convenient and safe interaction with C types. */
 
 extension UnsafeBufferPointer {
 	/// Creates a new buffer pointer, while tolerating `nil` and 0 arguments.
+	///
+	/// - ToDo: Replace with a `Span` once `@lifetime` annotations become available.
+	///   The use of `Span` will reduce the usage of memory-unsafe primitives.
+	///   The annotation is necessary because the caller needs to prove that
+	///   the `start` argument outlives the resulting `Span`.
 	init<C: UnsignedInteger>(start: UnsafePointer<Element>?, count: C?) {
-		if start != nil && count != nil && count! > 0 {
-			self = Self(start: start, count: Int(count!))
+		if unsafe start != nil && count != nil && count! > 0 {
+			unsafe self = Self(start: start, count: Int(count!))
 		} else {
-			self = Self(start: nil, count: 0)
+			unsafe self = Self(start: nil, count: 0)
 		}
 	}
 }
