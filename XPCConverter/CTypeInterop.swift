@@ -90,19 +90,31 @@ extension Array {
 	///
 	/// Swift represents fixed-size arrays as tuples.
 	///
-	/// - ToDo: If generic type sequences are added to Swift, this could be
-	///   improved by replacing the `Mirror` with iterating over a type sequence.
-	init<T>(tuple: T) {
-		self = Mirror(reflecting: tuple).children.compactMap { $0.value as? Element }
+	/// - ToDo: `TupleElement` should equal `Element`, but same-type requirements
+	///   on type parameter packs are not supported.
+	init<each TupleElement>(tuple: (repeat each TupleElement)) {
+		self.init()
+		for element in repeat each tuple {
+			if let value = element as? Element {
+				self.append(value)
+			}
+		}
 	}
 }
 
 extension String {
 	/// Create a `String` from a fixed-size C-style array of `CChar`.
-	init<T>(tuple: T) {
-		self.init(Array<CChar>(tuple: tuple).compactMap {
-			let unicodePoint = Unicode.Scalar(UInt8($0))
-			return unicodePoint != "\0" ? Character(unicodePoint) : nil
-		})
+	///
+	/// - ToDo: `TupleElement` should equal `CChar`, but same-type requirements
+	///   on type parameter packs are not supported.
+	init<each TupleElement>(tuple: (repeat each TupleElement)) {
+		self.init()
+		for element in repeat each tuple {
+			if let value = element as? CChar {
+				let unicodePoint = Unicode.Scalar(UInt8(value))
+				guard unicodePoint != "\0" else { continue }
+				self.append(Character(unicodePoint))
+			}
+		}
 	}
 }
