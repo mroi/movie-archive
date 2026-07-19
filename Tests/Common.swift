@@ -72,8 +72,8 @@ class ModelTests: XCTestCase {
 
 		// decoding with type knowledge succeeds
 		var decoded: MediaTree!
-		let types = [TestPayload.self, TestPayload.self]  // testing non-unique elements
-		XCTAssertNoThrow(decoded = try json.mediaTree(withTypes: types))
+		let types = (TestPayload.self, TestPayload.self)  // testing non-unique elements
+		XCTAssertNoThrow(decoded = try json.mediaTree(withTypes: types.0, types.1))
 
 		// decoded result re-encodes to the original JSON
 		var json2: JSON<MediaTree>!

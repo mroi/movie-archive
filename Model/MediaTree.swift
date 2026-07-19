@@ -40,9 +40,12 @@ extension JSON<MediaTree> {
 	/// - Parameter types: The JSON data can contain instances of protocol-typed
 	///   properties. When decoding, the concrete types need to be known or
 	///   decoding will fail. Pass types potentially occurring in the data here.
-	public func mediaTree(withTypes types: [(Codable & Sendable).Type] = []) throws -> MediaTree {
-		let typeKeys = types.map(ProtocolTypeCoding.init)
-		let typeDictionary = Dictionary(zip(typeKeys, types), uniquingKeysWith: {
+	public func mediaTree<each T: Codable & Sendable>(withTypes types: repeat (each T).Type) throws -> MediaTree {
+		// value pack expansion into an array literal does not work: https://github.com/swiftlang/swift/issues/67192
+		var typeArray: [(Codable & Sendable).Type] = []
+		for type in repeat each types { typeArray.append(type) }
+		let typeKeys = typeArray.map(ProtocolTypeCoding.init)
+		let typeDictionary = Dictionary(zip(typeKeys, typeArray), uniquingKeysWith: {
 			(first, _) in first
 		})
 		// register types before decoding

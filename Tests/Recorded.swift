@@ -40,7 +40,7 @@ class RecordedTests: XCTestCase {
 			var inputJson: JSON<MediaTree>!
 			var input: MediaTree!
 			await XCTAssertNoThrowAsync(inputJson = try await JSON(contentsOf: inputUrl))
-			XCTAssertNoThrow(input = try inputJson.mediaTree(withTypes: [DVDInfo.self]))
+			XCTAssertNoThrow(input = try inputJson.mediaTree(withTypes: DVDInfo.self))
 			XCTAssertEqual(inputJson.data, try! input.json().data)
 
 			// read recorded output
@@ -54,7 +54,7 @@ class RecordedTests: XCTestCase {
 			var output: MediaTree!
 			await XCTAssertNoThrowAsync(outputJson = try await JSON(contentsOf: outputUrl))
 			// TODO: DVDInfo should not be needed here, output trees should not have opaque nodes
-			XCTAssertNoThrow(output = try outputJson.mediaTree(withTypes: [DVDInfo.self, DVDDataSource.self]))
+			XCTAssertNoThrow(output = try outputJson.mediaTree(withTypes: DVDInfo.self, DVDDataSource.self))
 			XCTAssertEqual(outputJson.data, try! output.json().data)
 
 			// process media tree
