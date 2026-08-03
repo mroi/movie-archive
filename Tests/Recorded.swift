@@ -77,31 +77,31 @@ extension MediaTree: @retroactive Equatable {
 		switch lhs {
 		case .asset(let lhsNode):
 			if case .asset(let rhsNode) = rhs {
-				return lhsNode == rhsNode
+				lhsNode == rhsNode
 			} else {
-				return false
+				false
 			}
 		case .menu(let lhsNode):
 			if case .menu(let rhsNode) = rhs {
-				return lhsNode == rhsNode
+				lhsNode == rhsNode
 			} else {
-				return false
+				false
 			}
 		case .link(let lhsNode):
 			if case .link(let rhsNode) = rhs {
-				return lhsNode == rhsNode
+				lhsNode == rhsNode
 			} else {
-				return false
+				false
 			}
 		case .collection(let lhsNode):
 			if case .collection(let rhsNode) = rhs {
-				return lhsNode == rhsNode
+				lhsNode == rhsNode
 			} else {
-				return false
+				false
 			}
 		case .opaque:
 			// opaque nodes cannot be compared and are therefore never equal
-			return false
+			false
 		}
 	}
 }

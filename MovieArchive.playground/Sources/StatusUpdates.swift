@@ -103,9 +103,9 @@ extension Transform.Status {
 	public var mediaTree: MediaTree! {
 		get {
 			if case .mediaTree(let interaction) = self {
-				return interaction.value
+				interaction.value
 			} else {
-				return nil
+				nil
 			}
 		}
 		set {
@@ -120,11 +120,11 @@ extension Transform.Status: @retroactive CustomPlaygroundDisplayConvertible {
 	public var playgroundDescription: Any {
 		switch self {
 		case .message(level: _, let text):
-			return String(localized: text)
+			String(localized: text)
 		case .progress(let progress):
-			return String(localized: progress.localizable)
+			String(localized: progress.localizable)
 		case .mediaTree:
-			return "media tree"
+			"media tree"
 		}
 	}
 }
@@ -156,10 +156,10 @@ extension MediaTree {
 
 				let mirror = Mirror(reflecting: value)
 				type = String(describing: mirror.subjectType)
-				if mirror.children.isEmpty {
-					children = nil
+				children = if mirror.children.isEmpty {
+					nil
 				} else {
-					children = mirror.children.map {
+					mirror.children.map {
 						MirrorItem(label: $0.label, value: $0.value)
 					}
 				}

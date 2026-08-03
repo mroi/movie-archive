@@ -79,9 +79,9 @@ extension MediaTree {
 		}).reduce(into: []) { result, item in
 			// merge partial metadata items into one
 			let matches: [(MediaRecipe.Metadata) -> Bool] = [
-				{ if case .title = $0 { return true } else { return false } },
-				{ if case .series = $0 { return true } else { return false } },
-				{ if case .episode = $0 { return true } else { return false } }
+				{ if case .title = $0 { true } else { false } },
+				{ if case .series = $0 { true } else { false } },
+				{ if case .episode = $0 { true } else { false } }
 			]
 			for match in matches {
 				if match(item) {
@@ -106,7 +106,7 @@ extension MediaTree {
 			// remove artist entry: MP4 files of TV episodes abuse it to store the series name
 			var node = $0.asset!
 			node.content.metadata.removeAll {
-				if case .artist = $0 { return true } else { return false }
+				if case .artist = $0 { true } else { false }
 			}
 			return .asset(node)
 		}
@@ -116,10 +116,10 @@ extension MediaTree {
 
 private extension MediaRecipe.Video.ColorSpace {
 	init(primaries: UInt16, transfer: UInt16, matrix: UInt16) {
-		switch (primaries, transfer, matrix) {
-		case (1, 1, 1): self = .rec709
-		case (5, 1, 6): self = .rec601PAL
-		case (6, 1, 6): self = .rec601NTSC
+		self = switch (primaries, transfer, matrix) {
+		case (1, 1, 1): .rec709
+		case (5, 1, 6): .rec601PAL
+		case (6, 1, 6): .rec601NTSC
 		default: fatalError("unknown color space: \(primaries), \(transfer), \(matrix)")
 		}
 	}
@@ -127,8 +127,8 @@ private extension MediaRecipe.Video.ColorSpace {
 
 private extension MediaRecipe.Video.ContentInfo {
 	init(characteristics: Set<String>) {
-		switch characteristics {
-		case let tags where tags.isEmpty: self = .main
+		self = switch characteristics {
+		case let tags where tags.isEmpty: .main
 		default: fatalError("unknown video characteristics: \(characteristics)")
 		}
 	}
@@ -136,10 +136,10 @@ private extension MediaRecipe.Video.ContentInfo {
 
 private extension Array where Element == MediaRecipe.Audio.Channel {
 	init?(channels: UInt32, layout: UInt32) {
-		switch (channels, layout) {
-		case (1, 0): self = [.frontCenter]
-		case (2, 0): self = [.frontLeft, .frontRight]
-		case (6, 7929862): self = [.frontLeft, .frontRight, .frontCenter, .lowFrequencyEffects, .sideLeft, .sideRight]
+		self = switch (channels, layout) {
+		case (1, 0): [.frontCenter]
+		case (2, 0): [.frontLeft, .frontRight]
+		case (6, 7929862): [.frontLeft, .frontRight, .frontCenter, .lowFrequencyEffects, .sideLeft, .sideRight]
 		default: fatalError("unknown channel layout: \(channels), \(layout)")
 		}
 	}
@@ -147,8 +147,8 @@ private extension Array where Element == MediaRecipe.Audio.Channel {
 
 private extension MediaRecipe.Audio.ContentInfo {
 	init(characteristics: Set<String>) {
-		switch characteristics {
-		case let tags where tags.isEmpty: self = .main
+		self = switch characteristics {
+		case let tags where tags.isEmpty: .main
 		default: fatalError("unknown audio characteristics: \(characteristics)")
 		}
 	}
@@ -156,8 +156,8 @@ private extension MediaRecipe.Audio.ContentInfo {
 
 private extension MediaRecipe.Subtitles.ContentInfo {
 	init(characteristics: Set<String>) {
-		switch characteristics {
-		case let tags where tags.isEmpty: self = .main
+		self = switch characteristics {
+		case let tags where tags.isEmpty: .main
 		default: fatalError("unknown subtitle characteristics: \(characteristics)")
 		}
 	}
@@ -238,9 +238,9 @@ private extension MediaRecipe.Metadata {
 
 private extension MediaRecipe.Metadata.ImageFormat {
 	init(type: MP42TagArtworkType) {
-		switch type {
-		case MP42_ART_JPEG: self = .jpeg
-		case MP42_ART_PNG: self = .png
+		self = switch type {
+		case MP42_ART_JPEG: .jpeg
+		case MP42_ART_PNG: .png
 		default: fatalError("unknown image type: \(type)")
 		}
 	}
@@ -248,19 +248,19 @@ private extension MediaRecipe.Metadata.ImageFormat {
 
 private extension MediaRecipe.Metadata.Genre {
 	init(fromString genre: String) {
-		switch genre {
-		case "Action": self = .action
-		case "Animation": self = .animation
-		case "Drama": self = .drama
-		case "Horror": self = .horror
-		case "Kinder und Familie": self = .kidsAndFamily
-		case "Komödien": self = .comedy
-		case "Kurzfilme": self = .shorts
-		case "Liebesfilme": self = .romance
-		case "Musicals": self = .musical
-		case "Science-Fiction und Fantasy": self = .scienceFictionAndFantasy
-		case "Thriller": self = .thriller
-		case "Western": self = .western
+		self = switch genre {
+		case "Action": .action
+		case "Animation": .animation
+		case "Drama": .drama
+		case "Horror": .horror
+		case "Kinder und Familie": .kidsAndFamily
+		case "Komödien": .comedy
+		case "Kurzfilme": .shorts
+		case "Liebesfilme": .romance
+		case "Musicals": .musical
+		case "Science-Fiction und Fantasy": .scienceFictionAndFantasy
+		case "Thriller": .thriller
+		case "Western": .western
 		default: fatalError("unknown genre: \(genre)")
 		}
 	}
@@ -269,11 +269,11 @@ private extension MediaRecipe.Metadata.Genre {
 private extension MediaRecipe.Metadata.Rating {
 	init(fromString rating: String) {
 		let ratingCode = rating.split(separator: "|")[2]
-		switch ratingCode {
-		case "100": self = .age(6)
-		case "200": self = .age(12)
-		case "500": self = .age(16)
-		case "600": self = .age(18)
+		self = switch ratingCode {
+		case "100": .age(6)
+		case "200": .age(12)
+		case "500": .age(16)
+		case "600": .age(18)
 		default: fatalError("unknown rating: \(rating)")
 		}
 	}

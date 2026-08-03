@@ -135,20 +135,13 @@ extension DVDInfo.Domain.ProgramChains.Descriptor.MenuType: @retroactive CustomJ
 	public static func < (lhs: Self, rhs: Self) -> Bool {
 		func sortIndex(_ value: Self) -> Int {
 			switch value {
-			case .titles:
-				return 0
-			case .rootWithinTitle:
-				return 1
-			case .chapter:
-				return 2
-			case .audio:
-				return 3
-			case .subpicture:
-				return 4
-			case .viewingAngle:
-				return 5
-			case .unexpected(_):
-				return 6
+			case .titles: 0
+			case .rootWithinTitle: 1
+			case .chapter: 2
+			case .audio: 3
+			case .subpicture: 4
+			case .viewingAngle: 5
+			case .unexpected(_): 6
 			}
 		}
 		return sortIndex(lhs) < sortIndex(rhs)
@@ -180,15 +173,15 @@ extension DVDInfo.Domain.ProgramChains.Id: @retroactive CustomJSONStringKeyRepre
 	public static func < (lhs: Self, rhs: Self) -> Bool {
 		switch (lhs.languageId, rhs.languageId) {
 		case (.some(let lhs), .some(let rhs)) where lhs != rhs:
-			return lhs < rhs
+			lhs < rhs
 		case (.some, .some):
-			return lhs.programChainId < rhs.programChainId
+			lhs.programChainId < rhs.programChainId
 		case (.some, .none):
-			return true
+			true
 		case (.none, .some):
-			return false
+			false
 		case (.none, .none):
-			return lhs.programChainId < rhs.programChainId
+			lhs.programChainId < rhs.programChainId
 		}
 	}
 
@@ -266,14 +259,10 @@ extension DVDInfo.ProgramChain.SubpictureDescriptor: @retroactive CustomJSONStri
 	public static func < (lhs: Self, rhs: Self) -> Bool {
 		func sortIndex(_ value: Self) -> Int {
 			switch value {
-			case .classic:
-				return 0
-			case .wide:
-				return 1
-			case .letterbox:
-				return 2
-			case .panScan:
-				return 3
+			case .classic: 0
+			case .wide: 1
+			case .letterbox: 2
+			case .panScan: 3
 			}
 		}
 		return sortIndex(lhs) < sortIndex(rhs)
@@ -350,52 +339,29 @@ extension DVDInfo.Command.SystemRegister: @retroactive CustomJSONStringKeyRepres
 	public static func < (lhs: Self, rhs: Self) -> Bool {
 		func sortIndex(_ value: Self) -> Int {
 			switch value {
-			case .audioStreamIndex:
-				return 0
-			case .subpictureStreamIndex:
-				return 1
-			case .viewingAngleIndex:
-				return 2
-			case .globalTitleIndex:
-				return 3
-			case .titleIndex:
-				return 4
-			case .programChainIndex:
-				return 5
-			case .partIndex:
-				return 6
-			case .selectedButtonIndex:
-				return 7
-			case .navigationTimer:
-				return 8
-			case .programChainForTimer:
-				return 9
-			case .videoMode:
-				return 10
-			case .karaokeMode:
-				return 11
-			case .preferredMenuLanguage:
-				return 12
-			case .preferredAudioLanguage:
-				return 13
-			case .preferredAudioContent:
-				return 14
-			case .preferredSubpictureLanguage:
-				return 15
-			case .preferredSubpictureContent:
-				return 16
-			case .playerAudioCapabilities:
-				return 17
-			case .playerRegionMask:
-				return 18
-			case .parentalCountry:
-				return 19
-			case .parentalLevel:
-				return 20
-			case .reserved:
-				return 21
-			case .unexpected:
-				return 22
+			case .audioStreamIndex: 0
+			case .subpictureStreamIndex: 1
+			case .viewingAngleIndex: 2
+			case .globalTitleIndex: 3
+			case .titleIndex: 4
+			case .programChainIndex: 5
+			case .partIndex: 6
+			case .selectedButtonIndex: 7
+			case .navigationTimer: 8
+			case .programChainForTimer: 9
+			case .videoMode: 10
+			case .karaokeMode: 11
+			case .preferredMenuLanguage: 12
+			case .preferredAudioLanguage: 13
+			case .preferredAudioContent: 14
+			case .preferredSubpictureLanguage: 15
+			case .preferredSubpictureContent: 16
+			case .playerAudioCapabilities: 17
+			case .playerRegionMask: 18
+			case .parentalCountry: 19
+			case .parentalLevel: 20
+			case .reserved: 21
+			case .unexpected: 22
 			}
 		}
 		return sortIndex(lhs) < sortIndex(rhs)

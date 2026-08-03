@@ -30,13 +30,13 @@ extension ConverterError: LocalizedError {
 	public var errorDescription: String? {
 		switch self {
 		case .sourceNotSupported:
-			return String(localized: "source not supported")
+			String(localized: "source not supported")
 		case .sourceReadError:
-			return String(localized: "error reading from source")
+			String(localized: "error reading from source")
 		case .connectionInvalid:
-			return String(localized: "internal component unavailable")
+			String(localized: "internal component unavailable")
 		case .connectionInterrupted:
-			return String(localized: "processing interrupted unexpectedly")
+			String(localized: "processing interrupted unexpectedly")
 		}
 	}
 }

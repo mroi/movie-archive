@@ -1060,12 +1060,12 @@ extension CustomJSONDecoder.Element: CustomStringConvertible {
 	/// Description without the associated value for brevity of debug messages.
 	var description: String {
 		switch self {
-		case .missingCollectionsAsEmpty: return "emptyCollection"
-		case .dictionary: return "Dictionary"
-		case .array: return "Array"
-		case .string: return "String"
-		case .number: return "NSNumber"
-		case .null: return "NSNull"
+		case .missingCollectionsAsEmpty: "emptyCollection"
+		case .dictionary: "Dictionary"
+		case .array: "Array"
+		case .string: "String"
+		case .number: "NSNumber"
+		case .null: "NSNull"
 		}
 	}
 }
@@ -1353,13 +1353,12 @@ extension Encoder {
 			// skip any empty immediate sub-containers
 			switch $0.value.store {
 			case .dictionary(let container):
-				if container.store.isEmpty { return false }
+				!container.store.isEmpty
 			case .array(let container):
-				if container.store.isEmpty { return false }
+				!container.store.isEmpty
 			default:
-				break
+				true
 			}
-			return true
 		}
 	}
 

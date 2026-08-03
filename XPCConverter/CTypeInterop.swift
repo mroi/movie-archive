@@ -11,10 +11,10 @@ extension UnsafeBufferPointer {
 	///   The annotation is necessary because the caller needs to prove that
 	///   the `start` argument outlives the resulting `Span`.
 	init<C: UnsignedInteger>(start: UnsafePointer<Element>?, count: C?) {
-		if unsafe start != nil && count != nil && count! > 0 {
-			unsafe self = Self(start: start, count: Int(count!))
+		unsafe self = if start != nil && count != nil && count! > 0 {
+			Self(start: start, count: Int(count!))
 		} else {
-			unsafe self = Self(start: nil, count: 0)
+			Self(start: nil, count: 0)
 		}
 	}
 }

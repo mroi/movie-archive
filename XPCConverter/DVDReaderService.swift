@@ -134,8 +134,8 @@ enum DVDData {
 
 		var rawValue: Int32 {
 			switch self {
-			case .vmgi: return 0
-			case .vtsi(let titleSet): return Int32(titleSet)
+			case .vmgi: 0
+			case .vtsi(let titleSet): Int32(titleSet)
 			}
 		}
 	}
@@ -148,9 +148,9 @@ enum DVDData {
 
 		var rawValue: dvd_read_domain_t {
 			switch self {
-			case .firstPlay: return DVD_READ_MENU_VOBS
-			case .menus: return DVD_READ_MENU_VOBS
-			case .titles: return DVD_READ_TITLE_VOBS
+			case .firstPlay: DVD_READ_MENU_VOBS
+			case .menus: DVD_READ_MENU_VOBS
+			case .titles: DVD_READ_TITLE_VOBS
 			}
 		}
 	}

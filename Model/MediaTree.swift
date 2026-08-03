@@ -368,23 +368,23 @@ extension MediaTree {
 
 	/// Convenience accessor for asset nodes.
 	public var asset: AssetNode? {
-		if case .asset(let node) = self { return node } else { return nil }
+		if case .asset(let node) = self { node } else { nil }
 	}
 	/// Convenience accessor for menu nodes.
 	public var menu: MenuNode? {
-		if case .menu(let node) = self { return node } else { return nil }
+		if case .menu(let node) = self { node } else { nil }
 	}
 	/// Convenience accessor for link nodes.
 	public var link: LinkNode? {
-		if case .link(let node) = self { return node } else { return nil }
+		if case .link(let node) = self { node } else { nil }
 	}
 	/// Convenience accessor for collection nodes.
 	public var collection: CollectionNode? {
-		if case .collection(let node) = self { return node } else { return nil }
+		if case .collection(let node) = self { node } else { nil }
 	}
 	/// Convenience accessor for opaque nodes.
 	public var opaque: OpaqueNode? {
-		if case .opaque(let node) = self { return node } else { return nil }
+		if case .opaque(let node) = self { node } else { nil }
 	}
 
 	/// Convenience modifier for asset nodes.
@@ -446,15 +446,15 @@ extension MediaTree {
 		get {
 			switch self {
 			case .asset(let assetNode):
-				return assetNode.successor.map { [$0] } ?? []
+				assetNode.successor.map { [$0] } ?? []
 			case .menu(let menuNode):
-				return menuNode.children
+				menuNode.children
 			case .link:
-				return []
+				[]
 			case .collection(let collectionNode):
-				return collectionNode.children
+				collectionNode.children
 			case .opaque(let opaqueNode):
-				return opaqueNode.children
+				opaqueNode.children
 			}
 		}
 		set {
@@ -617,17 +617,17 @@ extension MediaTree: CustomJSONCodable {
 
 	public init(fromCustomJSON decoder: any Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
-		switch try container.singleKey {
+		self = switch try container.singleKey {
 		case .asset:
-			self = .asset(try container.decode(AssetNode.self, forKey: .asset))
+			.asset(try container.decode(AssetNode.self, forKey: .asset))
 		case .menu:
-			self = .menu(try container.decode(MenuNode.self, forKey: .menu))
+			.menu(try container.decode(MenuNode.self, forKey: .menu))
 		case .link:
-			self = .link(try container.decode(LinkNode.self, forKey: .link))
+			.link(try container.decode(LinkNode.self, forKey: .link))
 		case .collection:
-			self = .collection(try container.decode(CollectionNode.self, forKey: .collection))
+			.collection(try container.decode(CollectionNode.self, forKey: .collection))
 		case .opaque:
-			self = .opaque(try container.decode(OpaqueNode.self, forKey: .opaque))
+			.opaque(try container.decode(OpaqueNode.self, forKey: .opaque))
 		}
 	}
 }
@@ -774,9 +774,9 @@ extension MediaRecipe.Time: CustomJSONStringKeyRepresentable, CustomJSONCodable 
 extension MediaRecipe.TrackIdentifier: CustomJSONStringKeyRepresentable {
 	public static func < (lhs: Self, rhs: Self) -> Bool {
 		if let lhs = lhs.intValue, let rhs = rhs.intValue {
-			return lhs < rhs
+			lhs < rhs
 		} else {
-			return lhs.stringValue < rhs.stringValue
+			lhs.stringValue < rhs.stringValue
 		}
 	}
 	public init(stringValue: String) { self.init(stringValue) }
@@ -830,7 +830,8 @@ extension MediaRecipe.Metadata: CustomJSONCodable {
 			self = .producers(try container!.decode([String].self))
 		case "writers":
 			self = .writers(try container!.decode([String].self))
-		default: try self.init(from: decoder.reconstructedEnum())
+		default:
+			try self.init(from: decoder.reconstructedEnum())
 		}
 	}
 }

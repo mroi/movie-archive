@@ -57,12 +57,12 @@ struct NullExporter: ExportPass {
 extension OSLogType: @retroactive CustomStringConvertible {
 	public var description: String {
 		switch self {
-		case .debug: return "debug"
-		case .info: return "info"
-		case .default: return "notice"
-		case .error: return "error"
-		case .fault: return "fault"
-		default: return "unknown"
+		case .debug: "debug"
+		case .info: "info"
+		case .default: "notice"
+		case .error: "error"
+		case .fault: "fault"
+		default: "unknown"
 		}
 	}
 }

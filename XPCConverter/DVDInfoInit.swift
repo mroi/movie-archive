@@ -63,10 +63,10 @@ private extension DVDInfo.Time {
 
 private extension DVDInfo.Time.FrameRate {
 	init(_ frameInfo: UInt8) {
-		switch frameInfo.bits(6...7) {
-		case 1: self = .framesPerSecond(25.00)
-		case 3: self = .framesPerSecond(29.97)
-		default: self = .unexpected(frameInfo)
+		self = switch frameInfo.bits(6...7) {
+		case 1: .framesPerSecond(25.00)
+		case 3: .framesPerSecond(29.97)
+		default: .unexpected(frameInfo)
 		}
 	}
 }
@@ -86,7 +86,7 @@ private extension Dictionary where Key == DVDInfo.Index<Value>, Value == DVDInfo
 		// these two sets of indexes should be identical
 		let titleSetIndexes1 = titles.map(\.value.title_set_nr).map(Int.init)
 		let titleSetIndexes2 = ifoData.keys.compactMap {
-			if case .vtsi(let index) = $0 { return index } else { return nil }
+			if case .vtsi(let index) = $0 { index } else { nil }
 		}
 		let titleSetIndexes = Set().union(titleSetIndexes1).union(titleSetIndexes2)
 
@@ -269,14 +269,14 @@ private extension Dictionary<DVDInfo.Domain.ProgramChains.Id, DVDInfo.ProgramCha
 
 private extension DVDInfo.Domain.ProgramChains.Descriptor.MenuType {
 	init(_ entry: UInt8) {
-		switch entry {
-		case 2: self = .titles
-		case 3: self = .rootWithinTitle
-		case 4: self = .subpicture
-		case 5: self = .audio
-		case 6: self = .viewingAngle
-		case 7: self = .chapter
-		default: self = .unexpected(entry)
+		self = switch entry {
+		case 2: .titles
+		case 3: .rootWithinTitle
+		case 4: .subpicture
+		case 5: .audio
+		case 6: .viewingAngle
+		case 7: .chapter
+		default: .unexpected(entry)
 		}
 	}
 }
@@ -302,20 +302,20 @@ private extension DVDInfo.Domain.VideoAttributes {
 
 private extension DVDInfo.Domain.VideoAttributes.CodingType {
 	init(_ mpegVersion: UInt8) {
-		switch mpegVersion {
-		case 0: self = .mpeg1
-		case 1: self = .mpeg2
-		default: self = .unexpected(mpegVersion)
+		self = switch mpegVersion {
+		case 0: .mpeg1
+		case 1: .mpeg2
+		default: .unexpected(mpegVersion)
 		}
 	}
 }
 
 private extension DVDInfo.Domain.VideoAttributes.VideoStandard {
 	init(_ videoFormat: UInt8) {
-		switch videoFormat {
-		case 0: self = .ntsc
-		case 1: self = .pal
-		default: self = .unexpected(videoFormat)
+		self = switch videoFormat {
+		case 0: .ntsc
+		case 1: .pal
+		default: .unexpected(videoFormat)
 		}
 	}
 }
@@ -345,20 +345,20 @@ private extension DVDInfo.Domain.VideoAttributes.Resolution {
 
 private extension DVDInfo.Domain.VideoAttributes.AspectRatio {
 	init(_ displayAspectRatio: UInt8, letterboxed: Bool) {
-		switch displayAspectRatio {
-		case 0: self = .classic(letterboxed: letterboxed)
-		case 1: self = .unspecified
-		case 3: self = .wide
-		default: self = .unexpected(displayAspectRatio)
+		self = switch displayAspectRatio {
+		case 0: .classic(letterboxed: letterboxed)
+		case 1: .unspecified
+		case 3: .wide
+		default: .unexpected(displayAspectRatio)
 		}
 	}
 }
 
 private extension DVDInfo.Domain.VideoAttributes.ContentInfo {
 	init(_ filmMode: UInt8) {
-		switch filmMode {
-		case 0: self = .video
-		case 1: self = .film
+		self = switch filmMode {
+		case 0: .video
+		case 1: .film
 		default: fatalError("illegal value \(filmMode)")
 		}
 	}
@@ -377,42 +377,42 @@ private extension DVDInfo.Domain.AudioAttributes {
 
 private extension DVDInfo.Domain.AudioAttributes.CodingType {
 	init(_ audioFormat: UInt8, additional info: UInt8) {
-		switch audioFormat {
-		case 0: self = .ac3
-		case 2: self = .mpeg1(dynamicRangeCompression: info != 0)
-		case 3: self = .mpeg2(dynamicRangeCompression: info != 0)
+		self = switch audioFormat {
+		case 0: .ac3
+		case 2: .mpeg1(dynamicRangeCompression: info != 0)
+		case 3: .mpeg2(dynamicRangeCompression: info != 0)
 		case 4:
 			switch info {
-			case 0: self = .lpcm(bitsPerSample: 16)
-			case 1: self = .lpcm(bitsPerSample: 20)
-			case 2: self = .lpcm(bitsPerSample: 24)
-			default: self = .unexpected(audioFormat, info)
+			case 0: .lpcm(bitsPerSample: 16)
+			case 1: .lpcm(bitsPerSample: 20)
+			case 2: .lpcm(bitsPerSample: 24)
+			default: .unexpected(audioFormat, info)
 			}
-		case 6: self = .dts
-		default: self = .unexpected(audioFormat, info)
+		case 6: .dts
+		default: .unexpected(audioFormat, info)
 		}
 	}
 }
 
 private extension DVDInfo.Domain.AudioAttributes.RenderingIntent {
 	init(_ applicationMode: UInt8, additional info: audio_attr_t.__Unnamed_union_app_info, karaoke multiChannel: multichannel_ext_t?) {
-		switch applicationMode {
-		case 0: self = .normal
-		case 1: self = .karaoke(version: info.karaoke.version,
-		                        mode: Karaoke.Mode(info.karaoke.mode),
-		                        channels: multiChannel != nil ? Array(multiChannel!) : Array(info.karaoke.channel_assignment),
-		                        multiChannelIntro: info.karaoke.mc_intro == 0)
-		case 2: self = .surround(dolbyMatrixEncoded: info.surround.dolby_encoded != 0)
-		default: self = .unexpected(applicationMode)
+		self = switch applicationMode {
+		case 0: .normal
+		case 1: .karaoke(version: info.karaoke.version,
+		                 mode: Karaoke.Mode(info.karaoke.mode),
+		                 channels: multiChannel != nil ? Array(multiChannel!) : Array(info.karaoke.channel_assignment),
+		                 multiChannelIntro: info.karaoke.mc_intro == 0)
+		case 2: .surround(dolbyMatrixEncoded: info.surround.dolby_encoded != 0)
+		default: .unexpected(applicationMode)
 		}
 	}
 }
 
 private extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Mode {
 	init(_ mode: UInt8) {
-		switch mode {
-		case 0: self = .solo
-		case 1: self = .duet
+		self = switch mode {
+		case 0: .solo
+		case 1: .duet
 		default: fatalError("illegal value \(mode)")
 		}
 	}
@@ -437,27 +437,27 @@ private extension Array<DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.C
 		if multiChannel.ach4_seBe != 0 { self[4] = .effect("B") }
 	}
 	init(_ channelAssignment: UInt8) {
-		switch channelAssignment {
-		case 2: self = [.left, .right]
-		case 3: self = [.left, .guideMelody(), .right]
-		case 4: self = [.left, .right, .guideVocal()]
-		case 5: self = [.left, .guideMelody(), .right, .guideVocal()]
-		case 6: self = [.left, .right, .guideVocal("1"), .guideVocal("2")]
-		case 7: self = [.left, .guideMelody(), .right, .guideVocal("1"), .guideVocal("2")]
-		default: self = []
+		self = switch channelAssignment {
+		case 2: [.left, .right]
+		case 3: [.left, .guideMelody(), .right]
+		case 4: [.left, .right, .guideVocal()]
+		case 5: [.left, .guideMelody(), .right, .guideVocal()]
+		case 6: [.left, .right, .guideVocal("1"), .guideVocal("2")]
+		case 7: [.left, .guideMelody(), .right, .guideVocal("1"), .guideVocal("2")]
+		default: []
 		}
 	}
 }
 
 private extension DVDInfo.Domain.AudioAttributes.ContentInfo {
 	init(_ codeExtension: UInt8) {
-		switch codeExtension {
-		case 0: self = .unspecified
-		case 1: self = .sourceAudio
-		case 2: self = .audioDescription
-		case 3: self = .commentary
-		case 4: self = .alternateCommentary
-		default: self = .unexpected(codeExtension)
+		self = switch codeExtension {
+		case 0: .unspecified
+		case 1: .sourceAudio
+		case 2: .audioDescription
+		case 3: .commentary
+		case 4: .alternateCommentary
+		default: .unexpected(codeExtension)
 		}
 	}
 }
@@ -472,29 +472,29 @@ private extension DVDInfo.Domain.SubpictureAttributes {
 
 private extension DVDInfo.Domain.SubpictureAttributes.CodingType {
 	init(_ codeMode: UInt8) {
-		switch codeMode {
-		case 0: self = .rle
-		case 1: self = .extended
-		default: self = .unexpected(codeMode)
+		self = switch codeMode {
+		case 0: .rle
+		case 1: .extended
+		default: .unexpected(codeMode)
 		}
 	}
 }
 
 private extension DVDInfo.Domain.SubpictureAttributes.ContentInfo {
 	init(_ codeExtension: UInt8) {
-		switch codeExtension {
-		case 0: self = .unspecified
-		case 1: self = .subtitles(fontSize: .normal, forChildren: false)
-		case 2: self = .subtitles(fontSize: .large, forChildren: false)
-		case 3: self = .subtitles(fontSize: .normal, forChildren: true)
-		case 5: self = .closedCaptions(fontSize: .normal, forChildren: false)
-		case 6: self = .closedCaptions(fontSize: .large, forChildren: false)
-		case 7: self = .closedCaptions(fontSize: .normal, forChildren: true)
-		case 9: self = .forced
-		case 13: self = .commentary(fontSize: .normal, forChildren: false)
-		case 14: self = .commentary(fontSize: .large, forChildren: false)
-		case 15: self = .commentary(fontSize: .normal, forChildren: true)
-		default: self = .unexpected(codeExtension)
+		self = switch codeExtension {
+		case 0: .unspecified
+		case 1: .subtitles(fontSize: .normal, forChildren: false)
+		case 2: .subtitles(fontSize: .large, forChildren: false)
+		case 3: .subtitles(fontSize: .normal, forChildren: true)
+		case 5: .closedCaptions(fontSize: .normal, forChildren: false)
+		case 6: .closedCaptions(fontSize: .large, forChildren: false)
+		case 7: .closedCaptions(fontSize: .normal, forChildren: true)
+		case 9: .forced
+		case 13: .commentary(fontSize: .normal, forChildren: false)
+		case 14: .commentary(fontSize: .large, forChildren: false)
+		case 15: .commentary(fontSize: .normal, forChildren: true)
+		default: .unexpected(codeExtension)
 		}
 	}
 }
@@ -591,11 +591,11 @@ private extension DVDInfo.ProgramChain.Cell.AngleInfo {
 		if block == 0 && cell == 0 {
 			return nil
 		} else if block == 1 {
-			switch cell {
-			case 0: self = .externalCell
-			case 1: self = .firstCellInBlock
-			case 2: self = .innerCellInBlock
-			case 3: self = .lastCellInBlock
+			self = switch cell {
+			case 0: .externalCell
+			case 1: .firstCellInBlock
+			case 2: .innerCellInBlock
+			case 3: .lastCellInBlock
 			default: fatalError("illegal value \(cell)")
 			}
 		} else {
@@ -628,22 +628,22 @@ private extension DVDInfo.ProgramChain.Cell.KaraokeInfo {
 
 private extension DVDInfo.ProgramChain.PlaybackMode {
 	init(_ playbackMode: UInt8) {
-		if playbackMode == 0 {
-			self = .sequential
+		self = if playbackMode == 0 {
+			.sequential
 		} else if playbackMode.bit(7) {
-			self = .random(programCount: playbackMode.bits(0...6) + 1)
+			.random(programCount: playbackMode.bits(0...6) + 1)
 		} else {
-			self = .shuffle(programCount: playbackMode.bits(0...6) + 1)
+			.shuffle(programCount: playbackMode.bits(0...6) + 1)
 		}
 	}
 }
 
 private extension DVDInfo.ProgramChain.EndingMode {
 	init(_ still: UInt8) {
-		switch still {
-		case UInt8.min: self = .immediate
-		case UInt8.max: self = .holdLastFrameIndefinitely
-		default: self = .holdLastFrame(seconds: still)
+		self = switch still {
+		case UInt8.min: .immediate
+		case UInt8.max: .holdLastFrameIndefinitely
+		default: .holdLastFrame(seconds: still)
 		}
 	}
 }
@@ -776,12 +776,11 @@ private extension Dictionary where Key == DVDInfo.Index<DVDInfo.Interaction.Butt
 
 private extension DVDInfo.Interaction.Button {
 	init(_ btnit: btni_t, color btn_colit: btn_colit_t) {
-		let colorInfo: (UInt32, UInt32)?
-		switch btnit.btn_coln {
-		case 1: colorInfo = btn_colit.btn_coli.0
-		case 2: colorInfo = btn_colit.btn_coli.1
-		case 3: colorInfo = btn_colit.btn_coli.2
-		default: colorInfo = nil
+		let colorInfo: (UInt32, UInt32)? = switch btnit.btn_coln {
+		case 1: btn_colit.btn_coli.0
+		case 2: btn_colit.btn_coli.1
+		case 3: btn_colit.btn_coli.2
+		default: nil
 		}
 
 		self.init(mask: Rectangle(xStart: btnit.x_start, xEnd: btnit.x_end,
@@ -836,13 +835,13 @@ private extension DVDInfo.Command {
 		case 0:
 			// special instructions
 			condition = Self.decode(conditionType1: command)
-			switch command.bits(48...51) {
-			case 0: action = .nop
-			case 1: action = .goto(line: .init(command.bits(0...7)))
-			case 2: action = .break
-			case 3: action = .setParentalLevelAndGoto(level: Int(command.bits(8...11)),
-			                                          line: .init(command.bits(0...7)))
-			default: action = .unexpected(command)
+			action = switch command.bits(48...51) {
+			case 0: .nop
+			case 1: .goto(line: .init(command.bits(0...7)))
+			case 2: .break
+			case 3: .setParentalLevelAndGoto(level: Int(command.bits(8...11)),
+			                                 line: .init(command.bits(0...7)))
+			default: .unexpected(command)
 			}
 			link = .nop
 
@@ -869,10 +868,10 @@ private extension DVDInfo.Command {
 			condition = Self.decode(conditionType3: command)
 			let lhs, rhs, swap: Operand
 			lhs = .generalRegister(.init(command.bits(32...35)))
-			if command.bit(60) {
-				rhs = .immediate(UInt16(command.bits(16...31)))
+			rhs = if command.bit(60) {
+				.immediate(UInt16(command.bits(16...31)))
 			} else {
-				rhs = Self.decode(register: UInt8(command.bits(16...23)))
+				Self.decode(register: UInt8(command.bits(16...23)))
 			}
 			swap = .generalRegister(.init(command.bits(16...19)))
 			action = Self.decode(compute: command, lhs: lhs, rhs: rhs, swap: swap)
@@ -883,10 +882,10 @@ private extension DVDInfo.Command {
 			condition = Self.decode(conditionType4: command)
 			let lhs, rhs, swap: Operand
 			lhs = .generalRegister(.init(command.bits(48...51)))
-			if command.bit(60) {
-				rhs = .immediate(UInt16(command.bits(32...47)))
+			rhs = if command.bit(60) {
+				.immediate(UInt16(command.bits(32...47)))
 			} else {
-				rhs = Self.decode(register: UInt8(command.bits(32...39)))
+				Self.decode(register: UInt8(command.bits(32...39)))
 			}
 			swap = .generalRegister(.init(command.bits(32...35)))
 			action = Self.decode(compute: command, lhs: lhs, rhs: rhs, swap: swap)
@@ -898,58 +897,58 @@ private extension DVDInfo.Command {
 			link = .nop
 		}
 
-		switch (command.bits(61...63), condition, action, link) {
+		self = switch (command.bits(61...63), condition, action, link) {
 		case (_, _, .unexpected, _), (_, _, _, .unexpected):
-			self = .unexpected(command)
+			.unexpected(command)
 		case (_, .none, _, .nop):
-			self = action
+			action
 		case (_, .none, .nop, _):
-			self = link
+			link
 		case (_, .none, _, _):
-			self = .compound(action, link)
+			.compound(action, link)
 		case (_, .some, .nop, .nop):
-			self = .nop
+			.nop
 
 		// conditional action (link and condition cannot appear together)
 		case (0...3, .some(let condition), _, .nop):
-			self = .condition(if: condition, then: action)
+			.condition(if: condition, then: action)
 
 		// unconditional action, then conditional link
 		case (4, .some, _, .nop):
-			self = action
+			action
 		case (4, .some(let condition), .nop, _):
-			self = .condition(if: condition, then: link)
+			.condition(if: condition, then: link)
 		case (4, .some(let condition), _, _):
-			self = .compound(action, .condition(if: condition, then: link))
+			.compound(action, .condition(if: condition, then: link))
 
 		// conditional action and link
 		case (5, .some(let condition), _, .nop):
-			self = .condition(if: condition, then: action)
+			.condition(if: condition, then: action)
 		case (5, .some(let condition), .nop, _):
-			self = .condition(if: condition, then: link)
+			.condition(if: condition, then: link)
 		case (5, .some(let condition), _, _):
-			self = .condition(if: condition, then: .compound(action, link))
+			.condition(if: condition, then: .compound(action, link))
 
 		// conditional action, then unconditional link
 		case (6, .some(let condition), _, .nop):
-			self = .condition(if: condition, then: action)
+			.condition(if: condition, then: action)
 		case (6, .some, .nop, _):
-			self = link
+			link
 		case (6, .some(let condition), _, _):
-			self = .compound(.condition(if: condition, then: action), link)
+			.compound(.condition(if: condition, then: action), link)
 
 		default:
-			self = .unexpected(command)
+			.unexpected(command)
 		}
 	}
 
 	static func decode(conditionType1 command: UInt64) -> Condition? {
 		let lhs, rhs: Operand
 		lhs = decode(register: UInt8(command.bits(32...39)))
-		if command.bit(55) {
-			rhs = .immediate(UInt16(command.bits(16...31)))
+		rhs = if command.bit(55) {
+			.immediate(UInt16(command.bits(16...31)))
 		} else {
-			rhs = decode(register: UInt8(command.bits(16...23)))
+			decode(register: UInt8(command.bits(16...23)))
 		}
 		return decode(condition: command, lhs: lhs, rhs: rhs)
 	}
@@ -962,103 +961,103 @@ private extension DVDInfo.Command {
 	static func decode(conditionType3 command: UInt64) -> Condition? {
 		let lhs, rhs: Operand
 		lhs = decode(register: UInt8(command.bits(40...47)))
-		if command.bit(55) {
-			rhs = .immediate(UInt16(command.bits(0...15)))
+		rhs = if command.bit(55) {
+			.immediate(UInt16(command.bits(0...15)))
 		} else {
-			rhs = decode(register: UInt8(command.bits(0...7)))
+			decode(register: UInt8(command.bits(0...7)))
 		}
 		return decode(condition: command, lhs: lhs, rhs: rhs)
 	}
 	static func decode(conditionType4 command: UInt64) -> Condition? {
 		let lhs, rhs: Operand
 		lhs = decode(register: UInt8(command.bits(48...51)))
-		if command.bit(55) {
-			rhs = .immediate(UInt16(command.bits(16...31)))
+		rhs = if command.bit(55) {
+			.immediate(UInt16(command.bits(16...31)))
 		} else {
-			rhs = decode(register: UInt8(command.bits(16...23)))
+			decode(register: UInt8(command.bits(16...23)))
 		}
 		return decode(condition: command, lhs: lhs, rhs: rhs)
 	}
 	static func decode(condition command: UInt64, lhs: Operand, rhs: Operand) -> Condition? {
 		switch command.bits(52...54) {
-		case 1: return .bitwiseAndNotZero(lhs, rhs)
-		case 2: return .equal(lhs, rhs)
-		case 3: return .notEqual(lhs, rhs)
-		case 4: return .greaterThanOrEqual(lhs, rhs)
-		case 5: return .greaterThan(lhs, rhs)
-		case 6: return .lessThanOrEqual(lhs, rhs)
-		case 7: return .lessThan(lhs, rhs)
-		default: return nil
+		case 1: .bitwiseAndNotZero(lhs, rhs)
+		case 2: .equal(lhs, rhs)
+		case 3: .notEqual(lhs, rhs)
+		case 4: .greaterThanOrEqual(lhs, rhs)
+		case 5: .greaterThan(lhs, rhs)
+		case 6: .lessThanOrEqual(lhs, rhs)
+		case 7: .lessThan(lhs, rhs)
+		default: nil
 		}
 	}
 
 	static func decode(register: UInt8) -> Operand {
 		if register.bit(7) {
-			return .systemRegister(.init(register.bits(0...6)))
+			.systemRegister(.init(register.bits(0...6)))
 		} else {
-			return .generalRegister(.init(register.bits(0...6)))
+			.generalRegister(.init(register.bits(0...6)))
 		}
 	}
 
 	static func decode(link command: UInt64) -> Self {
 		let button = DVDInfo.Index<DVDInfo.Interaction.Button>(command.bits(10...15))
-		switch command.bits(48...51) {
-		case 0: return .nop
-		case 1: return decode(subLink: command)
-		case 4: return .jump(to: .programChain(.init(command.bits(0...15))))
-		case 5: return .jump(to: .part(.init(command.bits(0...9)), button))
-		case 6: return .jump(to: .program(.init(command.bits(0...7)), button))
-		case 7: return .jump(to: .cell(.init(command.bits(0...7)), button))
-		default: return .unexpected(command)
+		return switch command.bits(48...51) {
+		case 0: .nop
+		case 1: decode(subLink: command)
+		case 4: .jump(to: .programChain(.init(command.bits(0...15))))
+		case 5: .jump(to: .part(.init(command.bits(0...9)), button))
+		case 6: .jump(to: .program(.init(command.bits(0...7)), button))
+		case 7: .jump(to: .cell(.init(command.bits(0...7)), button))
+		default: .unexpected(command)
 		}
 	}
 	static func decode(subLink command: UInt64) -> Self {
 		let button = DVDInfo.Index<DVDInfo.Interaction.Button>(command.bits(10...15))
-		switch command.bits(0...4) {
-		case 0: return .jump(to: .none(button))
-		case 1: return .jump(to: .startOfCell(button))
-		case 2: return .jump(to: .nextCell(button))
-		case 3: return .jump(to: .previousCell(button))
-		case 5: return .jump(to: .startOfProgram(button))
-		case 6: return .jump(to: .nextProgram(button))
-		case 7: return .jump(to: .previousProgram(button))
-		case 9: return .jump(to: .startOfProgramChain(button))
-		case 10: return .jump(to: .nextProgramChain(button))
-		case 11: return .jump(to: .previousProgramChain(button))
-		case 12: return .jump(to: .upProgramChain(button))
-		case 13: return .jump(to: .endOfProgramChain(button))
-		case 16: return .jump(to: .resume(button))
-		default: return .unexpected(command)
+		return switch command.bits(0...4) {
+		case 0: .jump(to: .none(button))
+		case 1: .jump(to: .startOfCell(button))
+		case 2: .jump(to: .nextCell(button))
+		case 3: .jump(to: .previousCell(button))
+		case 5: .jump(to: .startOfProgram(button))
+		case 6: .jump(to: .nextProgram(button))
+		case 7: .jump(to: .previousProgram(button))
+		case 9: .jump(to: .startOfProgramChain(button))
+		case 10: .jump(to: .nextProgramChain(button))
+		case 11: .jump(to: .previousProgramChain(button))
+		case 12: .jump(to: .upProgramChain(button))
+		case 13: .jump(to: .endOfProgramChain(button))
+		case 16: .jump(to: .resume(button))
+		default: .unexpected(command)
 		}
 	}
 	static func decode(jumpOrCall command: UInt64) -> Self {
-		switch command.bits(48...51) {
-		case 0: return .nop
-		case 1: return .exit
-		case 2: return .jump(to: .title(.init(command.bits(16...23))))
-		case 3: return .jump(to: .titleWithinTitleSet(.init(command.bits(16...23))))
-		case 5: return .jump(to: .partWithinTitleSet(.init(command.bits(16...23)),
-		                                             .init(command.bits(32...40))))
+		let resume = DVDInfo.Index<DVDInfo.ProgramChain.Cell>(command.bits(24...31))
+		return switch command.bits(48...51) {
+		case 0: .nop
+		case 1: .exit
+		case 2: .jump(to: .title(.init(command.bits(16...23))))
+		case 3: .jump(to: .titleWithinTitleSet(.init(command.bits(16...23))))
+		case 5: .jump(to: .partWithinTitleSet(.init(command.bits(16...23)),
+		                                      .init(command.bits(32...40))))
 		case 6:
 			switch command.bits(22...23) {
-			case 0: return .jump(to: .start)
-			case 1: return .jump(to: .topLevelMenu(.init(UInt8(command.bits(16...19)))))
-			case 2: return .jump(to: .titleMenu(.init(command.bits(24...31)),
-			                                    .init(command.bits(32...39)),
-			                                    .init(UInt8(command.bits(16...19)))))
-			case 3: return .jump(to: .topLevelProgramChain(.init(command.bits(32...47))))
-			default: return .unexpected(command)
+			case 0: .jump(to: .start)
+			case 1: .jump(to: .topLevelMenu(.init(UInt8(command.bits(16...19)))))
+			case 2: .jump(to: .titleMenu(.init(command.bits(24...31)),
+			                             .init(command.bits(32...39)),
+			                             .init(UInt8(command.bits(16...19)))))
+			case 3: .jump(to: .topLevelProgramChain(.init(command.bits(32...47))))
+			default: .unexpected(command)
 			}
 		case 8:
-			let resume = DVDInfo.Index<DVDInfo.ProgramChain.Cell>(command.bits(24...31))
 			switch command.bits(22...23) {
-			case 0: return .call(to: .start, resume: resume)
-			case 1: return .call(to: .topLevelMenu(.init(UInt8(command.bits(16...19)))), resume: resume)
-			case 2: return .call(to: .menu(.init(UInt8(command.bits(16...19)))), resume: resume)
-			case 3: return .call(to: .topLevelProgramChain(.init(command.bits(32...47))), resume: resume)
-			default: return .unexpected(command)
+			case 0: .call(to: .start, resume: resume)
+			case 1: .call(to: .topLevelMenu(.init(UInt8(command.bits(16...19)))), resume: resume)
+			case 2: .call(to: .menu(.init(UInt8(command.bits(16...19)))), resume: resume)
+			case 3: .call(to: .topLevelProgramChain(.init(command.bits(32...47))), resume: resume)
+			default: .unexpected(command)
 			}
-		default: return .unexpected(command)
+		default: .unexpected(command)
 		}
 	}
 
@@ -1128,49 +1127,49 @@ private extension DVDInfo.Command {
 
 	static func decode(compute command: UInt64, lhs: Operand, rhs: Operand, swap: Operand) -> Self {
 		switch command.bits(56...59) {
-		case 0:	return .nop
-		case 1: return .compute(.assign(lhs, rhs))
-		case 2: return .compute(.swap(lhs, swap))
-		case 3: return .compute(.add(lhs, rhs))
-		case 4: return .compute(.subtract(lhs, rhs))
-		case 5: return .compute(.multiply(lhs, rhs))
-		case 6: return .compute(.divide(lhs, rhs))
-		case 7: return .compute(.modulus(lhs, rhs))
-		case 8: return .compute(.random(lhs, rhs))
-		case 9: return .compute(.bitwiseAnd(lhs, rhs))
-		case 10: return .compute(.bitwiseOr(lhs, rhs))
-		case 11: return .compute(.bitwiseXor(lhs, rhs))
-		default: return .unexpected(command)
+		case 0:	.nop
+		case 1: .compute(.assign(lhs, rhs))
+		case 2: .compute(.swap(lhs, swap))
+		case 3: .compute(.add(lhs, rhs))
+		case 4: .compute(.subtract(lhs, rhs))
+		case 5: .compute(.multiply(lhs, rhs))
+		case 6: .compute(.divide(lhs, rhs))
+		case 7: .compute(.modulus(lhs, rhs))
+		case 8: .compute(.random(lhs, rhs))
+		case 9: .compute(.bitwiseAnd(lhs, rhs))
+		case 10: .compute(.bitwiseOr(lhs, rhs))
+		case 11: .compute(.bitwiseXor(lhs, rhs))
+		default: .unexpected(command)
 		}
 	}
 }
 
 extension DVDInfo.Command.SystemRegister {
 	init(_ register: UInt8) {
-		switch register {
-		case 0: self = .preferredMenuLanguage
-		case 1: self = .audioStreamIndex
-		case 2: self = .subpictureStreamIndex
-		case 3: self = .viewingAngleIndex
-		case 4: self = .globalTitleIndex
-		case 5: self = .titleIndex
-		case 6: self = .programChainIndex
-		case 7: self = .partIndex
-		case 8: self = .selectedButtonIndex
-		case 9: self = .navigationTimer
-		case 10: self = .programChainForTimer
-		case 11: self = .karaokeMode
-		case 12: self = .parentalCountry
-		case 13: self = .parentalLevel
-		case 14: self = .videoMode
-		case 15: self = .playerAudioCapabilities
-		case 16: self = .preferredAudioLanguage
-		case 17: self = .preferredAudioContent
-		case 18: self = .preferredSubpictureLanguage
-		case 19: self = .preferredSubpictureContent
-		case 20: self = .playerRegionMask
-		case 21...23: self = .reserved
-		default: self = .unexpected
+		self = switch register {
+		case 0: .preferredMenuLanguage
+		case 1: .audioStreamIndex
+		case 2: .subpictureStreamIndex
+		case 3: .viewingAngleIndex
+		case 4: .globalTitleIndex
+		case 5: .titleIndex
+		case 6: .programChainIndex
+		case 7: .partIndex
+		case 8: .selectedButtonIndex
+		case 9: .navigationTimer
+		case 10: .programChainForTimer
+		case 11: .karaokeMode
+		case 12: .parentalCountry
+		case 13: .parentalLevel
+		case 14: .videoMode
+		case 15: .playerAudioCapabilities
+		case 16: .preferredAudioLanguage
+		case 17: .preferredAudioContent
+		case 18: .preferredSubpictureLanguage
+		case 19: .preferredSubpictureContent
+		case 20: .playerRegionMask
+		case 21...23: .reserved
+		default: .unexpected
 		}
 	}
 }
