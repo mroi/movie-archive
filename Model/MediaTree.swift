@@ -171,7 +171,7 @@ extension MediaTree {
 public struct MediaRecipe: Codable, Sendable {
 
 	/// The data stream containing encoded source video, audio, and subtitles.
-	public var data: any MediaDataSource
+	public var data: any DataSource
 
 	public var start: Time
 	public var stop: Time
@@ -183,7 +183,7 @@ public struct MediaRecipe: Codable, Sendable {
 	public var chapters: [Time: String]
 	public var metadata: [Metadata]
 
-	public init(data: any MediaDataSource,
+	public init(data: any DataSource,
 	            start: Time = .seconds(0),
 	            stop: Time = .seconds(.infinity),
 	            video: [TrackIdentifier<Video>: Video] = [:],
@@ -354,11 +354,11 @@ public struct MediaRecipe: Codable, Sendable {
 			case age(Int), parentalGuidance
 		}
 	}
-}
 
-/// Obtains data for a single asset from its source.
-public protocol MediaDataSource: Codable, Sendable {
-	// TODO: functionality to fetch data from source media
+	/// Obtains data for a single asset from its source.
+	public protocol DataSource: Codable, Sendable {
+		// TODO: functionality to fetch data from source media
+	}
 }
 
 
@@ -683,7 +683,7 @@ extension MediaTree.ID: CustomJSON.Codable {
 }
 
 extension MediaRecipe {
-	// custom encoding needed because of any MediaDataSource typed member
+	// custom encoding needed because of any DataSource typed member
 	private enum CodingKeys: String, CodingKey {
 		case data, start, stop, video, audio, subtitles, chapters, metadata
 	}
@@ -703,10 +703,10 @@ extension MediaRecipe {
 	public init(from decoder: any Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		let typeErasedData = try container.decode(protocolTypedForKey: .data)
-		guard let dataSource = typeErasedData as? MediaDataSource else {
-			throw DecodingError.typeMismatch(MediaDataSource.self,
+		guard let dataSource = typeErasedData as? MediaRecipe.DataSource else {
+			throw DecodingError.typeMismatch(MediaRecipe.DataSource.self,
 				.init(codingPath: decoder.codingPath, debugDescription:
-					"value of type \(MediaDataSource.self) expected"))
+					"value of type \(MediaRecipe.DataSource.self) expected"))
 		}
 		data = dataSource
 		start = try container.decode(Time.self, forKey: .start)

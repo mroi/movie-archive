@@ -11,7 +11,7 @@ import MP42Foundation
 
 extension MediaTree {
 
-	private struct DVDDataSource: MediaDataSource {}
+	private struct DVDDataSource: MediaRecipe.DataSource {}
 
 	/// Create a single-asset media tree from an existing MP4 file.
 	public init(fromMovie path: URL) throws {
