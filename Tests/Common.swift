@@ -100,14 +100,14 @@ class ModelTests: XCTestCase {
 	func testPassExecution() async {
 		let importer = TestImporter(.opaque(.init(payload: 42))) {
 			Test.Identity()
-			Base.Loop {
+			Compose.Loop {
 				Test.Countdown(3)
 				Test.Identity()
 			}
-			Base.If({ $0.allSatisfy { $0.opaque != nil } }) {
+			Compose.If({ $0.allSatisfy { $0.opaque != nil } }) {
 				Test.Identity()
 			}
-			Base.While(Test.Countdown(4)) {
+			Compose.While(Test.Countdown(4)) {
 				Test.Identity()
 			}
 		}
@@ -128,7 +128,7 @@ class ModelTests: XCTestCase {
 
 	func testClientInteraction() async {
 		let importer = TestImporter(.opaque(.init(payload: 42))) {
-			Base.MediaTreeInteraction()
+			Compose.MediaTreeInteraction()
 		}
 		let exporter = NullExporter()
 		let transform = Transform(importer: importer, exporter: exporter)

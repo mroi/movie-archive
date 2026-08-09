@@ -38,7 +38,7 @@ enum Test {
 	}
 
 	/// Test pass signalling a true condition until a countdown reaches zero.
-	struct Countdown: Pass, ConditionFlag {
+	struct Countdown: Pass, Compose.ConditionFlag {
 		var remaining: Int
 		var condition: Bool { remaining > 0 }
 		init(_ count: Int) { remaining = count }
