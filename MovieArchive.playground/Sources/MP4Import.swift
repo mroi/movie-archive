@@ -114,7 +114,7 @@ extension MediaTree {
 	}
 }
 
-fileprivate extension MediaRecipe.Video.ColorSpace {
+private extension MediaRecipe.Video.ColorSpace {
 	init(primaries: UInt16, transfer: UInt16, matrix: UInt16) {
 		switch (primaries, transfer, matrix) {
 		case (1, 1, 1): self = .rec709
@@ -125,7 +125,7 @@ fileprivate extension MediaRecipe.Video.ColorSpace {
 	}
 }
 
-fileprivate extension MediaRecipe.Video.ContentInfo {
+private extension MediaRecipe.Video.ContentInfo {
 	init(characteristics: Set<String>) {
 		switch characteristics {
 		case let tags where tags.isEmpty: self = .main
@@ -134,7 +134,7 @@ fileprivate extension MediaRecipe.Video.ContentInfo {
 	}
 }
 
-fileprivate extension Array where Element == MediaRecipe.Audio.Channel {
+private extension Array where Element == MediaRecipe.Audio.Channel {
 	init?(channels: UInt32, layout: UInt32) {
 		switch (channels, layout) {
 		case (1, 0): self = [.frontCenter]
@@ -145,7 +145,7 @@ fileprivate extension Array where Element == MediaRecipe.Audio.Channel {
 	}
 }
 
-fileprivate extension MediaRecipe.Audio.ContentInfo {
+private extension MediaRecipe.Audio.ContentInfo {
 	init(characteristics: Set<String>) {
 		switch characteristics {
 		case let tags where tags.isEmpty: self = .main
@@ -154,7 +154,7 @@ fileprivate extension MediaRecipe.Audio.ContentInfo {
 	}
 }
 
-fileprivate extension MediaRecipe.Subtitles.ContentInfo {
+private extension MediaRecipe.Subtitles.ContentInfo {
 	init(characteristics: Set<String>) {
 		switch characteristics {
 		case let tags where tags.isEmpty: self = .main
@@ -163,7 +163,7 @@ fileprivate extension MediaRecipe.Subtitles.ContentInfo {
 	}
 }
 
-fileprivate extension MediaRecipe.Metadata {
+private extension MediaRecipe.Metadata {
 	init?(identifier: String, value: Any?) {
 		switch identifier {
 		case MP42MetadataKeyName: self = .title(value as! String)
@@ -236,7 +236,7 @@ fileprivate extension MediaRecipe.Metadata {
 	}
 }
 
-fileprivate extension MediaRecipe.Metadata.ImageFormat {
+private extension MediaRecipe.Metadata.ImageFormat {
 	init(type: MP42TagArtworkType) {
 		switch type {
 		case MP42_ART_JPEG: self = .jpeg
@@ -246,7 +246,7 @@ fileprivate extension MediaRecipe.Metadata.ImageFormat {
 	}
 }
 
-fileprivate extension MediaRecipe.Metadata.Genre {
+private extension MediaRecipe.Metadata.Genre {
 	init(fromString genre: String) {
 		switch genre {
 		case "Action": self = .action
@@ -266,7 +266,7 @@ fileprivate extension MediaRecipe.Metadata.Genre {
 	}
 }
 
-fileprivate extension MediaRecipe.Metadata.Rating {
+private extension MediaRecipe.Metadata.Rating {
 	init(fromString rating: String) {
 		let ratingCode = rating.split(separator: "|")[2]
 		switch ratingCode {
@@ -279,7 +279,7 @@ fileprivate extension MediaRecipe.Metadata.Rating {
 	}
 }
 
-fileprivate extension Locale {
+private extension Locale {
 	init?(fromMP4Track language: String) {
 		switch language {
 		case "und": return nil
