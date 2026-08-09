@@ -32,7 +32,7 @@ class ModelTests: XCTestCase {
 	}
 
 	func testMediaTreeJSON() async {
-		struct TestPayload: Codable, CustomJSONEmptyCollectionSkipping {
+		struct TestPayload: Codable, CustomJSON.EmptyCollectionSkipping {
 			var someOptional: Int? = 42
 			var noneOptional: Int? = nil
 			var emptyArray: [Int] = []
@@ -420,7 +420,7 @@ class JSONCodingTests: XCTestCase {
 	}
 
 	func testUnkeyedContainer() {
-		struct Test: Codable, CustomJSONCodable, Equatable {
+		struct Test: Codable, CustomJSON.Codable, Equatable {
 			var string = "test"
 			var int: Int = 0
 			var int8: Int8 = 0
@@ -502,7 +502,7 @@ class JSONCodingTests: XCTestCase {
 	}
 
 	func testDecodingErrors() {
-		struct Test: Codable, CustomJSONCodable, Equatable {
+		struct Test: Codable, CustomJSON.Codable, Equatable {
 			var int = 0
 			init() {}
 			func encode(toCustomJSON encoder: Encoder) throws {

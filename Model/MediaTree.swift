@@ -596,7 +596,7 @@ private extension KeyedDecodingContainer {
 
 /* MARK: Custom JSON Coding */
 
-extension MediaTree: CustomJSONCodable {
+extension MediaTree: CustomJSON.Codable {
 	// custom encoding: encode single associated value directly, no positional key
 
 	public func encode(toCustomJSON encoder: any Encoder) throws {
@@ -632,9 +632,9 @@ extension MediaTree: CustomJSONCodable {
 	}
 }
 
-extension MediaTree.AssetNode.Kind: CustomJSONCompactEnum {}
+extension MediaTree.AssetNode.Kind: CustomJSON.CompactEnum {}
 
-extension MediaTree.CollectionNode: CustomJSONCodable {
+extension MediaTree.CollectionNode: CustomJSON.Codable {
 	// custom encoding: encode children directly without key
 	public func encode(toCustomJSON encoder: any Encoder) throws {
 		var container = encoder.singleValueContainer()
@@ -646,7 +646,7 @@ extension MediaTree.CollectionNode: CustomJSONCodable {
 	}
 }
 
-extension MediaTree.OpaqueNode: CustomJSONEmptyCollectionSkipping {
+extension MediaTree.OpaqueNode: CustomJSON.EmptyCollectionSkipping {
 	// custom encoding needed because of existentially typed member
 	private enum CodingKeys: String, CodingKey {
 		case id, payload, children
@@ -665,7 +665,7 @@ extension MediaTree.OpaqueNode: CustomJSONEmptyCollectionSkipping {
 	}
 }
 
-extension MediaTree.ID: CustomJSONCodable {
+extension MediaTree.ID: CustomJSON.Codable {
 	// custom encoding: encode ID value directly
 	public func encode(toCustomJSON encoder: any Encoder) throws {
 		var container = encoder.singleValueContainer()
@@ -719,7 +719,7 @@ extension MediaRecipe {
 	}
 }
 
-extension MediaRecipe.Time: CustomJSONStringKeyRepresentable, CustomJSONCodable {
+extension MediaRecipe.Time: CustomJSON.StringKeyRepresentable, CustomJSON.Codable {
 	// custom encoding: time as human-readable string
 
 	public var stringValue: String {
@@ -771,7 +771,7 @@ extension MediaRecipe.Time: CustomJSONStringKeyRepresentable, CustomJSONCodable 
 	}
 }
 
-extension MediaRecipe.TrackIdentifier: CustomJSONStringKeyRepresentable {
+extension MediaRecipe.TrackIdentifier: CustomJSON.StringKeyRepresentable {
 	public static func < (lhs: Self, rhs: Self) -> Bool {
 		if let lhs = lhs.intValue, let rhs = rhs.intValue {
 			lhs < rhs
@@ -782,17 +782,17 @@ extension MediaRecipe.TrackIdentifier: CustomJSONStringKeyRepresentable {
 	public init(stringValue: String) { self.init(stringValue) }
 }
 
-extension MediaRecipe.Video.ColorSpace: CustomJSONCompactEnum {}
-extension MediaRecipe.Video.InterlaceState: CustomJSONCompactEnum {}
-extension MediaRecipe.Video.ContentInfo: CustomJSONCompactEnum {}
-extension MediaRecipe.Audio.Channel: CustomJSONCompactEnum {}
-extension MediaRecipe.Audio.ContentInfo: CustomJSONCompactEnum {}
-extension MediaRecipe.Subtitles.ContentInfo: CustomJSONCompactEnum {}
-extension MediaRecipe.Metadata.ImageFormat: CustomJSONCompactEnum {}
-extension MediaRecipe.Metadata.Genre: CustomJSONCompactEnum {}
-extension MediaRecipe.Metadata.Rating: CustomJSONCompactEnum {}
+extension MediaRecipe.Video.ColorSpace: CustomJSON.CompactEnum {}
+extension MediaRecipe.Video.InterlaceState: CustomJSON.CompactEnum {}
+extension MediaRecipe.Video.ContentInfo: CustomJSON.CompactEnum {}
+extension MediaRecipe.Audio.Channel: CustomJSON.CompactEnum {}
+extension MediaRecipe.Audio.ContentInfo: CustomJSON.CompactEnum {}
+extension MediaRecipe.Subtitles.ContentInfo: CustomJSON.CompactEnum {}
+extension MediaRecipe.Metadata.ImageFormat: CustomJSON.CompactEnum {}
+extension MediaRecipe.Metadata.Genre: CustomJSON.CompactEnum {}
+extension MediaRecipe.Metadata.Rating: CustomJSON.CompactEnum {}
 
-extension MediaRecipe.Metadata: CustomJSONCodable {
+extension MediaRecipe.Metadata: CustomJSON.Codable {
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		switch self {
 		case .rating(let rating):
@@ -836,7 +836,7 @@ extension MediaRecipe.Metadata: CustomJSONCodable {
 	}
 }
 
-extension Locale: CustomJSONCodable {
+extension Locale: CustomJSON.Codable {
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		try identifier.encode(to: encoder)
 	}
@@ -846,7 +846,7 @@ extension Locale: CustomJSONCodable {
 	}
 }
 
-extension Date: CustomJSONCodable {
+extension Date: CustomJSON.Codable {
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		try ISO8601Format().encode(to: encoder)
 	}
