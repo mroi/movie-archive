@@ -1,7 +1,7 @@
 import Foundation
 
 
-extension Base {
+extension Compose {
 
 	/// A pass which stores its input and output media trees on disk.
 	///

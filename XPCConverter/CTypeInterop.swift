@@ -1,12 +1,69 @@
-/* Extensions for more convenient interaction with C types. */
+import LibDVDRead
+
+
+/* Extensions for more convenient and safe interaction with C types. */
 
 extension UnsafeBufferPointer {
 	/// Creates a new buffer pointer, while tolerating `nil` and 0 arguments.
+	///
+	/// - ToDo: Replace with a `Span` once `@lifetime` annotations become available.
+	///   The use of `Span` will reduce the usage of memory-unsafe primitives.
+	///   The annotation is necessary because the caller needs to prove that
+	///   the `start` argument outlives the resulting `Span`.
 	init<C: UnsignedInteger>(start: UnsafePointer<Element>?, count: C?) {
-		if start != nil && count != nil && count! > 0 {
-			self = Self(start: start, count: Int(count!))
+		unsafe self = if start != nil && count != nil && count! > 0 {
+			Self(start: start, count: Int(count!))
 		} else {
-			self = Self(start: nil, count: 0)
+			Self(start: nil, count: 0)
+		}
+	}
+}
+
+extension Span {
+	/// Compare the elements of the span to another `Sequence`.
+	func elementsEqual<Other>(_ other: Other) -> Bool where Other: Sequence, Element: Equatable, Element == Other.Element {
+		precondition(count == other.underestimatedCount)
+		return unsafe withUnsafeBufferPointer { unsafe $0.elementsEqual(other) }
+	}
+}
+
+extension MutableSpan {
+	/// Invokes a closure with a temporary mutable span of the requested capacity.
+	static func withTemporaryAllocation<R>(capacity: Int, body: (inout MutableSpan<Element>) -> R) -> R {
+		unsafe withUnsafeTemporaryAllocation(of: Element.self, capacity: capacity) { buffer in
+			var span = unsafe buffer.mutableSpan
+			return body(&span)
+		}
+	}
+}
+
+/// Reads one DVD block at the given block offset.
+func DVDReadBlock(_ handle: OpaquePointer, offset: Int, into buffer: inout MutableSpan<UInt8>) -> Bool {
+	precondition(buffer.count >= Int(DVD_VIDEO_LB_LEN))
+	let result = unsafe buffer.withUnsafeMutableBufferPointer {
+		unsafe DVDReadBlocks(handle, Int32(offset), 1, $0.baseAddress)
+	}
+	return result == 1
+}
+
+extension pci_t {
+	/// Parses a NAV PCI structure from a span of bytes.
+	init(from data: Span<UInt8>) {
+		self.init()
+		precondition(data.count >= MemoryLayout<pci_t>.size)
+		unsafe data.withUnsafeBufferPointer {
+			unsafe navRead_PCI(&self, .init(mutating: $0.baseAddress))
+		}
+	}
+}
+
+extension dsi_t {
+	/// Parses a NAV DSI structure from a span of bytes.
+	init(from data: Span<UInt8>) {
+		self.init()
+		precondition(data.count >= MemoryLayout<dsi_t>.size)
+		unsafe data.withUnsafeBufferPointer {
+			unsafe navRead_DSI(&self, .init(mutating: $0.baseAddress))
 		}
 	}
 }
@@ -33,19 +90,31 @@ extension Array {
 	///
 	/// Swift represents fixed-size arrays as tuples.
 	///
-	/// - ToDo: If generic type sequences are added to Swift, this could be
-	///   improved by replacing the `Mirror` with iterating over a type sequence.
-	init<T>(tuple: T) {
-		self = Mirror(reflecting: tuple).children.compactMap { $0.value as? Element }
+	/// - ToDo: `TupleElement` should equal `Element`, but same-type requirements
+	///   on type parameter packs are not supported.
+	init<each TupleElement>(tuple: (repeat each TupleElement)) {
+		self.init()
+		for element in repeat each tuple {
+			if let value = element as? Element {
+				self.append(value)
+			}
+		}
 	}
 }
 
 extension String {
 	/// Create a `String` from a fixed-size C-style array of `CChar`.
-	init<T>(tuple: T) {
-		self.init(Array<CChar>(tuple: tuple).compactMap {
-			let unicodePoint = Unicode.Scalar(UInt8($0))
-			return unicodePoint != "\0" ? Character(unicodePoint) : nil
-		})
+	///
+	/// - ToDo: `TupleElement` should equal `CChar`, but same-type requirements
+	///   on type parameter packs are not supported.
+	init<each TupleElement>(tuple: (repeat each TupleElement)) {
+		self.init()
+		for element in repeat each tuple {
+			if let value = element as? CChar {
+				let unicodePoint = Unicode.Scalar(UInt8(value))
+				guard unicodePoint != "\0" else { continue }
+				self.append(Character(unicodePoint))
+			}
+		}
 	}
 }

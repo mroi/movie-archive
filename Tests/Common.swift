@@ -32,7 +32,7 @@ class ModelTests: XCTestCase {
 	}
 
 	func testMediaTreeJSON() async {
-		struct TestPayload: Codable, CustomJSONEmptyCollectionSkipping {
+		struct TestPayload: Codable, CustomJSON.EmptyCollectionSkipping {
 			var someOptional: Int? = 42
 			var noneOptional: Int? = nil
 			var emptyArray: [Int] = []
@@ -72,8 +72,8 @@ class ModelTests: XCTestCase {
 
 		// decoding with type knowledge succeeds
 		var decoded: MediaTree!
-		let types = [TestPayload.self, TestPayload.self]  // testing non-unique elements
-		XCTAssertNoThrow(decoded = try json.mediaTree(withTypes: types))
+		let types = (TestPayload.self, TestPayload.self)  // testing non-unique elements
+		XCTAssertNoThrow(decoded = try json.mediaTree(withTypes: types.0, types.1))
 
 		// decoded result re-encodes to the original JSON
 		var json2: JSON<MediaTree>!
@@ -100,14 +100,14 @@ class ModelTests: XCTestCase {
 	func testPassExecution() async {
 		let importer = TestImporter(.opaque(.init(payload: 42))) {
 			Test.Identity()
-			Base.Loop {
+			Compose.Loop {
 				Test.Countdown(3)
 				Test.Identity()
 			}
-			Base.If({ $0.allSatisfy { $0.opaque != nil } }) {
+			Compose.If({ $0.allSatisfy { $0.opaque != nil } }) {
 				Test.Identity()
 			}
-			Base.While(Test.Countdown(4)) {
+			Compose.While(Test.Countdown(4)) {
 				Test.Identity()
 			}
 		}
@@ -128,7 +128,7 @@ class ModelTests: XCTestCase {
 
 	func testClientInteraction() async {
 		let importer = TestImporter(.opaque(.init(payload: 42))) {
-			Base.MediaTreeInteraction()
+			Compose.MediaTreeInteraction()
 		}
 		let exporter = NullExporter()
 		let transform = Transform(importer: importer, exporter: exporter)
@@ -420,7 +420,7 @@ class JSONCodingTests: XCTestCase {
 	}
 
 	func testUnkeyedContainer() {
-		struct Test: Codable, CustomJSONCodable, Equatable {
+		struct Test: Codable, CustomJSON.Codable, Equatable {
 			var string = "test"
 			var int: Int = 0
 			var int8: Int8 = 0
@@ -502,7 +502,7 @@ class JSONCodingTests: XCTestCase {
 	}
 
 	func testDecodingErrors() {
-		struct Test: Codable, CustomJSONCodable, Equatable {
+		struct Test: Codable, CustomJSON.Codable, Equatable {
 			var int = 0
 			init() {}
 			func encode(toCustomJSON encoder: Encoder) throws {

@@ -1,4 +1,11 @@
-extension Base {
+extension Compose {
+
+	/// Conforming passes expose a boolean condition flag.
+	public protocol ConditionFlag {
+
+		/// The indicated boolean condition.
+		var condition: Bool { get }
+	}
 
 	/// A pass which loops over all its sub-passes repeatedly.
 	///
@@ -85,11 +92,4 @@ extension Base {
 			return result
 		}
 	}
-}
-
-/// Conforming passes expose a boolean condition flag.
-public protocol ConditionFlag {
-
-	/// The indicated boolean condition.
-	var condition: Bool { get }
 }

@@ -24,7 +24,7 @@ struct DVDImporter: ImportPass {
 
 #if DEBUG
 		// record DVD source data and resulting media tree for use in testing
-		let wrapper = Base.Record(toPath: "DVD", identifier: info.discId) {
+		let wrapper = Compose.Record(toPath: "DVD", identifier: info.discId) {
 			return subPasses
 		}
 		return try await wrapper.process(tree)
@@ -39,7 +39,7 @@ extension DVDImporter: SubPassRecursing {
 	@SubPassBuilder
 	var subPasses: [any Pass] {
 		// TODO: gradually amend with passes until manual editing can be removed
-		Base.MediaTreeInteraction()
+		Compose.MediaTreeInteraction()
 	}
 }
 

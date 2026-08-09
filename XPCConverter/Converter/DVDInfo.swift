@@ -819,11 +819,11 @@ extension DVDInfo.Domain.ProgramChains {
 		let predicate = { (descriptor: Descriptor) -> Bool in
 			switch descriptor {
 			case .menu(language, _, _, index):
-				return true
+				true
 			case .title(_, _, index):
-				return true
+				true
 			default:
-				return false
+				false
 			}
 		}
 		return self[match: predicate]
