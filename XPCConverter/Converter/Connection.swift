@@ -153,6 +153,7 @@ extension ConverterConnection<Any> {
 	///   in the supported mock types. Callers must ensure that the `proxy` and
 	///   `publisher` parameters are not used concurrently and that `body` creates
 	///   no child tasks accessing `ConverterConnection`.
+	/// - ToDo: Convert to typed throws once `TaskLocal.withValue` supports typed throws.
 	static func withUnsafeMocks<R>(proxy: Interface, publisher: ConverterPublisher? = nil,
 	                               _ body: () async throws -> R) async rethrows -> R {
 		let emptyPublisher = Empty<ConverterOutput, ConverterError>(completeImmediately: false).eraseToAnyPublisher()
