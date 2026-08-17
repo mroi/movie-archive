@@ -33,12 +33,12 @@ extension DVDInfo.Command.Condition: @retroactive CustomJSON.CompactEnum {}
 extension DVDInfo.Command.Operand: @retroactive CustomJSON.CompactEnum {}
 
 extension DVDInfo.TitleSet.Title.CommandPresence: @retroactive CustomJSON.OptionSetCoding {
-	public var allValues: [(label: String, element: Element)] {
+	public var allValues: KeyValuePairs<String, Element> {
 		[
-			("features", .features),
-			("prePosts", .prePosts),
-			("cells", .cells),
-			("buttons", .buttons)
+			"features": .features,
+			"prePosts": .prePosts,
+			"cells": .cells,
+			"buttons": .buttons
 		]
 	}
 }
@@ -223,32 +223,32 @@ extension DVDInfo.Domain.VideoAttributes.AspectRatio: @retroactive CustomJSON.Co
 }
 
 extension DVDInfo.Domain.VideoAttributes.DisplayModification: @retroactive CustomJSON.OptionSetCoding {
-	public var allValues: [(label: String, element: Element)] {
+	public var allValues: KeyValuePairs<String, Element> {
 		[
-			("letterbox", .letterbox),
-			("pan&scan", .panScan)
+			"letterbox": .letterbox,
+			"pan&scan": .panScan
 		]
 	}
 }
 
 extension DVDInfo.Domain.VideoAttributes.Line21ClosedCaption: @retroactive CustomJSON.OptionSetCoding {
-	public var allValues: [(label: String, element: Element)] {
+	public var allValues: KeyValuePairs<String, Element> {
 		[
-			("firstField", .firstField),
-			("secondField", .secondField)
+			"firstField": .firstField,
+			"secondField": .secondField
 		]
 	}
 }
 
 extension DVDInfo.ProgramChain.Cell.PlaybackMode: @retroactive CustomJSON.OptionSetCoding {
-	public var allValues: [(label: String, element: Element)] {
+	public var allValues: KeyValuePairs<String, Element> {
 		[
-			("seamless", .seamless),
-			("seamlessAngle", .seamlessAngle),
-			("interleaved", .interleaved),
-			("timeDiscontinuity", .timeDiscontinuity),
-			("allStillFrames", .allStillFrames),
-			("stopFastForward", .stopFastForward)
+			"seamless": .seamless,
+			"seamlessAngle": .seamlessAngle,
+			"interleaved": .interleaved,
+			"timeDiscontinuity": .timeDiscontinuity,
+			"allStillFrames": .allStillFrames,
+			"stopFastForward": .stopFastForward
 		]
 	}
 }
@@ -398,33 +398,33 @@ extension DVDInfo.Command.SystemRegister: @retroactive CustomJSON.StringKeyRepre
 }
 
 extension DVDInfo.Restrictions: @retroactive CustomJSON.OptionSetCoding {
-	public var allValues: [(label: String, element: Self)] {
+	public var allValues: KeyValuePairs<String, Self> {
 		[
-			("noStop", .noStop),
-			("noJumpToTitle", .noJumpToTitle),
-			("noJumpToPart", .noJumpToPart),
-			("noJumpIntoTitle", .noJumpIntoTitle),
-			("noJumpIntoPart", .noJumpIntoPart),
-			("noJumpUp", .noJumpUp),
-			("noJumpToTopLevelMenu", .noJumpToTopLevelMenu),
-			("noJumpToPerTitleMenu", .noJumpToPerTitleMenu),
-			("noJumpToAudioMenu", .noJumpToAudioMenu),
-			("noJumpToSubpictureMenu", .noJumpToSubpictureMenu),
-			("noJumpToViewingAngleMenu", .noJumpToViewingAngleMenu),
-			("noJumpToChapterMenu", .noJumpToChapterMenu),
-			("noProgramForward", .noProgramForward),
-			("noProgramBackward", .noProgramBackward),
-			("noSeekForward", .noSeekForward),
-			("noSeekBackward", .noSeekBackward),
-			("noResumeFromMenu", .noResumeFromMenu),
-			("noMenuInteractions", .noMenuInteractions),
-			("noStillSkip", .noStillSkip),
-			("noPause", .noPause),
-			("noChangeAudioStream", .noChangeAudioStream),
-			("noChangeSubpictureStream", .noChangeSubpictureStream),
-			("noChangeViewingAngle", .noChangeViewingAngle),
-			("noChangeVideoMode", .noChangeVideoMode),
-			("noChangeKaraokeMode", .noChangeKaraokeMode)
+			"noStop": .noStop,
+			"noJumpToTitle": .noJumpToTitle,
+			"noJumpToPart": .noJumpToPart,
+			"noJumpIntoTitle": .noJumpIntoTitle,
+			"noJumpIntoPart": .noJumpIntoPart,
+			"noJumpUp": .noJumpUp,
+			"noJumpToTopLevelMenu": .noJumpToTopLevelMenu,
+			"noJumpToPerTitleMenu": .noJumpToPerTitleMenu,
+			"noJumpToAudioMenu": .noJumpToAudioMenu,
+			"noJumpToSubpictureMenu": .noJumpToSubpictureMenu,
+			"noJumpToViewingAngleMenu": .noJumpToViewingAngleMenu,
+			"noJumpToChapterMenu": .noJumpToChapterMenu,
+			"noProgramForward": .noProgramForward,
+			"noProgramBackward": .noProgramBackward,
+			"noSeekForward": .noSeekForward,
+			"noSeekBackward": .noSeekBackward,
+			"noResumeFromMenu": .noResumeFromMenu,
+			"noMenuInteractions": .noMenuInteractions,
+			"noStillSkip": .noStillSkip,
+			"noPause": .noPause,
+			"noChangeAudioStream": .noChangeAudioStream,
+			"noChangeSubpictureStream": .noChangeSubpictureStream,
+			"noChangeViewingAngle": .noChangeViewingAngle,
+			"noChangeVideoMode": .noChangeVideoMode,
+			"noChangeKaraokeMode": .noChangeKaraokeMode
 		]
 	}
 }

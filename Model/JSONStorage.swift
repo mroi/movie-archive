@@ -401,7 +401,7 @@ extension CustomJSON {
 		/// Mapping between string labels and option set elements.
 		///
 		/// The encoding will maintain the provided element order.
-		var allValues: [(label: String, element: Element)] { get }
+		var allValues: KeyValuePairs<String, Element> { get }
 	}
 }
 
@@ -417,7 +417,7 @@ extension CustomJSON.OptionSetCoding {
 		self.init()
 		while !container.isAtEnd {
 			let label = try container.decode(String.self)
-			guard let element = allValues.first(where: { $0.label == label })?.element else {
+			guard let element = allValues.first(where: { $0.key == label })?.value else {
 				throw DecodingError.dataCorrupted(.init(codingPath: container.codingPath,
 					debugDescription: "OptionSet \(Self.self) does not understand value ‘\(label)’"))
 			}
