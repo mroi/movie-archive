@@ -1,3 +1,4 @@
+import RegexBuilder
 import MovieArchiveModel
 import MovieArchiveConverter
 
@@ -82,46 +83,63 @@ extension DVDInfo.Domain.ProgramChains.Descriptor: @retroactive CustomJSON.Strin
 		}
 	}
 
-	/// - ToDo: Simplify using `Regex` once we move to macOS 13
 	public init?(stringValue: String) {
-		func parseElements(_ tupleString: Substring) -> [String: String] {
-			guard tupleString.hasPrefix("(") && tupleString.hasSuffix(")") else {
-				return [:]
+		func labeledArgument<Type>(_ label: String, as reference: Reference<Type>, transform: @escaping (Substring) -> Type) -> some RegexComponent {
+			Regex {
+				label
+				ZeroOrMore(.whitespace)
+				":"
+				ZeroOrMore(.whitespace)
+				TryCapture(as: reference, {
+					ZeroOrMore(CharacterClass.any.subtracting(.anyOf(",)")).subtracting(.whitespace))
+				}, transform: transform)
 			}
-			let elementsString = tupleString.dropFirst().dropLast()
-			let elementsList = elementsString.split(separator: ",")
-			let elementsPairs = elementsList.compactMap { element -> (String, String)? in
-				let pair = element.split(separator: ":").map {
-					$0.trimmingCharacters(in: .whitespaces)
+		}
+		func descriptor(for selector: String, using argument: some RegexComponent) -> some RegexComponent {
+			Regex {
+				selector
+				"("
+				ZeroOrMore {
+					ZeroOrMore(.whitespace)
+					argument
+					ZeroOrMore(.whitespace)
+					/(?:,(?!\s*\))|(?=\)))/   // match a comma unless it is followed by a closing parenthesis
 				}
-				guard pair.count == 2 else { return nil }
-				return (pair[0], pair[1])
+				")"
 			}
-			return Dictionary(uniqueKeysWithValues: elementsPairs)
 		}
 
 		switch stringValue {
 
 		case let string where string.hasPrefix("menu"):
-			let elements = parseElements(string.dropFirst("menu".count))
-			guard let language = elements["language"] else { return nil }
-			guard let element = elements["entryPoint"], let entryPoint = Bool(element) else { return nil }
-			let type: MenuType?
-			if let element = elements["type"] {
-				guard let decoded = MenuType(stringValue: element) else { return nil }
-				type = decoded
-			} else {
-				type = nil
+			let language = Reference(String?.self)
+			let entryPoint = Reference(Bool?.self)
+			let menuType = Reference(MenuType?.self)
+			let index = Reference(DVDInfo.Index<DVDInfo.ProgramChain>?.self)
+			let menuArguments = ChoiceOf {
+				labeledArgument("language", as: language, transform: String.init)
+				labeledArgument("entryPoint", as: entryPoint, transform: { Bool(String($0)) })
+				labeledArgument("type", as: menuType, transform: { MenuType(stringValue: String($0)) })
+				labeledArgument("index", as: index, transform: { UInt($0).map(DVDInfo.Index<DVDInfo.ProgramChain>.init) })
 			}
-			guard let element = elements["index"], let index = UInt(element) else { return nil }
-			self = .menu(language: language, entryPoint: entryPoint, type: type, index: .init(index))
+			let arguments = string.wholeMatch(of: descriptor(for: "menu", using: menuArguments))
+			guard let arguments else { return nil }
+			guard arguments[language] != nil, arguments[entryPoint] != nil, arguments[index] != nil else { return nil }
+			self = .menu(language: arguments[language]!, entryPoint: arguments[entryPoint]!, type: arguments[menuType], index: arguments[index]!)
 
 		case let string where string.hasPrefix("title"):
-			let elements = parseElements(string.dropFirst("title".count))
-			guard let element = elements["title"], let title = UInt(element) else { return nil }
-			guard let element = elements["entryPoint"], let entryPoint = Bool(element) else { return nil }
-			guard let element = elements["index"], let index = UInt(element) else { return nil }
-			self = .title(title: .init(title), entryPoint: entryPoint, index: .init(index))
+			let title = Reference(DVDInfo.Index<DVDInfo.TitleSet.Title>?.self)
+			let entryPoint = Reference(Bool?.self)
+			let index = Reference(DVDInfo.Index<DVDInfo.ProgramChain>?.self)
+			let titleArguments = ChoiceOf {
+				labeledArgument("title", as: title, transform: { UInt($0).map(DVDInfo.Index<DVDInfo.TitleSet.Title>.init) })
+				labeledArgument("entryPoint", as: entryPoint, transform: { Bool(String($0)) })
+				labeledArgument("index", as: index, transform: { UInt($0).map(DVDInfo.Index<DVDInfo.ProgramChain>.init) })
+			}
+			let arguments = string.wholeMatch(of: descriptor(for: "title", using: titleArguments))
+			guard let arguments else { return nil }
+			guard arguments[title] != nil, arguments[entryPoint] != nil, arguments[index] != nil else { return nil }
+			self = .title(title: arguments[title]!, entryPoint: arguments[entryPoint]!, index: arguments[index]!)
 
 		default:
 			return nil
@@ -147,7 +165,6 @@ extension DVDInfo.Domain.ProgramChains.Descriptor.MenuType: @retroactive CustomJ
 		return sortIndex(lhs) < sortIndex(rhs)
 	}
 
-	/// - ToDo: Simplify using `Regex` once we move to macOS 13
 	public init?(stringValue: String) {
 		switch stringValue {
 		case "titles": self = .titles
@@ -156,10 +173,14 @@ extension DVDInfo.Domain.ProgramChains.Descriptor.MenuType: @retroactive CustomJ
 		case "audio": self = .audio
 		case "subpicture": self = .subpicture
 		case "viewingAngle": self = .viewingAngle
-		case let string where string.hasPrefix("unexpected(") && string.hasSuffix(")"):
-			let innerString = string.dropFirst("unexpected(".count).dropLast(")".count)
-			guard let value = UInt8(innerString) else { return nil }
-			self = .unexpected(value)
+		case let string where string.hasPrefix("unexpected"):
+			let match = string.wholeMatch {
+				"unexpected("
+				TryCapture { OneOrMore(.digit) } transform: { UInt8($0) }
+				")"
+			}
+			guard let match else { return nil }
+			self = .unexpected(match.1)
 		default: return nil
 		}
 	}
@@ -490,42 +511,58 @@ extension DVDInfo.Time: @retroactive CustomJSON.Codable {
 		try container.encode(string)
 	}
 
-	/// - ToDo: Simplify using `Regex` once we move to macOS 13
 	public init(fromCustomJSON decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
 		let string = try container.decode(String.self)
-		var substrings = string.split(separator: ":")
-		if substrings.count < 1 || substrings.count > 4 {
-			throw DecodingError.dataCorruptedError(in: container,
-				debugDescription: "unexpected number of time components: \(substrings.count)")
-		}
 
-		let framesAndRate = substrings.removeLast().split(separator: "@")
-		if framesAndRate.count != 2 {
-			throw DecodingError.dataCorruptedError(in: container,
-				debugDescription: "frame count or frame rate missing")
-		}
-		substrings.append(contentsOf: framesAndRate)
+		let hours = Reference(UInt8?.self)
+		let minutes = Reference(UInt8?.self)
+		let seconds = Reference(UInt8?.self)
+		let frames = Reference(UInt8.self)
+		let rate = Reference(FrameRate.self)
 
-		let components = try substrings.reversed().map {
-			guard let number = UInt8($0) else {
-				throw DecodingError.dataCorruptedError(in: container,
-					debugDescription: "malformed time component: ‘\($0)’")
+		let components = string.wholeMatch {
+			// broken out of the builder expression because the compiler is unable to typecheck
+			let hoursPattern = TryCapture(as: hours) { OneOrMore(.digit) } transform: { UInt8($0) }
+			Optionally {
+				Optionally {
+					Optionally {
+						hoursPattern
+						":"
+					}
+					TryCapture(as: minutes) { OneOrMore(.digit) } transform: { UInt8($0) }
+					":"
+				}
+				TryCapture(as: seconds) { OneOrMore(.digit) } transform: { UInt8($0) }
+				":"
 			}
-			return number
+			TryCapture(as: frames) { OneOrMore(.digit) } transform: { UInt8($0) }
+			"@"
+			TryCapture(as: rate) {
+				OneOrMore(.digit)
+				Optionally {
+					"."
+					OneOrMore(.digit)
+				}
+			} transform: {
+				guard let integer = UInt($0) else { return nil }
+				let rate: Double = switch integer {
+				case 25: 25.00
+				case 30: 29.97
+				default: Double($0) ?? Double(integer)
+				}
+				return .framesPerSecond(rate)
+			}
+		}
+		guard let components else {
+			throw DecodingError.dataCorruptedError(in: container,
+				debugDescription: "malformed time: ‘\(string)’")
 		}
 
-		let fps: Double
-		switch components[0] {
-		case 25: fps = 25.00
-		case 30: fps = 29.97
-		default: fps = Double(substrings.last!) ?? Double(components[0])
-		}
-
-		self.init(hours: components.count > 4 ? components[4] : 0,
-				  minutes: components.count > 3 ? components[3] : 0,
-				  seconds: components.count > 2 ? components[2] : 0,
-				  frames: components[1],
-				  rate: .framesPerSecond(fps))
+		self.init(hours: components[hours] ?? 0,
+		          minutes: components[minutes] ?? 0,
+		          seconds: components[seconds] ?? 0,
+		          frames: components[frames],
+		          rate: components[rate])
 	}
 }

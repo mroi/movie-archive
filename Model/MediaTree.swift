@@ -1,5 +1,6 @@
 import Foundation
 import Synchronization
+import RegexBuilder
 
 
 /* MARK: Node Types and Properties */
@@ -748,22 +749,37 @@ extension MediaRecipe.Time: CustomJSON.StringKeyRepresentable, CustomJSON.Codabl
 		}
 	}
 
-	/// - ToDo: Simplify using `Regex` once we move to macOS 13
 	public init?(stringValue: String) {
 		switch stringValue {
 		case "∞": self = .seconds(.infinity)
 		case let string where string.contains("."):
-			let substrings = string.split(separator: ":")
-			guard 0...3 ~= substrings.count else { return nil }
-			var components: [Double] = []
-			for string in substrings.reversed() {
-				guard let number = Double(string) else { return nil }
-				components.append(number)
+			let hours = Reference(Double?.self)
+			let minutes = Reference(Double?.self)
+			let seconds = Reference(Double.self)
+			let components = string.wholeMatch {
+				Optionally {
+					Optionally {
+						Capture(as: hours) {
+							OneOrMore(.digit)
+						} transform: { Double($0) }
+						":"
+					}
+					Capture(as: minutes) {
+						OneOrMore(.digit)
+					} transform: { Double($0) }
+					":"
+				}
+				TryCapture(as: seconds) {
+					OneOrMore(.digit)
+					"."
+					OneOrMore(.digit)
+				} transform: { Double($0) }
 			}
-			let hours = components.count > 2 ? components[2] * 60 * 60 : 0
-			let minutes = components.count > 1 ? components[1] * 60 : 0
-			let seconds = components[0]
-			self = .seconds(hours + minutes + seconds)
+			guard let components else { return nil }
+			let hourSeconds = (components[hours] ?? 0) * 60 * 60
+			let minuteSeconds = (components[minutes] ?? 0) * 60
+			let secondSeconds = components[seconds]
+			self = .seconds(hourSeconds + minuteSeconds + secondSeconds)
 		default:
 			guard let frames = Int(stringValue) else { return nil }
 			self = .frames(frames)
