@@ -89,6 +89,32 @@ class DVDImporterTests: XCTestCase {
 		await fulfillment(of: [readCall], timeout: .infinity)
 	}
 
+	func testDVDInfoJSON() async {
+		// test struct with some custom JSON DVD info types
+		struct DVDInfoTest: Codable {
+			let duration: DVDInfo.Time
+			let menu: DVDInfo.Domain.ProgramChains.Descriptor
+			let title: DVDInfo.Domain.ProgramChains.Descriptor
+		}
+
+		let duration = DVDInfo.Time(hours: 1, minutes: 2, seconds: 3, frames: 4, rate: .framesPerSecond(25))
+		let menu = DVDInfo.Domain.ProgramChains.Descriptor.menu(language: "eng", entryPoint: true, type: .titles, index: 3)
+		let title = DVDInfo.Domain.ProgramChains.Descriptor.title(title: 1, entryPoint: true, index: 5)
+		let test = DVDInfoTest(duration: duration, menu: menu, title: title)
+
+		// encode DVD info to JSON and decode again
+		var json: JSON<DVDInfoTest>!
+		XCTAssertNoThrow(json = try JSON(test))
+		print(json.string())
+		var decoded: DVDInfoTest!
+		XCTAssertNoThrow(decoded = try json.decode())
+
+		// decoded result re-encodes to the original JSON
+		var json2: JSON<DVDInfoTest>!
+		XCTAssertNoThrow(json2 = try JSON(decoded))
+		XCTAssertEqual(json.data, json2.data)
+	}
+
 	func testMinimalDVD() async {
 		let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
 		var importer: Importer?
