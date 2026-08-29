@@ -1,4 +1,5 @@
-import XCTest
+import Testing
+import Foundation
 
 @testable import MovieArchiveModel
 @testable import MovieArchiveImporters
@@ -7,89 +8,97 @@ import XCTest
 
 /* MARK: Generic Importer Tests */
 
-class ImporterTests: XCTestCase {
+@Suite
+struct ImporterTests {
 
-	func testUnsupportedSource() async {
+	@Test
+	func unsupportedSource() async {
 		let source = URL(fileURLWithPath: "/var/empty")
-		await XCTAssertThrowsErrorAsync(try await Importer(source: source)) {
-			XCTAssertEqual($0 as! Importer.Error, .sourceNotSupported)
+		let error = await #expect(throws: Importer.Error.self) {
+			try await Importer(source: source)
 		}
+		#expect(error == .sourceNotSupported)
 	}
 }
 
 
 /* MARK: DVD Importer Tests */
 
-class DVDImporterTests: XCTestCase {
+@Suite
+struct DVDImporterTests {
 
-	/// The `Bundle` of this test class, can be used to access test resources.
-	private var testBundle: Bundle { Bundle(for: type(of: self)) }
+	/// The `Bundle` of this test target, can be used to access test resources.
+	private var testBundle: Bundle { Bundle(for: BundleFinder.self) }
+	private final class BundleFinder: NSObject {}
 
-	func testReaderInitDeinit() async {
-		let openCall = expectation(description: "open should be called")
-		let closeCall = expectation(description: "close should be called")
+	@Test
+	func readerInitDeinit() async {
+		await confirmation("open should be called") { openCall in
+			await confirmation("close should be called") { closeCall in
 
-		class ReaderMock: ConverterDVDReader {
-			let openCall: XCTestExpectation
-			let closeCall: XCTestExpectation
-
-			init(withExpectations expectations: XCTestExpectation...) {
-				openCall = expectations[0]
-				closeCall = expectations[1]
-			}
-			func open(_: URL, completionHandler done: @escaping (UUID?) -> Void) {
-				openCall.fulfill()
-				done(UUID())
-			}
-			func close(_: UUID) {
-				closeCall.fulfill()
-			}
-			func readInfo(_: UUID, completionHandler: @escaping (Data?) -> Void) {
-				XCTFail("unexpected read")
+				class ReaderMock: ConverterDVDReader {
+					let openCall: Confirmation
+					let closeCall: Confirmation
+					
+					init(open: Confirmation, close: Confirmation) {
+						openCall = open
+						closeCall = close
+					}
+					func open(_: URL, completionHandler done: @escaping (UUID?) -> Void) {
+						openCall.confirm()
+						done(UUID())
+					}
+					func close(_: UUID) {
+						closeCall.confirm()
+					}
+					func readInfo(_: UUID, completionHandler: @escaping (Data?) -> Void) {
+						Issue.record("unexpected read")
+					}
+				}
+				
+				await ConverterConnection.withUnsafeMocks(proxy: ReaderMock(open: openCall, close: closeCall)) {
+					let source = URL(fileURLWithPath: ".")
+					await #expect(throws: Never.self) {
+						try await DVDReader(source: source)
+					}
+				}
 			}
 		}
-
-		try! await ConverterConnection.withUnsafeMocks(proxy: ReaderMock(withExpectations: openCall, closeCall)) {
-			let source = URL(fileURLWithPath: ".")
-			await XCTAssertNoThrowAsync(try await DVDReader(source: source))
-		}
-
-		await fulfillment(of: [openCall, closeCall], timeout: .infinity)
 	}
 
-	func testInfoError() async {
-		let readCall = expectation(description: "read info should be called")
+	@Test
+	func readInfoError() async throws {
+		try await confirmation("read info should be called") { readCall in
 
-		class ReaderMock: ConverterDVDReader {
-			let readCall: XCTestExpectation
+			class ReaderMock: ConverterDVDReader {
+				let readCall: Confirmation
+				
+				init(read: Confirmation) {
+					readCall = read
+				}
+				func open(_: URL, completionHandler done: @escaping (UUID?) -> Void) {
+					done(UUID())
+				}
+				func close(_: UUID) {}
+				func readInfo(_: UUID, completionHandler done: @escaping (Data?) -> Void) {
+					readCall.confirm()
+					done(Data(base64Encoded: "broken archive"))
+				}
+			}
 
-			init(expectations: XCTestExpectation...) {
-				readCall = expectations[0]
-			}
-			func open(_: URL, completionHandler done: @escaping (UUID?) -> Void) {
-				done(UUID())
-			}
-			func close(_: UUID) {}
-			func readInfo(_: UUID, completionHandler done: @escaping (Data?) -> Void) {
-				readCall.fulfill()
-				done(Data(base64Encoded: "broken archive"))
+			try await ConverterConnection.withUnsafeMocks(proxy: ReaderMock(read: readCall)) {
+				let source = URL(fileURLWithPath: ".")
+				let reader = try await DVDReader(source: source)
+				let error = await #expect(throws: ConverterError.self) {
+					try await reader.info()
+				}
+				#expect(error == .sourceReadError)
 			}
 		}
-
-		try! await ConverterConnection.withUnsafeMocks(proxy: ReaderMock(expectations: readCall)) {
-			let source = URL(fileURLWithPath: ".")
-			var reader: DVDReader?
-			await XCTAssertNoThrowAsync(reader = try await DVDReader(source: source))
-			XCTAssertNotNil(reader)
-			await XCTAssertThrowsErrorAsync(try await reader!.info()) {
-				XCTAssertEqual($0 as! ConverterError, .sourceReadError)
-			}
-		}
-
-		await fulfillment(of: [readCall], timeout: .infinity)
 	}
 
-	func testDVDInfoJSON() async {
+	@Test
+	func dvdInfoJSON() async throws {
 		// test struct with some custom JSON DVD info types
 		struct DVDInfoTest: Codable {
 			let duration: DVDInfo.Time
@@ -103,25 +112,21 @@ class DVDImporterTests: XCTestCase {
 		let test = DVDInfoTest(duration: duration, menu: menu, title: title)
 
 		// encode DVD info to JSON and decode again
-		var json: JSON<DVDInfoTest>!
-		XCTAssertNoThrow(json = try JSON(test))
+		let json = try JSON(test)
 		print(json.string())
-		var decoded: DVDInfoTest!
-		XCTAssertNoThrow(decoded = try json.decode())
+		let decoded = try json.decode()
 
 		// decoded result re-encodes to the original JSON
-		var json2: JSON<DVDInfoTest>!
-		XCTAssertNoThrow(json2 = try JSON(decoded))
-		XCTAssertEqual(json.data, json2.data)
+		let json2 = try JSON(decoded)
+		#expect(json.data == json2.data)
 	}
 
-	func testMinimalDVD() async {
+	@Test
+	func minimalDVD() async throws {
 		let iso = testBundle.url(forResource: "MinimalDVD", withExtension: "iso")!
-		var importer: Importer?
-		await XCTAssertNoThrowAsync(importer = try await Importer(source: iso))
-		XCTAssertNotNil(importer)
+		let importer = try await Importer(source: iso)
 
-		let transform = Transform(importer: importer!, exporter: NullExporter())
+		let transform = Transform(importer: importer, exporter: NullExporter())
 
 		var outputs = 0
 		let subscription = transform.publisher
@@ -131,8 +136,8 @@ class DVDImporterTests: XCTestCase {
 
 		await transform.execute()
 
-		await XCTAssertEqualAsync(await transform.state, .success)
-		XCTAssertEqual(transform.description, "DVDImporter → NullExporter")
-		XCTAssertEqual(outputs, 9)
+		#expect(await transform.state == .success)
+		#expect(transform.description == "DVDImporter → NullExporter")
+		#expect(outputs == 9)
 	}
 }

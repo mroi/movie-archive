@@ -1,4 +1,5 @@
-import XCTest
+import Testing
+import Foundation
 
 @testable import MovieArchiveModel
 @testable import MovieArchiveImporters
@@ -8,26 +9,29 @@ import XCTest
 /* MARK: Recorded Input & Output */
 
 /// Iterates over recorded input/output pairs, comparing processed inputs to expected outputs.
-class RecordedTests: XCTestCase {
+@Suite
+struct RecordedTests {
 
-	/// The `Bundle` of this test class, can be used to access test resources.
-	private var testBundle: Bundle { Bundle(for: type(of: self)) }
+	/// The `Bundle` of this test target, can be used to access test resources.
+	private var testBundle: Bundle { Bundle(for: BundleFinder.self) }
+	private final class BundleFinder: NSObject {}
 
-	func testRecordedDVDs() async {
+	@Test
+	func recordedDVDs() async throws {
 		class ReaderMock: ConverterDVDReader {
 			func open(_: URL, completionHandler done: @escaping (UUID?) -> Void) {
 				done(UUID())
 			}
 			func close(_: UUID) {}
 			func readInfo(_: UUID, completionHandler done: @escaping (Data?) -> Void) {
-				XCTFail("unexpected read")
+				Issue.record("unexpected read")
 			}
 		}
 
 		// setup DVD importer
 		let source = URL(fileURLWithPath: ".")
-		let importer = await ConverterConnection.withUnsafeMocks(proxy: ReaderMock()) {
-			try! await DVDImporter(source: source)
+		let importer = try await ConverterConnection.withUnsafeMocks(proxy: ReaderMock()) {
+			try await DVDImporter(source: source)
 		}
 
 		// iterate over all recorded DVDs
@@ -37,11 +41,10 @@ class RecordedTests: XCTestCase {
 		for inputUrl in urls where inputUrl.lastPathComponent.contains("input") {
 
 			// read recorded input
-			var inputJson: JSON<MediaTree>!
-			var input: MediaTree!
-			await XCTAssertNoThrowAsync(inputJson = try await JSON(contentsOf: inputUrl))
-			XCTAssertNoThrow(input = try inputJson.mediaTree(withTypes: DVDInfo.self))
-			XCTAssertEqual(inputJson.data, try! input.json().data)
+			let inputJson: JSON<MediaTree> = try await JSON(contentsOf: inputUrl)
+			let input = try inputJson.mediaTree(withTypes: DVDInfo.self)
+			let inputData = try input.json().data
+			#expect(inputJson.data == inputData)
 
 			// read recorded output
 			let outputName = inputUrl
@@ -50,21 +53,22 @@ class RecordedTests: XCTestCase {
 			let outputUrl = inputUrl
 				.deletingLastPathComponent()
 				.appendingPathComponent(outputName)
-			var outputJson: JSON<MediaTree>!
-			var output: MediaTree!
-			await XCTAssertNoThrowAsync(outputJson = try await JSON(contentsOf: outputUrl))
+			let outputJson: JSON<MediaTree> = try await JSON(contentsOf: outputUrl)
 			// TODO: DVDInfo should not be needed here, output trees should not have opaque nodes
-			XCTAssertNoThrow(output = try outputJson.mediaTree(withTypes: DVDInfo.self, DVDDataSource.self))
-			XCTAssertEqual(outputJson.data, try! output.json().data)
+			let output = try outputJson.mediaTree(withTypes: DVDInfo.self, DVDDataSource.self)
+			let outputData = try output.json().data
+			#expect(outputJson.data == outputData)
 
 			// process media tree
-			let processed = try! await importer.process(bySubPasses: input)
+			let processed = try await importer.process(bySubPasses: input)
 
 			// compare processed input and expected output media tree
 			// TODO: with a complete set of DVD import passes, this should always succeed
-			XCTExpectFailure("incomplete DVD import")
-			// TODO: should use XCTAssertEqual, but this dumps both trees when not equal
-			XCTAssertTrue(processed == output)
+			withKnownIssue("incomplete DVD import") {
+				// TODO: should use #expect(processed == output), but this dumps both trees when not equal
+				let comparison = processed == output
+				#expect(comparison)
+			}
 		}
 	}
 }
