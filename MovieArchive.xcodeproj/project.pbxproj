@@ -142,6 +142,7 @@
 		4CB7801C269C97610027D46F /* intercept.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = intercept.h; sourceTree = "<group>"; };
 		4CBA49922BFE768A00B1B7F8 /* MP42Foundation.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MP42Foundation.xcframework; path = MovieArchive.playground/Sources/MP42Foundation.xcframework; sourceTree = "<group>"; };
 		4CBA49962BFE768C00B1B7F8 /* MP4v2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MP4v2.xcframework; path = MovieArchive.playground/Sources/MP4v2.xcframework; sourceTree = "<group>"; };
+		4CC437983044BC4300F90007 /* Migration.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Migration.md; sourceTree = "<group>"; };
 		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
 		4CEEFEF324A108EC00C0357D /* Converter.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = Converter.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEEFEF924A108ED00C0357D /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -257,6 +258,7 @@
 		4CEEFEF424A108EC00C0357D /* XPCConverter */ = {
 			isa = PBXGroup;
 			children = (
+				4CC437983044BC4300F90007 /* Migration.md */,
 				4C8AC3D5268B05EB00BF1726 /* Converter */,
 				4C509ECF2700CA600071AC1D /* CTypeInterop.swift */,
 				4CAB2E98268C5FB3004D9C4B /* DVDReaderService.swift */,
