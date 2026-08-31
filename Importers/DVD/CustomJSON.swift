@@ -1,49 +1,50 @@
+import RegexBuilder
 import MovieArchiveModel
 import MovieArchiveConverter
 
 
 /* MARK: DVDInfo Custom JSON */
 
-extension DVDInfo: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.TitleSet: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.TitleSet.Title: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.Domain: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.ProgramChain: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.ProgramChain.Cell: CustomJSONEmptyCollectionSkipping {}
-extension DVDInfo.Interaction: CustomJSONEmptyCollectionSkipping {}
+extension DVDInfo: @retroactive CustomJSON.EmptyCollectionSkipping {}
+extension DVDInfo.TitleSet: @retroactive CustomJSON.EmptyCollectionSkipping {}
+extension DVDInfo.TitleSet.Title: @retroactive CustomJSON.EmptyCollectionSkipping {}
+extension DVDInfo.Domain: @retroactive CustomJSON.EmptyCollectionSkipping {}
+extension DVDInfo.ProgramChain: @retroactive CustomJSON.EmptyCollectionSkipping {}
+extension DVDInfo.ProgramChain.Cell: @retroactive CustomJSON.EmptyCollectionSkipping {}
+extension DVDInfo.Interaction: @retroactive CustomJSON.EmptyCollectionSkipping {}
 
-extension DVDInfo.Domain.VideoAttributes.CodingType: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.VideoAttributes.VideoStandard: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.VideoAttributes.ContentInfo: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.AudioAttributes.CodingType: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.AudioAttributes.RenderingIntent: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Mode: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Channel: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.AudioAttributes.ContentInfo: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.SubpictureAttributes.CodingType: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.SubpictureAttributes.ContentInfo: CustomJSONCompactEnum {}
-extension DVDInfo.Domain.SubpictureAttributes.ContentInfo.FontSize: CustomJSONCompactEnum {}
-extension DVDInfo.ProgramChain.Cell.AngleInfo: CustomJSONCompactEnum {}
-extension DVDInfo.ProgramChain.Cell.KaraokeInfo: CustomJSONCompactEnum {}
-extension DVDInfo.ProgramChain.PlaybackMode: CustomJSONCompactEnum {}
-extension DVDInfo.ProgramChain.EndingMode: CustomJSONCompactEnum {}
-extension DVDInfo.Command.Operation: CustomJSONCompactEnum {}
-extension DVDInfo.Command.Target: CustomJSONCompactEnum {}
-extension DVDInfo.Command.Condition: CustomJSONCompactEnum {}
-extension DVDInfo.Command.Operand: CustomJSONCompactEnum {}
+extension DVDInfo.Domain.VideoAttributes.CodingType: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Domain.VideoAttributes.VideoStandard: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Domain.VideoAttributes.ContentInfo: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.CodingType: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.RenderingIntent: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Mode: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.RenderingIntent.Karaoke.Channel: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Domain.AudioAttributes.ContentInfo: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Domain.SubpictureAttributes.CodingType: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Domain.SubpictureAttributes.ContentInfo: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Domain.SubpictureAttributes.ContentInfo.FontSize: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.ProgramChain.Cell.AngleInfo: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.ProgramChain.Cell.KaraokeInfo: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.ProgramChain.PlaybackMode: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.ProgramChain.EndingMode: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Command.Operation: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Command.Target: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Command.Condition: @retroactive CustomJSON.CompactEnum {}
+extension DVDInfo.Command.Operand: @retroactive CustomJSON.CompactEnum {}
 
-extension DVDInfo.TitleSet.Title.CommandPresence: CustomJSONOptionSetCoding {
-	public var allValues: [(label: String, element: Element)] {
+extension DVDInfo.TitleSet.Title.CommandPresence: @retroactive CustomJSON.OptionSetCoding {
+	public var allValues: KeyValuePairs<String, Element> {
 		[
-			("features", .features),
-			("prePosts", .prePosts),
-			("cells", .cells),
-			("buttons", .buttons)
+			"features": .features,
+			"prePosts": .prePosts,
+			"cells": .cells,
+			"buttons": .buttons
 		]
 	}
 }
 
-extension DVDInfo.Domain.ProgramChains.Descriptor: CustomJSONStringKeyRepresentable {
+extension DVDInfo.Domain.ProgramChains.Descriptor: @retroactive CustomJSON.StringKeyRepresentable {
 	public var stringValue: String {
 		switch self {
 		case .menu(language: let language, entryPoint: let entryPoint, type: let type, index: let index):
@@ -82,46 +83,63 @@ extension DVDInfo.Domain.ProgramChains.Descriptor: CustomJSONStringKeyRepresenta
 		}
 	}
 
-	/// - ToDo: Simplify using `Regex` once we move to macOS 13
 	public init?(stringValue: String) {
-		func parseElements(_ tupleString: Substring) -> [String: String] {
-			guard tupleString.hasPrefix("(") && tupleString.hasSuffix(")") else {
-				return [:]
+		func labeledArgument<Type>(_ label: String, as reference: Reference<Type>, transform: @escaping (Substring) -> Type) -> some RegexComponent {
+			Regex {
+				label
+				ZeroOrMore(.whitespace)
+				":"
+				ZeroOrMore(.whitespace)
+				TryCapture(as: reference, {
+					ZeroOrMore(CharacterClass.any.subtracting(.anyOf(",)")).subtracting(.whitespace))
+				}, transform: transform)
 			}
-			let elementsString = tupleString.dropFirst().dropLast()
-			let elementsList = elementsString.split(separator: ",")
-			let elementsPairs = elementsList.compactMap { element -> (String, String)? in
-				let pair = element.split(separator: ":").map {
-					$0.trimmingCharacters(in: .whitespaces)
+		}
+		func descriptor(for selector: String, using argument: some RegexComponent) -> some RegexComponent {
+			Regex {
+				selector
+				"("
+				ZeroOrMore {
+					ZeroOrMore(.whitespace)
+					argument
+					ZeroOrMore(.whitespace)
+					/(?:,(?!\s*\))|(?=\)))/   // match a comma unless it is followed by a closing parenthesis
 				}
-				guard pair.count == 2 else { return nil }
-				return (pair[0], pair[1])
+				")"
 			}
-			return Dictionary(uniqueKeysWithValues: elementsPairs)
 		}
 
 		switch stringValue {
 
 		case let string where string.hasPrefix("menu"):
-			let elements = parseElements(string.dropFirst("menu".count))
-			guard let language = elements["language"] else { return nil }
-			guard let element = elements["entryPoint"], let entryPoint = Bool(element) else { return nil }
-			let type: MenuType?
-			if let element = elements["type"] {
-				guard let decoded = MenuType(stringValue: element) else { return nil }
-				type = decoded
-			} else {
-				type = nil
+			let language = Reference(String?.self)
+			let entryPoint = Reference(Bool?.self)
+			let menuType = Reference(MenuType?.self)
+			let index = Reference(DVDInfo.Index<DVDInfo.ProgramChain>?.self)
+			let menuArguments = ChoiceOf {
+				labeledArgument("language", as: language, transform: String.init)
+				labeledArgument("entryPoint", as: entryPoint, transform: { Bool(String($0)) })
+				labeledArgument("type", as: menuType, transform: { MenuType(stringValue: String($0)) })
+				labeledArgument("index", as: index, transform: { UInt($0).map(DVDInfo.Index<DVDInfo.ProgramChain>.init) })
 			}
-			guard let element = elements["index"], let index = UInt(element) else { return nil }
-			self = .menu(language: language, entryPoint: entryPoint, type: type, index: .init(index))
+			let arguments = string.wholeMatch(of: descriptor(for: "menu", using: menuArguments))
+			guard let arguments else { return nil }
+			guard arguments[language] != nil, arguments[entryPoint] != nil, arguments[index] != nil else { return nil }
+			self = .menu(language: arguments[language]!, entryPoint: arguments[entryPoint]!, type: arguments[menuType], index: arguments[index]!)
 
 		case let string where string.hasPrefix("title"):
-			let elements = parseElements(string.dropFirst("title".count))
-			guard let element = elements["title"], let title = UInt(element) else { return nil }
-			guard let element = elements["entryPoint"], let entryPoint = Bool(element) else { return nil }
-			guard let element = elements["index"], let index = UInt(element) else { return nil }
-			self = .title(title: .init(title), entryPoint: entryPoint, index: .init(index))
+			let title = Reference(DVDInfo.Index<DVDInfo.TitleSet.Title>?.self)
+			let entryPoint = Reference(Bool?.self)
+			let index = Reference(DVDInfo.Index<DVDInfo.ProgramChain>?.self)
+			let titleArguments = ChoiceOf {
+				labeledArgument("title", as: title, transform: { UInt($0).map(DVDInfo.Index<DVDInfo.TitleSet.Title>.init) })
+				labeledArgument("entryPoint", as: entryPoint, transform: { Bool(String($0)) })
+				labeledArgument("index", as: index, transform: { UInt($0).map(DVDInfo.Index<DVDInfo.ProgramChain>.init) })
+			}
+			let arguments = string.wholeMatch(of: descriptor(for: "title", using: titleArguments))
+			guard let arguments else { return nil }
+			guard arguments[title] != nil, arguments[entryPoint] != nil, arguments[index] != nil else { return nil }
+			self = .title(title: arguments[title]!, entryPoint: arguments[entryPoint]!, index: arguments[index]!)
 
 		default:
 			return nil
@@ -129,32 +147,24 @@ extension DVDInfo.Domain.ProgramChains.Descriptor: CustomJSONStringKeyRepresenta
 	}
 }
 
-extension DVDInfo.Domain.ProgramChains.Descriptor.MenuType: CustomJSONStringKeyRepresentable, CustomJSONCodable {
+extension DVDInfo.Domain.ProgramChains.Descriptor.MenuType: @retroactive CustomJSON.StringKeyRepresentable, @retroactive CustomJSON.Codable {
 	public var stringValue: String { String(describing: self) }
 
 	public static func < (lhs: Self, rhs: Self) -> Bool {
 		func sortIndex(_ value: Self) -> Int {
 			switch value {
-			case .titles:
-				return 0
-			case .rootWithinTitle:
-				return 1
-			case .chapter:
-				return 2
-			case .audio:
-				return 3
-			case .subpicture:
-				return 4
-			case .viewingAngle:
-				return 5
-			case .unexpected(_):
-				return 6
+			case .titles: 0
+			case .rootWithinTitle: 1
+			case .chapter: 2
+			case .audio: 3
+			case .subpicture: 4
+			case .viewingAngle: 5
+			case .unexpected(_): 6
 			}
 		}
 		return sortIndex(lhs) < sortIndex(rhs)
 	}
 
-	/// - ToDo: Simplify using `Regex` once we move to macOS 13
 	public init?(stringValue: String) {
 		switch stringValue {
 		case "titles": self = .titles
@@ -163,16 +173,20 @@ extension DVDInfo.Domain.ProgramChains.Descriptor.MenuType: CustomJSONStringKeyR
 		case "audio": self = .audio
 		case "subpicture": self = .subpicture
 		case "viewingAngle": self = .viewingAngle
-		case let string where string.hasPrefix("unexpected(") && string.hasSuffix(")"):
-			let innerString = string.dropFirst("unexpected(".count).dropLast(")".count)
-			guard let value = UInt8(innerString) else { return nil }
-			self = .unexpected(value)
+		case let string where string.hasPrefix("unexpected"):
+			let match = string.wholeMatch {
+				"unexpected("
+				TryCapture { OneOrMore(.digit) } transform: { UInt8($0) }
+				")"
+			}
+			guard let match else { return nil }
+			self = .unexpected(match.1)
 		default: return nil
 		}
 	}
 }
 
-extension DVDInfo.Domain.ProgramChains.Id: CustomJSONStringKeyRepresentable, CustomJSONCodable {
+extension DVDInfo.Domain.ProgramChains.Id: @retroactive CustomJSON.StringKeyRepresentable, @retroactive CustomJSON.Codable {
 	public var stringValue: String {
 		(languageId.map { String($0) + ":" } ?? "") + String(programChainId)
 	}
@@ -180,15 +194,15 @@ extension DVDInfo.Domain.ProgramChains.Id: CustomJSONStringKeyRepresentable, Cus
 	public static func < (lhs: Self, rhs: Self) -> Bool {
 		switch (lhs.languageId, rhs.languageId) {
 		case (.some(let lhs), .some(let rhs)) where lhs != rhs:
-			return lhs < rhs
+			lhs < rhs
 		case (.some, .some):
-			return lhs.programChainId < rhs.programChainId
+			lhs.programChainId < rhs.programChainId
 		case (.some, .none):
-			return true
+			true
 		case (.none, .some):
-			return false
+			false
 		case (.none, .none):
-			return lhs.programChainId < rhs.programChainId
+			lhs.programChainId < rhs.programChainId
 		}
 	}
 
@@ -206,7 +220,7 @@ extension DVDInfo.Domain.ProgramChains.Id: CustomJSONStringKeyRepresentable, Cus
 	}
 }
 
-extension DVDInfo.Domain.VideoAttributes.AspectRatio: CustomJSONCodable {
+extension DVDInfo.Domain.VideoAttributes.AspectRatio: @retroactive CustomJSON.Codable {
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		switch self {
 		case .classic(letterboxed: let letterboxed):
@@ -229,51 +243,47 @@ extension DVDInfo.Domain.VideoAttributes.AspectRatio: CustomJSONCodable {
 	}
 }
 
-extension DVDInfo.Domain.VideoAttributes.DisplayModification: CustomJSONOptionSetCoding {
-	public var allValues: [(label: String, element: Element)] {
+extension DVDInfo.Domain.VideoAttributes.DisplayModification: @retroactive CustomJSON.OptionSetCoding {
+	public var allValues: KeyValuePairs<String, Element> {
 		[
-			("letterbox", .letterbox),
-			("pan&scan", .panScan)
+			"letterbox": .letterbox,
+			"pan&scan": .panScan
 		]
 	}
 }
 
-extension DVDInfo.Domain.VideoAttributes.Line21ClosedCaption: CustomJSONOptionSetCoding {
-	public var allValues: [(label: String, element: Element)] {
+extension DVDInfo.Domain.VideoAttributes.Line21ClosedCaption: @retroactive CustomJSON.OptionSetCoding {
+	public var allValues: KeyValuePairs<String, Element> {
 		[
-			("firstField", .firstField),
-			("secondField", .secondField)
+			"firstField": .firstField,
+			"secondField": .secondField
 		]
 	}
 }
 
-extension DVDInfo.ProgramChain.Cell.PlaybackMode: CustomJSONOptionSetCoding {
-	public var allValues: [(label: String, element: Element)] {
+extension DVDInfo.ProgramChain.Cell.PlaybackMode: @retroactive CustomJSON.OptionSetCoding {
+	public var allValues: KeyValuePairs<String, Element> {
 		[
-			("seamless", .seamless),
-			("seamlessAngle", .seamlessAngle),
-			("interleaved", .interleaved),
-			("timeDiscontinuity", .timeDiscontinuity),
-			("allStillFrames", .allStillFrames),
-			("stopFastForward", .stopFastForward)
+			"seamless": .seamless,
+			"seamlessAngle": .seamlessAngle,
+			"interleaved": .interleaved,
+			"timeDiscontinuity": .timeDiscontinuity,
+			"allStillFrames": .allStillFrames,
+			"stopFastForward": .stopFastForward
 		]
 	}
 }
 
-extension DVDInfo.ProgramChain.SubpictureDescriptor: CustomJSONStringKeyRepresentable {
+extension DVDInfo.ProgramChain.SubpictureDescriptor: @retroactive CustomJSON.StringKeyRepresentable {
 	public var stringValue: String { String(describing: self) }
 
 	public static func < (lhs: Self, rhs: Self) -> Bool {
 		func sortIndex(_ value: Self) -> Int {
 			switch value {
-			case .classic:
-				return 0
-			case .wide:
-				return 1
-			case .letterbox:
-				return 2
-			case .panScan:
-				return 3
+			case .classic: 0
+			case .wide: 1
+			case .letterbox: 2
+			case .panScan: 3
 			}
 		}
 		return sortIndex(lhs) < sortIndex(rhs)
@@ -290,7 +300,7 @@ extension DVDInfo.ProgramChain.SubpictureDescriptor: CustomJSONStringKeyRepresen
 	}
 }
 
-extension DVDInfo.Interaction.ButtonDescriptor: CustomJSONStringKeyRepresentable {
+extension DVDInfo.Interaction.ButtonDescriptor: @retroactive CustomJSON.StringKeyRepresentable {
 	public var stringValue: String {
 		var elements: [String] = []
 		if rawValue == 0 { elements = ["classic"] }
@@ -321,7 +331,7 @@ extension DVDInfo.Interaction.ButtonDescriptor: CustomJSONStringKeyRepresentable
 	}
 }
 
-extension DVDInfo.Command: CustomJSONCodable {
+extension DVDInfo.Command: @retroactive CustomJSON.Codable {
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		switch self {
 		case .setSystemRegisters(let settings):
@@ -344,58 +354,35 @@ extension DVDInfo.Command: CustomJSONCodable {
 	}
 }
 
-extension DVDInfo.Command.SystemRegister: CustomJSONStringKeyRepresentable, CustomJSONCodable {
+extension DVDInfo.Command.SystemRegister: @retroactive CustomJSON.StringKeyRepresentable, @retroactive CustomJSON.Codable {
 	public var stringValue: String { String(describing: self) }
 
 	public static func < (lhs: Self, rhs: Self) -> Bool {
 		func sortIndex(_ value: Self) -> Int {
 			switch value {
-			case .audioStreamIndex:
-				return 0
-			case .subpictureStreamIndex:
-				return 1
-			case .viewingAngleIndex:
-				return 2
-			case .globalTitleIndex:
-				return 3
-			case .titleIndex:
-				return 4
-			case .programChainIndex:
-				return 5
-			case .partIndex:
-				return 6
-			case .selectedButtonIndex:
-				return 7
-			case .navigationTimer:
-				return 8
-			case .programChainForTimer:
-				return 9
-			case .videoMode:
-				return 10
-			case .karaokeMode:
-				return 11
-			case .preferredMenuLanguage:
-				return 12
-			case .preferredAudioLanguage:
-				return 13
-			case .preferredAudioContent:
-				return 14
-			case .preferredSubpictureLanguage:
-				return 15
-			case .preferredSubpictureContent:
-				return 16
-			case .playerAudioCapabilities:
-				return 17
-			case .playerRegionMask:
-				return 18
-			case .parentalCountry:
-				return 19
-			case .parentalLevel:
-				return 20
-			case .reserved:
-				return 21
-			case .unexpected:
-				return 22
+			case .audioStreamIndex: 0
+			case .subpictureStreamIndex: 1
+			case .viewingAngleIndex: 2
+			case .globalTitleIndex: 3
+			case .titleIndex: 4
+			case .programChainIndex: 5
+			case .partIndex: 6
+			case .selectedButtonIndex: 7
+			case .navigationTimer: 8
+			case .programChainForTimer: 9
+			case .videoMode: 10
+			case .karaokeMode: 11
+			case .preferredMenuLanguage: 12
+			case .preferredAudioLanguage: 13
+			case .preferredAudioContent: 14
+			case .preferredSubpictureLanguage: 15
+			case .preferredSubpictureContent: 16
+			case .playerAudioCapabilities: 17
+			case .playerRegionMask: 18
+			case .parentalCountry: 19
+			case .parentalLevel: 20
+			case .reserved: 21
+			case .unexpected: 22
 			}
 		}
 		return sortIndex(lhs) < sortIndex(rhs)
@@ -431,39 +418,39 @@ extension DVDInfo.Command.SystemRegister: CustomJSONStringKeyRepresentable, Cust
 	}
 }
 
-extension DVDInfo.Restrictions: CustomJSONOptionSetCoding {
-	public var allValues: [(label: String, element: Self)] {
+extension DVDInfo.Restrictions: @retroactive CustomJSON.OptionSetCoding {
+	public var allValues: KeyValuePairs<String, Self> {
 		[
-			("noStop", .noStop),
-			("noJumpToTitle", .noJumpToTitle),
-			("noJumpToPart", .noJumpToPart),
-			("noJumpIntoTitle", .noJumpIntoTitle),
-			("noJumpIntoPart", .noJumpIntoPart),
-			("noJumpUp", .noJumpUp),
-			("noJumpToTopLevelMenu", .noJumpToTopLevelMenu),
-			("noJumpToPerTitleMenu", .noJumpToPerTitleMenu),
-			("noJumpToAudioMenu", .noJumpToAudioMenu),
-			("noJumpToSubpictureMenu", .noJumpToSubpictureMenu),
-			("noJumpToViewingAngleMenu", .noJumpToViewingAngleMenu),
-			("noJumpToChapterMenu", .noJumpToChapterMenu),
-			("noProgramForward", .noProgramForward),
-			("noProgramBackward", .noProgramBackward),
-			("noSeekForward", .noSeekForward),
-			("noSeekBackward", .noSeekBackward),
-			("noResumeFromMenu", .noResumeFromMenu),
-			("noMenuInteractions", .noMenuInteractions),
-			("noStillSkip", .noStillSkip),
-			("noPause", .noPause),
-			("noChangeAudioStream", .noChangeAudioStream),
-			("noChangeSubpictureStream", .noChangeSubpictureStream),
-			("noChangeViewingAngle", .noChangeViewingAngle),
-			("noChangeVideoMode", .noChangeVideoMode),
-			("noChangeKaraokeMode", .noChangeKaraokeMode)
+			"noStop": .noStop,
+			"noJumpToTitle": .noJumpToTitle,
+			"noJumpToPart": .noJumpToPart,
+			"noJumpIntoTitle": .noJumpIntoTitle,
+			"noJumpIntoPart": .noJumpIntoPart,
+			"noJumpUp": .noJumpUp,
+			"noJumpToTopLevelMenu": .noJumpToTopLevelMenu,
+			"noJumpToPerTitleMenu": .noJumpToPerTitleMenu,
+			"noJumpToAudioMenu": .noJumpToAudioMenu,
+			"noJumpToSubpictureMenu": .noJumpToSubpictureMenu,
+			"noJumpToViewingAngleMenu": .noJumpToViewingAngleMenu,
+			"noJumpToChapterMenu": .noJumpToChapterMenu,
+			"noProgramForward": .noProgramForward,
+			"noProgramBackward": .noProgramBackward,
+			"noSeekForward": .noSeekForward,
+			"noSeekBackward": .noSeekBackward,
+			"noResumeFromMenu": .noResumeFromMenu,
+			"noMenuInteractions": .noMenuInteractions,
+			"noStillSkip": .noStillSkip,
+			"noPause": .noPause,
+			"noChangeAudioStream": .noChangeAudioStream,
+			"noChangeSubpictureStream": .noChangeSubpictureStream,
+			"noChangeViewingAngle": .noChangeViewingAngle,
+			"noChangeVideoMode": .noChangeVideoMode,
+			"noChangeKaraokeMode": .noChangeKaraokeMode
 		]
 	}
 }
 
-extension DVDInfo.Index: CustomJSONStringKeyRepresentable, CustomJSONCodable {
+extension DVDInfo.Index: @retroactive CustomJSON.StringKeyRepresentable, @retroactive CustomJSON.Codable {
 	// custom encoding: directly use internal integer value
 	public var stringValue: String { String(rawValue) }
 	public init?(stringValue: String) {
@@ -472,11 +459,11 @@ extension DVDInfo.Index: CustomJSONStringKeyRepresentable, CustomJSONCodable {
 	}
 }
 
-extension DVDInfo.Index: CustomStringConvertible {
+extension DVDInfo.Index: @retroactive CustomStringConvertible {
 	public var description: String { rawValue.description }
 }
 
-extension DVDInfo.Time: CustomJSONCodable {
+extension DVDInfo.Time: @retroactive CustomJSON.Codable {
 	// custom encoding: time as human-readable string
 
 	public func encode(toCustomJSON encoder: Encoder) throws {
@@ -524,42 +511,58 @@ extension DVDInfo.Time: CustomJSONCodable {
 		try container.encode(string)
 	}
 
-	/// - ToDo: Simplify using `Regex` once we move to macOS 13
 	public init(fromCustomJSON decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
 		let string = try container.decode(String.self)
-		var substrings = string.split(separator: ":")
-		if substrings.count < 1 || substrings.count > 4 {
-			throw DecodingError.dataCorruptedError(in: container,
-				debugDescription: "unexpected number of time components: \(substrings.count)")
-		}
 
-		let framesAndRate = substrings.removeLast().split(separator: "@")
-		if framesAndRate.count != 2 {
-			throw DecodingError.dataCorruptedError(in: container,
-				debugDescription: "frame count or frame rate missing")
-		}
-		substrings.append(contentsOf: framesAndRate)
+		let hours = Reference(UInt8?.self)
+		let minutes = Reference(UInt8?.self)
+		let seconds = Reference(UInt8?.self)
+		let frames = Reference(UInt8.self)
+		let rate = Reference(FrameRate.self)
 
-		let components = try substrings.reversed().map {
-			guard let number = UInt8($0) else {
-				throw DecodingError.dataCorruptedError(in: container,
-					debugDescription: "malformed time component: ‘\($0)’")
+		let components = string.wholeMatch {
+			// broken out of the builder expression because the compiler is unable to typecheck
+			let hoursPattern = TryCapture(as: hours) { OneOrMore(.digit) } transform: { UInt8($0) }
+			Optionally {
+				Optionally {
+					Optionally {
+						hoursPattern
+						":"
+					}
+					TryCapture(as: minutes) { OneOrMore(.digit) } transform: { UInt8($0) }
+					":"
+				}
+				TryCapture(as: seconds) { OneOrMore(.digit) } transform: { UInt8($0) }
+				":"
 			}
-			return number
+			TryCapture(as: frames) { OneOrMore(.digit) } transform: { UInt8($0) }
+			"@"
+			TryCapture(as: rate) {
+				OneOrMore(.digit)
+				Optionally {
+					"."
+					OneOrMore(.digit)
+				}
+			} transform: {
+				guard let integer = UInt($0) else { return nil }
+				let rate: Double = switch integer {
+				case 25: 25.00
+				case 30: 29.97
+				default: Double($0) ?? Double(integer)
+				}
+				return .framesPerSecond(rate)
+			}
+		}
+		guard let components else {
+			throw DecodingError.dataCorruptedError(in: container,
+				debugDescription: "malformed time: ‘\(string)’")
 		}
 
-		let fps: Double
-		switch components[0] {
-		case 25: fps = 25.00
-		case 30: fps = 29.97
-		default: fps = Double(substrings.last!) ?? Double(components[0])
-		}
-
-		self.init(hours: components.count > 4 ? components[4] : 0,
-				  minutes: components.count > 3 ? components[3] : 0,
-				  seconds: components.count > 2 ? components[2] : 0,
-				  frames: components[1],
-				  rate: .framesPerSecond(fps))
+		self.init(hours: components[hours] ?? 0,
+		          minutes: components[minutes] ?? 0,
+		          seconds: components[seconds] ?? 0,
+		          frames: components[frames],
+		          rate: components[rate])
 	}
 }

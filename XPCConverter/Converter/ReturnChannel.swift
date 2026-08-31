@@ -1,5 +1,5 @@
+@preconcurrency import Combine
 import Foundation
-import Combine
 import os
 
 
@@ -9,9 +9,8 @@ import os
 public typealias ConverterPublisher = AnyPublisher<ConverterOutput, ConverterError>
 
 /// Status updates from the converter service.
-/// - ToDo: Replace log message with `LocalizedStringResource` once we move to macOS 13.
 public enum ConverterOutput {
-	case message(level: OSLogType, String.LocalizationValue)
+	case message(level: OSLogType, LocalizedStringResource)
 	case progress(Progress)
 }
 
@@ -31,13 +30,13 @@ extension ConverterError: LocalizedError {
 	public var errorDescription: String? {
 		switch self {
 		case .sourceNotSupported:
-			return String(localized: "source not supported")
+			String(localized: "source not supported")
 		case .sourceReadError:
-			return String(localized: "error reading from source")
+			String(localized: "error reading from source")
 		case .connectionInvalid:
-			return String(localized: "internal component unavailable")
+			String(localized: "internal component unavailable")
 		case .connectionInterrupted:
-			return String(localized: "processing interrupted unexpectedly")
+			String(localized: "processing interrupted unexpectedly")
 		}
 	}
 }
@@ -60,16 +59,16 @@ extension ConverterError: LocalizedError {
 
 /// A non-interpolated string which is used as a localization key.
 ///
-/// It would be preferrable to use `String.LocalizationValue` here, but this type
+/// It would be preferrable to use `LocalizedStringResource` here, but this type
 /// is not `@objc` compatible and thus cannot be used in an XPC protocol. We
 /// therefore pass regular strings, which are converted to
-/// `String.LocalizationValue` when received.
+/// `LocalizedStringResource` when received.
 ///
 /// Consequently, these strings must be static, non-interpolated instances.
 /// Otherwise, using them as lookup keys in the localization tables will not
 /// result in a match. This requirement is not enforced by the type system.
 ///
-/// - ToDo: Replace with `LocalizedStringResource` once we move to macOS 13.
+/// - ToDo: Replace with `LocalizedStringResource` once we use `XPCSession`.
 public typealias StringLocalizationKey = String
 
 
@@ -85,23 +84,26 @@ class ReturnImplementation: NSObject, ReturnInterface {
 	private var progress: [UUID: Progress] = [:]
 
 	func sendMessage(level: OSLogType, _ text: StringLocalizationKey) {
-		subject.send(.message(level: level, String.LocalizationValue(text)))
+		let localization = String.LocalizationValue(text)
+		let localizableText = LocalizedStringResource(localization)
+		subject.send(.message(level: level, localizableText))
 	}
 	func sendProgress(id: UUID, completed: Int64, total: Int64, description: StringLocalizationKey) {
+		let localization = String.LocalizationValue(description)
+		let localizableDescription = LocalizedStringResource(localization)
 		// manually keep in sync with ProgressUserInfoKey.localizationKey in the model
-		let localizationKey = ProgressUserInfoKey(rawValue: "StringLocalizationKey")
-		let description = String.LocalizationValue(description)
+		let localizationKey = ProgressUserInfoKey(rawValue: "LocalizedStringResourceKey")
 
 		if let currentProgress = progress[id] {
 			currentProgress.totalUnitCount = total
 			currentProgress.completedUnitCount = completed
-			currentProgress.localizedDescription = String(localized: description)
-			currentProgress.setUserInfoObject(description, forKey: localizationKey)
+			currentProgress.localizedDescription = String(localized: localizableDescription)
+			currentProgress.setUserInfoObject(localizableDescription, forKey: localizationKey)
 		} else {
 			let currentProgress = Progress.discreteProgress(totalUnitCount: total)
 			currentProgress.completedUnitCount = completed
-			currentProgress.localizedDescription = String(localized: description)
-			currentProgress.setUserInfoObject(description, forKey: localizationKey)
+			currentProgress.localizedDescription = String(localized: localizableDescription)
+			currentProgress.setUserInfoObject(localizableDescription, forKey: localizationKey)
 			currentProgress.localizedAdditionalDescription = ""
 			progress.updateValue(currentProgress, forKey: id)
 			subject.send(.progress(currentProgress))

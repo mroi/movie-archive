@@ -10,8 +10,6 @@ public struct TestView: View {
 }
 
 
-struct TestView_Previews: PreviewProvider {
-	static var previews: some View {
-		TestView()
-	}
+#Preview {
+	TestView()
 }

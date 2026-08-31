@@ -1,4 +1,4 @@
-extension Base {
+extension Compose {
 
 	/// A pass allowing the client to interact with the media tree.
 	public struct MediaTreeInteraction: Pass {

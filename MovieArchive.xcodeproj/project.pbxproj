@@ -27,11 +27,10 @@
 		4CB78014269C88700027D46F /* dlopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CB78013269C88700027D46F /* dlopen.c */; };
 		4CBA49932BFE768A00B1B7F8 /* MP42Foundation.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CBA49922BFE768A00B1B7F8 /* MP42Foundation.xcframework */; };
 		4CBA49972BFE768C00B1B7F8 /* MP4v2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CBA49962BFE768C00B1B7F8 /* MP4v2.xcframework */; };
-		4CC4585C276CAD0A00B7B7EC /* AsyncAsserts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC4585B276CAD0A00B7B7EC /* AsyncAsserts.swift */; };
-		4CE4581826C1B40E00501102 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4CE4581A26C1B40E00501102 /* Localizable.strings */; };
 		4CEEFEFA24A108ED00C0357D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEEFEF924A108ED00C0357D /* main.swift */; };
 		4CEEFEFF24A108ED00C0357D /* Converter.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 4CEEFEF324A108EC00C0357D /* Converter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4CFA77932681FCB900BB9632 /* MovieArchiveImporters in Frameworks */ = {isa = PBXBuildFile; productRef = 4CFA77922681FCB900BB9632 /* MovieArchiveImporters */; };
+		4CFD23042FEDB97100974590 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 4CFD23032FEDB97100974590 /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -143,12 +142,12 @@
 		4CB7801C269C97610027D46F /* intercept.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = intercept.h; sourceTree = "<group>"; };
 		4CBA49922BFE768A00B1B7F8 /* MP42Foundation.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MP42Foundation.xcframework; path = MovieArchive.playground/Sources/MP42Foundation.xcframework; sourceTree = "<group>"; };
 		4CBA49962BFE768C00B1B7F8 /* MP4v2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MP4v2.xcframework; path = MovieArchive.playground/Sources/MP4v2.xcframework; sourceTree = "<group>"; };
-		4CC4585B276CAD0A00B7B7EC /* AsyncAsserts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncAsserts.swift; sourceTree = "<group>"; };
-		4CE4581926C1B40E00501102 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		4CC437983044BC4300F90007 /* Migration.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Migration.md; sourceTree = "<group>"; };
 		4CEEFEEE24A0FDE400C0357D /* Players */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Players; sourceTree = "<group>"; };
 		4CEEFEF324A108EC00C0357D /* Converter.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = Converter.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEEFEF924A108ED00C0357D /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		4CEEFEFB24A108ED00C0357D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CFD23032FEDB97100974590 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,7 +215,6 @@
 		4C1A35A9245DFEE900C40FB5 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				4CC4585B276CAD0A00B7B7EC /* AsyncAsserts.swift */,
 				4CA53B862690D4FF002140BC /* Common.swift */,
 				4C6D90A526B49E5200EAA149 /* Importers.swift */,
 				4C4908C227A48C7D001BA47B /* Recorded.swift */,
@@ -233,7 +231,7 @@
 				4C1A3594245DFEE700C40FB5 /* IngestDocument.swift */,
 				4C1A3598245DFEE800C40FB5 /* Assets.xcassets */,
 				4C1A35A0245DFEE800C40FB5 /* Info.plist */,
-				4CE4581A26C1B40E00501102 /* Localizable.strings */,
+				4CFD23032FEDB97100974590 /* Localizable.xcstrings */,
 				4C1A35A1245DFEE800C40FB5 /* MovieArchive.entitlements */,
 			);
 			path = macOS;
@@ -260,6 +258,7 @@
 		4CEEFEF424A108EC00C0357D /* XPCConverter */ = {
 			isa = PBXGroup;
 			children = (
+				4CC437983044BC4300F90007 /* Migration.md */,
 				4C8AC3D5268B05EB00BF1726 /* Converter */,
 				4C509ECF2700CA600071AC1D /* CTypeInterop.swift */,
 				4CAB2E98268C5FB3004D9C4B /* DVDReaderService.swift */,
@@ -403,7 +402,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1310;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					4C1A358E245DFEE700C40FB5 = {
 						CreatedOnToolsVersion = 11.4.1;
@@ -456,7 +455,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C1A3599245DFEE800C40FB5 /* Assets.xcassets in Resources */,
-				4CE4581826C1B40E00501102 /* Localizable.strings in Resources */,
+				4CFD23042FEDB97100974590 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,7 +503,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# copy intercept library\nmkdir -p \"$(dirname \"$SCRIPT_OUTPUT_FILE_0\")\"\ncp -p \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n\n# patch XPC converter to replace libSystem with intercept library\nif otool -L \"$SCRIPT_INPUT_FILE_1\" | fgrep -q libSystem ; then\n\tcodesign --remove-signature \"$SCRIPT_INPUT_FILE_1\"\n\tinstall_name_tool -change /usr/lib/libSystem.B.dylib \"@executable_path/../Frameworks/$(basename \"$SCRIPT_OUTPUT_FILE_0\")\" \"$SCRIPT_OUTPUT_FILE_1\"\nfi\n";
+			shellScript = "# copy intercept library\nmkdir -p \"$(dirname \"$SCRIPT_OUTPUT_FILE_0\")\"\ncp -p \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n\n# patch XPC converter to replace libSystem with intercept library\nif otool -L \"$SCRIPT_INPUT_FILE_1\" | fgrep -q libSystem ; then\n\tinstall_name_tool -change /usr/lib/libSystem.B.dylib \"@executable_path/../Frameworks/$(basename \"$SCRIPT_OUTPUT_FILE_0\")\" \"$SCRIPT_OUTPUT_FILE_1\"\nfi\n";
 		};
 		4CC8ED4E279DB9F600226566 /* Create Resource Symlinks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -550,7 +549,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4CC4585C276CAD0A00B7B7EC /* AsyncAsserts.swift in Sources */,
 				4C932869276687A100E65B18 /* Common.swift in Sources */,
 				4C4908C327A48C7D001BA47B /* Recorded.swift in Sources */,
 				4C93286A276687A100E65B18 /* Importers.swift in Sources */,
@@ -601,31 +599,18 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		4CE4581A26C1B40E00501102 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4CE4581926C1B40E00501102 /* en */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		4C1A35B8245DFEE900C40FB5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = arm64;
 				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTABILITY = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				ONLY_ACTIVE_ARCH = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_STRICT_CONCURRENCY = complete;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -633,14 +618,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = arm64;
 				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_STRICT_CONCURRENCY = complete;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
@@ -749,9 +733,12 @@
 		4CB78010269C855B0027D46F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_IMPLICIT_FALLTHROUGH = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
@@ -769,6 +756,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -786,9 +774,12 @@
 		4CB78011269C855B0027D46F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_IMPLICIT_FALLTHROUGH = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
@@ -805,6 +796,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -829,7 +821,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
 				"HEADER_SEARCH_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64/contrib/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64/contrib/include";
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
 				OTHER_CODE_SIGN_FLAGS = "--deep";
@@ -838,7 +829,6 @@
 				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "";
 				"SWIFT_INCLUDE_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64";
-				"SWIFT_INCLUDE_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64";
 			};
 			name = Debug;
 		};
@@ -851,7 +841,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
 				"HEADER_SEARCH_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64/contrib/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64/contrib/include";
 				INFOPLIST_FILE = XPCConverter/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake";
 				OTHER_CODE_SIGN_FLAGS = "--deep";
@@ -860,7 +849,6 @@
 				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "";
 				"SWIFT_INCLUDE_PATHS[arch=arm64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/arm64";
-				"SWIFT_INCLUDE_PATHS[arch=x86_64]" = "$(SRCROOT)/Dependencies/Build/$(CONFIGURATION)/HandBrake/x86_64";
 			};
 			name = Release;
 		};

@@ -11,6 +11,8 @@
 						autoconf automake libtool pkg-config meson ninja cmake nasm
 					];
 					shellHook = ''
+						unset DEVELOPER_DIR SDKROOT
+						export PATH=/usr/bin:$PATH  # prefer platform tools, especially xcrun
 						export ACLOCAL_PATH="${libtool}/share/aclocal:${pkg-config}/share/aclocal"
 						export NIX_CC="$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr"
 					'';

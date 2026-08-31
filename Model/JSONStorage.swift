@@ -10,12 +10,12 @@ public struct JSON<Root: Codable>: Sendable {
 	public let data: Data
 
 	init(_ root: Root) throws {
-		let encoder = CustomJSONEncoder()
+		let encoder = CustomJSON.Encoder()
 		data = try encoder.encode(root)
 	}
 
 	func decode() throws -> Root {
-		let decoder = CustomJSONDecoder()
+		let decoder = CustomJSON.Decoder()
 		return try decoder.decode(Root.self, from: data)
 	}
 }
@@ -53,8 +53,9 @@ extension JSON {
 	/// - Throws: `Errno` in case of file system errors.
 	public func write(to url: URL) async throws {
 		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			let data = self.data
 			let task = Task {
-				let file = try FileDescriptor.open(JSON.path(from: url), .writeOnly,
+				let file = try FileDescriptor.open(path(from: url), .writeOnly,
 				                                   options: [ .create, .truncate ],
 				                                   permissions: FilePermissions(rawValue: 0o644))
 				defer { try? file.close() }
@@ -103,7 +104,7 @@ extension JSON {
 	init(contentsOf url: URL) async throws {
 		data = try await withCheckedThrowingContinuation { continuation in
 			let task = Task {
-				let file = try FileDescriptor.open(JSON.path(from: url), .readOnly)
+				let file = try FileDescriptor.open(path(from: url), .readOnly)
 				defer { try? file.close() }
 
 				var stream = z_stream()
@@ -143,39 +144,46 @@ extension JSON {
 			Task { continuation.resume(with: await task.result) }
 		}
 	}
+}
 
-	static private func path(from url: URL) throws -> FilePath {
-		// ensure enclosing directory exists
-		let directory = url.deletingLastPathComponent()
-		try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+private func path(from url: URL) throws -> FilePath {
+	// ensure enclosing directory exists
+	let directory = url.deletingLastPathComponent()
+	try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
 
-		// ensure file extensions
-		var url = url
-		if url.pathExtension == "gz" { url.deletePathExtension() }
-		if url.pathExtension == "json" { url.deletePathExtension() }
-		url.appendPathExtension("json")
-		url.appendPathExtension("gz")
+	// ensure file extensions
+	var url = url
+	if url.pathExtension == "gz" { url.deletePathExtension() }
+	if url.pathExtension == "json" { url.deletePathExtension() }
+	url.appendPathExtension("json")
+	url.appendPathExtension("gz")
 
-		// convert to FilePath
-		guard let path = FilePath(url) else { throw Errno.noSuchFileOrDirectory }
-		return path
-	}
+	// convert to FilePath
+	guard let path = FilePath(url) else { throw Errno.noSuchFileOrDirectory }
+	return path
 }
 
 
 /* MARK: Custom JSON Coding */
 
-/// Types can adopt this protocol to customize their JSON representation.
-///
-/// You can still delegate to the original, synthesized functions from `Codable`.
-/// Only the JSON encoding and decoding performed by the `JSON` type respects
-/// these customizations.
-public protocol CustomJSONCodable {
-	func encode(toCustomJSON encoder: any Encoder) throws
-	init(fromCustomJSON decoder: any Decoder) throws
+/// A namespace for protocols to customize type’s JSON representation.
+public enum CustomJSON {}
+
+
+extension CustomJSON {
+
+	/// Types can adopt this protocol to customize their JSON representation.
+	///
+	/// You can still delegate to the original, synthesized functions from `Codable`.
+	/// Only the JSON encoding and decoding performed by the `JSON` type respects
+	/// these customizations.
+	public protocol Codable {
+		func encode(toCustomJSON encoder: any Swift.Encoder) throws
+		init(fromCustomJSON decoder: any Swift.Decoder) throws
+	}
 }
 
-extension Data: CustomJSONCodable {
+extension Data: CustomJSON.Codable {
 	// custom encoding: data as base64 string
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		try base64EncodedString().encode(to: encoder)
@@ -191,7 +199,7 @@ extension Data: CustomJSONCodable {
 	}
 }
 
-extension Array<UInt8>: CustomJSONCodable {
+extension Array<UInt8>: CustomJSON.Codable {
 	// custom encoding: byte array as data
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		try Data(self).encode(toCustomJSON: encoder)
@@ -203,19 +211,22 @@ extension Array<UInt8>: CustomJSONCodable {
 }
 
 
-/// Types can adopt this protocol to enable skipping of empty collections.
-///
-/// For brevity and JSON readability, some types can benefit from not storing
-/// empty collections. Instead, the entire key-value pair containing an empty
-/// collection is skipped. Only the JSON encoding and decoding performed by the
-/// `JSON` type respects these customizations.
-///
-/// This behavior is opt-in, since it can lead to ambiguities during decoding
-/// when applied universally. A good indicator for a type that should **not**
-/// adopt this behavior is inspection of `allKeys` in the decoding initializers.
-public protocol CustomJSONEmptyCollectionSkipping: Codable, CustomJSONCodable {}
+extension CustomJSON {
 
-extension CustomJSONEmptyCollectionSkipping {
+	/// Types can adopt this protocol to enable skipping of empty collections.
+	///
+	/// For brevity and JSON readability, some types can benefit from not storing
+	/// empty collections. Instead, the entire key-value pair containing an empty
+	/// collection is skipped. Only the JSON encoding and decoding performed by the
+	/// `JSON` type respects these customizations.
+	///
+	/// This behavior is opt-in, since it can lead to ambiguities during decoding
+	/// when applied universally. A good indicator for a type that should **not**
+	/// adopt this behavior is inspection of `allKeys` in the decoding initializers.
+	public protocol EmptyCollectionSkipping: Swift.Codable, CustomJSON.Codable {}
+}
+
+extension CustomJSON.EmptyCollectionSkipping {
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		try encode(to: encoder)
 		try encoder.skipEmptyCollections()
@@ -227,28 +238,31 @@ extension CustomJSONEmptyCollectionSkipping {
 }
 
 
-/// Types can adopt this protocol to enable more readable dictionary coding.
-///
-/// By default, dictionaries are encoded to JSON arrays that alternate between
-/// storing a key and a value. This is not very intuitive to read. However, if
-/// the dictionary’s key type adopts this protocol, it declares that it can
-/// encode and decode itself against a string. Strings can be used directly as
-/// JSON keys, allowing a readable JSON representation of the dictionary.
-///
-/// Furthermore, the same string representation can be used to encode all
-/// instances of the adopting type. All that is needed is to additionally
-/// declare `CustomJSONCodable` conformance.
-///
-/// - Remark: A similar dictionary coding customization could be achieved with
-///   the standard library’s `CodingKeyRepresentable` protocol. However,
-///   adopting this protocol requires more boilerplate (a `CodingKey` type) and
-///   changes the dictionary representation app-wide, not just for custom JSON.
-public protocol CustomJSONStringKeyRepresentable: Comparable {
-	var stringValue: String { get }
-	init?(stringValue: String)
+extension CustomJSON {
+
+	/// Types can adopt this protocol to enable more readable dictionary coding.
+	///
+	/// By default, dictionaries are encoded to JSON arrays that alternate between
+	/// storing a key and a value. This is not very intuitive to read. However, if
+	/// the dictionary’s key type adopts this protocol, it declares that it can
+	/// encode and decode itself against a string. Strings can be used directly as
+	/// JSON keys, allowing a readable JSON representation of the dictionary.
+	///
+	/// Furthermore, the same string representation can be used to encode all
+	/// instances of the adopting type. All that is needed is to additionally
+	/// declare `CustomJSON.Codable` conformance.
+	///
+	/// - Remark: A similar dictionary coding customization could be achieved with
+	///   the standard library’s `CodingKeyRepresentable` protocol. However,
+	///   adopting this protocol requires more boilerplate (a `CodingKey` type) and
+	///   changes the dictionary representation app-wide, not just for custom JSON.
+	public protocol StringKeyRepresentable: Comparable {
+		var stringValue: String { get }
+		init?(stringValue: String)
+	}
 }
 
-extension CustomJSONStringKeyRepresentable {
+extension CustomJSON.StringKeyRepresentable {
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		var container = encoder.singleValueContainer()
 		try container.encode(stringValue)
@@ -263,7 +277,7 @@ extension CustomJSONStringKeyRepresentable {
 	}
 }
 
-extension Dictionary: CustomJSONCodable where Key: CustomJSONStringKeyRepresentable, Value: Codable {
+extension Dictionary: CustomJSON.Codable where Key: CustomJSON.StringKeyRepresentable, Value: Codable {
 	// custom encoding: string-representable keys as direct string keys
 	struct StringKeys: CodingKey {
 		let stringValue: String
@@ -295,31 +309,34 @@ extension Dictionary: CustomJSONCodable where Key: CustomJSONStringKeyRepresenta
 }
 
 
-/// Enum types can adopt this protocol to enable a compact coded representation.
-///
-/// The default coding synthesized by the compiler stores enums as an outer
-/// keyed container holding a single key signifying the instantiated enum case.
-/// This key’s value holds an inner keyed container to store associated values.
-/// This representation is general, but too noisy for many enum types.
-///
-/// By adopting this protocol, three compactions are performed:
-/// * Enum cases without any associated values collapse to a plain string.
-/// * Cases with a single unlabeled non-container associated value directly
-///   store that value within their outer container.
-/// * Multiple unlabeled associated values are stored in an unkeyed inner
-///   container.
-///
-/// Only the JSON encoding and decoding performed by the `JSON` type respects
-/// these customizations.
-///
-/// - Remark: Further customization is possible by implementing
-///   `CustomJSONCodable` conformance and invoking the internal functions
-///   `Encoder.compactifyEnum()` and `Decoder.reconstructedEnum()` manually.
-///   This allows for example to manually encode specific cases, while
-///   deferring to the synthesized `Codable` conformance for the remaining cases.
-public protocol CustomJSONCompactEnum: Codable, CustomJSONCodable {}
+extension CustomJSON {
 
-extension CustomJSONCompactEnum {
+	/// Enum types can adopt this protocol to enable a compact coded representation.
+	///
+	/// The default coding synthesized by the compiler stores enums as an outer
+	/// keyed container holding a single key signifying the instantiated enum case.
+	/// This key’s value holds an inner keyed container to store associated values.
+	/// This representation is general, but too noisy for many enum types.
+	///
+	/// By adopting this protocol, three compactions are performed:
+	/// * Enum cases without any associated values collapse to a plain string.
+	/// * Cases with a single unlabeled non-container associated value directly
+	///   store that value within their outer container.
+	/// * Multiple unlabeled associated values are stored in an unkeyed inner
+	///   container.
+	///
+	/// Only the JSON encoding and decoding performed by the `JSON` type respects
+	/// these customizations.
+	///
+	/// - Remark: Further customization is possible by implementing
+	///   `CustomJSON.Codable` conformance and invoking the internal functions
+	///   `Encoder.compactifyEnum()` and `Decoder.reconstructedEnum()` manually.
+	///   This allows for example to manually encode specific cases, while
+	///   deferring to the synthesized `Codable` conformance for the remaining cases.
+	public protocol CompactEnum: Swift.Codable, CustomJSON.Codable {}
+}
+
+extension CustomJSON.CompactEnum {
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		try encode(to: encoder)
 		try encoder.compactifyEnum()
@@ -371,21 +388,24 @@ extension KeyedDecodingContainer<EnumKeys> {
 }
 
 
-/// Option set types can adopt this protocol to customize their JSON representation.
-///
-/// By default, option sets are represented as their raw value, which is not
-/// easily understandable by human readers of the JSON file. By providing a
-/// mapping between option set elements and label strings, the option set is
-/// represented as a JSON array of those labels.
-public protocol CustomJSONOptionSetCoding: OptionSet, CustomJSONCodable {
+extension CustomJSON {
 
-	/// Mapping between string labels and option set elements.
+	/// Option set types can adopt this protocol to customize their JSON representation.
 	///
-	/// The encoding will maintain the provided element order.
-	var allValues: [(label: String, element: Element)] { get }
+	/// By default, option sets are represented as their raw value, which is not
+	/// easily understandable by human readers of the JSON file. By providing a
+	/// mapping between option set elements and label strings, the option set is
+	/// represented as a JSON array of those labels.
+	public protocol OptionSetCoding: OptionSet, CustomJSON.Codable {
+
+		/// Mapping between string labels and option set elements.
+		///
+		/// The encoding will maintain the provided element order.
+		var allValues: KeyValuePairs<String, Element> { get }
+	}
 }
 
-extension CustomJSONOptionSetCoding {
+extension CustomJSON.OptionSetCoding {
 	public func encode(toCustomJSON encoder: Encoder) throws {
 		var container = encoder.unkeyedContainer()
 		for (label, element) in allValues where self.contains(element) {
@@ -397,7 +417,7 @@ extension CustomJSONOptionSetCoding {
 		self.init()
 		while !container.isAtEnd {
 			let label = try container.decode(String.self)
-			guard let element = allValues.first(where: { $0.label == label })?.element else {
+			guard let element = allValues.first(where: { $0.key == label })?.value else {
 				throw DecodingError.dataCorrupted(.init(codingPath: container.codingPath,
 					debugDescription: "OptionSet \(Self.self) does not understand value ‘\(label)’"))
 			}
@@ -409,68 +429,71 @@ extension CustomJSONOptionSetCoding {
 
 /* MARK: Custom JSON Encoder */
 
-/// A JSON encoder with customizable behavior.
-///
-/// This encoder implements the following differences compared to the standard
-/// `JSONEncoder`:
-/// * retain element order in dictionary collections
-/// * rendering of reasonably short collections in a single line
-/// * respect `CustomJSONCodable` to customize JSON encoding of types
-private struct CustomJSONEncoder {
+extension CustomJSON {
 
-	/// Reference-typed storage box.
+	/// A JSON encoder with customizable behavior.
 	///
-	/// Because this is reference-typed, by recursively adding sub-storages and
-	/// passing them into sub-encoders, we simultaneously build up the final
-	/// tree in the top-level storage.
-	///
-	/// Conformance to different protocols depends on the `Value` type parameter:
-	/// * `ElementStorage` conforms to `Encoder` and `SingleValueEncodingContainer`
-	/// * `ArrayStorage` conforms to `UnkeyedEncodingContainer`
-	/// * `KeyedDictionaryStorage` conforms to `KeyedEncodingContainerProtocol`
-	class Storage<Value> {
-		let codingPath: [any CodingKey]
-		var store: Value
-		init(codingPath: [any CodingKey], store: Value) {
-			self.codingPath = codingPath
-			self.store = store
+	/// This encoder implements the following differences compared to the standard
+	/// `JSONEncoder`:
+	/// * retain element order in dictionary collections
+	/// * rendering of reasonably short collections in a single line
+	/// * respect `CustomJSON.Codable` to customize JSON encoding of types
+	fileprivate struct Encoder {
+
+		/// Reference-typed storage box.
+		///
+		/// Because this is reference-typed, by recursively adding sub-storages and
+		/// passing them into sub-encoders, we simultaneously build up the final
+		/// tree in the top-level storage.
+		///
+		/// Conformance to different protocols depends on the `Value` type parameter:
+		/// * `ElementStorage` conforms to `Encoder` and `SingleValueEncodingContainer`
+		/// * `ArrayStorage` conforms to `UnkeyedEncodingContainer`
+		/// * `KeyedDictionaryStorage` conforms to `KeyedEncodingContainerProtocol`
+		class Storage<Value> {
+			let codingPath: [any CodingKey]
+			var store: Value
+			init(codingPath: [any CodingKey], store: Value) {
+				self.codingPath = codingPath
+				self.store = store
+			}
+		}
+
+		/// Subclass to remember `Key` type for `KeyedEncodingContainerProtocol`
+		class KeyedDictionaryStorage<Key: CodingKey>: DictionaryStorage {}
+
+		typealias DictionaryStorage = Storage<Array<(key: any CodingKey, value: ElementStorage)>>
+		typealias ArrayStorage = Storage<Array<ElementStorage>>
+		typealias ElementStorage = Storage<Element?>
+
+		enum Element {
+			case dictionary(DictionaryStorage)
+			case array(ArrayStorage)
+			case string(String)
+			case signedInteger(Int64)
+			case unsignedInteger(UInt64)
+			case float(Double)
+			case boolean(Bool)
+			case null
+		}
+
+		func encode<Root: Encodable>(_ root: Root) throws -> Data {
+			let storage = ElementStorage(codingPath: [], store: nil)
+			try storage.encode(root)
+			return try storage.serialize() + "\n".utf8
 		}
 	}
-
-	/// Subclass to remember `Key` type for `KeyedEncodingContainerProtocol`
-	class KeyedDictionaryStorage<Key: CodingKey>: DictionaryStorage {}
-
-	typealias DictionaryStorage = Storage<Array<(key: any CodingKey, value: ElementStorage)>>
-	typealias ArrayStorage = Storage<Array<ElementStorage>>
-	typealias ElementStorage = Storage<Element?>
-
-	enum Element {
-		case dictionary(DictionaryStorage)
-		case array(ArrayStorage)
-		case string(String)
-		case signedInteger(Int64)
-		case unsignedInteger(UInt64)
-		case float(Double)
-		case boolean(Bool)
-		case null
-	}
-
-	func encode<Root: Encodable>(_ root: Root) throws -> Data {
-		let storage = ElementStorage(codingPath: [], store: nil)
-		try storage.encode(root)
-		return try storage.serialize() + "\n".utf8
-	}
 }
 
-private extension CustomJSONEncoder.Storage {
-	typealias KeyedDictionaryStorage = CustomJSONEncoder.KeyedDictionaryStorage
-	typealias DictionaryStorage = CustomJSONEncoder.DictionaryStorage
-	typealias ArrayStorage = CustomJSONEncoder.ArrayStorage
-	typealias ElementStorage = CustomJSONEncoder.ElementStorage
-	typealias Element = CustomJSONEncoder.Element
+private extension CustomJSON.Encoder.Storage {
+	typealias KeyedDictionaryStorage = CustomJSON.Encoder.KeyedDictionaryStorage
+	typealias DictionaryStorage = CustomJSON.Encoder.DictionaryStorage
+	typealias ArrayStorage = CustomJSON.Encoder.ArrayStorage
+	typealias ElementStorage = CustomJSON.Encoder.ElementStorage
+	typealias Element = CustomJSON.Encoder.Element
 }
 
-private extension CustomJSONEncoder.KeyedDictionaryStorage {
+private extension CustomJSON.Encoder.KeyedDictionaryStorage {
 	func emptyDictionaryStorage<NestedKey: CodingKey>(keyedBy _: NestedKey.Type, forKey key: Key) -> KeyedDictionaryStorage<NestedKey> {
 		let codingPath = codingPath + [key]
 		let storage = KeyedDictionaryStorage<NestedKey>(codingPath: codingPath, store: [])
@@ -502,7 +525,7 @@ private extension CustomJSONEncoder.KeyedDictionaryStorage {
 	}
 }
 
-private extension CustomJSONEncoder.ArrayStorage {
+private extension CustomJSON.Encoder.ArrayStorage {
 	struct ArrayCodingKey: CodingKey {
 		let intValue: Int?
 		var stringValue: String { "\(intValue!)" }
@@ -537,7 +560,7 @@ private extension CustomJSONEncoder.ArrayStorage {
 	}
 }
 
-private extension CustomJSONEncoder.ElementStorage {
+private extension CustomJSON.Encoder.ElementStorage {
 	func emptyDictionaryStorage<Key: CodingKey>(keyedBy _: Key.Type) -> KeyedDictionaryStorage<Key> {
 		let storage = KeyedDictionaryStorage<Key>(codingPath: codingPath, store: [])
 		store(.dictionary(storage))
@@ -556,7 +579,7 @@ private extension CustomJSONEncoder.ElementStorage {
 	}
 }
 
-extension CustomJSONEncoder.ElementStorage: Encoder {
+extension CustomJSON.Encoder.ElementStorage: Encoder {
 	var userInfo: [CodingUserInfoKey: Any] { [:] }
 
 	func container<Key: CodingKey>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> {
@@ -570,7 +593,7 @@ extension CustomJSONEncoder.ElementStorage: Encoder {
 	}
 }
 
-extension CustomJSONEncoder.KeyedDictionaryStorage: KeyedEncodingContainerProtocol {
+extension CustomJSON.Encoder.KeyedDictionaryStorage: KeyedEncodingContainerProtocol {
 
 	func nestedContainer<NestedKey: CodingKey>(keyedBy type: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> {
 		return KeyedEncodingContainer(emptyDictionaryStorage(keyedBy: type, forKey: key))
@@ -587,7 +610,7 @@ extension CustomJSONEncoder.KeyedDictionaryStorage: KeyedEncodingContainerProtoc
 
 	func encode<T: Encodable>(_ value: T, forKey key: Key) throws {
 		let storage = emptyElementStorage(forKey: key)
-		if let value = value as? CustomJSONCodable {
+		if let value = value as? CustomJSON.Codable {
 			try value.encode(toCustomJSON: storage)
 		} else {
 			try value.encode(to: storage)
@@ -641,7 +664,7 @@ extension CustomJSONEncoder.KeyedDictionaryStorage: KeyedEncodingContainerProtoc
 	}
 }
 
-extension CustomJSONEncoder.ArrayStorage: UnkeyedEncodingContainer {
+extension CustomJSON.Encoder.ArrayStorage: UnkeyedEncodingContainer {
 	var count: Int { store.count }
 
 	func nestedContainer<Key: CodingKey>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> {
@@ -656,7 +679,7 @@ extension CustomJSONEncoder.ArrayStorage: UnkeyedEncodingContainer {
 
 	func encode<T: Encodable>(_ value: T) throws {
 		let storage = emptyElementStorage()
-		if let value = value as? CustomJSONCodable {
+		if let value = value as? CustomJSON.Codable {
 			try value.encode(toCustomJSON: storage)
 		} else {
 			try value.encode(to: storage)
@@ -710,10 +733,10 @@ extension CustomJSONEncoder.ArrayStorage: UnkeyedEncodingContainer {
 	}
 }
 
-extension CustomJSONEncoder.ElementStorage: SingleValueEncodingContainer {
+extension CustomJSON.Encoder.ElementStorage: SingleValueEncodingContainer {
 
 	func encode<T: Encodable>(_ value: T) throws {
-		if let value = value as? CustomJSONCodable {
+		if let value = value as? CustomJSON.Codable {
 			try value.encode(toCustomJSON: self)
 		} else {
 			try value.encode(to: self)
@@ -767,7 +790,7 @@ extension CustomJSONEncoder.ElementStorage: SingleValueEncodingContainer {
 	}
 }
 
-private extension CustomJSONEncoder.ElementStorage {
+private extension CustomJSON.Encoder.ElementStorage {
 
 	func serialize() throws -> Data {
 
@@ -849,70 +872,73 @@ private extension CustomJSONEncoder.ElementStorage {
 
 /* MARK: Custom JSON Decoder */
 
-private struct CustomJSONDecoder {
+extension CustomJSON {
 
-	/// Reference-typed storage box.
-	///
-	/// Contrary to the encoder, the decoder does not actually need the
-	/// reference semantics, because the entire nested structure is initialized
-	/// once from `JSONSerialization` output. However, transparent sub-typing by
-	/// inheritance is used, so we keep this class-typed.
-	///
-	/// Conformance to different protocols depends on the `Value` type parameter:
-	/// * `ElementStorage` conforms to `Decoder` and `SingleValueDecodingContainer`
-	/// * `ArrayStorage` conforms to `UnkeyedDecodingContainer`
-	/// * `KeyedDictionaryStorage` conforms to `KeyedDecodingContainerProtocol`
-	class Storage<Value> {
-		var codingPath: [any CodingKey]
-		let store: Value
-		init(codingPath: [any CodingKey] = [], store: Value) {
-			self.codingPath = codingPath
-			self.store = store
+	fileprivate struct Decoder {
+
+		/// Reference-typed storage box.
+		///
+		/// Contrary to the encoder, the decoder does not actually need the
+		/// reference semantics, because the entire nested structure is initialized
+		/// once from `JSONSerialization` output. However, transparent sub-typing by
+		/// inheritance is used, so we keep this class-typed.
+		///
+		/// Conformance to different protocols depends on the `Value` type parameter:
+		/// * `ElementStorage` conforms to `Decoder` and `SingleValueDecodingContainer`
+		/// * `ArrayStorage` conforms to `UnkeyedDecodingContainer`
+		/// * `KeyedDictionaryStorage` conforms to `KeyedDecodingContainerProtocol`
+		class Storage<Value> {
+			var codingPath: [any CodingKey]
+			let store: Value
+			init(codingPath: [any CodingKey] = [], store: Value) {
+				self.codingPath = codingPath
+				self.store = store
+			}
 		}
-	}
 
-	/// Subclass to remember `Key` type for `KeyedDecodingContainerProtocol`
-	class KeyedDictionaryStorage<Key: CodingKey>: DictionaryStorage {}
+		/// Subclass to remember `Key` type for `KeyedDecodingContainerProtocol`
+		class KeyedDictionaryStorage<Key: CodingKey>: DictionaryStorage {}
 
-	class DictionaryStorage: Storage<Dictionary<String, ElementStorage>> {
-		var missingCollectionsAsEmpty: Bool = false
-		init(codingPath: [any CodingKey] = [],
-		     store: [String: ElementStorage],
-		     missingCollectionsAsEmpty: Bool = false) {
-			super.init(codingPath: codingPath, store: store)
-			self.missingCollectionsAsEmpty = missingCollectionsAsEmpty
+		class DictionaryStorage: Storage<Dictionary<String, ElementStorage>> {
+			var missingCollectionsAsEmpty: Bool = false
+			init(codingPath: [any CodingKey] = [],
+			     store: [String: ElementStorage],
+			     missingCollectionsAsEmpty: Bool = false) {
+				super.init(codingPath: codingPath, store: store)
+				self.missingCollectionsAsEmpty = missingCollectionsAsEmpty
+			}
 		}
-	}
-	class ArrayStorage: Storage<Array<ElementStorage>> {
-		var currentIndex: Int = 0
-	}
-	typealias ElementStorage = Storage<Element>
+		class ArrayStorage: Storage<Array<ElementStorage>> {
+			var currentIndex: Int = 0
+		}
+		typealias ElementStorage = Storage<Element>
 
-	enum Element {
-		case missingCollectionsAsEmpty
-		case dictionary(DictionaryStorage)
-		case array(ArrayStorage)
-		case string(String)
-		case number(NSNumber)
-		case null
-	}
+		enum Element {
+			case missingCollectionsAsEmpty
+			case dictionary(DictionaryStorage)
+			case array(ArrayStorage)
+			case string(String)
+			case number(NSNumber)
+			case null
+		}
 
-	func decode<Root: Decodable>(_ type: Root.Type, from data: Data) throws -> Root {
-		let object = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
-		let storage = ElementStorage(from: object)
-		return try storage.decode(type)
+		func decode<Root: Decodable>(_ type: Root.Type, from data: Data) throws -> Root {
+			let object = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+			let storage = ElementStorage(from: object)
+			return try storage.decode(type)
+		}
 	}
 }
 
-private extension CustomJSONDecoder.Storage {
-	typealias KeyedDictionaryStorage = CustomJSONDecoder.KeyedDictionaryStorage
-	typealias DictionaryStorage = CustomJSONDecoder.DictionaryStorage
-	typealias ArrayStorage = CustomJSONDecoder.ArrayStorage
-	typealias ElementStorage = CustomJSONDecoder.ElementStorage
-	typealias Element = CustomJSONDecoder.Element
+private extension CustomJSON.Decoder.Storage {
+	typealias KeyedDictionaryStorage = CustomJSON.Decoder.KeyedDictionaryStorage
+	typealias DictionaryStorage = CustomJSON.Decoder.DictionaryStorage
+	typealias ArrayStorage = CustomJSON.Decoder.ArrayStorage
+	typealias ElementStorage = CustomJSON.Decoder.ElementStorage
+	typealias Element = CustomJSON.Decoder.Element
 }
 
-private extension CustomJSONDecoder.ElementStorage {
+private extension CustomJSON.Decoder.ElementStorage {
 
 	convenience init(from object: Any) {
 		switch object {
@@ -942,7 +968,7 @@ private extension CustomJSONDecoder.ElementStorage {
 	}
 }
 
-private extension CustomJSONDecoder.KeyedDictionaryStorage {
+private extension CustomJSON.Decoder.KeyedDictionaryStorage {
 	func dictionaryStorage<NestedKey: CodingKey>(keyedBy _: NestedKey.Type, forKey key: Key) throws -> KeyedDictionaryStorage<NestedKey> {
 		let codingPath = codingPath + [key]
 		if missingCollectionsAsEmpty && store[key.stringValue] == nil {
@@ -988,8 +1014,8 @@ private extension CustomJSONDecoder.KeyedDictionaryStorage {
 	}
 }
 
-private extension CustomJSONDecoder.ArrayStorage {
-	typealias ArrayCodingKey = CustomJSONEncoder.ArrayStorage.ArrayCodingKey
+private extension CustomJSON.Decoder.ArrayStorage {
+	typealias ArrayCodingKey = CustomJSON.Encoder.ArrayStorage.ArrayCodingKey
 	func nextDictionaryStorage<Key: CodingKey>(keyedBy _: Key.Type) throws -> KeyedDictionaryStorage<Key> {
 		if case .dictionary(let storage) = try next() {
 			let codingPath = codingPath + [ArrayCodingKey(intValue: currentIndex)]
@@ -1025,7 +1051,7 @@ private extension CustomJSONDecoder.ArrayStorage {
 	}
 }
 
-private extension CustomJSONDecoder.ElementStorage {
+private extension CustomJSON.Decoder.ElementStorage {
 	func dictionaryStorage<Key: CodingKey>(keyedBy _: Key.Type) throws -> KeyedDictionaryStorage<Key> {
 		if case .missingCollectionsAsEmpty = store {
 			// propagate missingCollectionsAsEmpty into the dictionary
@@ -1055,21 +1081,21 @@ private extension CustomJSONDecoder.ElementStorage {
 	}
 }
 
-extension CustomJSONDecoder.Element: CustomStringConvertible {
+extension CustomJSON.Decoder.Element: CustomStringConvertible {
 	/// Description without the associated value for brevity of debug messages.
 	var description: String {
 		switch self {
-		case .missingCollectionsAsEmpty: return "emptyCollection"
-		case .dictionary: return "Dictionary"
-		case .array: return "Array"
-		case .string: return "String"
-		case .number: return "NSNumber"
-		case .null: return "NSNull"
+		case .missingCollectionsAsEmpty: "emptyCollection"
+		case .dictionary: "Dictionary"
+		case .array: "Array"
+		case .string: "String"
+		case .number: "NSNumber"
+		case .null: "NSNull"
 		}
 	}
 }
 
-extension CustomJSONDecoder.ElementStorage: Decoder {
+extension CustomJSON.Decoder.ElementStorage: Decoder {
 	var userInfo: [CodingUserInfoKey: Any] { [:] }
 
 	func container<Key: CodingKey>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> {
@@ -1083,7 +1109,7 @@ extension CustomJSONDecoder.ElementStorage: Decoder {
 	}
 }
 
-extension CustomJSONDecoder.KeyedDictionaryStorage: KeyedDecodingContainerProtocol {
+extension CustomJSON.Decoder.KeyedDictionaryStorage: KeyedDecodingContainerProtocol {
 	var allKeys: [Key] { store.keys.map { Key(stringValue: $0)! } }
 	func contains(_ key: Key) -> Bool { store.keys.contains(key.stringValue) }
 
@@ -1102,7 +1128,7 @@ extension CustomJSONDecoder.KeyedDictionaryStorage: KeyedDecodingContainerProtoc
 
 	func decode<T: Decodable>(_ type: T.Type, forKey key: Key) throws -> T {
 		let storage = try elementStorage(forKey: key)
-		if let type = type as? CustomJSONCodable.Type {
+		if let type = type as? CustomJSON.Codable.Type {
 			return try type.init(fromCustomJSON: storage) as! T
 		} else {
 			return try type.init(from: storage)
@@ -1171,7 +1197,7 @@ extension CustomJSONDecoder.KeyedDictionaryStorage: KeyedDecodingContainerProtoc
 	}
 }
 
-extension CustomJSONDecoder.ArrayStorage: UnkeyedDecodingContainer {
+extension CustomJSON.Decoder.ArrayStorage: UnkeyedDecodingContainer {
 	var isAtEnd: Bool { currentIndex == store.endIndex }
 	var count: Int? { store.count }
 
@@ -1187,7 +1213,7 @@ extension CustomJSONDecoder.ArrayStorage: UnkeyedDecodingContainer {
 
 	func decode<T: Decodable>(_ type: T.Type) throws -> T {
 		let storage = try nextElementStorage()
-		if let type = type as? CustomJSONCodable.Type {
+		if let type = type as? CustomJSON.Codable.Type {
 			return try type.init(fromCustomJSON: storage) as! T
 		} else {
 			return try type.init(from: storage)
@@ -1256,10 +1282,10 @@ extension CustomJSONDecoder.ArrayStorage: UnkeyedDecodingContainer {
 	}
 }
 
-extension CustomJSONDecoder.ElementStorage: SingleValueDecodingContainer {
+extension CustomJSON.Decoder.ElementStorage: SingleValueDecodingContainer {
 
 	func decode<T: Decodable>(_ type: T.Type) throws -> T {
-		if let type = type as? CustomJSONCodable.Type {
+		if let type = type as? CustomJSON.Codable.Type {
 			return try type.init(fromCustomJSON: self) as! T
 		} else {
 			return try type.init(from: self)
@@ -1335,11 +1361,11 @@ extension Encoder {
 
 	/// Removes empty sub-containers on an already filled encoder.
 	///
-	/// - SeeAlso: `CustomJSONEmptyCollectionSkipping`
+	/// - SeeAlso: `CustomJSON.EmptyCollectionSkipping`
 	public func skipEmptyCollections() throws {
-		guard let storage = self as? CustomJSONEncoder.ElementStorage else {
+		guard let storage = self as? CustomJSON.Encoder.ElementStorage else {
 			throw EncodingError.invalidValue(self, .init(codingPath: codingPath,
-				debugDescription: "empty collection skip requires CustomJSONEncoder"))
+				debugDescription: "empty collection skip requires CustomJSON.Encoder"))
 		}
 
 		guard case .dictionary(let dictionary) = storage.store else {
@@ -1352,23 +1378,22 @@ extension Encoder {
 			// skip any empty immediate sub-containers
 			switch $0.value.store {
 			case .dictionary(let container):
-				if container.store.isEmpty { return false }
+				!container.store.isEmpty
 			case .array(let container):
-				if container.store.isEmpty { return false }
+				!container.store.isEmpty
 			default:
-				break
+				true
 			}
-			return true
 		}
 	}
 
 	/// Compacts a default enum encoding to a more dense representation.
 	///
-	/// - SeeAlso: `CustomJSONCompactEnum`
+	/// - SeeAlso: `CustomJSON.CompactEnum`
 	public func compactifyEnum() throws {
-		guard let storage = self as? CustomJSONEncoder.ElementStorage else {
+		guard let storage = self as? CustomJSON.Encoder.ElementStorage else {
 			throw EncodingError.invalidValue(self, .init(codingPath: codingPath,
-				debugDescription: "enum compaction requires CustomJSONEncoder"))
+				debugDescription: "enum compaction requires CustomJSON.Encoder"))
 		}
 
 		// unpack the already encoded enum container hierarchy
@@ -1401,8 +1426,8 @@ extension Encoder {
 			// store unlabeled associated values as unkeyed container
 			if inner.store.allSatisfy({ $0.key.stringValue.starts(with: "_") }) {
 				let values = inner.store.map { $0.value }
-				let unkeyed = CustomJSONEncoder.ArrayStorage(codingPath: inner.codingPath, store: values)
-				let element = CustomJSONEncoder.ElementStorage(codingPath: unkeyed.codingPath, store: .array(unkeyed))
+				let unkeyed = CustomJSON.Encoder.ArrayStorage(codingPath: inner.codingPath, store: values)
+				let element = CustomJSON.Encoder.ElementStorage(codingPath: unkeyed.codingPath, store: .array(unkeyed))
 				outer.store = [(key: enumCase.key, value: element)]
 			}
 		}
@@ -1413,11 +1438,11 @@ extension Decoder {
 
 	/// Enables the decoder to treat missing container-type elements as empty containers.
 	///
-	/// - SeeAlso: `CustomJSONEmptyCollectionSkipping`
+	/// - SeeAlso: `CustomJSON.EmptyCollectionSkipping`
 	public func enableMissingAsEmpty() throws {
-		guard let storage = self as? CustomJSONDecoder.ElementStorage else {
+		guard let storage = self as? CustomJSON.Decoder.ElementStorage else {
 			throw DecodingError.typeMismatch(Self.self, .init(codingPath: codingPath,
-				debugDescription: "missing-as-empty requires CustomJSONDecoder"))
+				debugDescription: "missing-as-empty requires CustomJSON.Decoder"))
 		}
 
 		// modify the stored dictionary to enable missingCollectionsAsEmpty
@@ -1430,16 +1455,16 @@ extension Decoder {
 
 	/// Reconstructs an enum representation compatible with default decoding from a compact one.
 	///
-	/// - SeeAlso: `CustomJSONCompactEnum`
+	/// - SeeAlso: `CustomJSON.CompactEnum`
 	public func reconstructedEnum() throws -> some Decoder {
-		guard let storage = self as? CustomJSONDecoder.ElementStorage else {
+		guard let storage = self as? CustomJSON.Decoder.ElementStorage else {
 			throw DecodingError.typeMismatch(Self.self, .init(codingPath: codingPath,
-				debugDescription: "enum reconstruction requires CustomJSONDecoder"))
+				debugDescription: "enum reconstruction requires CustomJSON.Decoder"))
 		}
 
 		// reconstruct original enum representation from compact one
 		let caseLabel: String
-		let innerContainer: [String: CustomJSONDecoder.ElementStorage]
+		let innerContainer: [String: CustomJSON.Decoder.ElementStorage]
 
 		if let string = try? storage.decode(String.self) {
 			// plain string: add empty inner container, wrap in outer container
@@ -1469,9 +1494,9 @@ extension Decoder {
 		}
 
 		let innerPath = storage.codingPath + [EnumKeys(stringValue: caseLabel)]
-		let innerDict = CustomJSONDecoder.DictionaryStorage(codingPath: innerPath, store: innerContainer)
-		let innerElem = CustomJSONDecoder.ElementStorage(codingPath: innerPath, store: .dictionary(innerDict))
-		let outer = CustomJSONDecoder.DictionaryStorage(codingPath: storage.codingPath, store: [caseLabel: innerElem])
-		return CustomJSONDecoder.ElementStorage(codingPath: storage.codingPath, store: .dictionary(outer))
+		let innerDict = CustomJSON.Decoder.DictionaryStorage(codingPath: innerPath, store: innerContainer)
+		let innerElem = CustomJSON.Decoder.ElementStorage(codingPath: innerPath, store: .dictionary(innerDict))
+		let outer = CustomJSON.Decoder.DictionaryStorage(codingPath: storage.codingPath, store: [caseLabel: innerElem])
+		return CustomJSON.Decoder.ElementStorage(codingPath: storage.codingPath, store: .dictionary(outer))
 	}
 }

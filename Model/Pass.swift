@@ -35,7 +35,7 @@ public protocol SubPassRecursing {
 	/// Have all sub-passes process the `MediaTree`.
 	///
 	/// - Important: Replacing the default implementation is not recommended,
-	/// because it performs logging and cancellation for the executed sub-passes.
+	///   because it performs logging and cancellation for the executed sub-passes.
 	mutating func process(bySubPasses mediaTree: MediaTree) async throws -> MediaTree
 }
 
@@ -97,7 +97,7 @@ public enum SubPassBuilder {
 }
 
 /// A namespace for pass types that help compose larger pass graphs.
-public enum Base {}
+public enum Compose {}
 
 
 /* MARK: Default Implementations */
@@ -112,8 +112,10 @@ extension AnyPass {
 	/// Invocations of `process()`, `generate()`, and `consume()` should be
 	/// wrapped by this function.
 	///
+	/// - ToDo: Remove `nonisolated(nonsending)` annotation when
+	///   `NonisolatedNonsendingByDefault` feature is enabled (Swift 7?)
 	/// - ToDo: Reconsider this design whenever function wrappers are added to Swift.
-	func run<Result>(_ body: () async throws -> Result) async throws -> Result {
+	nonisolated(nonsending) func run<Result>(_ body: () async throws -> Result) async throws -> Result {
 		await Task.yield()
 		if await Transform.state == .error { withUnsafeCurrentTask { $0?.cancel() } }
 		try Task.checkCancellation()

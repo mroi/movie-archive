@@ -54,7 +54,7 @@ public actor DVDReader {
 		}
 	}
 
-	deinit {
+	isolated deinit {
 		connection.remote.close(remoteStateID)
 	}
 }

@@ -1,11 +1,11 @@
-// swift-tools-version:5.7
+// swift-tools-version:6.3
 import PackageDescription
 
 let package = Package(
 	name: "Exporters",
 	defaultLocalization: "en",
 	platforms: [
-		.macOS(.v12)
+		.macOS(.v26)
 	],
 	products: [
 		.library(name: "MovieArchiveExporters", targets: ["MovieArchiveExporters"]),

@@ -1,4 +1,5 @@
-import XCTest
+import Testing
+import Foundation
 
 @testable import MovieArchiveModel
 @testable import MovieArchiveConverter
@@ -6,33 +7,36 @@ import XCTest
 
 /* MARK: Model Tests */
 
-class ModelTests: XCTestCase {
+@Suite
+struct ModelTests {
 
-	func testMediaTreeEditing() {
+	@Test
+	func mediaTreeEditing() {
 		var tree = MediaTree.collection(.init(children: [
 			.opaque(.init(payload: 42)),
 			.opaque(.init(payload: 23))
 		]))
-		XCTAssertEqual(tree.count, 3)
-		XCTAssertNotNil(tree.collection)
-		XCTAssertTrue(tree.contains(where: { $0.collection != nil }))
-		XCTAssertTrue(tree.contains(where: { $0.opaque?.payload as? Int == 42 }))
-		XCTAssertTrue(tree.contains(where: { $0.opaque?.payload as? Int == 23 }))
+		#expect(tree.count == 3)
+		#expect(tree.collection != nil)
+		#expect(tree.contains(where: { $0.collection != nil }))
+		#expect(tree.contains(where: { $0.opaque?.payload as? Int == 42 }))
+		#expect(tree.contains(where: { $0.opaque?.payload as? Int == 23 }))
 		tree.withOpaque { $0.children.removeAll() }
-		XCTAssertEqual(tree.count, 3)  // nothing changed
+		#expect(tree.count == 3)  // nothing changed
 		tree.withCollection { $0.children.removeLast() }
-		XCTAssertEqual(tree.count, 2)
+		#expect(tree.count == 2)
 		tree.modifyFirst(where: { $0.opaque?.payload as? Int == 42 }) {
 			$0.withOpaque { $0.payload = 17 }
 		}
-		XCTAssertEqual(tree.count, 2)
-		XCTAssertNotNil(tree.collection)
-		XCTAssertEqual(tree.collection?.children.count, 1)
-		XCTAssertEqual(tree.collection?.children.first?.opaque?.payload as? Int, 17)
+		#expect(tree.count == 2)
+		#expect(tree.collection != nil)
+		#expect(tree.collection?.children.count == 1)
+		#expect(tree.collection?.children.first?.opaque?.payload as? Int == 17)
 	}
 
-	func testMediaTreeJSON() async {
-		struct TestPayload: Codable, CustomJSONEmptyCollectionSkipping {
+	@Test
+	func mediaTreeJSON() async throws {
+		struct TestPayload: Codable, CustomJSON.EmptyCollectionSkipping {
 			var someOptional: Int? = 42
 			var noneOptional: Int? = nil
 			var emptyArray: [Int] = []
@@ -61,59 +65,58 @@ class ModelTests: XCTestCase {
 		}
 
 		// encode media tree to JSON and compare with expected output
-		var json: JSON<MediaTree>!
-		XCTAssertNoThrow(json = try tree.json())
-		XCTAssertEqual(json.string(tabsAs: .spaces(width: 4)), expectedOutput)
+		let json = try tree.json()
+		#expect(json.string(tabsAs: .spaces(width: 4)) == expectedOutput)
 
 		// decoding without registering payload types fails
-		XCTAssertThrowsError(try json.mediaTree()) {
-			XCTAssertNotNil($0 as? UnknownTypeError)
+		#expect(throws: UnknownTypeError.self) {
+			try json.mediaTree()
 		}
 
 		// decoding with type knowledge succeeds
-		var decoded: MediaTree!
-		let types = [TestPayload.self, TestPayload.self]  // testing non-unique elements
-		XCTAssertNoThrow(decoded = try json.mediaTree(withTypes: types))
+		let types = (TestPayload.self, TestPayload.self)  // testing non-unique elements
+		let decoded = try json.mediaTree(withTypes: types.0, types.1)
 
 		// decoded result re-encodes to the original JSON
-		var json2: JSON<MediaTree>!
-		XCTAssertNoThrow(json2 = try decoded.json())
-		XCTAssertEqual(json.data, json2.data)
+		let json2 = try decoded.json()
+		#expect(json.data == json2.data)
 
 		// JSON can be stored and read
 		let fileManager = FileManager.default
 		let testUrl = fileManager.temporaryDirectory.appendingPathComponent("test.json.gz")
-		await XCTAssertNoThrowAsync(try await json2.write(to: testUrl))
-		await XCTAssertNoThrowAsync(json2 = try await JSON(contentsOf: testUrl))
-		XCTAssertEqual(json.data, json2.data)
-		try! fileManager.removeItem(at: testUrl)
+		try await json2.write(to: testUrl)
+		let json3 = try await JSON<MediaTree>(contentsOf: testUrl)
+		#expect(json.data == json3.data)
+		try fileManager.removeItem(at: testUrl)
 
 		// reading an empty file fails
 		let emptyUrl = fileManager.temporaryDirectory.appendingPathComponent("empty.json.gz")
 		fileManager.createFile(atPath: emptyUrl.path, contents: nil)
-		await XCTAssertThrowsErrorAsync(json2 = try await JSON(contentsOf: emptyUrl)) {
-			XCTAssertEqual(String(describing: $0), "Inappropriate file type or format")
+		let error = await #expect(throws: (any Error).self) {
+			try await JSON<MediaTree>(contentsOf: emptyUrl)
 		}
-		try! fileManager.removeItem(at: emptyUrl)
+		#expect(String(describing: try #require(error)) == "Inappropriate file type or format")
+		try fileManager.removeItem(at: emptyUrl)
 	}
 
-	func testPassExecution() async {
+	@Test
+	func passExecution() async {
 		let importer = TestImporter(.opaque(.init(payload: 42))) {
 			Test.Identity()
-			Base.Loop {
+			Compose.Loop {
 				Test.Countdown(3)
 				Test.Identity()
 			}
-			Base.If({ $0.allSatisfy { $0.opaque != nil } }) {
+			Compose.If({ $0.allSatisfy { $0.opaque != nil } }) {
 				Test.Identity()
 			}
-			Base.While(Test.Countdown(4)) {
+			Compose.While(Test.Countdown(4)) {
 				Test.Identity()
 			}
 		}
 		let exporter = NullExporter()
 		let transform = Transform(importer: importer, exporter: exporter)
-		XCTAssertEqual(transform.description, "TestImporter → NullExporter")
+		#expect(transform.description == "TestImporter → NullExporter")
 
 		var outputs = 0
 		let subscription = transform.publisher
@@ -123,16 +126,17 @@ class ModelTests: XCTestCase {
 
 		await transform.execute()
 
-		XCTAssertEqual(outputs, 43)
+		#expect(outputs == 43)
 	}
 
-	func testClientInteraction() async {
+	@Test
+	func clientInteraction() async {
 		let importer = TestImporter(.opaque(.init(payload: 42))) {
-			Base.MediaTreeInteraction()
+			Compose.MediaTreeInteraction()
 		}
 		let exporter = NullExporter()
 		let transform = Transform(importer: importer, exporter: exporter)
-		XCTAssertEqual(transform.description, "TestImporter → NullExporter")
+		#expect(transform.description == "TestImporter → NullExporter")
 
 		var mediaTree: MediaTree?
 		let subscription = transform.publisher
@@ -140,8 +144,8 @@ class ModelTests: XCTestCase {
 			.sink {
 				if case .mediaTree(let interaction) = $0 {
 					if let node = interaction.opaque {
-						XCTAssertEqual(node.children.count, 0)
-						XCTAssertEqual(node.payload as? Int, 42)
+						#expect(node.children.count == 0)
+						#expect(node.payload as? Int == 42)
 						interaction.value = .collection(.init(children: []))
 						interaction.finish()
 					} else {
@@ -153,103 +157,105 @@ class ModelTests: XCTestCase {
 
 		await transform.execute()
 
-		XCTAssertNotNil(mediaTree?.collection)
+		#expect(mediaTree?.collection != nil)
 	}
 
-	func testErrorToPublisher() async {
-		let error = expectation(description: "an error should be published")
-
+	@Test
+	func errorToPublisher() async {
 		let importer = ThrowingImporter()
 		let exporter = NullExporter()
 		let transform = Transform(importer: importer, exporter: exporter)
-		XCTAssertEqual(transform.description, "ThrowingImporter → NullExporter")
+		#expect(transform.description == "ThrowingImporter → NullExporter")
 
 		var outputs = 0
-		let subscription = transform.publisher.sink(
-			receiveCompletion: { if case .failure = $0 { error.fulfill() } },
-			receiveValue: { _ in outputs += 1 })
-		defer { subscription.cancel() }
+		await confirmation("an error should be published") { error in
+			let subscription = transform.publisher.sink(
+				receiveCompletion: { if case .failure = $0 { error.confirm() } },
+				receiveValue: { _ in outputs += 1 })
+			defer { subscription.cancel() }
 
-		await transform.execute()
+			await transform.execute()
+		}
 
-		XCTAssertEqual(outputs, 1)
-		await XCTAssertEqualAsync(await transform.state, .error)
-		await waitForExpectations(timeout: .infinity)
+		#expect(outputs == 1)
+		#expect(await transform.state == .error)
 	}
 
-	func testCancellation() async {
-		let cancelled = expectation(description: "transform should be cancelled")
-
+	@Test
+	func cancellation() async {
 		let importer = ThrowingImporter()
 		let exporter = NullExporter()
 		let transform = Transform(importer: importer, exporter: exporter)
-		XCTAssertEqual(transform.description, "ThrowingImporter → NullExporter")
+		#expect(transform.description == "ThrowingImporter → NullExporter")
 
-		let subscription = transform.publisher.sink(
-			receiveCompletion: {
-				if case .failure(let error) = $0, error is CancellationError {
-					cancelled.fulfill()
-				} else {
-					XCTFail("unexpected completion")
-				}
-			},
-			receiveValue: { _ in XCTFail("unexpected value") })
-		defer { subscription.cancel() }
+		await confirmation("transform should be cancelled") { cancelled in
+			let task = Task {
+				let subscription = transform.publisher.sink(
+					receiveCompletion: {
+						if case .failure(let error) = $0, error is CancellationError {
+							cancelled.confirm()
+						} else {
+							Issue.record("unexpected completion")
+						}
+					},
+					receiveValue: { _ in Issue.record("unexpected value") })
+				defer { subscription.cancel() }
 
-		withUnsafeCurrentTask { $0?.cancel() }
-		await transform.execute()
+				withUnsafeCurrentTask { $0?.cancel() }
+				await transform.execute()
+			}
+			await task.value  // wait for task completion
+		}
 
-		await XCTAssertEqualAsync(await transform.state, .error)
-		await waitForExpectations(timeout: .infinity)
+		#expect(await transform.state == .error)
 	}
 }
 
 
 /* MARK: Converter Tests */
 
-class ConverterTests: XCTestCase {
+@Suite
+struct ConverterTests {
 
-	func testDeinitialization() async {
-		let deinitClient = expectation(description: "converter client should be released")
-		let deinitReturn = expectation(description: "return channel should be released")
+	@Test
+	func deinitialization() async throws {
+		try await confirmation("converter client should be released") { deinitClient in
+			try await confirmation("return channel should be released") { deinitReturn in
 
-		class TestClient: ConverterConnection<ConverterInterface> {
-			let deinitClient: XCTestExpectation
-			init(withExpectations expectations: XCTestExpectation...) {
-				deinitClient = expectations[0]
-			}
-			deinit {
-				deinitClient.fulfill()
-			}
-		}
-		class TestReturn: ReturnImplementation {
-			let deinitReturn: XCTestExpectation
-			init(withExpectations expectations: XCTestExpectation...) {
-				deinitReturn = expectations[0]
-			}
-			deinit {
-				deinitReturn.fulfill()
-			}
-		}
-
-		// do complicated stuff with client and return and check for proper release
-		do {
-			let client = TestClient(withExpectations: deinitClient)
-			let returnChannel = TestReturn(withExpectations: deinitReturn)
-			try! await ConverterConnection.withMocks(proxy: client.remote, publisher: returnChannel.publisher) {
-				await XCTAssertNoThrowAsync(
-					try await client.withErrorHandling { _, done in
+				class TestClient: ConverterConnection<ConverterInterface> {
+					let deinitClient: Confirmation
+					init(deinit: Confirmation) {
+						deinitClient = `deinit`
+					}
+					deinit {
+						deinitClient.confirm()
+					}
+				}
+				class TestReturn: ReturnImplementation {
+					let deinitReturn: Confirmation
+					init(deinit: Confirmation) {
+						deinitReturn = `deinit`
+					}
+					deinit {
+						deinitReturn.confirm()
+					}
+				}
+				
+				// do complicated stuff with client and return and check for proper release
+				let client = TestClient(deinit: deinitClient)
+				let returnChannel = TestReturn(deinit: deinitReturn)
+				try await ConverterConnection.withUnsafeMocks(proxy: client.remote, publisher: returnChannel.publisher) {
+					let _ = try await client.withErrorHandling { _, done in
 						done(.success(ConverterConnection<ConverterInterface>()))
 					}
-				)
-				returnChannel.sendConnectionInterrupted()
+					returnChannel.sendConnectionInterrupted()
+				}
 			}
 		}
-
-		await waitForExpectations(timeout: .infinity)
 	}
 
-	func testMessagePropagation() async {
+	@Test
+	func messagePropagation() async {
 		class MessageSender {
 			private let returnChannel: ReturnImplementation
 			init(channel: ReturnImplementation) { returnChannel = channel }
@@ -260,7 +266,7 @@ class ConverterTests: XCTestCase {
 		let sender = MessageSender(channel: returnChannel)
 		var outputs = [ConverterOutput]()
 
-		await ConverterConnection.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+		await ConverterConnection.withUnsafeMocks(proxy: sender, publisher: returnChannel.publisher) {
 			let client = ConverterConnection<MessageSender>()
 			let subscription = client.publisher
 				.assertNoFailure()
@@ -270,16 +276,17 @@ class ConverterTests: XCTestCase {
 			client.remote.message()
 		}
 
-		XCTAssertEqual(outputs.count, 1)
+		#expect(outputs.count == 1)
 		if case .message(let level, let text) = outputs[0] {
-			XCTAssertEqual(level, .default)
-			XCTAssertEqual(text, "test message")
+			#expect(level == .default)
+			#expect(text == "test message")
 		} else {
-			XCTFail("unexpected publisher output")
+			Issue.record("unexpected publisher output")
 		}
 	}
 
-	func testProgressPropagation() async {
+	@Test
+	func progressPropagation() async {
 		class ProgressSender {
 			private let id = UUID()
 			private let returnChannel: ReturnImplementation
@@ -293,7 +300,7 @@ class ConverterTests: XCTestCase {
 		let sender = ProgressSender(channel: returnChannel)
 		var outputs = [ConverterOutput]()
 
-		await ConverterConnection.withMocks(proxy: sender, publisher: returnChannel.publisher) {
+		await ConverterConnection.withUnsafeMocks(proxy: sender, publisher: returnChannel.publisher) {
 			let client = ConverterConnection<ProgressSender>()
 			let subscription = client.publisher
 				.assertNoFailure()
@@ -302,31 +309,32 @@ class ConverterTests: XCTestCase {
 
 			client.remote.step(0, of: 0)
 
-			XCTAssertEqual(outputs.count, 1)
+			#expect(outputs.count == 1)
 			guard case .progress(let progress) = outputs[0] else {
 				fatalError("unexpected publisher output")
 			}
-			XCTAssertEqual(progress.fractionCompleted, 0.0)
-			XCTAssertEqual(progress.isIndeterminate, true)
-			XCTAssertEqual(progress.isFinished, false)
+			#expect(progress.fractionCompleted == 0.0)
+			#expect(progress.isIndeterminate == true)
+			#expect(progress.isFinished == false)
 
 			client.remote.step(1, of: 2)
 
-			XCTAssertEqual(outputs.count, 1)
-			XCTAssertEqual(progress.fractionCompleted, 0.5)
-			XCTAssertEqual(progress.isIndeterminate, false)
-			XCTAssertEqual(progress.isFinished, false)
+			#expect(outputs.count == 1)
+			#expect(progress.fractionCompleted == 0.5)
+			#expect(progress.isIndeterminate == false)
+			#expect(progress.isFinished == false)
 
 			client.remote.step(2, of: 2)
 
-			XCTAssertEqual(outputs.count, 1)
-			XCTAssertEqual(progress.fractionCompleted, 1.0)
-			XCTAssertEqual(progress.isIndeterminate, false)
-			XCTAssertEqual(progress.isFinished, true)
+			#expect(outputs.count == 1)
+			#expect(progress.fractionCompleted == 1.0)
+			#expect(progress.isIndeterminate == false)
+			#expect(progress.isFinished == true)
 		}
 	}
 
-	func testXPCErrorPropagation() async {
+	@Test
+	func xpcErrorPropagation() async {
 		// set up an invalid XPC connection
 		let returnChannel = ReturnImplementation()
 		let connection = NSXPCConnection(serviceName: "invalid")
@@ -337,25 +345,28 @@ class ConverterTests: XCTestCase {
 		defer { connection.invalidate() }
 
 		// expect publisher to report the error
-		let publisherFailure = expectation(description: "publisher should fail")
-		let subscription = returnChannel.publisher.sink(
-			receiveCompletion: {
-				XCTAssertEqual($0, .failure(.connectionInvalid))
-				publisherFailure.fulfill()
-			},
-			receiveValue: { _ in })
-		defer { subscription.cancel() }
+		await confirmation("publisher should fail") { publisherFailure in
+			let subscription = returnChannel.publisher.sink(
+				receiveCompletion: {
+					#expect($0 == .failure(.connectionInvalid))
+					publisherFailure.confirm()
+				},
+				receiveValue: { _ in }
+			)
+			defer { subscription.cancel() }
 
-		// exercise the invalid connection
-		await ConverterConnection.withMocks(proxy: connection.remoteObjectProxy, publisher: returnChannel.publisher) {
-			let remote = connection.remoteObjectProxy as! ConverterTesting
-			remote.doNothing()
+			// exercise the invalid connection
+			await ConverterConnection.withUnsafeMocks(proxy: connection.remoteObjectProxy, publisher: returnChannel.publisher) {
+				let remote = connection.remoteObjectProxy as! ConverterTesting
+				remote.doNothing()
+			}
+			// give asynchronous invalidation handlers time to run
+			try? await Task.sleep(for: .milliseconds(100))
 		}
-
-		await waitForExpectations(timeout: .infinity)
 	}
 
-	func testXPCErrorWrapper() async {
+	@Test
+	func xpcErrorWrapper() async {
 		class ErrorSender {
 			private let returnChannel: ReturnImplementation
 			init(channel: ReturnImplementation) { returnChannel = channel }
@@ -365,28 +376,30 @@ class ConverterTests: XCTestCase {
 		class ErrorClient: ConverterConnection<ErrorSender> {
 			func test() async throws {
 				// test that this wrapper observes the published error and throws
-				try await withErrorHandling { (_, _: (Result<Void, ConverterError>) -> Void) in
+				try await withErrorHandling { (_, _: (sending Result<Void, ConverterError>) -> Void) in
 					remote.exercise()
 					remote.error()
 				}
-				XCTFail("error handling should throw")
+				Issue.record("error handling should throw")
 			}
 		}
 
 		let returnChannel = ReturnImplementation()
 		let sender = ErrorSender(channel: returnChannel)
-		try! await ConverterConnection.withMocks(proxy: sender, publisher: returnChannel.publisher) {
-			await XCTAssertThrowsErrorAsync(try await ErrorClient().test()) {
-				XCTAssertEqual($0 as! ConverterError, .connectionInterrupted)
+		await ConverterConnection.withUnsafeMocks(proxy: sender, publisher: returnChannel.publisher) {
+			let error = await #expect(throws: ConverterError.self) {
+				try await ErrorClient().test()
 			}
+			#expect(error == .connectionInterrupted)
 		}
 	}
 
-	func testErrorLocalization() {
-		XCTAssertNotNil(ConverterError.sourceNotSupported.errorDescription)
-		XCTAssertNotNil(ConverterError.sourceReadError.errorDescription)
-		XCTAssertNotNil(ConverterError.connectionInvalid.errorDescription)
-		XCTAssertNotNil(ConverterError.connectionInterrupted.errorDescription)
+	@Test
+	func errorLocalization() {
+		#expect(ConverterError.sourceNotSupported.errorDescription != nil)
+		#expect(ConverterError.sourceReadError.errorDescription != nil)
+		#expect(ConverterError.connectionInvalid.errorDescription != nil)
+		#expect(ConverterError.connectionInterrupted.errorDescription != nil)
 	}
 }
 
@@ -397,9 +410,11 @@ class ConverterTests: XCTestCase {
 
 /* MARK: JSON Coding Tests */
 
-class JSONCodingTests: XCTestCase {
+@Suite
+struct JSONCodingTests {
 
-	func testKeyedContainer() {
+	@Test
+	func keyedContainer() throws {
 		struct Test: Codable, Equatable {
 			var string = "test"
 			var int: Int = 0
@@ -416,11 +431,13 @@ class JSONCodingTests: XCTestCase {
 			var float: Float = 0
 			var bool = false
 		}
-		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+		let decoded = try JSON(Test()).decode()
+		#expect(decoded == Test())
 	}
 
-	func testUnkeyedContainer() {
-		struct Test: Codable, CustomJSONCodable, Equatable {
+	@Test
+	func unkeyedContainer() throws {
+		struct Test: Codable, CustomJSON.Codable, Equatable {
 			var string = "test"
 			var int: Int = 0
 			var int8: Int8 = 0
@@ -474,13 +491,15 @@ class JSONCodingTests: XCTestCase {
 				double = try container.decode(Double.self)
 				float = try container.decode(Float.self)
 				bool = try container.decode(Bool.self)
-				XCTAssertEqual(try container.decodeNil(), true)
+				#expect(try container.decodeNil() == true)
 			}
 		}
-		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+		let decoded = try JSON(Test()).decode()
+		#expect(decoded == Test())
 	}
 
-	func testSingleValueContainer() {
+	@Test
+	func singleValueContainer() throws {
 		struct Test: Codable, Equatable {
 			var arrayOfString = ["test"]
 			var arrayOfInt: [Int] = [0]
@@ -498,43 +517,55 @@ class JSONCodingTests: XCTestCase {
 			var arrayOfBool = [false]
 			var arrayOfNull: [Bool?] = [nil]
 		}
-		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+		let decoded = try JSON(Test()).decode()
+		#expect(decoded == Test())
 	}
 
-	func testDecodingErrors() {
-		struct Test: Codable, CustomJSONCodable, Equatable {
+	@Test
+	func decodingErrors() throws {
+		struct Test: Codable, CustomJSON.Codable, Equatable {
 			var int = 0
 			init() {}
 			func encode(toCustomJSON encoder: Encoder) throws {
 				try encode(to: encoder)
 			}
 			init(fromCustomJSON decoder: Decoder) throws {
-				XCTAssertThrowsError(try decoder.unkeyedContainer())
+				#expect(throws: DecodingError.self) {
+					try decoder.unkeyedContainer()
+				}
 				let container = try decoder.container(keyedBy: CodingKeys.self)
-				XCTAssertThrowsError(try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .int))
-				XCTAssertThrowsError(try container.nestedUnkeyedContainer(forKey: .int))
-				XCTAssertThrowsError(try container.decode(String.self, forKey: .int))
+				#expect(throws: DecodingError.self) {
+					try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .int)
+				}
+				#expect(throws: DecodingError.self) {
+					try container.nestedUnkeyedContainer(forKey: .int)
+				}
+				#expect(throws: DecodingError.self) {
+					try container.decode(String.self, forKey: .int)
+				}
 				try self.init(from: decoder)
 			}
 		}
-		XCTAssertNoThrow(XCTAssertEqual(try JSON(Test()).decode(), Test()))
+		let decoded = try JSON(Test()).decode()
+		#expect(decoded == Test())
 	}
 }
 
 
 /* MARK: Intercept Library Tests */
 
-class InterceptTests: XCTestCase {
+@Suite
+struct InterceptTests {
 
 	struct Intercept {
 		let dlopen: @convention(c) (UnsafePointer<CChar>?, Int32) -> UnsafeMutableRawPointer?
 
 		init() {
 			let handle = Darwin.dlopen("libintercept.dylib", RTLD_LOCAL)
-			XCTAssertNotNil(handle)
+			#expect(handle != nil)
 
 			let dlopenSymbol = dlsym(handle, "dlopen")
-			XCTAssertNotNil(dlopenSymbol)
+			#expect(dlopenSymbol != nil)
 			dlopen = unsafeBitCast(dlopenSymbol, to: type(of: dlopen))
 		}
 	}
@@ -545,9 +576,10 @@ class InterceptTests: XCTestCase {
 	/// adapt the behavior of other libraries without the need to modify them.
 	let intercept = Intercept()
 
-	func testDlopen() {
-		XCTAssertNotNil(intercept.dlopen("/usr/lib/libSystem.B.dylib", 0))
-		XCTAssertNil(intercept.dlopen("libdvdcss.2.dylib", 0))
-		XCTAssertNil(intercept.dlopen("not existing", 0))
+	@Test
+	func dlopen() {
+		#expect(intercept.dlopen("/usr/lib/libSystem.B.dylib", 0) != nil)
+		#expect(intercept.dlopen("libdvdcss.2.dylib", 0) == nil)
+		#expect(intercept.dlopen("not existing", 0) == nil)
 	}
 }

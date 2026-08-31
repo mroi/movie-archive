@@ -3,19 +3,19 @@ import Foundation
 
 public extension String {
 	
-	/// String representation of the localization key with no localization applied.
-	init(unlocalized keyAndValue: String.LocalizationValue) {
-		self = String(localized: keyAndValue, table: "non-existing")
+	/// Representation of the localizable string with no localization applied.
+	init(unlocalized resource: LocalizedStringResource) {
+		self = String(localized: resource.defaultValue, table: "non-existing")
 	}
 }
 
 public extension Progress {
 	
-	/// The `String.LocalizationValue` used to generate the `localizedDescription`.
-	var localization: String.LocalizationValue {
+	/// The `LocalizedStringResource` used to generate the `localizedDescription`.
+	var localizable: LocalizedStringResource {
 		get {
-			let unknown = String.LocalizationValue("unknown operation")
-			return userInfo[.localizationKey] as? String.LocalizationValue ?? unknown
+			let unknown = LocalizedStringResource("unknown operation")
+			return userInfo[.localizationKey] as? LocalizedStringResource ?? unknown
 		}
 		set {
 			setUserInfoObject(newValue, forKey: .localizationKey)
@@ -24,5 +24,5 @@ public extension Progress {
 }
 
 private extension ProgressUserInfoKey {
-	static let localizationKey = Self("StringLocalizationKey")
+	static let localizationKey = Self("LocalizedStringResourceKey")
 }
