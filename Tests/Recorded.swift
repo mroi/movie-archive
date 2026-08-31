@@ -13,11 +13,21 @@ import Foundation
 struct RecordedTests {
 
 	/// The `Bundle` of this test target, can be used to access test resources.
-	private var testBundle: Bundle { Bundle(for: BundleFinder.self) }
+	static private var testBundle: Bundle { Bundle(for: BundleFinder.self) }
 	private final class BundleFinder: NSObject {}
 
-	@Test
-	func recordedDVDs() async throws {
+	static private func recordings(subdirectory: String) -> [(input: URL, output: URL)] {
+		let all = testBundle.urls(forResourcesWithExtension: "json.gz", subdirectory: subdirectory) ?? []
+		let inputs = all.filter { $0.lastPathComponent.contains("input") }
+		let outputs = inputs.map {
+			let outputName = $0.lastPathComponent.replacingOccurrences(of: "input", with: "output")
+			return $0.deletingLastPathComponent().appendingPathComponent(outputName)
+		}
+		return Array(zip(inputs, outputs))
+	}
+
+	@Test(arguments: recordings(subdirectory: "DVD"))
+	func recorded(dvd urls: (input: URL, output: URL)) async throws {
 		class ReaderMock: ConverterDVDReader {
 			func open(_: URL, completionHandler done: @escaping (UUID?) -> Void) {
 				done(UUID())
@@ -34,41 +44,28 @@ struct RecordedTests {
 			try await DVDImporter(source: source)
 		}
 
-		// iterate over all recorded DVDs
-		let urls = testBundle.urls(forResourcesWithExtension: "json.gz", subdirectory: "DVD")
-		guard let urls else { return }
+		// read recorded input
+		let inputJson: JSON<MediaTree> = try await JSON(contentsOf: urls.input)
+		let input = try inputJson.mediaTree(withTypes: DVDInfo.self)
+		let inputData = try input.json().data
+		#expect(inputJson.data == inputData)
 
-		for inputUrl in urls where inputUrl.lastPathComponent.contains("input") {
+		// read recorded output
+		let outputJson: JSON<MediaTree> = try await JSON(contentsOf: urls.output)
+		// TODO: DVDInfo should not be needed here, output trees should not have opaque nodes
+		let output = try outputJson.mediaTree(withTypes: DVDInfo.self, DVDDataSource.self)
+		let outputData = try output.json().data
+		#expect(outputJson.data == outputData)
 
-			// read recorded input
-			let inputJson: JSON<MediaTree> = try await JSON(contentsOf: inputUrl)
-			let input = try inputJson.mediaTree(withTypes: DVDInfo.self)
-			let inputData = try input.json().data
-			#expect(inputJson.data == inputData)
+		// process media tree
+		let processed = try await importer.process(bySubPasses: input)
 
-			// read recorded output
-			let outputName = inputUrl
-				.lastPathComponent
-				.replacingOccurrences(of: "input", with: "output")
-			let outputUrl = inputUrl
-				.deletingLastPathComponent()
-				.appendingPathComponent(outputName)
-			let outputJson: JSON<MediaTree> = try await JSON(contentsOf: outputUrl)
-			// TODO: DVDInfo should not be needed here, output trees should not have opaque nodes
-			let output = try outputJson.mediaTree(withTypes: DVDInfo.self, DVDDataSource.self)
-			let outputData = try output.json().data
-			#expect(outputJson.data == outputData)
-
-			// process media tree
-			let processed = try await importer.process(bySubPasses: input)
-
-			// compare processed input and expected output media tree
-			// TODO: with a complete set of DVD import passes, this should always succeed
-			withKnownIssue("incomplete DVD import") {
-				// TODO: should use #expect(processed == output), but this dumps both trees when not equal
-				let comparison = processed == output
-				#expect(comparison)
-			}
+		// compare processed input and expected output media tree
+		// TODO: with a complete set of DVD import passes, this should always succeed
+		withKnownIssue("incomplete DVD import") {
+			// TODO: should use #expect(processed == output), but this dumps both trees when not equal
+			let comparison = processed == output
+			#expect(comparison)
 		}
 	}
 }
